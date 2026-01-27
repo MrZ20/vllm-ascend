@@ -1,0 +1,70 @@
+# Copyright (c) 2025 Huawei Technologies Co., Ltd. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# This file is a part of the vllm-ascend project.
+#
+
+# =============================================================================
+# Qwen3-30B-W8A8 Single Node Test Configuration
+# =============================================================================
+# This configuration runs Qwen3-30B-A3B-W8A8 on a single node with 16 NPUs.
+
+test_name: "Qwen3-30B-A3B-W8A8 single node test"
+model: "vllm-ascend/Qwen3-30B-A3B-W8A8"
+
+# Single node configuration
+num_nodes: 1
+npu_per_node: 16
+
+# Environment variables
+env_common:
+  HCCL_OP_EXPANSION_MODE: "AIV"
+  TASK_QUEUE_ENABLE: "1"
+  OMP_PROC_BIND: "false"
+  OMP_NUM_THREADS: "1"
+  HCCL_BUFFSIZE: "1024"
+  PYTORCH_NPU_ALLOC_CONF: "expandable_segments:True"
+  SERVER_PORT: 8080
+
+# Server arguments
+server_args:
+  - "--quantization"
+  - "ascend"
+  - "--data-parallel-size"
+  - "4"
+  - "--tensor-parallel-size"
+  - "4"
+  - "--enable-expert-parallel"
+  - "--max-model-len"
+  - "36864"
+  - "--max-num-batched-tokens"
+  - "8192"
+  - "--max-num-seqs"
+  - "12"
+  - "--trust-remote-code"
+  - "--gpu-memory-utilization"
+  - "0.9"
+  - "--async-scheduling"
+  - "--compilation-config"
+  - '{"cudagraph_mode": "FULL_DECODE_ONLY"}'
+
+# Benchmark configurations
+benchmarks:
+  - case_type: accuracy
+    dataset_path: vllm-ascend/gsm8k-lite
+    request_conf: vllm_api_general_chat
+    dataset_conf: gsm8k/gsm8k_gen_0_shot_cot_chat_prompt
+    max_out_len: 32768
+    batch_size: 32
+    baseline: 95
+    threshold: 5
