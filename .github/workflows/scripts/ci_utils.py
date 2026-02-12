@@ -3,6 +3,7 @@ import os
 import subprocess
 import time
 from dataclasses import dataclass
+import shlex
 
 # Configure logger to output to stdout
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -31,6 +32,7 @@ class TestFile:
 def run_e2e_files(
     files: list[TestFile],
     continue_on_error: bool = False,
+    pytest_args: str | list[str] | None = None,
 ):
     """
     Run a list of test files.
@@ -49,11 +51,23 @@ def run_e2e_files(
         filename, estimated_time = file.name, file.estimated_time
 
         full_path = os.path.join(os.getcwd(), filename)
-        logger.info(f".\n.\n{Colors.HEADER}Begin ({i}/{len(files)}):{Colors.ENDC}\npytest -sv {full_path}\n.\n.\n")
+
+        extra_args: list[str] = []
+        if pytest_args:
+            if isinstance(pytest_args, str):
+                extra_args = shlex.split(pytest_args)
+            else:
+                extra_args = list(pytest_args)
+
+        cmd = ["pytest", "-sv", "--durations=0", "--color=yes", *extra_args, full_path]
+        logger.info(
+            f".\n.\n{Colors.HEADER}Begin ({i}/{len(files)}):{Colors.ENDC}\n"
+            f"{' '.join(cmd)}\n.\n.\n"
+        )
         file_tic = time.perf_counter()
 
         process = subprocess.Popen(
-            ["pytest", "-sv", "--durations=0", "--color=yes", full_path],
+            cmd,
             stdout=None,
             stderr=None,
             env=os.environ,

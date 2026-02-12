@@ -1,0 +1,186 @@
+name: 'TIA Mapping Generation'
+
+on:
+  # Run weekly to keep mapping fresh
+  schedule:
+    - cron: '0 2 * * 0'  # Every Sunday at 2:00 AM UTC
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      vllm:
+        description: 'vLLM version/ref to use'
+        required: false
+        default: ''
+
+jobs:
+  generate-mapping:
+    name: Generate Mapping (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 配置单卡任务
+          - name: singlecard
+            runner: linux-aarch64-a2b3-1
+            image: swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann:8.5.0-a3-ubuntu22.04-py3.11
+            test_path: tests/e2e/singlecard/
+            output_file: mapping_singlecard.json
+            timeout: 600
+            # 环境变量差异
+            env_alloc_conf: "max_split_size_mb:256"
+            env_hccl_buff: ""
+            
+          # 配置双卡任务
+          - name: 2cards
+            runner: linux-aarch64-a3-2
+            image: swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann:8.5.0-a3-ubuntu22.04-py3.11
+            test_path: tests/e2e/multicard/2-cards/
+            output_file: mapping_2cards.json
+            timeout: 900
+            env_alloc_conf: ""
+            env_hccl_buff: "1024"
+
+          # 配置四卡任务
+          - name: 4cards
+            runner: linux-aarch64-a3-4
+            image: m.daocloud.io/quay.io/ascend/cann:8.5.0-a3-ubuntu22.04-py3.11
+            test_path: tests/e2e/multicard/4-cards/
+            output_file: mapping_4cards.json
+            timeout: 900
+            env_alloc_conf: ""
+            env_hccl_buff: ""
+
+    container:
+      image: ${{ matrix.image }}
+      env:
+        VLLM_LOGGING_LEVEL: ERROR
+        VLLM_USE_MODELSCOPE: True
+        HF_HUB_OFFLINE: 1
+        # 动态注入 Matrix 中的环境变量
+        HCCL_BUFFSIZE: ${{ matrix.env_hccl_buff }}
+        PYTORCH_NPU_ALLOC_CONF: ${{ matrix.env_alloc_conf }}
+
+    steps:
+      - name: Checkout vllm-project/vllm-ascend repo
+        uses: actions/checkout@v6
+
+      - name: Check npu and CANN info
+        run: |
+          npu-smi info
+          cat /usr/local/Ascend/ascend-toolkit/latest/"$(uname -i)"-linux/ascend_toolkit_install.info
+
+      - name: Config mirrors
+        run: |
+          sed -Ei 's@(ports|archive).ubuntu.com@cache-service.nginx-pypi-cache.svc.cluster.local:8081@g' /etc/apt/sources.list
+          pip config set global.index-url http://cache-service.nginx-pypi-cache.svc.cluster.local/pypi/simple
+          pip config set global.trusted-host cache-service.nginx-pypi-cache.svc.cluster.local
+          apt-get update -y
+          apt install git -y
+
+      - name: Install system dependencies
+        run: |
+          apt-get -y install `cat packages.txt`
+          apt-get -y install gcc g++ cmake libnuma-dev clang-15
+          update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 20
+          update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 20
+
+      - name: Determine vLLM ref
+        id: vllm-ref
+        run: |
+          if [ -n "${{ inputs.vllm }}" ]; then
+            echo "ref=${{ inputs.vllm }}" >> $GITHUB_OUTPUT
+          else
+            # Read from config
+            VLLM_REF=$(python3 -c "
+          import yaml
+          with open('.github/workflows/scripts/config.yaml') as f:
+              config = yaml.safe_load(f)
+          print(config.get('vllm', {}).get('main', {}).get('ref', 'main'))
+          ")
+            echo "ref=${VLLM_REF}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout vllm-project/vllm repo
+        uses: actions/checkout@v6
+        with:
+          repository: vllm-project/vllm
+          ref: ${{ steps.vllm-ref.outputs.ref }}
+          path: ./vllm-empty
+          fetch-depth: 1
+
+      - name: Install vllm-project/vllm from source
+        working-directory: ./vllm-empty
+        run: |
+          VLLM_TARGET_DEVICE=empty pip install -e .
+
+      - name: Install vllm-project/vllm-ascend
+        env:
+          PIP_EXTRA_INDEX_URL: https://mirrors.huaweicloud.com/ascend/repos/pypi
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -v -e .
+
+      - name: Run tests with coverage (${{ matrix.name }})
+        env:
+          VLLM_WORKER_MULTIPROC_METHOD: spawn
+        run: |
+          # NOTE: Per-test mapping requires pytest-cov dynamic contexts.
+          pytest -sv --durations=0 \
+            ${{ matrix.test_path }} \
+            --junitxml=test-results-${{ matrix.name }}.xml \
+            --cov=vllm_ascend --cov-context=test_function --cov-report= \
+            -x --timeout=${{ matrix.timeout }} \
+            || true  # Don't fail on test failures, we need mapping
+
+      - name: Generate mapping
+        run: |
+          python3 tools/tia/generate_mapping.py generate \
+            --coverage-db .coverage \
+            --source-dir vllm_ascend \
+            --project-root . \
+            --output ${{ matrix.output_file }}
+
+      - name: Upload mapping artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapping-${{ matrix.name }}
+          path: ${{ matrix.output_file }}
+
+  merge-mappings:
+    name: Merge All Mappings
+    needs: [generate-mapping]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Download all mapping artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: mappings/
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Merge mappings
+        run: |
+          # 由于使用了 matrix，Artifact 下载后的目录结构为：
+          # mappings/mapping-singlecard/mapping_singlecard.json
+          # mappings/mapping-2cards/mapping_2cards.json
+          # mappings/mapping-4cards/mapping_4cards.json
+          
+          python3 tools/tia/generate_mapping.py merge \
+            mappings/mapping-singlecard/mapping_singlecard.json \
+            mappings/mapping-2cards/mapping_2cards.json \
+            mappings/mapping-4cards/mapping_4cards.json \
+            --output mapping.json
+
+      - name: Upload merged mapping
+        uses: actions/upload-artifact@v4
+        with:
+          name: tia-mapping
+          path: mapping.json
+          retention-days: 90
