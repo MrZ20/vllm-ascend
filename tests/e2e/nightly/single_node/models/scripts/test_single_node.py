@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 configs = SingleNodeConfigLoader.from_yaml_cases()
 
+
 async def run_completion_test(config: SingleNodeConfig, server: "RemoteOpenAIServer | DisaggEpdProxy") -> None:
     client = server.get_async_client()
     batch = await client.completions.create(
@@ -140,6 +141,7 @@ def _run_benchmarks(config: SingleNodeConfig, port: int) -> None:
 
     if "benchmark_comparisons" in config.test_content:
         run_benchmark_comparisons(config, result)
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("config", configs, ids=[config.name for config in configs])

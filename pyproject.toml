@@ -69,7 +69,7 @@ exclude = [
     "tests/e2e/weekly/",
     
     # Batch (3)
-    "tests/e2e/nightly/single_node/",
+    # "tests/e2e/nightly/single_node/",
 
     "tests/ut/",
 ]
