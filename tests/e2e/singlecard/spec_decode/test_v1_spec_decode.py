@@ -596,7 +596,7 @@ def test_eagle3_fia_pad_under_max_concurrency(
         "model": spec_model_name,
     }
     max_num_tokens = 1 + num_speculative_tokens
-    compilation_config = CompilationConfig(cudagraph_mode="FULL_DECODE_ONLY",cudagraph_capture_sizes=[max_num_tokens])
+    compilation_config = CompilationConfig(cudagraph_mode="FULL_DECODE_ONLY", cudagraph_capture_sizes=[max_num_tokens])
     with VllmRunner(
         main_model_name,
         max_model_len=2048,
