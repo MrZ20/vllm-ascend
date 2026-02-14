@@ -149,12 +149,6 @@ class TestBatchInvariant:
     @patch("vllm_ascend.batch_invariant.torch_npu")
     def test_add_rms_norm(self, mock_torch_npu):
         """Test add_rms_norm function"""
-        # Mock dependencies
-        mock_torch = batch_invariant.torch
-
-        # Create mock tensors
-        batch_size = 2
-        hidden_size = 4
         x = MagicMock(spec=torch.Tensor)
         residual = MagicMock(spec=torch.Tensor)
         weight = MagicMock(spec=torch.Tensor)
@@ -185,9 +179,6 @@ class TestBatchInvariant:
     @patch("vllm_ascend.batch_invariant.torch_npu")
     def test_add_rms_norm_consistency(self, mock_torch_npu):
         """Test that add_rms_norm produces the same output as torch_npu.npu_add_rms_norm"""
-        # Create mock tensors
-        batch_size = 2
-        hidden_size = 4
         x = MagicMock(spec=torch.Tensor)
         residual = MagicMock(spec=torch.Tensor)
         weight = MagicMock(spec=torch.Tensor)
