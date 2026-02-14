@@ -1,7 +1,8 @@
 import unittest
+from unittest.mock import Mock, patch
+
 import torch
 import torch.nn as nn
-from unittest.mock import Mock, patch
 
 
 class TestWeightLoader(unittest.TestCase):
@@ -11,15 +12,12 @@ class TestWeightLoader(unittest.TestCase):
         """Set up test environment before each test"""
         # Import the module under test
         from vllm_ascend.quantization.methods.kv_c8 import weight_loader
+
         self.weight_loader = weight_loader
 
         # Mock distributed functions
-        self.tp_rank_patch = patch(
-            "vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_rank"
-        )
-        self.tp_size_patch = patch(
-            "vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_world_size"
-        )
+        self.tp_rank_patch = patch("vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_rank")
+        self.tp_size_patch = patch("vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_world_size")
         self.mock_tp_rank = self.tp_rank_patch.start()
         self.mock_tp_size = self.tp_size_patch.start()
 
@@ -61,7 +59,7 @@ class TestWeightLoader(unittest.TestCase):
         loaded_weight = torch.ones(8, 5)  # Full weight (8,5)
 
         # Mock narrow to track the call
-        with patch.object(loaded_weight, 'narrow', wraps=loaded_weight.narrow) as mock_narrow:
+        with patch.object(loaded_weight, "narrow", wraps=loaded_weight.narrow) as mock_narrow:
             self.weight_loader(param, loaded_weight)
 
             # Verify narrow was called correctly: narrow(dim=0, start=0, length=2)
@@ -79,7 +77,7 @@ class TestWeightLoader(unittest.TestCase):
         param = torch.zeros(2, 5)
         loaded_weight = torch.ones(8, 5)
 
-        with patch.object(loaded_weight, 'narrow', wraps=loaded_weight.narrow) as mock_narrow:
+        with patch.object(loaded_weight, "narrow", wraps=loaded_weight.narrow) as mock_narrow:
             self.weight_loader(param, loaded_weight)
 
             # Verify narrow was called correctly: start = shard_size * rank = 2 * 2 = 4
@@ -96,7 +94,7 @@ class TestWeightLoader(unittest.TestCase):
         param = torch.zeros(2, 5)
         loaded_weight = torch.ones(8, 5)
 
-        with patch.object(loaded_weight, 'narrow', wraps=loaded_weight.narrow) as mock_narrow:
+        with patch.object(loaded_weight, "narrow", wraps=loaded_weight.narrow) as mock_narrow:
             self.weight_loader(param, loaded_weight)
 
             # Verify narrow was called correctly: start = 2 * 3 = 6
@@ -113,7 +111,7 @@ class TestWeightLoader(unittest.TestCase):
         loaded_weight = torch.ones(4, 4)  # Different shape after sharding
 
         # Mock narrow to return tensor with wrong shape
-        with patch.object(loaded_weight, 'narrow', return_value=torch.ones(2, 4)):
+        with patch.object(loaded_weight, "narrow", return_value=torch.ones(2, 4)):
             with self.assertRaises(AssertionError) as context:
                 self.weight_loader(param, loaded_weight)
 
@@ -155,6 +153,7 @@ class TestAscendFAQuantAttentionMethodInit(unittest.TestCase):
 
         # Import the class after patching
         from vllm_ascend.quantization.methods.kv_c8 import AscendFAQuantAttentionMethod
+
         self.method_class = AscendFAQuantAttentionMethod
 
     def tearDown(self):
@@ -217,6 +216,7 @@ class TestAscendFAQuantAttentionMethodCreateWeights(unittest.TestCase):
 
         # Import the class
         from vllm_ascend.quantization.methods.kv_c8 import AscendFAQuantAttentionMethod
+
         self.method_class = AscendFAQuantAttentionMethod
 
         # Mock torch functions
@@ -287,8 +287,8 @@ class TestAscendFAQuantAttentionMethodCreateWeights(unittest.TestCase):
 
         # Create real tensors for testing
         def create_tensor(*args, **kwargs):
-            size = args[0] if args else kwargs.get('size', (1,))
-            dtype = kwargs.get('dtype', torch.float32)
+            size = args[0] if args else kwargs.get("size", (1,))
+            dtype = kwargs.get("dtype", torch.float32)
             return torch.zeros(*size, dtype=dtype)
 
         with patch("torch.empty", side_effect=create_tensor):
@@ -332,6 +332,7 @@ class TestAscendFAQuantAttentionMethodProcessWeights(unittest.TestCase):
 
         # Import the class
         from vllm_ascend.quantization.methods.kv_c8 import AscendFAQuantAttentionMethod
+
         self.method_class = AscendFAQuantAttentionMethod
 
         # Create method instance with real layer
@@ -385,12 +386,8 @@ class TestIntegration(unittest.TestCase):
         self.mock_get_config.return_value = self.mock_config
 
         # Mock distributed functions
-        self.tp_rank_patch = patch(
-            "vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_rank"
-        )
-        self.tp_size_patch = patch(
-            "vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_world_size"
-        )
+        self.tp_rank_patch = patch("vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_rank")
+        self.tp_size_patch = patch("vllm_ascend.quantization.methods.kv_c8.get_tensor_model_parallel_world_size")
         self.mock_tp_rank = self.tp_rank_patch.start()
         self.mock_tp_size = self.tp_size_patch.start()
 
