@@ -152,19 +152,15 @@ def test_dcp_mtp3_full_graph():
 @wait_until_npu_memory_free()
 def test_pcp_eagle3_eager():
     with VllmRunner(
-            model_eagle3["main"],
-            max_model_len=1024,
-            tensor_parallel_size=2,
-            enforce_eager=True,
-            prefill_context_parallel_size=2,
-            decode_context_parallel_size=1,
-            max_num_batched_tokens=1024,
-            block_size=128,
-            speculative_config={
-                "num_speculative_tokens": 3,
-                "method": "eagle3",
-                "model": model_eagle3["spec"]
-            },
-            async_scheduling=False,
+        model_eagle3["main"],
+        max_model_len=1024,
+        tensor_parallel_size=2,
+        enforce_eager=True,
+        prefill_context_parallel_size=2,
+        decode_context_parallel_size=1,
+        max_num_batched_tokens=1024,
+        block_size=128,
+        speculative_config={"num_speculative_tokens": 3, "method": "eagle3", "model": model_eagle3["spec"]},
+        async_scheduling=False,
     ) as runner:
         runner.generate_greedy(prompts, 32)
