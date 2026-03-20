@@ -13,15 +13,11 @@ permissions:
 jobs:
   pre-commit:
     runs-on: linux-amd64-cpu-8-hk
-    container:
-      # Build it from https://github.com/nv-action/vllm-benchmarks/blob/main/Dockerfile
-      image: quay.io/ascend-ci/vllm-ascend:lint
     steps:
     - name: Checkout vllm-project/vllm-ascend repo
       uses: actions/checkout@v6
 
-    # With problem matchers in a container, the output of $GITHUB_WORKSPACE and ${{ github.workspace }} are different.
-    # So we will just copy it into a temp path. see https://github.com/actions/runner/issues/2058
+    # Keep matchers in a temp path so they remain stable when lint commands run via docker.
     - name: cp problem matchers
       run: |
         cp .github/workflows/matchers/actionlint.json "$RUNNER_TEMP/actionlint.json"
@@ -44,23 +40,27 @@ jobs:
       with:
         filters: |
           lint_tracker:
+            - '.github/workflows/dockerfiles/Dockerfile.lint'
             - 'requirements.txt'
             - 'requirements-dev.txt'
             - 'requirements-lint.txt'
 
-    - name: Install vllm-ascend dev (conditional)
-      if: steps.filter.outputs.lint_tracker == 'true'
-      env:
-        UV_INDEX_URL: http://cache-service.nginx-pypi-cache.svc.cluster.local/pypi/simple
-        UV_EXTRA_INDEX_URL: https://mirrors.huaweicloud.com/ascend/repos/pypi
-        UV_INDEX_STRATEGY: unsafe-best-match
-        UV_NO_CACHE: 1
-        UV_SYSTEM_PYTHON: 1
+    - name: Select lint image
+      id: lint-image
       run: |
-        pip install uv
-        git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
-        pip install uc-manager
-        uv pip install -r requirements-dev.txt --extra-index-url https://download.pytorch.org/whl/cpu
+        if [ "${{ steps.filter.outputs.lint_tracker }}" = "true" ]; then
+          echo "image=vllm-ascend-lint:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+        else
+          echo "image=quay.io/ascend-ci/vllm-ascend:lint" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Build lint image for this PR
+      if: steps.filter.outputs.lint_tracker == 'true'
+      run: |
+        docker build \
+          -t "${{ steps.lint-image.outputs.image }}" \
+          -f .github/workflows/dockerfiles/Dockerfile.lint \
+          .
 
     - name: Run pre-commit
       env:
@@ -69,18 +69,34 @@ jobs:
         TERM: xterm-256color
         SHELLCHECK_OPTS: "--exclude=SC2046,SC2006,SC2086" # Exclude SC2046, SC2006, SC2086 for actionlint
       run: |
-        git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
-        pre-commit run --all-files --hook-stage manual --show-diff-on-failure
+        docker run --rm \
+          --workdir /work \
+          -v "$GITHUB_WORKSPACE:/work" \
+          -e PRE_COMMIT_COLOR \
+          -e FORCE_COLOR \
+          -e TERM \
+          -e SHELLCHECK_OPTS \
+          "${{ steps.lint-image.outputs.image }}" \
+          bash -lc '
+            git config --global --add safe.directory /work
+            pre-commit run --all-files --hook-stage manual --show-diff-on-failure
+          '
 
     - name: Run mypy
       run: |
-        PYTHONPATH="$PYTHONPATH:$(pwd)/vllm-empty"
-        export PYTHONPATH
-        git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
-        # Run mypy for Python 3.10, 3.11, 3.12 manually
-        # Note: We are now separating mypy from pre-commit hooks for performance reasons.
-        for python_version in "3.10" "3.11" "3.12"; do
-          echo "============================"
-          tools/mypy.sh 1 "$python_version"
-          echo "============================"
-        done
+        docker run --rm \
+          --workdir /work \
+          -v "$GITHUB_WORKSPACE:/work" \
+          "${{ steps.lint-image.outputs.image }}" \
+          bash -lc '
+            PYTHONPATH="$PYTHONPATH:/work/vllm-empty"
+            export PYTHONPATH
+            git config --global --add safe.directory /work
+            # Run mypy for Python 3.10, 3.11, 3.12 manually
+            # Note: We are now separating mypy from pre-commit hooks for performance reasons.
+            for python_version in "3.10" "3.11" "3.12"; do
+              echo "============================"
+              tools/mypy.sh 1 "$python_version"
+              echo "============================"
+            done
+          '
