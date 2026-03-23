@@ -1,10 +1,10 @@
 import logging
+import subprocess
+import sys
 from typing import Any
 
 import openai
 import pytest
-import subprocess
-import sys
 
 from tests.e2e.conftest import DisaggEpdProxy, RemoteEPDServer, RemoteOpenAIServer
 from tests.e2e.nightly.single_node.models.scripts.single_node_config import (
@@ -16,6 +16,7 @@ from tools.aisbench import run_aisbench_cases
 logger = logging.getLogger(__name__)
 
 configs = SingleNodeConfigLoader.from_yaml_cases()
+
 
 async def run_completion_test(config: SingleNodeConfig, server: "RemoteOpenAIServer | DisaggEpdProxy") -> None:
     client = server.get_async_client()
@@ -143,6 +144,7 @@ def _run_benchmarks(config: SingleNodeConfig, port: int) -> None:
     if "benchmark_comparisons" in config.test_content:
         run_benchmark_comparisons(config, result)
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("config", configs, ids=[config.name for config in configs])
 async def test_single_node(config: SingleNodeConfig) -> None:
@@ -151,7 +153,9 @@ async def test_single_node(config: SingleNodeConfig) -> None:
         for k, v in config.special_dependencies.items():
             command = [
                 sys.executable,
-                "-m", "pip", "install",
+                "-m",
+                "pip",
+                "install",
                 f"{k}=={v}",
             ]
             subprocess.call(command)
