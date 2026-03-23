@@ -1,5 +1,5 @@
-from unittest.mock import MagicMock, patch
 import unittest
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import torch
@@ -137,6 +137,7 @@ class TestEagleProposerInitialization(TestBase):
             self.assertFalse(proposer.use_cuda_graph)
             expected_max_num_tokens = proposer.max_num_tokens
             self.assertEqual(proposer.hidden_states.shape, (expected_max_num_tokens, 2048))
+
 
 @unittest.skip("Skip due to the changes in #7153, fix me later")
 class TestEagleProposerLoadModel(TestBase):
@@ -341,9 +342,10 @@ class TestEagleProposerDummyRun(TestBase):
         set_current_vllm_config(None)
 
     # cpu does not support parallel-group, let alone `sp`
-    @patch('vllm_ascend.ascend_forward_context.get_forward_context')
-    @patch("vllm_ascend.spec_decode.eagle_proposer.get_forward_context",
-           **{"return_value.flash_comm_v1_enabled": False})
+    @patch("vllm_ascend.ascend_forward_context.get_forward_context")
+    @patch(
+        "vllm_ascend.spec_decode.eagle_proposer.get_forward_context", **{"return_value.flash_comm_v1_enabled": False}
+    )
     @patch("vllm_ascend.spec_decode.eagle_proposer.set_ascend_forward_context")
     def test_dummy_run_basic(self, mock_context, mock_get_context, mock_get_context_2):
         num_tokens = 32
@@ -357,9 +359,10 @@ class TestEagleProposerDummyRun(TestBase):
             self.assertTrue(self.proposer._runnable.call_count == 1)
 
     # cpu does not support parallel-group, let alone `sp`
-    @patch('vllm_ascend.ascend_forward_context.get_forward_context')
-    @patch("vllm_ascend.spec_decode.eagle_proposer.get_forward_context",
-           **{"return_value.flash_comm_v1_enabled": False})
+    @patch("vllm_ascend.ascend_forward_context.get_forward_context")
+    @patch(
+        "vllm_ascend.spec_decode.eagle_proposer.get_forward_context", **{"return_value.flash_comm_v1_enabled": False}
+    )
     @patch("vllm_ascend.spec_decode.eagle_proposer.set_ascend_forward_context")
     def test_dummy_run_with_prefill(self, mock_context, mock_get_context, mock_get_context_2):
         mock_context.return_value.__enter__.return_value = None
@@ -369,12 +372,13 @@ class TestEagleProposerDummyRun(TestBase):
             self.proposer.dummy_run(num_tokens=64, with_prefill=True, num_reqs=4)
             self.assertTrue(self.proposer._runnable.call_count == 1)
 
-    @patch('vllm_ascend.ascend_forward_context.get_forward_context')
+    @patch("vllm_ascend.ascend_forward_context.get_forward_context")
     @patch("vllm_ascend.spec_decode.eagle_proposer.update_full_graph_params")
     @patch("vllm_ascend.spec_decode.eagle_proposer.get_forward_context")
     @patch("vllm_ascend.spec_decode.eagle_proposer.set_ascend_forward_context")
-    def test_dummy_run_in_graph_capture(self, mock_context, mock_get_context,
-                                        mock_update_full_graph_params, mock_get_context_2):
+    def test_dummy_run_in_graph_capture(
+        self, mock_context, mock_get_context, mock_update_full_graph_params, mock_get_context_2
+    ):
         last_use_cuda_graph = self.proposer.use_cuda_graph
         mock_return_context = MagicMock()
         mock_return_context.cudagraph_runtime_mode = CUDAGraphMode.FULL
@@ -391,13 +395,14 @@ class TestEagleProposerDummyRun(TestBase):
             self.assertTrue(self.proposer._runnable.call_count == 1)
             mock_update_full_graph_params.assert_not_called()
             self.proposer.use_cuda_graph = last_use_cuda_graph
-    
-    @patch('vllm_ascend.ascend_forward_context.get_forward_context')
+
+    @patch("vllm_ascend.ascend_forward_context.get_forward_context")
     @patch("vllm_ascend.spec_decode.eagle_proposer.update_full_graph_params")
     @patch("vllm_ascend.spec_decode.eagle_proposer.get_forward_context")
     @patch("vllm_ascend.spec_decode.eagle_proposer.set_ascend_forward_context")
-    def test_dummy_run_in_graph_run(self, mock_context, mock_get_context,
-                                    mock_update_full_graph_params, mock_get_context_2):
+    def test_dummy_run_in_graph_run(
+        self, mock_context, mock_get_context, mock_update_full_graph_params, mock_get_context_2
+    ):
         last_use_cuda_graph = self.proposer.use_cuda_graph
         mock_return_context = MagicMock()
         mock_return_context.cudagraph_runtime_mode = CUDAGraphMode.FULL
