@@ -1,0 +1,278 @@
+#
+# Copyright (c) 2025 Huawei Technologies Co., Ltd. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# This file is a part of the vllm-ascend project.
+#
+
+name: Docs Smoke Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'main'
+      - '*-dev'
+      - 'releases/v*'
+    paths:
+      - 'docs/source/tutorials/models/**'
+      - 'tools/docs/**'
+      - '.github/workflows/docs-smoke-test.yml'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+defaults:
+  run:
+    shell: bash -el {0}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  resolve-docs:
+    name: Resolve docs smoke scope
+    runs-on: linux-aarch64-a2b3-0
+    outputs:
+      docs_json: ${{ steps.resolve.outputs.docs_json }}
+      docs_count: ${{ steps.resolve.outputs.docs_count }}
+      selection_mode: ${{ steps.resolve.outputs.selection_mode }}
+    steps:
+      - name: Setup git proxy
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global url."https://gh-proxy.test.osinfra.cn/https://github.com/".insteadOf https://github.com/
+
+      - name: Checkout vllm-project/vllm-ascend repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Resolve target markdown documents
+        id: resolve
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git fetch origin "${{ github.base_ref }}":"refs/remotes/origin/${{ github.base_ref }}"
+            mapfile -t changed_docs < <(git diff --name-only "origin/${{ github.base_ref }}"...HEAD -- docs/source/tutorials/models | grep '\.md$' || true)
+          else
+            changed_docs=()
+          fi
+
+          if [[ "${{ github.event_name }}" == "pull_request" && ${#changed_docs[@]} -gt 0 ]]; then
+            selection_mode="changed-docs"
+            docs=("${changed_docs[@]}")
+          else
+            selection_mode="all-docs"
+            mapfile -t docs < <(find docs/source/tutorials/models -maxdepth 1 -type f -name '*.md' | sort)
+          fi
+
+          if [[ ${#docs[@]} -eq 0 ]]; then
+            echo "No model tutorial markdown files selected for docs smoke test." >&2
+            exit 1
+          fi
+
+          printf 'Selected docs (%s):\n' "$selection_mode"
+          printf '  %s\n' "${docs[@]}"
+
+          DOCS_JSON=$(printf '%s\n' "${docs[@]}" | python3 -c 'import json, sys; docs=[line.strip() for line in sys.stdin if line.strip()]; print(json.dumps(docs))')
+          echo "docs_json=${DOCS_JSON}" >> "$GITHUB_OUTPUT"
+          echo "docs_count=${#docs[@]}" >> "$GITHUB_OUTPUT"
+          echo "selection_mode=${selection_mode}" >> "$GITHUB_OUTPUT"
+
+  docs-smoke:
+    name: docs smoke
+    needs: resolve-docs
+    runs-on: linux-aarch64-a3-16
+    container:
+      image: swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/vllm-ascend:nightly-a3
+      env:
+        VLLM_USE_MODELSCOPE: True
+        UV_INDEX_URL: http://cache-service.nginx-pypi-cache.svc.cluster.local/pypi/simple
+        UV_EXTRA_INDEX_URL: https://mirrors.huaweicloud.com/ascend/repos/pypi
+        UV_INDEX_STRATEGY: unsafe-best-match
+        UV_NO_CACHE: 1
+        UV_SYSTEM_PYTHON: 1
+    steps:
+      - name: Check NPU/CANN info
+        run: |
+          npu-smi info
+          cat /usr/local/Ascend/ascend-toolkit/latest/"$(uname -i)"-linux/ascend_toolkit_install.info
+
+      - name: Config mirrors
+        run: |
+          sed -i 's|ports.ubuntu.com|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
+          pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+          apt-get update -y
+          apt-get install -y git curl
+          git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
+          git config --global url."https://gh-proxy.test.osinfra.cn/https://github.com/".insteadOf https://github.com/
+
+      - name: Checkout vllm-project/vllm-ascend repo
+        uses: actions/checkout@v6
+
+      - name: Install runtime dependencies
+        run: |
+          pip install uv
+          pip install uc-manager
+          uv pip install -r requirements-dev.txt
+          uv pip install -v -e .
+
+      - name: Extract docs smoke shell scripts
+        id: extract
+        continue-on-error: true
+        env:
+          DOCS_JSON: ${{ needs.resolve-docs.outputs.docs_json }}
+        run: |
+          set -euo pipefail
+          mkdir -p doctest /tmp/docs-smoke-artifacts
+
+          set +e
+          python3 - <<'PY' 2>&1 | tee /tmp/docs-smoke-artifacts/extract.log
+          import json
+          import os
+          import subprocess
+          import sys
+
+          docs = json.loads(os.environ["DOCS_JSON"])
+          cmd = ["python3", "tools/docs/extract_ci_code_blocks.py", "--output-dir", "doctest"]
+          for doc in docs:
+              cmd.extend(["--doc", doc])
+          print("Running extractor command:")
+          print(" ".join(cmd))
+          subprocess.run(cmd, check=True)
+          PY
+          extract_status=${PIPESTATUS[0]}
+          set -e
+
+          if [[ ${extract_status} -eq 0 ]]; then
+            script_count=$(find doctest -type f -name '*.sh' | wc -l | tr -d ' ')
+            echo "Extracted shell script count: ${script_count}"
+            if [[ "${script_count}" == "0" ]]; then
+              echo "No executable docs smoke shell scripts were extracted." >&2
+              extract_status=1
+            else
+              find doctest -type f -name '*.sh' | sort | tee /tmp/docs-smoke-artifacts/generated-scripts.txt
+            fi
+          fi
+
+          echo "exit_code=${extract_status}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Run docs smoke shell scripts
+        id: run
+        if: ${{ steps.extract.outputs.exit_code == '0' }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/docs-smoke-artifacts
+
+          set +e
+          python3 tools/docs/run_ci_shell_scripts.py \
+            doctest \
+            --keep-going \
+            --summary-json /tmp/docs-smoke-artifacts/runner-summary.json \
+            2>&1 | tee /tmp/docs-smoke-artifacts/runner.log
+          runner_status=${PIPESTATUS[0]}
+          set -e
+          echo "exit_code=${runner_status}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Generate docs smoke summary
+        if: ${{ always() }}
+        env:
+          DOCS_JSON: ${{ needs.resolve-docs.outputs.docs_json }}
+          DOCS_COUNT: ${{ needs.resolve-docs.outputs.docs_count }}
+          SELECTION_MODE: ${{ needs.resolve-docs.outputs.selection_mode }}
+          EXTRACT_EXIT_CODE: ${{ steps.extract.outputs.exit_code }}
+          RUNNER_EXIT_CODE: ${{ steps.run.outputs.exit_code }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          docs = json.loads(os.environ["DOCS_JSON"])
+          docs_count = os.environ["DOCS_COUNT"]
+          selection_mode = os.environ["SELECTION_MODE"]
+          extract_exit_code = os.environ.get("EXTRACT_EXIT_CODE") or "1"
+          runner_exit_code = os.environ.get("RUNNER_EXIT_CODE") or "1"
+          summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          runner_summary_path = Path("/tmp/docs-smoke-artifacts/runner-summary.json")
+
+          with summary_path.open("a", encoding="utf-8") as handle:
+              handle.write("## Docs Smoke Test\n\n")
+              handle.write(f"- Selection mode: `{selection_mode}`\n")
+              handle.write(f"- Markdown docs selected: `{docs_count}`\n")
+              handle.write(f"- Extract exit code: `{extract_exit_code}`\n")
+              handle.write(f"- Runner exit code: `{runner_exit_code}`\n\n")
+
+              handle.write("### Selected docs\n\n")
+              for doc in docs:
+                  handle.write(f"- `{doc}`\n")
+              handle.write("\n")
+
+              if extract_exit_code != "0":
+                  handle.write("### Extraction status\n\n")
+                  handle.write("Extractor failed before runnable shell scripts were produced.\n")
+              elif not runner_summary_path.exists():
+                  handle.write("### Execution status\n\n")
+                  handle.write("Runner summary JSON was not generated.\n")
+              else:
+                  payload = json.loads(runner_summary_path.read_text(encoding="utf-8"))
+                  handle.write("### Execution summary\n\n")
+                  handle.write(f"- Total scripts: `{payload['total']}`\n")
+                  handle.write(f"- Succeeded: `{payload['succeeded']}`\n")
+                  handle.write(f"- Failed: `{payload['failed']}`\n\n")
+
+                  failed = [item for item in payload["results"] if not item["succeeded"]]
+                  if failed:
+                      handle.write("### Failed scripts\n\n")
+                      handle.write("| source doc | group | script | log |\n")
+                      handle.write("| --- | --- | --- | --- |\n")
+                      for item in failed:
+                          metadata = item["metadata"]
+                          handle.write(
+                              f"| `{metadata['source_doc'] or 'unknown'}` | "
+                              f"`{metadata['group']}` | "
+                              f"`{Path(metadata['path']).name}` | "
+                              f"`{item['log_path']}` |\n"
+                          )
+                  else:
+                      handle.write("### Failed scripts\n\nNone.\n")
+          PY
+
+      - name: Upload docs smoke artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: docs-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            doctest
+            /tmp/docs-smoke-artifacts
+          if-no-files-found: warn
+
+      - name: Fail workflow if extraction failed
+        if: ${{ always() && steps.extract.outputs.exit_code != '0' }}
+        run: |
+          echo "Docs smoke extraction failed. See /tmp/docs-smoke-artifacts/extract.log and uploaded artifacts." >&2
+          exit 1
+
+      - name: Fail workflow if runner failed
+        if: ${{ always() && steps.extract.outputs.exit_code == '0' && steps.run.outputs.exit_code != '0' }}
+        run: |
+          echo "Docs smoke runner failed. See uploaded artifacts and summary for failing scripts." >&2
+          exit 1

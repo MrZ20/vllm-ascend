@@ -113,7 +113,8 @@ For an Atlas 800 A3 (64G*16) node, tensor-parallel-size should be at least 16.
 
 ```{code-block} bash
 :name: env-preparation
-:class: doc-exec group-kimi-k2-single-node-smoke
+:class: doc-exec
+:group: kimi-k2-single-node
 export MODEL_PATH="${MODEL_PATH:-moonshotai/Kimi-K2-Thinking}"
 export SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-kimi-k2-thinking}"
 export VLLM_PORT="${VLLM_PORT:-8000}"
@@ -128,7 +129,8 @@ export VLLM_SMOKE_LOG="${VLLM_SMOKE_LOG:-/tmp/kimi_k2_thinking_smoke.log}"
 
 ```{code-block} bash
 :name: start-service
-:class: doc-exec group-kimi-k2-single-node-smoke
+:class: doc-exec
+:group: kimi-k2-single-node
 vllm serve "$MODEL_PATH" \
   --host 0.0.0.0 \
   --port "$VLLM_PORT" \
@@ -150,7 +152,8 @@ Once your server is started, you can query the model with input prompts.
 
 ```{code-block} bash
 :name: verify-service
-:class: doc-exec group-kimi-k2-single-node-smoke
+:class: doc-exec
+:group: kimi-k2-single-node
 for attempt in $(seq 1 60); do
   if curl -sf "http://127.0.0.1:${VLLM_PORT}/v1/models" >/dev/null; then
     break
@@ -172,7 +175,8 @@ curl -sf "http://127.0.0.1:${VLLM_PORT}/v1/chat/completions" \
 
 ```{code-block} bash
 :name: cleanup-service
-:class: doc-exec group-kimi-k2-single-node-smoke
+:class: doc-exec
+:group: kimi-k2-single-node
 if [ -n "${VLLM_SERVER_PID:-}" ] && kill -0 "$VLLM_SERVER_PID" 2>/dev/null; then
   kill "$VLLM_SERVER_PID"
   wait "$VLLM_SERVER_PID" 2>/dev/null || true
