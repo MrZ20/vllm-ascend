@@ -9,7 +9,6 @@ from vllm_ascend.worker.model_runner_v1 import NPUModelRunner
 
 
 class TestNPUModelRunnerKVCache(unittest.TestCase):
-
     def _build_runner(self):
         runner = NPUModelRunner.__new__(NPUModelRunner)
         runner.device = torch.device("cpu")

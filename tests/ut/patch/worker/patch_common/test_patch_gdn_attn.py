@@ -5,12 +5,12 @@ from types import SimpleNamespace
 
 import pytest
 import torch
-
-import vllm_ascend.patch.worker.patch_gdn_attn as patch_gdn_attn
 from vllm.config.compilation import CUDAGraphMode
 from vllm.v1.attention.backend import CommonAttentionMetadata
 from vllm.v1.attention.backends.gdn_attn import GDNAttentionMetadataBuilder
 from vllm.v1.kv_cache_interface import MambaSpec
+
+import vllm_ascend.patch.worker.patch_gdn_attn as patch_gdn_attn
 
 
 @dataclass
@@ -45,10 +45,7 @@ def create_common_attn_metadata(
     seq_lens = torch.tensor(batch_spec.seq_lens, dtype=torch.int32, device=device)
     seq_lens_cpu = seq_lens.cpu()
     max_seq_len = int(seq_lens_cpu.max())
-    context_lens = [
-        batch_spec.seq_lens[i] - batch_spec.query_lens[i]
-        for i in range(batch_spec.batch_size)
-    ]
+    context_lens = [batch_spec.seq_lens[i] - batch_spec.query_lens[i] for i in range(batch_spec.batch_size)]
     num_computed_tokens_cpu = torch.tensor(context_lens, dtype=torch.int32)
     max_blocks = (max(batch_spec.seq_lens) + block_size - 1) // block_size
     block_table_tensor = torch.arange(
@@ -155,35 +152,35 @@ def _prepare_chunk_offsets(cu_seqlens: torch.Tensor, chunk_size: int) -> torch.T
     return offsets.to(cu_seqlens.device)
 
 
-def _prepare_update_chunk_offsets(
-    cu_seqlens: torch.Tensor, chunk_size: int
-) -> torch.Tensor:
+def _prepare_update_chunk_offsets(cu_seqlens: torch.Tensor, chunk_size: int) -> torch.Tensor:
     lens = cu_seqlens[1:] - cu_seqlens[:-1]
-    num_chunks = torch.div(
-        lens + chunk_size - 1,
-        chunk_size,
-        rounding_mode="floor",
-    ) + 1
+    num_chunks = (
+        torch.div(
+            lens + chunk_size - 1,
+            chunk_size,
+            rounding_mode="floor",
+        )
+        + 1
+    )
     offsets = torch.zeros(len(num_chunks) + 1, dtype=cu_seqlens.dtype)
     torch.cumsum(num_chunks, dim=0, out=offsets[1:])
     return offsets.to(cu_seqlens.device)
 
 
-def _prepare_final_chunk_indices(
-    cu_seqlens: torch.Tensor, chunk_size: int
-) -> torch.Tensor:
+def _prepare_final_chunk_indices(cu_seqlens: torch.Tensor, chunk_size: int) -> torch.Tensor:
     lens = cu_seqlens[1:] - cu_seqlens[:-1]
-    num_chunks = torch.div(
-        lens + chunk_size - 1,
-        chunk_size,
-        rounding_mode="floor",
-    ) + 1
+    num_chunks = (
+        torch.div(
+            lens + chunk_size - 1,
+            chunk_size,
+            rounding_mode="floor",
+        )
+        + 1
+    )
     return (torch.cumsum(num_chunks, dim=0) - 1).to(cu_seqlens.device)
 
 
-def _build_non_spec_query_start_loc_cpu(
-    batch_spec: BatchSpec, spec_mask_cpu: torch.Tensor | None
-) -> torch.Tensor:
+def _build_non_spec_query_start_loc_cpu(batch_spec: BatchSpec, spec_mask_cpu: torch.Tensor | None) -> torch.Tensor:
     query_lens = torch.tensor(batch_spec.query_lens, dtype=torch.int32)
     if spec_mask_cpu is not None:
         query_lens = query_lens[~spec_mask_cpu]
@@ -246,9 +243,7 @@ def test_builder_prebuilds_non_spec_chunk_metadata_exactly(
     num_accepted_tokens = None
     spec_mask_cpu = None
     if num_decode_draft_tokens_cpu is not None:
-        num_accepted_tokens = torch.ones(
-            batch_spec.batch_size, dtype=torch.int32, device=device
-        )
+        num_accepted_tokens = torch.ones(batch_spec.batch_size, dtype=torch.int32, device=device)
         spec_mask_cpu = num_decode_draft_tokens_cpu >= 0
 
     attn_metadata = builder.build(
@@ -277,8 +272,7 @@ def test_builder_prebuilds_non_spec_chunk_metadata_exactly(
         patch_gdn_attn._GDN_SOLVE_TRIL_LARGE_BLOCK_SIZE,
     )
     optim_block_size = _next_power_of_2(
-        patch_gdn_attn._GDN_CUMSUM_WORKING_SET
-        // (num_heads * patch_gdn_attn._GDN_CHUNK_SIZE)
+        patch_gdn_attn._GDN_CUMSUM_WORKING_SET // (num_heads * patch_gdn_attn._GDN_CHUNK_SIZE)
     )
     legacy_block_indices_cumsum = _prepare_chunk_indices(
         non_spec_query_start_loc_cpu,
@@ -289,12 +283,8 @@ def test_builder_prebuilds_non_spec_chunk_metadata_exactly(
     assert prebuilt_meta is not None
     assert torch.equal(prebuilt_meta.chunk_indices_chunk64, legacy_chunk_indices_64)
     assert torch.equal(prebuilt_meta.chunk_offsets_chunk64, legacy_chunk_offsets_64)
-    assert torch.equal(
-        prebuilt_meta.update_chunk_offsets_chunk64, legacy_update_chunk_offsets_64
-    )
-    assert torch.equal(
-        prebuilt_meta.final_chunk_indices_chunk64, legacy_final_chunk_indices_64
-    )
+    assert torch.equal(prebuilt_meta.update_chunk_offsets_chunk64, legacy_update_chunk_offsets_64)
+    assert torch.equal(prebuilt_meta.final_chunk_indices_chunk64, legacy_final_chunk_indices_64)
     assert torch.equal(
         prebuilt_meta.chunk_indices_large_block,
         legacy_chunk_indices_large_block,
@@ -372,12 +362,8 @@ def test_builder_skips_prebuilt_meta_without_non_spec_prefill(batch_spec: BatchS
     num_accepted_tokens = None
     num_decode_draft_tokens_cpu = None
     if batch_spec.name == "spec_only":
-        num_accepted_tokens = torch.ones(
-            batch_spec.batch_size, dtype=torch.int32, device=device
-        )
-        num_decode_draft_tokens_cpu = torch.full(
-            (batch_spec.batch_size,), 3, dtype=torch.int32
-        )
+        num_accepted_tokens = torch.ones(batch_spec.batch_size, dtype=torch.int32, device=device)
+        num_decode_draft_tokens_cpu = torch.full((batch_spec.batch_size,), 3, dtype=torch.int32)
 
     attn_metadata = builder.build(
         0,
