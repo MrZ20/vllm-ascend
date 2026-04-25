@@ -1,5 +1,24 @@
 #!/usr/bin/env bash
 
+#
+# Copyright (c) 2025 Huawei Technologies Co., Ltd. All Rights Reserved.
+# Copyright 2023 The vLLM team.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# This file is a part of the vllm-ascend project.
+# Adapted from https://github.com/vllm-project/vllm/tree/main/tools
+#
+
 set -euo pipefail
 
 # ==============================================================================
@@ -105,16 +124,25 @@ format_commit_date() {
   echo "${short_date//-//}"
 }
 
-format_contributor_row() {
-  local number="$1"
-  local login="$2"
-  local date="$3"
-  local sha="$4"
-  local short_sha
+is_contributor_table_row() {
+  local line="$1"
 
-  short_sha="${sha:0:7}"
-  printf "| %s | [@%s](https://github.com/%s) | %s | [%s](https://github.com/%s/commit/%s) |" \
-    "$number" "$login" "$login" "$date" "$short_sha" "$REPO" "$sha"
+  # Supports regular 4-column rows, 4-column rows with an empty Number cell,
+  # and manually added 3-column rows without the Number cell.
+  [[ "$line" =~ ^\|[[:space:]]*([0-9]+)?[[:space:]]*\|[[:space:]]*\[@ ]] \
+    || [[ "$line" =~ ^\|[[:space:]]*\[@ ]]
+}
+
+renumber_contributor_table_row() {
+  local number="$1"
+  local line="$2"
+
+  if [[ "$line" =~ ^\|[[:space:]]*([0-9]+)?[[:space:]]*\|[[:space:]]*\[@ ]]; then
+    echo "$line" | sed -E "s/^\|[[:space:]]*([0-9]+)?[[:space:]]*\|/| ${number} |/"
+  else
+    local row_without_leading_pipe="${line#|}"
+    echo "| ${number} |${row_without_leading_pipe}"
+  fi
 }
 
 extract_existing_logins() {
@@ -310,10 +338,9 @@ write_contributor_rows() {
 }
 
 find_valid_commit_replacement() {
-  local number="$1"
-  local login="$2"
-  local selected_sha="$3"
-  local login_commits="$4"
+  local login="$1"
+  local selected_sha="$2"
+  local login_commits="$3"
   local found_selected=false
 
   while IFS='|' read -r commit_login commit_sha commit_date _; do
@@ -334,7 +361,7 @@ find_valid_commit_replacement() {
     if [ "$commit_code" = "200" ]; then
       local replacement_date
       replacement_date=$(format_commit_date "$commit_date")
-      format_contributor_row "$number" "$login" "$replacement_date" "$commit_sha"
+      printf "| @%s | %s | %s |" "$login" "$replacement_date" "${commit_sha:0:7}"
       return
     fi
   done < "$login_commits"
@@ -343,39 +370,44 @@ find_valid_commit_replacement() {
 }
 
 run_link_check_one() {
-  local number="$1"
-  local login="$2"
-  local sha="$3"
-  local date="$4"
-  local login_commits="$2"
-
-  login_commits="$5"
+  local login="$1"
+  local sha="$2"
+  local date="$3"
+  local login_commits="$4"
 
   local row
   local profile_code
   local commit_code
 
-  row=$(format_contributor_row "$number" "$login" "$date" "$sha")
+  row=$(printf "| @%s | %s | %s |" "$login" "$date" "${sha:0:7}")
   profile_code=$(get_github_http_code "https://api.github.com/users/${login}")
 
   if [ "$profile_code" != "200" ]; then
-    echo "${row} ------ Invalid profile(${profile_code})"
-    return
+    printf "%s ---- Invalid profile(%s)\n" "$row" "$profile_code"
+    return 1
   fi
 
   commit_code=$(get_github_http_code "https://api.github.com/repos/${REPO}/commits/${sha}")
 
   if [ "$commit_code" != "200" ]; then
     local replacement_row
+    local output
 
-    echo "${row} ------ Invalid commit(${commit_code})"
-    replacement_row=$(find_valid_commit_replacement "$number" "$login" "$sha" "$login_commits")
+    output="${row} ---- Invalid commit(${commit_code})"
+    replacement_row=$(find_valid_commit_replacement "$login" "$sha" "$login_commits")
 
     if [ -n "$replacement_row" ]; then
-      echo "==>"
-      echo "$replacement_row"
+      output="${output}
+=====>
+${replacement_row}"
     fi
+
+    printf "%s\n" "$output"
+    return 1
   fi
+
+  printf "%s -- 200 ok\n" "$login"
+  return 0
 }
 
 run_link_check() {
@@ -387,53 +419,47 @@ run_link_check() {
   fi
 
   echo ""
-  echo "Checking GitHub profile and commit links with ${LINK_CHECK_JOBS} jobs..."
+  local total
+  total=$(awk -F'|' '$2 != "" { count++ } END { print count + 0 }' "$numbered_contributors")
+
+  echo "Checking ${total} GitHub profile/commit link groups with ${LINK_CHECK_JOBS} jobs..."
 
   local checked=0
   local issues=0
   local batch_size=0
-  local pids=()
-  local output_files=()
+  local pids=""
 
-  while IFS='|' read -r number login sha _short_sha date _timestamp; do
+  while IFS='|' read -r _number login sha _short_sha date _timestamp; do
     if [ -z "$login" ]; then
       continue
     fi
 
-    checked=$((checked + 1))
-
-    local CHECK_OUTPUT
-    make_temp_file CHECK_OUTPUT
-    output_files+=("$CHECK_OUTPUT")
-
-    run_link_check_one "$number" "$login" "$sha" "$date" "$login_commits" > "$CHECK_OUTPUT" &
-    pids+=("$!")
+    run_link_check_one "$login" "$sha" "$date" "$login_commits" &
+    pids="${pids}${pids:+ }$!"
     batch_size=$((batch_size + 1))
 
     if [ "$batch_size" -ge "$LINK_CHECK_JOBS" ]; then
       local pid
-      for pid in "${pids[@]}"; do
-        wait "$pid" || true
+      for pid in $pids; do
+        if ! wait "$pid"; then
+          issues=$((issues + 1))
+        fi
+        checked=$((checked + 1))
       done
-      pids=()
+      pids=""
       batch_size=0
     fi
   done < "$numbered_contributors"
 
   local pid
-  for pid in "${pids[@]}"; do
-    wait "$pid" || true
-  done
-
-  local output_file
-  for output_file in "${output_files[@]}"; do
-    if [ -s "$output_file" ]; then
-      cat "$output_file"
+  for pid in $pids; do
+    if ! wait "$pid"; then
       issues=$((issues + 1))
     fi
+    checked=$((checked + 1))
   done
 
-  echo "Link check completed: ${checked} checked, ${issues} issue(s) found."
+  echo "Link check completed: ${checked}/${total} checked, ${issues} issue(s) found."
 }
 
 # ==============================================================================
@@ -583,11 +609,13 @@ run_incremental_update() {
   # 1. Collect git data.
   # ---------------------------------------------------------------------------
 
-  # Full git history is needed to merge emails into GitHub logins correctly.
+  # Full git history is needed to identify each GitHub login's first
+  # contribution after merging multiple emails under the same account.
   git log --pretty=format:'%ct|%H|%aE|%cI|%aN' \
     --reverse --all > "$ALL_HISTORY"
 
-  # Extract all new commit SHAs in this incremental range.
+  # New commit SHAs are only used after account merging to decide whether the
+  # final selected first contribution belongs to this incremental range.
   git rev-list "${LAST_COMMIT}..${CURRENT_HEAD}" > "$NEW_SHAS"
 
   # Extract existing GitHub logins from contributors.md for deduplication.
@@ -660,12 +688,17 @@ run_incremental_update() {
   # ---------------------------------------------------------------------------
 
   local CURRENT_DATE
+  local IN_CONTRIBUTORS_METADATA=false
   local WROTE_HEADER=false
 
   CURRENT_DATE=$(date +%Y-%m-%d)
 
   while IFS= read -r line || [ -n "$line" ]; do
-    if [[ "$line" == "<!-- last_commit:"* ]]; then
+    if [[ "$line" == "## Contributors" ]]; then
+      echo "$line" >> "$TEMP_FILE"
+      IN_CONTRIBUTORS_METADATA=true
+
+    elif [[ "$line" == "<!-- last_commit:"* ]]; then
       # Remove old last_commit.
       continue
 
@@ -677,8 +710,14 @@ run_incremental_update() {
       # Remove old description.
       continue
 
+    elif [[ "$IN_CONTRIBUTORS_METADATA" == true && -z "$line" ]]; then
+      # Remove blank lines from the old generated metadata block. The new
+      # metadata inserted before the table header contains its own spacing.
+      continue
+
     elif [[ "$line" == "| Number | Contributor | Date | Commit ID |" ]]; then
       # Insert new metadata before table header.
+      IN_CONTRIBUTORS_METADATA=false
       {
         echo "<!-- last_commit: ${CURRENT_HEAD} -->"
         echo ""
@@ -834,7 +873,7 @@ run_sort_only() {
     fi
 
     if [ "$IN_TABLE" = true ] && [ "$IN_ROWS" = true ]; then
-      if [[ "$line" =~ ^\|[[:space:]]*[0-9]+[[:space:]]*\| ]]; then
+      if is_contributor_table_row "$line"; then
         ROW_COUNT=$((ROW_COUNT + 1))
       else
         break
@@ -869,8 +908,8 @@ run_sort_only() {
     fi
 
     if [ "$IN_TABLE" = true ] && [ "$IN_ROWS" = true ]; then
-      if [[ "$line" =~ ^\|[[:space:]]*[0-9]+[[:space:]]*\| ]]; then
-        echo "$line" | sed -E "s/^\|[[:space:]]*[0-9]+[[:space:]]*\|/| ${NEXT_NUMBER} |/" >> "$TEMP_FILE"
+      if is_contributor_table_row "$line"; then
+        renumber_contributor_table_row "$NEXT_NUMBER" "$line" >> "$TEMP_FILE"
         NEXT_NUMBER=$((NEXT_NUMBER - 1))
         continue
       fi
