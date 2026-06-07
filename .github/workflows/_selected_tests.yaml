@@ -210,7 +210,7 @@ jobs:
           VLLM_WORKER_MULTIPROC_METHOD: spawn
         run: |
           . /usr/local/Ascend/ascend-toolkit/set_env.sh
-          .github/workflows/scripts/run_selected_tests.sh \
+          python3 .github/workflows/scripts/run_selected_tests.py \
             "${{ matrix.group.npu_type }}" \
             "${{ matrix.group.num_npus }}" \
             "with-device" \
@@ -222,7 +222,7 @@ jobs:
           VLLM_WORKER_MULTIPROC_METHOD: spawn
           TORCH_DEVICE_BACKEND_AUTOLOAD: 0
         run: |
-          .github/workflows/scripts/run_selected_tests.sh \
+          python3 .github/workflows/scripts/run_selected_tests.py \
             "${{ matrix.group.npu_type }}" \
             "${{ matrix.group.num_npus }}" \
             "without-device" \
