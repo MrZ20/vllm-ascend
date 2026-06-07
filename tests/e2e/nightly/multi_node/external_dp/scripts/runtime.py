@@ -19,6 +19,9 @@ from tests.e2e.nightly.multi_node.external_dp.scripts.external_dp_config import 
     replace_cluster_placeholders,
 )
 from tests.e2e.nightly.multi_node.external_dp.scripts.utils import (
+    HEALTH_POLL_INTERVAL_S,
+    HEALTH_PROBE_TIMEOUT_S,
+    UNHEALTHY_FAILURE_THRESHOLD,
     format_server_cmd,
     is_http_ready,
     start_logged_process,
@@ -30,9 +33,42 @@ from tests.e2e.nightly.multi_node.scripts.utils import get_net_interface
 
 logger = logging.getLogger(__name__)
 
-SERVER_READY_TIMEOUT_SECONDS = 3600
 TEMPLATE_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 ENV_VAR_RE = re.compile(r"(?<!\$)\$([A-Za-z_][A-Za-z0-9_]*)")
+
+# Defaults backing the two user-facing timeouts (see resolve_*_timeout below).
+# STARTUP covers "service launch -> all ranks ready"; the margin on top of vLLM's
+# own engine-ready timeout absorbs weight download, process spawn and cross-node DP
+# rendezvous. TOTAL covers the whole run; the allowance on top of STARTUP is the
+# worker's safety net while it hangs for the master to finish the benchmark.
+STARTUP_MARGIN_S = 1800
+BENCHMARK_ALLOWANCE_S = 3600
+
+
+def resolve_startup_timeout(config: ExternalDPConfig) -> int:
+    """Seconds to wait for every rank (and the proxy) to become ready.
+
+    Overridable via ``EXTERNAL_DP_STARTUP_TIMEOUT_S``; otherwise derived from the
+    rank-level ``VLLM_ENGINE_READY_TIMEOUT_S`` plus a margin, so the framework never
+    gives up before vLLM itself would.
+    """
+    explicit = os.environ.get("EXTERNAL_DP_STARTUP_TIMEOUT_S")
+    if explicit:
+        return int(explicit)
+    return config.engine_ready_timeout_s + STARTUP_MARGIN_S
+
+
+def resolve_total_timeout(config: ExternalDPConfig) -> int:
+    """Seconds for the whole run (startup -> benchmark end).
+
+    Overridable via ``EXTERNAL_DP_TOTAL_TIMEOUT_S``; otherwise the startup budget
+    plus an allowance for the benchmark. Used as the worker's safety net while it
+    hangs for the master to stop (the normal exit is the master's health dropping).
+    """
+    explicit = os.environ.get("EXTERNAL_DP_TOTAL_TIMEOUT_S")
+    if explicit:
+        return int(explicit)
+    return resolve_startup_timeout(config) + BENCHMARK_ALLOWANCE_S
 
 
 @dataclass(frozen=True)
@@ -178,11 +214,13 @@ class ExternalDPServerManager:
         ranks: list[RankInfo],
         current_node_index: int,
         log_root: Path,
+        startup_timeout: int,
     ):
         self.config = config
         self.ranks = ranks
         self.current_node_index = current_node_index
         self.log_root = log_root
+        self.startup_timeout = startup_timeout
         self.command_builder = ServerCommandBuilder(config)
         self.dist_envs = build_dist_envs(
             config.cluster_ips[current_node_index],
@@ -207,7 +245,7 @@ class ExternalDPServerManager:
 
             wait_ranks_ready(
                 local_ranks,
-                timeout=SERVER_READY_TIMEOUT_SECONDS,
+                timeout=self.startup_timeout,
                 rank_processes=self.rank_processes,
             )
         except Exception:
@@ -382,6 +420,7 @@ def wait_ranks_ready(
 ) -> None:
     ranks = list(ranks)
     rank_ready = {rank: False for rank in ranks}
+    consecutive_unhealthy = {rank: 0 for rank in ranks}
     deadline = time.monotonic() + timeout
     last_log_time = 0.0
 
@@ -389,22 +428,28 @@ def wait_ranks_ready(
         _raise_if_rank_process_exited(rank_processes)
 
         all_ready = True
-        unhealthy_after_ready = []
 
         for rank in ranks:
-            is_ready = is_http_ready(rank_health_url(rank), timeout=1.0)
+            is_ready = is_http_ready(rank_health_url(rank), timeout=HEALTH_PROBE_TIMEOUT_S)
             if is_ready:
                 if not rank_ready[rank]:
                     logger.info("[READY] External DP rank %s", rank_label(rank))
                 rank_ready[rank] = True
+                consecutive_unhealthy[rank] = 0
                 continue
 
             all_ready = False
             if rank_ready[rank]:
-                unhealthy_after_ready.append(rank)
+                consecutive_unhealthy[rank] += 1
 
-        if unhealthy_after_ready:
-            failed = "; ".join(rank_label(rank) for rank in unhealthy_after_ready)
+        # Only treat an already-ready rank as crashed once it has failed several
+        # probes in a row; a single transient failure (slow /health under load, a
+        # network blip) must not abort an otherwise-healthy run.
+        flapping = [
+            rank for rank in ranks if rank_ready[rank] and consecutive_unhealthy[rank] >= UNHEALTHY_FAILURE_THRESHOLD
+        ]
+        if flapping:
+            failed = "; ".join(rank_label(rank) for rank in flapping)
             raise RuntimeError(f"External DP rank became unhealthy after ready: {failed}")
 
         if all_ready:
@@ -425,11 +470,26 @@ def wait_ranks_ready(
             pending_labels = "; ".join(rank_label(rank) for rank in pending)
             raise TimeoutError(f"Timed out waiting for external DP ranks ready: {pending_labels}")
 
-        time.sleep(5)
+        time.sleep(HEALTH_POLL_INTERVAL_S)
 
 
-def wait_master_rank_stopped(ranks: list[RankInfo], timeout: int) -> None:
+def wait_master_rank_stopped(
+    ranks: list[RankInfo],
+    *,
+    startup_timeout: int,
+    total_timeout: int,
+) -> None:
+    """Block a worker until the master rank has come up and then stopped.
+
+    Phase 1 waits for the master to become ready, bounded by ``startup_timeout``.
+    Phase 2 hangs (debounced) until the master's health drops, bounded by the
+    *remaining* portion of ``total_timeout`` -- so the worker keeps its ranks alive
+    for the whole benchmark and tears down only when the master truly finishes,
+    never because the per-run budget was set shorter than the benchmark.
+    """
     url = master_rank_health_url(ranks)
-    wait_http_ready(url, timeout=SERVER_READY_TIMEOUT_SECONDS)
+    start = time.monotonic()
+    wait_http_ready(url, timeout=startup_timeout)
     logger.info("Hanging until master external DP rank stops: %s", url)
-    wait_http_unready(url, timeout=timeout)
+    remaining = max(int(total_timeout - (time.monotonic() - start)), 0)
+    wait_http_unready(url, timeout=remaining)

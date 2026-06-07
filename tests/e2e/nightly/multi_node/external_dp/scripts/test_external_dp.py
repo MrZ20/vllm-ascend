@@ -21,6 +21,8 @@ from tests.e2e.nightly.multi_node.external_dp.scripts.runtime import (
     format_http_status,
     master_rank_health_url,
     proxy_server_health_url,
+    resolve_startup_timeout,
+    resolve_total_timeout,
     wait_master_rank_stopped,
     wait_ranks_ready,
 )
@@ -105,7 +107,14 @@ def test_external_dp() -> None:
     ranks = RankResolver(config).resolve()
     current_node_index = resolve_current_node_index(config)
     log_root = Path(os.environ.get("EXTERNAL_DP_LOG_DIR", str(DEFAULT_LOG_ROOT)))
-    max_wait_seconds = int(os.environ.get("EXTERNAL_DP_MAX_WAIT_SECONDS", "3600"))
+    startup_timeout = resolve_startup_timeout(config)
+    total_timeout = resolve_total_timeout(config)
+    logger.info(
+        "External DP timeouts: startup=%ds total=%ds (engine_ready=%ds)",
+        startup_timeout,
+        total_timeout,
+        config.engine_ready_timeout_s,
+    )
     is_master = current_node_index == 0
 
     server_manager = ExternalDPServerManager(
@@ -113,6 +122,7 @@ def test_external_dp() -> None:
         ranks=ranks,
         current_node_index=current_node_index,
         log_root=log_root,
+        startup_timeout=startup_timeout,
     )
     proxy_launcher = ExternalDPProxyLauncher(
         config=config,
@@ -124,8 +134,8 @@ def test_external_dp() -> None:
     try:
         with server_manager, proxy_launcher:
             if is_master:
-                wait_ranks_ready(ranks, timeout=max_wait_seconds)
-                proxy_launcher.wait_ready()
+                wait_ranks_ready(ranks, timeout=startup_timeout)
+                proxy_launcher.wait_ready(timeout=startup_timeout)
                 target = f"http://{config.routing.proxy_host}:{config.routing.proxy_port}"
                 logger.info(
                     "Running AISBench cases: model=%s target=%s cases=[%s]",
@@ -151,13 +161,16 @@ def test_external_dp() -> None:
                     commands=all_commands,
                     results=results,
                 )
-                wait_ranks_ready(ranks, timeout=30)
             else:
                 master_url = master_rank_health_url(ranks)
                 with _heartbeat(
                     "Waiting for master external DP rank to stop",
                     status_fn=lambda: format_http_status("master", master_url),
                 ):
-                    wait_master_rank_stopped(ranks, timeout=max_wait_seconds)
+                    wait_master_rank_stopped(
+                        ranks,
+                        startup_timeout=startup_timeout,
+                        total_timeout=total_timeout,
+                    )
     finally:
         _archive_rank_logs(log_root, current_node_index)

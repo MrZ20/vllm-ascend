@@ -30,6 +30,13 @@ if TYPE_CHECKING:
 
 SENSITIVE_ENV_TOKENS = ("TOKEN", "SECRET", "PASSWORD", "ACCESS_KEY")
 
+# Health-probe tuning shared by the readiness/liveness waits. These are kept as
+# internal constants (not env knobs) so the only user-facing timeouts stay the two
+# startup/total budgets resolved in runtime.py.
+HEALTH_PROBE_TIMEOUT_S = 5.0
+HEALTH_POLL_INTERVAL_S = 5.0
+UNHEALTHY_FAILURE_THRESHOLD = 3
+
 
 def format_server_cmd(cmd: list[str], env: dict[str, str] | None = None) -> str:
     env_parts: list[str] = []
@@ -113,11 +120,28 @@ def wait_http_ready(url: str, timeout: int, interval: float = 2.0) -> None:
     raise TimeoutError(f"Timed out waiting for HTTP ready: {url}; last_error={last_error}")
 
 
-def wait_http_unready(url: str, timeout: int, interval: float = 5.0) -> None:
+def wait_http_unready(
+    url: str,
+    timeout: int,
+    interval: float = HEALTH_POLL_INTERVAL_S,
+    failure_threshold: int = UNHEALTHY_FAILURE_THRESHOLD,
+) -> None:
+    """Return once ``url`` has been unreachable ``failure_threshold`` times in a row.
+
+    A single transient probe failure (a network blip, or /health momentarily slow
+    under benchmark load) must not be read as "the service stopped" -- doing so
+    would make a worker tear its ranks down mid-run and break the DP/PD group. We
+    only conclude the service is gone after several consecutive failures.
+    """
     deadline = time.monotonic() + timeout
+    consecutive_failures = 0
     while time.monotonic() < deadline:
-        if not is_http_ready(url):
-            return
+        if is_http_ready(url, timeout=HEALTH_PROBE_TIMEOUT_S):
+            consecutive_failures = 0
+        else:
+            consecutive_failures += 1
+            if consecutive_failures >= failure_threshold:
+                return
         time.sleep(interval)
     raise TimeoutError(f"Timed out waiting for HTTP unready: {url}")
 
