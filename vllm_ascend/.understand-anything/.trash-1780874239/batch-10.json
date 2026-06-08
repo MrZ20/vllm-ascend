@@ -1,0 +1,838 @@
+{
+  "nodes": [
+    {
+      "id": "file:_310p/worker_310p.py",
+      "type": "file",
+      "name": "worker_310p.py",
+      "filePath": "_310p/worker_310p.py",
+      "summary": "针对 Ascend 310P 设备定制的 NPU Worker 实现，处理 310P 芯片特有的设备初始化与执行逻辑。",
+      "tags": ["worker", "device-specific", "npu", "310p", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/worker_310p.py:NPUWorker310",
+      "type": "class",
+      "name": "NPUWorker310",
+      "filePath": "_310p/worker_310p.py",
+      "lineRange": [48, 191],
+      "summary": "面向 Ascend 310P 芯片的 Worker 子类，封装 310P 设备特有的模型加载与推理执行流程。",
+      "tags": ["worker", "device-specific", "310p", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_cann_ops_custom/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "_cann_ops_custom/.gitkeep",
+      "summary": "占位文件，用于在版本控制中保留 _cann_ops_custom 自定义 CANN 算子目录结构。",
+      "tags": ["placeholder", "gitkeep", "scaffolding"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ascend_config.py",
+      "type": "file",
+      "name": "ascend_config.py",
+      "filePath": "ascend_config.py",
+      "summary": "定义 Ascend 插件的全局配置体系，聚合编译、融合、图模式、权重预取、EPLB 等子配置并提供单例式的初始化与访问接口。",
+      "tags": ["config", "configuration", "singleton", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "使用模块级单例 (_ascend_config) 与多个 dataclass 风格子配置类组合管理配置。"
+    },
+    {
+      "id": "class:ascend_config.py:AscendConfig",
+      "type": "class",
+      "name": "AscendConfig",
+      "filePath": "ascend_config.py",
+      "lineRange": [27, 409],
+      "summary": "Ascend 插件的核心配置聚合类，从 vLLM 配置解析并校验 NPU 特有的运行参数与各功能开关。",
+      "tags": ["config", "data-model", "validation", "aggregator"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ascend_config.py:FinegrainedTPConfig",
+      "type": "class",
+      "name": "FinegrainedTPConfig",
+      "filePath": "ascend_config.py",
+      "lineRange": [412, 462],
+      "summary": "细粒度张量并行 (TP) 配置类，控制 lmhead/embedding/oproj/mlp 等模块级别的 TP 切分开关。",
+      "tags": ["config", "tensor-parallel", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:ascend_config.py:AscendCompilationConfig",
+      "type": "class",
+      "name": "AscendCompilationConfig",
+      "filePath": "ascend_config.py",
+      "lineRange": [465, 514],
+      "summary": "Ascend 编译相关配置，控制 ACL Graph、图模式编译及相关编译期参数。",
+      "tags": ["config", "compilation", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:ascend_config.py:EplbConfig",
+      "type": "class",
+      "name": "EplbConfig",
+      "filePath": "ascend_config.py",
+      "lineRange": [617, 677],
+      "summary": "专家并行负载均衡 (EPLB) 配置类，管理 MoE 专家分布与动态负载均衡参数。",
+      "tags": ["config", "moe", "eplb", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ascend_config.py:init_ascend_config",
+      "type": "function",
+      "name": "init_ascend_config",
+      "filePath": "ascend_config.py",
+      "lineRange": [696, 707],
+      "summary": "初始化全局 AscendConfig 单例，将 vLLM 配置注入并构造 Ascend 专属配置实例。",
+      "tags": ["config", "initialization", "singleton"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:ascend_config.py:get_ascend_config",
+      "type": "function",
+      "name": "get_ascend_config",
+      "filePath": "ascend_config.py",
+      "lineRange": [718, 722],
+      "summary": "返回已初始化的全局 AscendConfig 单例，供插件各模块读取配置。",
+      "tags": ["config", "accessor", "singleton"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ascend_forward_context.py",
+      "type": "file",
+      "name": "ascend_forward_context.py",
+      "filePath": "ascend_forward_context.py",
+      "summary": "管理 Ascend 前向推理上下文，设置 MoE 通信方式、MC2 token 容量/掩码等运行时状态并提供上下文代理。",
+      "tags": ["forward-context", "moe", "runtime-state", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ascend_forward_context.py:set_ascend_forward_context",
+      "type": "function",
+      "name": "set_ascend_forward_context",
+      "filePath": "ascend_forward_context.py",
+      "lineRange": [57, 191],
+      "summary": "构建并设置 Ascend 前向推理上下文，配置 attention、MoE 通信、并行状态等本次前向所需的全部运行时信息。",
+      "tags": ["forward-context", "runtime-state", "moe", "attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ascend_forward_context.py:select_moe_comm_method",
+      "type": "function",
+      "name": "select_moe_comm_method",
+      "filePath": "ascend_forward_context.py",
+      "lineRange": [233, 319],
+      "summary": "根据 token 数量、并行配置与硬件特性选择最优的 MoE 通信方式 (如 MC2/AllGather/All2All)。",
+      "tags": ["moe", "communication", "dispatch", "optimization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ascend_forward_context.py:_ExtraForwardContextProxy",
+      "type": "class",
+      "name": "_ExtraForwardContextProxy",
+      "filePath": "ascend_forward_context.py",
+      "lineRange": [322, 377],
+      "summary": "前向上下文的额外属性代理类，提供对扩展上下文字段的受控访问。",
+      "tags": ["forward-context", "proxy", "runtime-state"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:attention/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "attention/__init__.py",
+      "summary": "attention 包的初始化文件，标记该目录为 Python 包。",
+      "tags": ["package-init", "barrel", "attention"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attention/abstract.py",
+      "type": "file",
+      "name": "abstract.py",
+      "filePath": "attention/abstract.py",
+      "summary": "定义 attention 相关的抽象基类，包括 AttentionMetadata 与 DSA attention 实现的抽象接口。",
+      "tags": ["attention", "abstract", "interface", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attention/attention_mask.py",
+      "type": "file",
+      "name": "attention_mask.py",
+      "filePath": "attention/attention_mask.py",
+      "summary": "提供注意力掩码构建工具，生成因果掩码及 NPU 专用格式的 attention mask。",
+      "tags": ["attention", "mask", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:attention/attention_mask.py:AttentionMaskBuilder",
+      "type": "class",
+      "name": "AttentionMaskBuilder",
+      "filePath": "attention/attention_mask.py",
+      "lineRange": [35, 85],
+      "summary": "注意力掩码构建器，封装因果掩码与各类场景掩码的生成逻辑并适配 NPU 张量格式。",
+      "tags": ["attention", "mask", "builder"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:attention/attention_v1.py",
+      "type": "file",
+      "name": "attention_v1.py",
+      "filePath": "attention/attention_v1.py",
+      "summary": "标准注意力后端的 V1 实现，提供 Ascend NPU 的 attention backend、元数据构建器及含 C8 量化的 attention 算子实现。",
+      "tags": ["attention", "backend", "npu", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "包含 paged attention 与 C8 量化两套实现，元数据通过 dataclass 与 builder 模式构建。"
+    },
+    {
+      "id": "class:attention/attention_v1.py:AscendAttentionBackend",
+      "type": "class",
+      "name": "AscendAttentionBackend",
+      "filePath": "attention/attention_v1.py",
+      "lineRange": [74, 140],
+      "summary": "Ascend 标准注意力后端入口类，注册 attention 实现、元数据构建器与 KV cache 形状等后端能力。",
+      "tags": ["attention", "backend", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:attention/attention_v1.py:AscendAttentionMetadataBuilder",
+      "type": "class",
+      "name": "AscendAttentionMetadataBuilder",
+      "filePath": "attention/attention_v1.py",
+      "lineRange": [214, 355],
+      "summary": "构建标准注意力的运行时元数据，处理序列长度、block table、掩码等 attention 计算所需信息。",
+      "tags": ["attention", "metadata", "builder"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/attention_v1.py:AscendAttentionBackendImpl",
+      "type": "class",
+      "name": "AscendAttentionBackendImpl",
+      "filePath": "attention/attention_v1.py",
+      "lineRange": [358, 1344],
+      "summary": "Ascend 标准注意力的核心算子实现，封装 prefill/decode 阶段的 NPU paged attention 前向计算。",
+      "tags": ["attention", "backend", "npu", "kernel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/attention_v1.py:AscendC8AttentionBackendImpl",
+      "type": "class",
+      "name": "AscendC8AttentionBackendImpl",
+      "filePath": "attention/attention_v1.py",
+      "lineRange": [1347, 1784],
+      "summary": "支持 C8 (INT8) KV cache 量化的注意力实现，在量化场景下完成 NPU attention 前向计算。",
+      "tags": ["attention", "quantization", "c8", "kernel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attention/context_parallel/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "attention/context_parallel/__init__.py",
+      "summary": "context_parallel 包的初始化文件，标记该目录为上下文并行注意力的 Python 包。",
+      "tags": ["package-init", "barrel", "context-parallel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attention/context_parallel/attention_cp.py",
+      "type": "file",
+      "name": "attention_cp.py",
+      "filePath": "attention/context_parallel/attention_cp.py",
+      "summary": "上下文并行 (CP) 场景下的标准注意力实现，处理跨 CP rank 的注意力计算与元数据构建。",
+      "tags": ["attention", "context-parallel", "backend"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/attention_cp.py:AscendAttentionCPImpl",
+      "type": "class",
+      "name": "AscendAttentionCPImpl",
+      "filePath": "attention/context_parallel/attention_cp.py",
+      "lineRange": [271, 1018],
+      "summary": "上下文并行注意力的核心实现，封装分块 prefill 与跨 rank 通信的 NPU attention 前向计算。",
+      "tags": ["attention", "context-parallel", "kernel", "communication"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/attention_cp.py:AscendAttentionCPMetadataBuilder",
+      "type": "class",
+      "name": "AscendAttentionCPMetadataBuilder",
+      "filePath": "attention/context_parallel/attention_cp.py",
+      "lineRange": [63, 268],
+      "summary": "上下文并行注意力的元数据构建器，处理 CP 切分下的序列分布与通信元信息。",
+      "tags": ["attention", "context-parallel", "metadata", "builder"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attention/context_parallel/common_cp.py",
+      "type": "file",
+      "name": "common_cp.py",
+      "filePath": "attention/context_parallel/common_cp.py",
+      "summary": "上下文并行注意力的公共工具与元数据结构，提供 attention 输出与 log-sum-exp 的在线更新及合并逻辑。",
+      "tags": ["context-parallel", "utility", "attention", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attention/context_parallel/common_cp.py:_npu_attention_update",
+      "type": "function",
+      "name": "_npu_attention_update",
+      "filePath": "attention/context_parallel/common_cp.py",
+      "lineRange": [129, 155],
+      "summary": "在 NPU 上对分块注意力的输出与 log-sum-exp 进行在线更新，实现跨 CP 分块的 attention 结果合并。",
+      "tags": ["context-parallel", "attention", "online-softmax", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:attention/context_parallel/dsa_cp.py",
+      "type": "file",
+      "name": "dsa_cp.py",
+      "filePath": "attention/context_parallel/dsa_cp.py",
+      "summary": "上下文并行下的 DSA (DeepSeek Sparse Attention) 实现，结合稀疏注意力与 CP 切分完成 NPU 前向计算。",
+      "tags": ["attention", "dsa", "context-parallel", "sparse-attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/dsa_cp.py:AscendDSACPMetadataBuilder",
+      "type": "class",
+      "name": "AscendDSACPMetadataBuilder",
+      "filePath": "attention/context_parallel/dsa_cp.py",
+      "lineRange": [145, 817],
+      "summary": "DSA 上下文并行场景的元数据构建器，处理稀疏注意力的索引、压缩与 CP 切分元信息。",
+      "tags": ["dsa", "context-parallel", "metadata", "builder"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/dsa_cp.py:AscendDSACPImpl",
+      "type": "class",
+      "name": "AscendDSACPImpl",
+      "filePath": "attention/context_parallel/dsa_cp.py",
+      "lineRange": [820, 1349],
+      "summary": "DSA 上下文并行注意力的核心算子实现，完成稀疏 KV 选择与跨 CP rank 的 NPU attention 计算。",
+      "tags": ["dsa", "context-parallel", "sparse-attention", "kernel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attention/context_parallel/mla_cp.py",
+      "type": "file",
+      "name": "mla_cp.py",
+      "filePath": "attention/context_parallel/mla_cp.py",
+      "summary": "上下文并行下的 MLA (Multi-head Latent Attention) 实现，结合 latent 压缩注意力与 CP 切分完成 NPU 前向计算。",
+      "tags": ["attention", "mla", "context-parallel", "backend"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/mla_cp.py:AscendMlaCPImpl",
+      "type": "class",
+      "name": "AscendMlaCPImpl",
+      "filePath": "attention/context_parallel/mla_cp.py",
+      "lineRange": [257, 842],
+      "summary": "MLA 上下文并行注意力的核心实现，封装 latent 投影、KV 压缩与跨 rank 通信的 NPU 计算流程。",
+      "tags": ["mla", "context-parallel", "kernel", "communication"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/mla_cp.py:AscendMlaCPMetadataBuilder",
+      "type": "class",
+      "name": "AscendMlaCPMetadataBuilder",
+      "filePath": "attention/context_parallel/mla_cp.py",
+      "lineRange": [54, 254],
+      "summary": "MLA 上下文并行的元数据构建器，处理 CP 切分下 latent attention 所需的序列与通信元信息。",
+      "tags": ["mla", "context-parallel", "metadata", "builder"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attention/context_parallel/sfa_cp.py",
+      "type": "file",
+      "name": "sfa_cp.py",
+      "filePath": "attention/context_parallel/sfa_cp.py",
+      "summary": "上下文并行下的 SFA (Sparse Flash Attention) 实现，结合稀疏 flash 注意力与 CP 切分完成 NPU 前向计算。",
+      "tags": ["attention", "sfa", "context-parallel", "sparse-attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/sfa_cp.py:AscendSFACPImpl",
+      "type": "class",
+      "name": "AscendSFACPImpl",
+      "filePath": "attention/context_parallel/sfa_cp.py",
+      "lineRange": [192, 578],
+      "summary": "SFA 上下文并行注意力的核心实现，完成稀疏 flash attention 与跨 CP rank 的 NPU 计算。",
+      "tags": ["sfa", "context-parallel", "sparse-attention", "kernel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/context_parallel/sfa_cp.py:AscendSFACPMetadataBuilder",
+      "type": "class",
+      "name": "AscendSFACPMetadataBuilder",
+      "filePath": "attention/context_parallel/sfa_cp.py",
+      "lineRange": [19, 189],
+      "summary": "SFA 上下文并行的元数据构建器，处理稀疏 flash attention 在 CP 切分下的索引与通信元信息。",
+      "tags": ["sfa", "context-parallel", "metadata", "builder"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attention/dsa_v1.py",
+      "type": "file",
+      "name": "dsa_v1.py",
+      "filePath": "attention/dsa_v1.py",
+      "summary": "DSA (DeepSeek Sparse Attention) 后端的 V1 实现，提供稀疏注意力的后端、元数据构建器、核心算子及 hadamard 变换等辅助函数。",
+      "tags": ["attention", "dsa", "sparse-attention", "backend"],
+      "complexity": "complex",
+      "languageNotes": "文件超过 2800 行，包含 prefill/decode 元数据、hadamard 变换与 block 填充等大量 NPU 专用逻辑。"
+    },
+    {
+      "id": "class:attention/dsa_v1.py:AscendDSAMetadataBuilder",
+      "type": "class",
+      "name": "AscendDSAMetadataBuilder",
+      "filePath": "attention/dsa_v1.py",
+      "lineRange": [335, 1367],
+      "summary": "DSA 注意力元数据构建器，构造稀疏注意力的 KV 索引、压缩比与 prefill/decode 元数据。",
+      "tags": ["dsa", "metadata", "builder", "sparse-attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/dsa_v1.py:AscendDSAImpl",
+      "type": "class",
+      "name": "AscendDSAImpl",
+      "filePath": "attention/dsa_v1.py",
+      "lineRange": [1370, 2825],
+      "summary": "DSA 稀疏注意力的核心算子实现，完成稀疏 KV 选择、压缩与 NPU attention 前向计算。",
+      "tags": ["dsa", "sparse-attention", "kernel", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/dsa_v1.py:AscendDSABackend",
+      "type": "class",
+      "name": "AscendDSABackend",
+      "filePath": "attention/dsa_v1.py",
+      "lineRange": [171, 212],
+      "summary": "DSA 稀疏注意力后端入口类，注册 DSA 实现、元数据构建器与 KV cache 规格。",
+      "tags": ["dsa", "backend", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attention/dsa_v1.py:pad_to_blocks",
+      "type": "function",
+      "name": "pad_to_blocks",
+      "filePath": "attention/dsa_v1.py",
+      "lineRange": [111, 168],
+      "summary": "将稀疏注意力张量按 block 大小对齐填充，以满足 NPU paged attention 的内存布局要求。",
+      "tags": ["dsa", "padding", "utility", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attention/dsa_v1.py:hadamard_linear",
+      "type": "function",
+      "name": "hadamard_linear",
+      "filePath": "attention/dsa_v1.py",
+      "lineRange": [83, 99],
+      "summary": "对输入张量应用 hadamard 线性变换，用于 DSA 稀疏注意力中的激活旋转。",
+      "tags": ["dsa", "hadamard", "transform"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:attention/fa3_v1.py",
+      "type": "file",
+      "name": "fa3_v1.py",
+      "filePath": "attention/fa3_v1.py",
+      "summary": "FlashAttention-3 (FA3) 后端的 V1 实现，提供 FA3 注意力的后端入口与核心算子实现。",
+      "tags": ["attention", "flash-attention", "fa3", "backend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:attention/fa3_v1.py:AscendFAImpl",
+      "type": "class",
+      "name": "AscendFAImpl",
+      "filePath": "attention/fa3_v1.py",
+      "lineRange": [43, 145],
+      "summary": "FlashAttention-3 的核心算子实现，封装 NPU 上的 flash attention 前向计算。",
+      "tags": ["flash-attention", "fa3", "kernel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:attention/fa3_v1.py:AscendFABackend",
+      "type": "class",
+      "name": "AscendFABackend",
+      "filePath": "attention/fa3_v1.py",
+      "lineRange": [12, 40],
+      "summary": "FlashAttention-3 后端入口类，注册 FA3 实现与相关后端能力。",
+      "tags": ["flash-attention", "fa3", "backend", "factory"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attention/kvcomp_attn/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "attention/kvcomp_attn/__init__.py",
+      "summary": "kvcomp_attn 包的初始化文件，标记 KV 压缩注意力目录为 Python 包。",
+      "tags": ["package-init", "barrel", "kv-compression"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attention/kvcomp_attn/attention_utils.py",
+      "type": "file",
+      "name": "attention_utils.py",
+      "filePath": "attention/kvcomp_attn/attention_utils.py",
+      "summary": "KV 压缩注意力的工具函数集，提供元数据构建、KV cache 重排存储与 decode 参数计算等辅助逻辑。",
+      "tags": ["attention", "kv-compression", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attention/kvcomp_attn/attention_utils.py:build_kvcomp_metadata",
+      "type": "function",
+      "name": "build_kvcomp_metadata",
+      "filePath": "attention/kvcomp_attn/attention_utils.py",
+      "lineRange": [11, 69],
+      "summary": "构建 KV 压缩注意力所需的运行时元数据，处理压缩 KV 的索引与序列布局。",
+      "tags": ["kv-compression", "metadata", "attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attention/kvcomp_attn/attention_utils.py:get_kvcomp_decode_params",
+      "type": "function",
+      "name": "get_kvcomp_decode_params",
+      "filePath": "attention/kvcomp_attn/attention_utils.py",
+      "lineRange": [97, 142],
+      "summary": "计算 KV 压缩注意力在 decode 阶段所需的参数，准备压缩 KV 的访问与解码输入。",
+      "tags": ["kv-compression", "decode", "attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:attention/mla_v1.py",
+      "type": "file",
+      "name": "mla_v1.py",
+      "filePath": "attention/mla_v1.py",
+      "summary": "MLA (Multi-head Latent Attention) 后端的 V1 实现，提供 latent 压缩注意力的后端、元数据构建器及含 prefill/decode 预处理的核心算子。",
+      "tags": ["attention", "mla", "backend", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "包含 chunked context、prefill/decode 预处理结果等多个 dataclass 元数据结构。"
+    },
+    {
+      "id": "class:attention/mla_v1.py:AscendMLAImpl",
+      "type": "class",
+      "name": "AscendMLAImpl",
+      "filePath": "attention/mla_v1.py",
+      "lineRange": [699, 1803],
+      "summary": "MLA latent attention 的核心算子实现，完成 latent 投影、KV 压缩、RoPE 与 NPU attention 前向计算。",
+      "tags": ["mla", "kernel", "npu", "latent-attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/mla_v1.py:AscendMLAMetadataBuilder",
+      "type": "class",
+      "name": "AscendMLAMetadataBuilder",
+      "filePath": "attention/mla_v1.py",
+      "lineRange": [230, 679],
+      "summary": "MLA 注意力元数据构建器，构造 latent attention 的 prefill/decode 元数据与 chunked context 信息。",
+      "tags": ["mla", "metadata", "builder"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/mla_v1.py:AscendMLABackend",
+      "type": "class",
+      "name": "AscendMLABackend",
+      "filePath": "attention/mla_v1.py",
+      "lineRange": [77, 115],
+      "summary": "MLA latent attention 后端入口类，注册 MLA 实现、元数据构建器与 KV cache 规格。",
+      "tags": ["mla", "backend", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:attention/sfa_v1.py",
+      "type": "file",
+      "name": "sfa_v1.py",
+      "filePath": "attention/sfa_v1.py",
+      "summary": "SFA (Sparse Flash Attention) 后端的 V1 实现，提供稀疏 flash 注意力的后端、元数据构建器与核心算子实现。",
+      "tags": ["attention", "sfa", "sparse-attention", "backend"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/sfa_v1.py:AscendSFAImpl",
+      "type": "class",
+      "name": "AscendSFAImpl",
+      "filePath": "attention/sfa_v1.py",
+      "lineRange": [370, 1335],
+      "summary": "SFA 稀疏 flash 注意力的核心算子实现，完成稀疏 KV 选择与 NPU flash attention 前向计算。",
+      "tags": ["sfa", "sparse-attention", "kernel", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/sfa_v1.py:AscendSFAMetadataBuilder",
+      "type": "class",
+      "name": "AscendSFAMetadataBuilder",
+      "filePath": "attention/sfa_v1.py",
+      "lineRange": [166, 367],
+      "summary": "SFA 注意力元数据构建器，构造稀疏 flash attention 所需的索引与序列元信息。",
+      "tags": ["sfa", "metadata", "builder"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/sfa_v1.py:AscendSFABackend",
+      "type": "class",
+      "name": "AscendSFABackend",
+      "filePath": "attention/sfa_v1.py",
+      "lineRange": [71, 109],
+      "summary": "SFA 稀疏 flash 注意力后端入口类，注册 SFA 实现、元数据构建器与 KV cache 规格。",
+      "tags": ["sfa", "backend", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:attention/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "attention/utils.py",
+      "summary": "注意力模块的公共工具集，提供 chunked prefill 工作区计算、decode/prefill 拆分、KV connector 交互及张量格式转换等辅助函数。",
+      "tags": ["attention", "utility", "helpers"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:attention/utils.py:AscendCommonAttentionMetadata",
+      "type": "class",
+      "name": "AscendCommonAttentionMetadata",
+      "filePath": "attention/utils.py",
+      "lineRange": [147, 240],
+      "summary": "各注意力后端共享的通用元数据结构，承载序列长度、block table 等跨后端复用的 attention 信息。",
+      "tags": ["attention", "metadata", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attention/utils.py:split_decodes_and_prefills",
+      "type": "function",
+      "name": "split_decodes_and_prefills",
+      "filePath": "attention/utils.py",
+      "lineRange": [268, 310],
+      "summary": "将一批请求拆分为 decode 与 prefill 两组，供注意力后端按阶段分别处理。",
+      "tags": ["attention", "scheduling", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attention/utils.py:ascend_chunked_prefill_workspace_size",
+      "type": "function",
+      "name": "ascend_chunked_prefill_workspace_size",
+      "filePath": "attention/utils.py",
+      "lineRange": [16, 41],
+      "summary": "计算 chunked prefill 所需的 NPU 工作区大小，依据序列与 block 配置确定内存预算。",
+      "tags": ["attention", "chunked-prefill", "memory", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:batch_invariant.py",
+      "type": "file",
+      "name": "batch_invariant.py",
+      "filePath": "batch_invariant.py",
+      "summary": "提供批次不变性 (batch-invariant) 模式支持，覆盖 RMSNorm/reduce 等算子并通过环境变量启用确定性计算。",
+      "tags": ["batch-invariant", "determinism", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:batch_invariant.py:enable_batch_invariant_mode",
+      "type": "function",
+      "name": "enable_batch_invariant_mode",
+      "filePath": "batch_invariant.py",
+      "lineRange": [90, 123],
+      "summary": "启用批次不变模式，注册确定性算子实现以保证不同 batch 下数值结果一致。",
+      "tags": ["batch-invariant", "determinism", "initialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:batch_invariant.py:init_batch_invariance",
+      "type": "function",
+      "name": "init_batch_invariance",
+      "filePath": "batch_invariant.py",
+      "lineRange": [126, 149],
+      "summary": "初始化批次不变性支持，根据环境配置覆盖相关环境变量并激活确定性算子。",
+      "tags": ["batch-invariant", "determinism", "initialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "compilation/__init__.py",
+      "summary": "compilation 包的初始化文件，标记编译相关模块目录为 Python 包。",
+      "tags": ["package-init", "barrel", "compilation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:compilation/acl_graph.py",
+      "type": "file",
+      "name": "acl_graph.py",
+      "filePath": "compilation/acl_graph.py",
+      "summary": "封装 Ascend ACL Graph 图模式执行，提供图捕获包装器、图参数管理及 workspace 弱引用等运行时支持。",
+      "tags": ["compilation", "acl-graph", "graph-mode", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:compilation/acl_graph.py:ACLGraphWrapper",
+      "type": "class",
+      "name": "ACLGraphWrapper",
+      "filePath": "compilation/acl_graph.py",
+      "lineRange": [38, 214],
+      "summary": "ACL Graph 包装器，负责图捕获、重放及 workspace 管理，实现 NPU 上的图模式加速执行。",
+      "tags": ["acl-graph", "graph-mode", "compilation", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:compilation/acl_graph.py:update_full_graph_params",
+      "type": "function",
+      "name": "update_full_graph_params",
+      "filePath": "compilation/acl_graph.py",
+      "lineRange": [226, 258],
+      "summary": "更新完整 ACL Graph 的运行时参数，将最新的输入张量与 workspace 绑定到已捕获的图。",
+      "tags": ["acl-graph", "graph-mode", "runtime-state"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/compiler_interface.py",
+      "type": "file",
+      "name": "compiler_interface.py",
+      "filePath": "compilation/compiler_interface.py",
+      "summary": "定义 Ascend 编译器接口，配置 torch.compile 后端、融合 pass 与 NPU 图编译入口。",
+      "tags": ["compilation", "torch-compile", "interface"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/compiler_interface.py:AscendCompiler",
+      "type": "class",
+      "name": "AscendCompiler",
+      "filePath": "compilation/compiler_interface.py",
+      "lineRange": [163, 216],
+      "summary": "Ascend 编译器实现类，对接 vLLM 编译接口并配置 NPU 专用的编译后端与融合优化。",
+      "tags": ["compilation", "torch-compile", "backend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:compilation/compiler_interface.py:_configure_backend",
+      "type": "function",
+      "name": "_configure_backend",
+      "filePath": "compilation/compiler_interface.py",
+      "lineRange": [81, 121],
+      "summary": "配置 torch.compile 的编译后端，设置 NPU 图编译选项与融合 pass。",
+      "tags": ["compilation", "torch-compile", "configuration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:compilation/compiler_interface.py:npugraph_ex_compile",
+      "type": "function",
+      "name": "npugraph_ex_compile",
+      "filePath": "compilation/compiler_interface.py",
+      "lineRange": [124, 160],
+      "summary": "执行 NPU 图扩展编译流程，将 FX 图编译为可在 Ascend 图模式下运行的可执行体。",
+      "tags": ["compilation", "graph-mode", "npu"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:_310p/worker_310p.py", "target": "class:_310p/worker_310p.py:NPUWorker310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/worker_310p.py", "target": "class:_310p/worker_310p.py:NPUWorker310", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:AscendConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:AscendConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:FinegrainedTPConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:FinegrainedTPConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:AscendCompilationConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:AscendCompilationConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:EplbConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_config.py", "target": "class:ascend_config.py:EplbConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ascend_config.py", "target": "function:ascend_config.py:init_ascend_config", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_config.py", "target": "function:ascend_config.py:init_ascend_config", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ascend_config.py", "target": "function:ascend_config.py:get_ascend_config", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_config.py", "target": "function:ascend_config.py:get_ascend_config", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ascend_forward_context.py", "target": "function:ascend_forward_context.py:set_ascend_forward_context", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_forward_context.py", "target": "function:ascend_forward_context.py:set_ascend_forward_context", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ascend_forward_context.py", "target": "function:ascend_forward_context.py:select_moe_comm_method", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ascend_forward_context.py", "target": "function:ascend_forward_context.py:select_moe_comm_method", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ascend_forward_context.py", "target": "class:ascend_forward_context.py:_ExtraForwardContextProxy", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:attention/attention_mask.py", "target": "class:attention/attention_mask.py:AttentionMaskBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/attention_mask.py", "target": "class:attention/attention_mask.py:AttentionMaskBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendAttentionBackend", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendAttentionBackend", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendAttentionMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendAttentionMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendAttentionBackendImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendAttentionBackendImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendC8AttentionBackendImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/attention_v1.py", "target": "class:attention/attention_v1.py:AscendC8AttentionBackendImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/context_parallel/attention_cp.py", "target": "class:attention/context_parallel/attention_cp.py:AscendAttentionCPImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/attention_cp.py", "target": "class:attention/context_parallel/attention_cp.py:AscendAttentionCPImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/context_parallel/attention_cp.py", "target": "class:attention/context_parallel/attention_cp.py:AscendAttentionCPMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/attention_cp.py", "target": "class:attention/context_parallel/attention_cp.py:AscendAttentionCPMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/context_parallel/common_cp.py", "target": "function:attention/context_parallel/common_cp.py:_npu_attention_update", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:attention/context_parallel/dsa_cp.py", "target": "class:attention/context_parallel/dsa_cp.py:AscendDSACPMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/dsa_cp.py", "target": "class:attention/context_parallel/dsa_cp.py:AscendDSACPMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/context_parallel/dsa_cp.py", "target": "class:attention/context_parallel/dsa_cp.py:AscendDSACPImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/dsa_cp.py", "target": "class:attention/context_parallel/dsa_cp.py:AscendDSACPImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/context_parallel/mla_cp.py", "target": "class:attention/context_parallel/mla_cp.py:AscendMlaCPImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/mla_cp.py", "target": "class:attention/context_parallel/mla_cp.py:AscendMlaCPImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/context_parallel/mla_cp.py", "target": "class:attention/context_parallel/mla_cp.py:AscendMlaCPMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/mla_cp.py", "target": "class:attention/context_parallel/mla_cp.py:AscendMlaCPMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/context_parallel/sfa_cp.py", "target": "class:attention/context_parallel/sfa_cp.py:AscendSFACPImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/sfa_cp.py", "target": "class:attention/context_parallel/sfa_cp.py:AscendSFACPImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/context_parallel/sfa_cp.py", "target": "class:attention/context_parallel/sfa_cp.py:AscendSFACPMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/context_parallel/sfa_cp.py", "target": "class:attention/context_parallel/sfa_cp.py:AscendSFACPMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/dsa_v1.py", "target": "class:attention/dsa_v1.py:AscendDSAMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/dsa_v1.py", "target": "class:attention/dsa_v1.py:AscendDSAMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/dsa_v1.py", "target": "class:attention/dsa_v1.py:AscendDSAImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/dsa_v1.py", "target": "class:attention/dsa_v1.py:AscendDSAImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/dsa_v1.py", "target": "class:attention/dsa_v1.py:AscendDSABackend", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/dsa_v1.py", "target": "class:attention/dsa_v1.py:AscendDSABackend", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/dsa_v1.py", "target": "function:attention/dsa_v1.py:pad_to_blocks", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/dsa_v1.py", "target": "function:attention/dsa_v1.py:hadamard_linear", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:attention/fa3_v1.py", "target": "class:attention/fa3_v1.py:AscendFAImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/fa3_v1.py", "target": "class:attention/fa3_v1.py:AscendFAImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/fa3_v1.py", "target": "class:attention/fa3_v1.py:AscendFABackend", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/fa3_v1.py", "target": "class:attention/fa3_v1.py:AscendFABackend", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/kvcomp_attn/attention_utils.py", "target": "function:attention/kvcomp_attn/attention_utils.py:build_kvcomp_metadata", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/kvcomp_attn/attention_utils.py", "target": "function:attention/kvcomp_attn/attention_utils.py:build_kvcomp_metadata", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/kvcomp_attn/attention_utils.py", "target": "function:attention/kvcomp_attn/attention_utils.py:get_kvcomp_decode_params", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/kvcomp_attn/attention_utils.py", "target": "function:attention/kvcomp_attn/attention_utils.py:get_kvcomp_decode_params", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/mla_v1.py", "target": "class:attention/mla_v1.py:AscendMLAImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/mla_v1.py", "target": "class:attention/mla_v1.py:AscendMLAImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/mla_v1.py", "target": "class:attention/mla_v1.py:AscendMLAMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/mla_v1.py", "target": "class:attention/mla_v1.py:AscendMLAMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/mla_v1.py", "target": "class:attention/mla_v1.py:AscendMLABackend", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/mla_v1.py", "target": "class:attention/mla_v1.py:AscendMLABackend", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/sfa_v1.py", "target": "class:attention/sfa_v1.py:AscendSFAImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/sfa_v1.py", "target": "class:attention/sfa_v1.py:AscendSFAImpl", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/sfa_v1.py", "target": "class:attention/sfa_v1.py:AscendSFAMetadataBuilder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/sfa_v1.py", "target": "class:attention/sfa_v1.py:AscendSFAMetadataBuilder", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/sfa_v1.py", "target": "class:attention/sfa_v1.py:AscendSFABackend", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/sfa_v1.py", "target": "class:attention/sfa_v1.py:AscendSFABackend", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:attention/utils.py", "target": "class:attention/utils.py:AscendCommonAttentionMetadata", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/utils.py", "target": "class:attention/utils.py:AscendCommonAttentionMetadata", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/utils.py", "target": "function:attention/utils.py:split_decodes_and_prefills", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/utils.py", "target": "function:attention/utils.py:split_decodes_and_prefills", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:attention/utils.py", "target": "function:attention/utils.py:ascend_chunked_prefill_workspace_size", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:attention/utils.py", "target": "function:attention/utils.py:ascend_chunked_prefill_workspace_size", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:batch_invariant.py", "target": "function:batch_invariant.py:enable_batch_invariant_mode", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:batch_invariant.py", "target": "function:batch_invariant.py:enable_batch_invariant_mode", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:batch_invariant.py", "target": "function:batch_invariant.py:init_batch_invariance", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:batch_invariant.py", "target": "function:batch_invariant.py:init_batch_invariance", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:compilation/acl_graph.py", "target": "class:compilation/acl_graph.py:ACLGraphWrapper", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/acl_graph.py", "target": "class:compilation/acl_graph.py:ACLGraphWrapper", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/acl_graph.py", "target": "function:compilation/acl_graph.py:update_full_graph_params", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/acl_graph.py", "target": "function:compilation/acl_graph.py:update_full_graph_params", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/acl_graph.py", "target": "file:utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:compilation/compiler_interface.py", "target": "class:compilation/compiler_interface.py:AscendCompiler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/compiler_interface.py", "target": "class:compilation/compiler_interface.py:AscendCompiler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/compiler_interface.py", "target": "function:compilation/compiler_interface.py:_configure_backend", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/compiler_interface.py", "target": "function:compilation/compiler_interface.py:npugraph_ex_compile", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:ascend_forward_context.py", "target": "file:ascend_config.py", "type": "depends_on", "direction": "forward", "weight": 0.6}
+  ]
+}

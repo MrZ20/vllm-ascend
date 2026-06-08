@@ -1,0 +1,15 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 2,
+  "edgesRestored": 5,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "Fixed section sane: 170x func:->function: prefix is a systemic LLM output pattern, expected. No node-type or complexity anomalies in final graph.",
+    "Node coverage complete: all 393 scan files map to a node. The one file lacking a *file* node (worker/v2/README.md) is correctly represented as a document node, not a gap.",
+    "All 109 importMap relations were already present as imports edges; 0 cross-batch import edges needed adding (merge report 0 recoveries confirmed).",
+    "The 5 dropped dangling edges were a REAL gap: targets function:ops/triton/fla/utils.py:safe_exp (def at line 73) and class:_310p/sample/sampler.py:AscendSampler310 (def at line 90) both exist in source but were never emitted as nodes by their batches. Recreated both nodes (with derived summaries/tags) and restored all 5 calls edges.",
+    "No duplicate node ids; no invalid complexity values; no unknown node types. Data quality is high."
+  ]
+}

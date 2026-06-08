@@ -1,0 +1,1827 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "model_loader/netloader/executor/elastic_load.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 161,
+      "nonEmptyLines": 141,
+      "classes": [
+        {
+          "name": "P2PLoad",
+          "startLine": 24,
+          "endLine": 98,
+          "methods": [
+            "__init__",
+            "load"
+          ],
+          "properties": []
+        },
+        {
+          "name": "P2PSend",
+          "startLine": 101,
+          "endLine": 161,
+          "methods": [
+            "__init__",
+            "send"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "P2PLoad",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "P2PSend",
+          "line": 101,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "load",
+          "callee": "next",
+          "lineNumber": 60
+        },
+        {
+          "caller": "load",
+          "callee": "model.parameters",
+          "lineNumber": 60
+        },
+        {
+          "caller": "load",
+          "callee": "logger.info",
+          "lineNumber": 61
+        },
+        {
+          "caller": "load",
+          "callee": "stateless_init_process_group",
+          "lineNumber": 67
+        },
+        {
+          "caller": "load",
+          "callee": "self.world_name.split",
+          "lineNumber": 68
+        },
+        {
+          "caller": "load",
+          "callee": "logger.info",
+          "lineNumber": 74
+        },
+        {
+          "caller": "load",
+          "callee": "logger.info",
+          "lineNumber": 78
+        },
+        {
+          "caller": "load",
+          "callee": "logger.info",
+          "lineNumber": 79
+        },
+        {
+          "caller": "load",
+          "callee": "torch_npu.npu.Stream",
+          "lineNumber": 81
+        },
+        {
+          "caller": "load",
+          "callee": "torch_npu.npu.stream",
+          "lineNumber": 82
+        },
+        {
+          "caller": "load",
+          "callee": "model.named_parameters",
+          "lineNumber": 83
+        },
+        {
+          "caller": "load",
+          "callee": "len",
+          "lineNumber": 84
+        },
+        {
+          "caller": "load",
+          "callee": "receiver_pg.recv([param], 1, 0).wait",
+          "lineNumber": 86
+        },
+        {
+          "caller": "load",
+          "callee": "receiver_pg.recv",
+          "lineNumber": 86
+        },
+        {
+          "caller": "load",
+          "callee": "torch.distributed.barrier",
+          "lineNumber": 87
+        },
+        {
+          "caller": "load",
+          "callee": "torch_npu.npu.synchronize",
+          "lineNumber": 89
+        },
+        {
+          "caller": "load",
+          "callee": "logger.info",
+          "lineNumber": 91
+        },
+        {
+          "caller": "load",
+          "callee": "logger.error",
+          "lineNumber": 94
+        },
+        {
+          "caller": "load",
+          "callee": "destroy_stateless_process_group",
+          "lineNumber": 97
+        },
+        {
+          "caller": "send",
+          "callee": "next",
+          "lineNumber": 129
+        },
+        {
+          "caller": "send",
+          "callee": "model.parameters",
+          "lineNumber": 129
+        },
+        {
+          "caller": "send",
+          "callee": "torch.npu.set_device",
+          "lineNumber": 130
+        },
+        {
+          "caller": "send",
+          "callee": "logger.info",
+          "lineNumber": 131
+        },
+        {
+          "caller": "send",
+          "callee": "stateless_init_process_group",
+          "lineNumber": 134
+        },
+        {
+          "caller": "send",
+          "callee": "self.comm_name.split",
+          "lineNumber": 135
+        },
+        {
+          "caller": "send",
+          "callee": "logger.info",
+          "lineNumber": 141
+        },
+        {
+          "caller": "send",
+          "callee": "logger.info",
+          "lineNumber": 144
+        },
+        {
+          "caller": "send",
+          "callee": "logger.info",
+          "lineNumber": 145
+        },
+        {
+          "caller": "send",
+          "callee": "torch_npu.npu.Stream",
+          "lineNumber": 147
+        },
+        {
+          "caller": "send",
+          "callee": "torch_npu.npu.stream",
+          "lineNumber": 148
+        },
+        {
+          "caller": "send",
+          "callee": "model.named_parameters",
+          "lineNumber": 149
+        },
+        {
+          "caller": "send",
+          "callee": "sender_pg.send([int8_params[name].to(model_device)], 0, 0).wait",
+          "lineNumber": 153
+        },
+        {
+          "caller": "send",
+          "callee": "sender_pg.send",
+          "lineNumber": 153
+        },
+        {
+          "caller": "send",
+          "callee": "int8_params[name].to",
+          "lineNumber": 153
+        },
+        {
+          "caller": "send",
+          "callee": "sender_pg.send([param.contiguous()], 0, 0).wait",
+          "lineNumber": 155
+        },
+        {
+          "caller": "send",
+          "callee": "sender_pg.send",
+          "lineNumber": 155
+        },
+        {
+          "caller": "send",
+          "callee": "param.contiguous",
+          "lineNumber": 155
+        },
+        {
+          "caller": "send",
+          "callee": "torch.distributed.barrier",
+          "lineNumber": 156
+        },
+        {
+          "caller": "send",
+          "callee": "torch_npu.npu.synchronize",
+          "lineNumber": 157
+        },
+        {
+          "caller": "send",
+          "callee": "logger.info",
+          "lineNumber": 158
+        },
+        {
+          "caller": "send",
+          "callee": "destroy_stateless_process_group",
+          "lineNumber": 161
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "model_loader/netloader/executor/netloader_pg.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 180,
+      "nonEmptyLines": 161,
+      "functions": [
+        {
+          "name": "stateless_init_process_group",
+          "startLine": 32,
+          "endLine": 151,
+          "params": [
+            "host",
+            "port",
+            "world_size",
+            "rank",
+            "timeout",
+            "group_name",
+            "pg_options"
+          ]
+        },
+        {
+          "name": "destroy_stateless_process_group",
+          "startLine": 154,
+          "endLine": 180,
+          "params": [
+            "pg",
+            "manual_gc"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "stateless_init_process_group",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "destroy_stateless_process_group",
+          "line": 154,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "RuntimeError",
+          "lineNumber": 65
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "RuntimeError",
+          "lineNumber": 68
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "is_hccl_available",
+          "lineNumber": 70
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "RuntimeError",
+          "lineNumber": 71
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "isinstance",
+          "lineNumber": 73
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "TypeError",
+          "lineNumber": 74
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "_world.pg_names.values",
+          "lineNumber": 76
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "ValueError",
+          "lineNumber": 77
+        },
+        {
+          "caller": "is_valid_ipv6_address",
+          "callee": "ipaddress.IPv6Address",
+          "lineNumber": 84
+        },
+        {
+          "caller": "get_tcp_uri",
+          "callee": "is_valid_ipv6_address",
+          "lineNumber": 91
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "get_tcp_uri",
+          "lineNumber": 97
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "Backend",
+          "lineNumber": 99
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "next",
+          "lineNumber": 101
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "rendezvous",
+          "lineNumber": 101
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "store.set_timeout",
+          "lineNumber": 104
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "PrefixStore",
+          "lineNumber": 106
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "ProcessGroup",
+          "lineNumber": 111
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "BackendConfig",
+          "lineNumber": 117
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "pg._set_default_backend",
+          "lineNumber": 119
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "isinstance",
+          "lineNumber": 122
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "torch_npu._C._distributed_c10d.ProcessGroupHCCL.Options",
+          "lineNumber": 123
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "ProcessGroupHCCL",
+          "lineNumber": 130
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "backend_class._set_sequence_number_for_group",
+          "lineNumber": 132
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "pg._register_backend",
+          "lineNumber": 136
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "torch.device",
+          "lineNumber": 136
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "pg._set_group_name",
+          "lineNumber": 142
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "pg._set_group_desc",
+          "lineNumber": 143
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "range",
+          "lineNumber": 146
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "_register_process_group",
+          "lineNumber": 149
+        },
+        {
+          "caller": "stateless_init_process_group",
+          "callee": "str",
+          "lineNumber": 150
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "pg.shutdown",
+          "lineNumber": 163
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "_world.pg_map.pop",
+          "lineNumber": 165
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "_world.pg_names.pop",
+          "lineNumber": 166
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "_world.pg_group_ranks.pop",
+          "lineNumber": 167
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "_world.pg_backend_config.pop",
+          "lineNumber": 168
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "logger.warning",
+          "lineNumber": 171
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "_unregister_process_group",
+          "lineNumber": 176
+        },
+        {
+          "caller": "destroy_stateless_process_group",
+          "callee": "gc.collect",
+          "lineNumber": 180
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "model_loader/netloader/interaction/elastic.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 422,
+      "nonEmptyLines": 371,
+      "classes": [
+        {
+          "name": "ElasticClient",
+          "startLine": 30,
+          "endLine": 214,
+          "methods": [
+            "__init__",
+            "close",
+            "__enter__",
+            "__exit__",
+            "__del__",
+            "send_str",
+            "recv_str",
+            "register"
+          ],
+          "properties": []
+        },
+        {
+          "name": "ElasticServer",
+          "startLine": 217,
+          "endLine": 422,
+          "methods": [
+            "__init__",
+            "__del__",
+            "start",
+            "elastic_client_handler",
+            "register_handler"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ElasticClient",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "ElasticServer",
+          "line": 217,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "source.split",
+          "lineNumber": 63
+        },
+        {
+          "caller": "__init__",
+          "callee": "int",
+          "lineNumber": 64
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 66
+        },
+        {
+          "caller": "__init__",
+          "callee": "socket.socket",
+          "lineNumber": 73
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 74
+        },
+        {
+          "caller": "__init__",
+          "callee": "sock.connect",
+          "lineNumber": 75
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 76
+        },
+        {
+          "caller": "__init__",
+          "callee": "sock.settimeout",
+          "lineNumber": 77
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.register",
+          "lineNumber": 80
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.error",
+          "lineNumber": 83
+        },
+        {
+          "caller": "__init__",
+          "callee": "suppress",
+          "lineNumber": 85
+        },
+        {
+          "caller": "__init__",
+          "callee": "sock.close",
+          "lineNumber": 86
+        },
+        {
+          "caller": "__init__",
+          "callee": "\", \".join",
+          "lineNumber": 93
+        },
+        {
+          "caller": "__init__",
+          "callee": "len",
+          "lineNumber": 94
+        },
+        {
+          "caller": "__init__",
+          "callee": "len",
+          "lineNumber": 95
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.error",
+          "lineNumber": 96
+        },
+        {
+          "caller": "close",
+          "callee": "self.s.close",
+          "lineNumber": 109
+        },
+        {
+          "caller": "close",
+          "callee": "logger.error",
+          "lineNumber": 111
+        },
+        {
+          "caller": "__exit__",
+          "callee": "self.close",
+          "lineNumber": 125
+        },
+        {
+          "caller": "__del__",
+          "callee": "suppress",
+          "lineNumber": 131
+        },
+        {
+          "caller": "__del__",
+          "callee": "self.close",
+          "lineNumber": 132
+        },
+        {
+          "caller": "send_str",
+          "callee": "RuntimeError",
+          "lineNumber": 142
+        },
+        {
+          "caller": "send_str",
+          "callee": "self.s.send",
+          "lineNumber": 143
+        },
+        {
+          "caller": "send_str",
+          "callee": "data_str.encode",
+          "lineNumber": 143
+        },
+        {
+          "caller": "recv_str",
+          "callee": "RuntimeError",
+          "lineNumber": 156
+        },
+        {
+          "caller": "recv_str",
+          "callee": "self.s.recv(buffer_size).decode",
+          "lineNumber": 157
+        },
+        {
+          "caller": "recv_str",
+          "callee": "self.s.recv",
+          "lineNumber": 157
+        },
+        {
+          "caller": "register",
+          "callee": "find_free_port",
+          "lineNumber": 173
+        },
+        {
+          "caller": "register",
+          "callee": "self.send_str",
+          "lineNumber": 187
+        },
+        {
+          "caller": "register",
+          "callee": "json.dumps",
+          "lineNumber": 187
+        },
+        {
+          "caller": "register",
+          "callee": "RuntimeError",
+          "lineNumber": 189
+        },
+        {
+          "caller": "register",
+          "callee": "self.recv_str",
+          "lineNumber": 192
+        },
+        {
+          "caller": "register",
+          "callee": "RuntimeError",
+          "lineNumber": 194
+        },
+        {
+          "caller": "register",
+          "callee": "json.loads",
+          "lineNumber": 197
+        },
+        {
+          "caller": "register",
+          "callee": "RuntimeError",
+          "lineNumber": 199
+        },
+        {
+          "caller": "register",
+          "callee": "logger.info",
+          "lineNumber": 201
+        },
+        {
+          "caller": "register",
+          "callee": "RuntimeError",
+          "lineNumber": 212
+        },
+        {
+          "caller": "register",
+          "callee": "RuntimeError",
+          "lineNumber": 214
+        },
+        {
+          "caller": "__init__",
+          "callee": "socket.socket",
+          "lineNumber": 252
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.s.setsockopt",
+          "lineNumber": 253
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.s.bind",
+          "lineNumber": 254
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.s.listen",
+          "lineNumber": 255
+        },
+        {
+          "caller": "__init__",
+          "callee": "\"|\".join",
+          "lineNumber": 265
+        },
+        {
+          "caller": "__init__",
+          "callee": "map",
+          "lineNumber": 265
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.model.named_parameters",
+          "lineNumber": 266
+        },
+        {
+          "caller": "__init__",
+          "callee": "re.search",
+          "lineNumber": 270
+        },
+        {
+          "caller": "__init__",
+          "callee": "param.data.clone().detach",
+          "lineNumber": 273
+        },
+        {
+          "caller": "__init__",
+          "callee": "param.data.clone",
+          "lineNumber": 273
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.error",
+          "lineNumber": 275
+        },
+        {
+          "caller": "__init__",
+          "callee": "param.data.cpu",
+          "lineNumber": 276
+        },
+        {
+          "caller": "__init__",
+          "callee": "re.search",
+          "lineNumber": 280
+        },
+        {
+          "caller": "__init__",
+          "callee": "param.data.cpu",
+          "lineNumber": 282
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.warning",
+          "lineNumber": 286
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 290
+        },
+        {
+          "caller": "__init__",
+          "callee": "list",
+          "lineNumber": 298
+        },
+        {
+          "caller": "__del__",
+          "callee": "suppress",
+          "lineNumber": 307
+        },
+        {
+          "caller": "__del__",
+          "callee": "self.s.close",
+          "lineNumber": 308
+        },
+        {
+          "caller": "start",
+          "callee": "threading.Thread",
+          "lineNumber": 314
+        },
+        {
+          "caller": "start",
+          "callee": "handler_thread.start",
+          "lineNumber": 316
+        },
+        {
+          "caller": "elastic_client_handler",
+          "callee": "self.s.accept",
+          "lineNumber": 323
+        },
+        {
+          "caller": "elastic_client_handler",
+          "callee": "logger.info",
+          "lineNumber": 324
+        },
+        {
+          "caller": "elastic_client_handler",
+          "callee": "self.register_handler",
+          "lineNumber": 325
+        },
+        {
+          "caller": "register_handler",
+          "callee": "conn.recv(buffer_size).decode",
+          "lineNumber": 336
+        },
+        {
+          "caller": "register_handler",
+          "callee": "conn.recv",
+          "lineNumber": 336
+        },
+        {
+          "caller": "register_handler",
+          "callee": "json.loads",
+          "lineNumber": 340
+        },
+        {
+          "caller": "register_handler",
+          "callee": "logger.error",
+          "lineNumber": 342
+        },
+        {
+          "caller": "register_handler",
+          "callee": "conn.close",
+          "lineNumber": 343
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "isinstance",
+          "lineNumber": 356
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "data.get",
+          "lineNumber": 358
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "data.get",
+          "lineNumber": 360
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "isinstance",
+          "lineNumber": 361
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "all",
+          "lineNumber": 364
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "isinstance",
+          "lineNumber": 367
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "isinstance",
+          "lineNumber": 367
+        },
+        {
+          "caller": "is_valid_data",
+          "callee": "port.isdigit",
+          "lineNumber": 367
+        },
+        {
+          "caller": "register_handler",
+          "callee": "is_valid_data",
+          "lineNumber": 370
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 371
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 373
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 374
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 377
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 379
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 380
+        },
+        {
+          "caller": "register_handler",
+          "callee": "str",
+          "lineNumber": 382
+        },
+        {
+          "caller": "register_handler",
+          "callee": "str",
+          "lineNumber": 382
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 385
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 385
+        },
+        {
+          "caller": "register_handler",
+          "callee": "int",
+          "lineNumber": 385
+        },
+        {
+          "caller": "register_handler",
+          "callee": "logger.warning",
+          "lineNumber": 388
+        },
+        {
+          "caller": "register_handler",
+          "callee": "logger.warning",
+          "lineNumber": 394
+        },
+        {
+          "caller": "register_handler",
+          "callee": "json.dumps(ack).encode",
+          "lineNumber": 398
+        },
+        {
+          "caller": "register_handler",
+          "callee": "json.dumps",
+          "lineNumber": 398
+        },
+        {
+          "caller": "register_handler",
+          "callee": "logger.error",
+          "lineNumber": 400
+        },
+        {
+          "caller": "register_handler",
+          "callee": "conn.close",
+          "lineNumber": 401
+        },
+        {
+          "caller": "register_handler",
+          "callee": "conn.send",
+          "lineNumber": 405
+        },
+        {
+          "caller": "register_handler",
+          "callee": "logger.error",
+          "lineNumber": 407
+        },
+        {
+          "caller": "register_handler",
+          "callee": "conn.close",
+          "lineNumber": 408
+        },
+        {
+          "caller": "register_handler",
+          "callee": "isinstance",
+          "lineNumber": 411
+        },
+        {
+          "caller": "register_handler",
+          "callee": "P2PSend",
+          "lineNumber": 413
+        },
+        {
+          "caller": "register_handler",
+          "callee": "data[\"content\"].get",
+          "lineNumber": 417
+        },
+        {
+          "caller": "register_handler",
+          "callee": "p2psend.send",
+          "lineNumber": 419
+        },
+        {
+          "caller": "register_handler",
+          "callee": "logger.error",
+          "lineNumber": 421
+        },
+        {
+          "caller": "register_handler",
+          "callee": "conn.close",
+          "lineNumber": 422
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "model_loader/netloader/load.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 77,
+      "nonEmptyLines": 67,
+      "functions": [
+        {
+          "name": "elastic_load",
+          "startLine": 25,
+          "endLine": 77,
+          "params": [
+            "model",
+            "device_id",
+            "model_path",
+            "sources",
+            "tp",
+            "pp",
+            "group_name"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "elastic_load",
+          "line": 25,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "elastic_load",
+          "callee": "isinstance",
+          "lineNumber": 53
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "isinstance",
+          "lineNumber": 53
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "len",
+          "lineNumber": 55
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "ElasticClient",
+          "lineNumber": 60
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "RuntimeError",
+          "lineNumber": 62
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "RuntimeError",
+          "lineNumber": 65
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "time.perf_counter",
+          "lineNumber": 67
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "P2PLoad",
+          "lineNumber": 68
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "elastic_loader.load",
+          "lineNumber": 69
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "logger.error",
+          "lineNumber": 71
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "logger.info",
+          "lineNumber": 73
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "time.perf_counter",
+          "lineNumber": 73
+        },
+        {
+          "caller": "elastic_load",
+          "callee": "logger.info",
+          "lineNumber": 76
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "model_loader/netloader/netloader.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 367,
+      "nonEmptyLines": 314,
+      "classes": [
+        {
+          "name": "ModelNetLoaderElastic",
+          "startLine": 40,
+          "endLine": 367,
+          "methods": [
+            "__init__",
+            "_is_draft_model",
+            "load_model",
+            "revert_to_default",
+            "download_model",
+            "load_weights"
+          ],
+          "properties": [
+            "source",
+            "model_path",
+            "listen_port",
+            "int8_cache",
+            "int8_cache_name",
+            "output_prefix"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ModelNetLoaderElastic",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 59
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 59
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 67
+        },
+        {
+          "caller": "__init__",
+          "callee": "open",
+          "lineNumber": 68
+        },
+        {
+          "caller": "__init__",
+          "callee": "json.load",
+          "lineNumber": 69
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.error",
+          "lineNumber": 71
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.error",
+          "lineNumber": 73
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.error",
+          "lineNumber": 75
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 78
+        },
+        {
+          "caller": "__init__",
+          "callee": "isinstance",
+          "lineNumber": 83
+        },
+        {
+          "caller": "__init__",
+          "callee": "isinstance",
+          "lineNumber": 84
+        },
+        {
+          "caller": "__init__",
+          "callee": "isinstance",
+          "lineNumber": 88
+        },
+        {
+          "caller": "__init__",
+          "callee": "isinstance",
+          "lineNumber": 88
+        },
+        {
+          "caller": "__init__",
+          "callee": "v.isdigit",
+          "lineNumber": 88
+        },
+        {
+          "caller": "__init__",
+          "callee": "int",
+          "lineNumber": 89
+        },
+        {
+          "caller": "__init__",
+          "callee": "isinstance",
+          "lineNumber": 95
+        },
+        {
+          "caller": "__init__",
+          "callee": "v.lower",
+          "lineNumber": 95
+        },
+        {
+          "caller": "__init__",
+          "callee": "v.lower",
+          "lineNumber": 96
+        },
+        {
+          "caller": "__init__",
+          "callee": "isinstance",
+          "lineNumber": 99
+        },
+        {
+          "caller": "__init__",
+          "callee": "isinstance",
+          "lineNumber": 103
+        },
+        {
+          "caller": "__init__",
+          "callee": "is_valid_path_prefix",
+          "lineNumber": 103
+        },
+        {
+          "caller": "__init__",
+          "callee": "config.get",
+          "lineNumber": 108
+        },
+        {
+          "caller": "__init__",
+          "callee": "checker",
+          "lineNumber": 109
+        },
+        {
+          "caller": "__init__",
+          "callee": "caster",
+          "lineNumber": 112
+        },
+        {
+          "caller": "__init__",
+          "callee": "setattr",
+          "lineNumber": 113
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_is_draft_model",
+          "callee": "getattr",
+          "lineNumber": 131
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 153
+        },
+        {
+          "caller": "load_model",
+          "callee": "torch.distributed.get_rank",
+          "lineNumber": 155
+        },
+        {
+          "caller": "load_model",
+          "callee": "self._is_draft_model",
+          "lineNumber": 156
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 159
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 161
+        },
+        {
+          "caller": "load_model",
+          "callee": "isinstance",
+          "lineNumber": 165
+        },
+        {
+          "caller": "load_model",
+          "callee": "isinstance",
+          "lineNumber": 170
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.warning",
+          "lineNumber": 173
+        },
+        {
+          "caller": "load_model",
+          "callee": "self.revert_to_default",
+          "lineNumber": 174
+        },
+        {
+          "caller": "load_model",
+          "callee": "torch.device",
+          "lineNumber": 179
+        },
+        {
+          "caller": "load_model",
+          "callee": "deepcopy",
+          "lineNumber": 181
+        },
+        {
+          "caller": "load_model",
+          "callee": "deepcopy",
+          "lineNumber": 182
+        },
+        {
+          "caller": "load_model",
+          "callee": "set_default_torch_dtype",
+          "lineNumber": 184
+        },
+        {
+          "caller": "load_model",
+          "callee": "initialize_model",
+          "lineNumber": 186
+        },
+        {
+          "caller": "load_model",
+          "callee": "time.perf_counter",
+          "lineNumber": 188
+        },
+        {
+          "caller": "load_model",
+          "callee": "int",
+          "lineNumber": 196
+        },
+        {
+          "caller": "load_model",
+          "callee": "s.get",
+          "lineNumber": 197
+        },
+        {
+          "caller": "load_model",
+          "callee": "isinstance",
+          "lineNumber": 198
+        },
+        {
+          "caller": "load_model",
+          "callee": "len",
+          "lineNumber": 199
+        },
+        {
+          "caller": "load_model",
+          "callee": "addr.rsplit",
+          "lineNumber": 199
+        },
+        {
+          "caller": "load_model",
+          "callee": "parts[1].isdigit",
+          "lineNumber": 200
+        },
+        {
+          "caller": "load_model",
+          "callee": "isinstance",
+          "lineNumber": 204
+        },
+        {
+          "caller": "load_model",
+          "callee": "elastic_load",
+          "lineNumber": 207
+        },
+        {
+          "caller": "load_model",
+          "callee": "time.perf_counter",
+          "lineNumber": 216
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 217
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.warning",
+          "lineNumber": 221
+        },
+        {
+          "caller": "load_model",
+          "callee": "gc.collect",
+          "lineNumber": 227
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 229
+        },
+        {
+          "caller": "load_model",
+          "callee": "torch.npu.empty_cache",
+          "lineNumber": 230
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 232
+        },
+        {
+          "caller": "load_model",
+          "callee": "torch.cuda.empty_cache",
+          "lineNumber": 233
+        },
+        {
+          "caller": "load_model",
+          "callee": "self.revert_to_default",
+          "lineNumber": 235
+        },
+        {
+          "caller": "load_model",
+          "callee": "time.perf_counter",
+          "lineNumber": 239
+        },
+        {
+          "caller": "load_model",
+          "callee": "range",
+          "lineNumber": 242
+        },
+        {
+          "caller": "load_model",
+          "callee": "get_ip",
+          "lineNumber": 246
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.error",
+          "lineNumber": 249
+        },
+        {
+          "caller": "load_model",
+          "callee": "find_free_port",
+          "lineNumber": 252
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 261
+        },
+        {
+          "caller": "load_model",
+          "callee": "open",
+          "lineNumber": 271
+        },
+        {
+          "caller": "load_model",
+          "callee": "str",
+          "lineNumber": 271
+        },
+        {
+          "caller": "load_model",
+          "callee": "file.write",
+          "lineNumber": 272
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 273
+        },
+        {
+          "caller": "load_model",
+          "callee": "str",
+          "lineNumber": 274
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.error",
+          "lineNumber": 277
+        },
+        {
+          "caller": "load_model",
+          "callee": "str",
+          "lineNumber": 277
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.error",
+          "lineNumber": 279
+        },
+        {
+          "caller": "load_model",
+          "callee": "str",
+          "lineNumber": 279
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.error",
+          "lineNumber": 281
+        },
+        {
+          "caller": "load_model",
+          "callee": "str",
+          "lineNumber": 282
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.error",
+          "lineNumber": 285
+        },
+        {
+          "caller": "load_model",
+          "callee": "ElasticServer",
+          "lineNumber": 288
+        },
+        {
+          "caller": "load_model",
+          "callee": "elastic_server.start",
+          "lineNumber": 300
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.error",
+          "lineNumber": 306
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 308
+        },
+        {
+          "caller": "load_model",
+          "callee": "time.perf_counter",
+          "lineNumber": 310
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.info",
+          "lineNumber": 311
+        },
+        {
+          "caller": "load_model",
+          "callee": "process_weights_after_loading",
+          "lineNumber": 314
+        },
+        {
+          "caller": "load_model",
+          "callee": "torch.device",
+          "lineNumber": 314
+        },
+        {
+          "caller": "load_model",
+          "callee": "logger.error",
+          "lineNumber": 317
+        },
+        {
+          "caller": "load_model",
+          "callee": "model.eval",
+          "lineNumber": 320
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "deepcopy",
+          "lineNumber": 343
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "DefaultModelLoader",
+          "lineNumber": 346
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "default_model_loader.load_model",
+          "lineNumber": 349
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "logger.warning",
+          "lineNumber": 352
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "torch.device",
+          "lineNumber": 354
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "set_default_torch_dtype",
+          "lineNumber": 355
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "initialize_model",
+          "lineNumber": 357
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "default_model_loader.load_weights",
+          "lineNumber": 358
+        },
+        {
+          "caller": "revert_to_default",
+          "callee": "model.eval",
+          "lineNumber": 359
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "model_loader/netloader/utils.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 63,
+      "nonEmptyLines": 52,
+      "functions": [
+        {
+          "name": "find_free_port",
+          "startLine": 24,
+          "endLine": 33,
+          "params": []
+        },
+        {
+          "name": "is_valid_path_prefix",
+          "startLine": 36,
+          "endLine": 63,
+          "params": [
+            "path_prefix"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "find_free_port",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "is_valid_path_prefix",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "find_free_port",
+          "callee": "socket.socket",
+          "lineNumber": 31
+        },
+        {
+          "caller": "find_free_port",
+          "callee": "s.bind",
+          "lineNumber": 32
+        },
+        {
+          "caller": "find_free_port",
+          "callee": "s.getsockname",
+          "lineNumber": 33
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "re.search",
+          "lineNumber": 49
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "logger.warning",
+          "lineNumber": 50
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "path_prefix.startswith",
+          "lineNumber": 53
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "path_prefix.startswith",
+          "lineNumber": 53
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.exists",
+          "lineNumber": 54
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.dirname",
+          "lineNumber": 54
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "logger.warning",
+          "lineNumber": 55
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.dirname",
+          "lineNumber": 55
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.exists",
+          "lineNumber": 58
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.dirname",
+          "lineNumber": 58
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.abspath",
+          "lineNumber": 58
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "logger.warning",
+          "lineNumber": 59
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.dirname",
+          "lineNumber": 60
+        },
+        {
+          "caller": "is_valid_path_prefix",
+          "callee": "os.path.abspath",
+          "lineNumber": 60
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    }
+  ]
+}

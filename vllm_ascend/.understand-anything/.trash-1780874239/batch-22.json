@@ -1,0 +1,396 @@
+{
+  "nodes": [
+    {
+      "id": "file:xlite/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "xlite/__init__.py",
+      "summary": "xlite 子包的空初始化文件，仅用于将 xlite 目录标记为 Python 包。",
+      "tags": ["entry-point", "barrel", "package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:xlite/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "xlite/utils.py",
+      "summary": "提供递归属性访问的工具函数，支持以点分路径安全读取嵌套模型对象的属性，供 xlite 适配层在权重映射时使用。",
+      "tags": ["utility", "attribute-access", "helper"],
+      "complexity": "simple",
+      "languageNotes": "使用 functools.reduce 风格实现 rgetattr，支持点分路径递归取值并带默认值回退。"
+    },
+    {
+      "id": "file:xlite/xlite_model_runner.py",
+      "type": "file",
+      "name": "xlite_model_runner.py",
+      "filePath": "xlite/xlite_model_runner.py",
+      "summary": "继承 NPU model runner，将加载后的模型包装为 XliteWrapper，并在 KV cache 初始化时向 xlite runtime 注册 KV cache。",
+      "tags": ["service", "model-runner", "kv-cache"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:xlite/xlite_worker.py",
+      "type": "file",
+      "name": "xlite_worker.py",
+      "filePath": "xlite/xlite_worker.py",
+      "summary": "继承 NPU worker，在设备初始化时初始化 workspace manager 并以 XliteModelRunner 作为模型运行器，使 worker 走 xlite 推理路径。",
+      "tags": ["service", "worker", "device-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:xlite/xlite.py",
+      "type": "file",
+      "name": "xlite.py",
+      "filePath": "xlite/xlite.py",
+      "summary": "xlite 集成核心模块，定义将 vLLM 模型适配到 xlite C++ runtime 的模型适配器体系（Llama / Qwen MoE / GLM4 MoE / MiniMax M2）以及前向调用包装器 XliteWrapper。",
+      "tags": ["service", "model-adapter", "runtime-integration", "factory", "moe"],
+      "complexity": "complex",
+      "languageNotes": "采用抽象基类 XliteModel + 多架构子类 + 工厂函数 xlite_model_init 的策略模式；XliteWrapper 通过 __getattr__ 透明代理底层 runnable，并在 __call__ 中构建 AttnMeta 调用 NPU 上的 xlite runtime 前向。"
+    },
+    {
+      "id": "function:xlite/utils.py:_get_nested_attr",
+      "type": "function",
+      "name": "_get_nested_attr",
+      "filePath": "xlite/utils.py",
+      "lineRange": [24, 42],
+      "summary": "按点分路径逐级 getattr 读取对象的嵌套属性，任一层缺失时返回给定默认值。",
+      "tags": ["utility", "attribute-access", "helper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:xlite/utils.py:rgetattr",
+      "type": "function",
+      "name": "rgetattr",
+      "filePath": "xlite/utils.py",
+      "lineRange": [45, 51],
+      "summary": "递归 getattr 包装，拆分点分属性路径并逐级取值，是 _get_nested_attr 的对外入口。",
+      "tags": ["utility", "attribute-access", "helper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:xlite/xlite_model_runner.py:XliteModelRunner",
+      "type": "class",
+      "name": "XliteModelRunner",
+      "filePath": "xlite/xlite_model_runner.py",
+      "lineRange": [25, 52],
+      "summary": "NPU model runner 的 xlite 子类，重写模型加载以包装 XliteWrapper，并在 KV cache 初始化后向 xlite 模型注册 KV cache。",
+      "tags": ["model-runner", "kv-cache", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:xlite/xlite_worker.py:XliteWorker",
+      "type": "class",
+      "name": "XliteWorker",
+      "filePath": "xlite/xlite_worker.py",
+      "lineRange": [22, 30],
+      "summary": "NPU worker 的 xlite 子类，在 init_device 时初始化 workspace manager 并选用 XliteModelRunner。",
+      "tags": ["worker", "device-init", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:xlite/xlite.py:XliteModel",
+      "type": "class",
+      "name": "XliteModel",
+      "filePath": "xlite/xlite.py",
+      "lineRange": [44, 166],
+      "summary": "抽象基类，定义将 vLLM 模型适配到 xlite C++ runtime 的通用流程，包括构建模型配置、构建模型、提取层结构前缀与预计算 RoPE freqs_cis。",
+      "tags": ["model-adapter", "abstract-base", "runtime-integration"],
+      "complexity": "moderate",
+      "languageNotes": "使用 abc.ABC + abstractmethod 强制子类实现 _build_model_config / _build_model 等架构相关步骤。"
+    },
+    {
+      "id": "class:xlite/xlite.py:LlamaXliteModel",
+      "type": "class",
+      "name": "LlamaXliteModel",
+      "filePath": "xlite/xlite.py",
+      "lineRange": [169, 399],
+      "summary": "Llama 架构的 xlite 适配器，负责权重映射、反量化 scale 处理以及 NZ 格式矩阵乘权重的初始化。",
+      "tags": ["model-adapter", "llama", "quantization", "weight-mapping"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:xlite/xlite.py:QwenMoeXliteModel",
+      "type": "class",
+      "name": "QwenMoeXliteModel",
+      "filePath": "xlite/xlite.py",
+      "lineRange": [402, 459],
+      "summary": "Qwen MoE 架构的 xlite 适配器，在 Llama 适配基础上结合专家并行（EP）组配置完成 MoE 权重构建。",
+      "tags": ["model-adapter", "qwen", "moe", "expert-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:xlite/xlite.py:Glm4MoeXliteModel",
+      "type": "class",
+      "name": "Glm4MoeXliteModel",
+      "filePath": "xlite/xlite.py",
+      "lineRange": [462, 535],
+      "summary": "GLM4 MoE 架构的 xlite 适配器，处理 GLM4 特有的 RoPE 参数与 MoE 权重并接入专家并行组。",
+      "tags": ["model-adapter", "glm", "moe", "expert-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:xlite/xlite.py:MiniMaxM2XliteModel",
+      "type": "class",
+      "name": "MiniMaxM2XliteModel",
+      "filePath": "xlite/xlite.py",
+      "lineRange": [538, 608],
+      "summary": "MiniMax M2 架构的 xlite 适配器，完成其 MoE 权重映射、bias 处理与逐层反量化 scale 准备。",
+      "tags": ["model-adapter", "minimax", "moe", "expert-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:xlite/xlite.py:XliteWrapper",
+      "type": "class",
+      "name": "XliteWrapper",
+      "filePath": "xlite/xlite.py",
+      "lineRange": [642, 803],
+      "summary": "前向调用包装器，初始化 xlite Runtime 与 tensor pool，透明代理底层 runnable，并在 __call__ 中从 AscendMetadata 构建 AttnMeta 驱动 NPU 上的 xlite runtime 前向。",
+      "tags": ["wrapper", "runtime-integration", "forward", "attention"],
+      "complexity": "complex",
+      "languageNotes": "__getattr__ 实现对底层模型的属性透传；__call__ 中区分 inputs_embeds 路径并调用 xlite_model.forward / forward_with_inputs_embeds。"
+    },
+    {
+      "id": "function:xlite/xlite.py:xlite_model_init",
+      "type": "function",
+      "name": "xlite_model_init",
+      "filePath": "xlite/xlite.py",
+      "lineRange": [611, 639],
+      "summary": "工厂函数，依据模型架构从策略映射表选择对应的 XliteModel 子类并完成初始化，未知架构时抛出 ValueError。",
+      "tags": ["factory", "model-adapter", "dispatch"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:xlite/utils.py",
+      "target": "function:xlite/utils.py:_get_nested_attr",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/utils.py",
+      "target": "function:xlite/utils.py:rgetattr",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/utils.py",
+      "target": "function:xlite/utils.py:_get_nested_attr",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/utils.py",
+      "target": "function:xlite/utils.py:rgetattr",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:xlite/utils.py:rgetattr",
+      "target": "function:xlite/utils.py:_get_nested_attr",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite_model_runner.py",
+      "target": "class:xlite/xlite_model_runner.py:XliteModelRunner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite_model_runner.py",
+      "target": "class:xlite/xlite_model_runner.py:XliteModelRunner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite_worker.py",
+      "target": "class:xlite/xlite_worker.py:XliteWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite_worker.py",
+      "target": "class:xlite/xlite_worker.py:XliteWorker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:XliteModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:LlamaXliteModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:QwenMoeXliteModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:Glm4MoeXliteModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:MiniMaxM2XliteModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:XliteWrapper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "function:xlite/xlite.py:xlite_model_init",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:XliteModel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:LlamaXliteModel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:QwenMoeXliteModel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:Glm4MoeXliteModel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:MiniMaxM2XliteModel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "class:xlite/xlite.py:XliteWrapper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "function:xlite/xlite.py:xlite_model_init",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:xlite/xlite.py:LlamaXliteModel",
+      "target": "class:xlite/xlite.py:XliteModel",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:xlite/xlite.py:QwenMoeXliteModel",
+      "target": "class:xlite/xlite.py:LlamaXliteModel",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:xlite/xlite.py:Glm4MoeXliteModel",
+      "target": "class:xlite/xlite.py:LlamaXliteModel",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:xlite/xlite.py:MiniMaxM2XliteModel",
+      "target": "class:xlite/xlite.py:LlamaXliteModel",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:xlite/xlite.py:xlite_model_init",
+      "target": "class:xlite/xlite.py:XliteModel",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:xlite/xlite.py",
+      "target": "file:xlite/utils.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:xlite/xlite.py:XliteModel",
+      "target": "function:xlite/utils.py:_get_nested_attr",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:xlite/xlite.py:LlamaXliteModel",
+      "target": "function:xlite/utils.py:rgetattr",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:xlite/xlite_model_runner.py:XliteModelRunner",
+      "target": "class:xlite/xlite.py:XliteWrapper",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:xlite/xlite_worker.py:XliteWorker",
+      "target": "class:xlite/xlite_model_runner.py:XliteModelRunner",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

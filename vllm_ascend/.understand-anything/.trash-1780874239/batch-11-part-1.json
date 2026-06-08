@@ -1,0 +1,553 @@
+{
+  "nodes": [
+    {
+      "id": "file:compilation/graph_fusion_pass_manager.py",
+      "type": "file",
+      "name": "graph_fusion_pass_manager.py",
+      "filePath": "compilation/graph_fusion_pass_manager.py",
+      "summary": "图融合 pass 管理器，根据 Ascend 编译配置按需注册 RMSNorm 量化、QKNorm-RoPE、MatmulAllReduce、MulsAdd 与序列并行等融合 pass，并在编译期依次应用到 fx 计算图上。",
+      "tags": ["compilation", "fusion-pass", "factory", "npu", "manager"],
+      "complexity": "moderate",
+      "languageNotes": "通过 __call__ 使实例可作为编译 pass 直接调用，遍历 self.passes 依次重写计算图。"
+    },
+    {
+      "id": "class:compilation/graph_fusion_pass_manager.py:GraphFusionPassManager",
+      "type": "class",
+      "name": "GraphFusionPassManager",
+      "filePath": "compilation/graph_fusion_pass_manager.py",
+      "lineRange": [25, 79],
+      "summary": "聚合并调度所有图融合 pass 的管理类，configure 根据 Ascend 编译配置开关决定启用哪些融合 pass，__call__ 在图上逐一执行并触发重编译。",
+      "tags": ["fusion-pass", "manager", "configuration", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/passes/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "compilation/passes/__init__.py",
+      "summary": "compilation.passes 子包的空初始化文件，用于将编译融合 pass 目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "compilation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:compilation/passes/allgather_chunk_noop_pass.py",
+      "type": "file",
+      "name": "allgather_chunk_noop_pass.py",
+      "filePath": "compilation/passes/allgather_chunk_noop_pass.py",
+      "summary": "消除冗余 all-gather 后再 chunk 的空操作清理 pass，针对张量并行场景注册模式匹配替换以删除可抵消的通信算子。",
+      "tags": ["compilation", "fusion-pass", "tensor-parallel", "optimization", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:compilation/passes/allgather_chunk_noop_pass.py:AllGatherChunkNoOpCleanupPass",
+      "type": "class",
+      "name": "AllGatherChunkNoOpCleanupPass",
+      "filePath": "compilation/passes/allgather_chunk_noop_pass.py",
+      "lineRange": [10, 40],
+      "summary": "基于 PatternMatcherPass 注册 all-gather + sequence_parallel_chunk 抵消模式，在图上将其替换为直通从而消除无意义通信。",
+      "tags": ["fusion-pass", "pattern-matching", "optimization", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:compilation/passes/allreduce_rmsnorm_fusion_pass.py",
+      "type": "file",
+      "name": "allreduce_rmsnorm_fusion_pass.py",
+      "filePath": "compilation/passes/allreduce_rmsnorm_fusion_pass.py",
+      "summary": "将 matmul + all-reduce + add + RMSNorm 序列融合为单个 NPU matmul_allreduce_add_rmsnorm 算子的融合 pass，分别处理中间层和末层两种模式。",
+      "tags": ["compilation", "fusion-pass", "layernorm", "tensor-parallel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MiddleLayerMatmulAllReduceAddRMSNormPattern",
+      "type": "class",
+      "name": "MiddleLayerMatmulAllReduceAddRMSNormPattern",
+      "filePath": "compilation/passes/allreduce_rmsnorm_fusion_pass.py",
+      "lineRange": [32, 84],
+      "summary": "中间层的 matmul+allreduce+add+RMSNorm 融合模式，定义匹配子图与替换为融合 NPU 算子的实现。",
+      "tags": ["fusion-pass", "pattern-matching", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:LastLayerMatmulAllReduceAddRMSNormPattern",
+      "type": "class",
+      "name": "LastLayerMatmulAllReduceAddRMSNormPattern",
+      "filePath": "compilation/passes/allreduce_rmsnorm_fusion_pass.py",
+      "lineRange": [87, 131],
+      "summary": "末层的 matmul+allreduce+add+RMSNorm 融合模式，针对最后一层残差处理定义匹配与替换实现。",
+      "tags": ["fusion-pass", "pattern-matching", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MatmulAllReduceAddRMSNormPass",
+      "type": "class",
+      "name": "MatmulAllReduceAddRMSNormPass",
+      "filePath": "compilation/passes/allreduce_rmsnorm_fusion_pass.py",
+      "lineRange": [134, 159],
+      "summary": "注册中间层与末层两种 matmul-allreduce-rmsnorm 融合模式并在 fx 图上应用的融合 pass 入口类。",
+      "tags": ["fusion-pass", "manager", "tensor-parallel", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:compilation/passes/base_pattern.py",
+      "type": "file",
+      "name": "base_pattern.py",
+      "filePath": "compilation/passes/base_pattern.py",
+      "summary": "所有融合模式的基类，统一定义 get_inputs/get_pattern/get_replacement 接口并提供向 PatternMatcher 或 npugraph_ex 注册替换的 register 方法。",
+      "tags": ["compilation", "fusion-pass", "base-class", "type-definition", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:compilation/passes/base_pattern.py:BasePattern",
+      "type": "class",
+      "name": "BasePattern",
+      "filePath": "compilation/passes/base_pattern.py",
+      "lineRange": [20, 63],
+      "summary": "融合模式抽象基类，子类实现样例输入、匹配模式与替换函数后，由 register 统一完成模式注册并记录已注册模式集合。",
+      "tags": ["fusion-pass", "base-class", "registration", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:compilation/passes/muls_add_pass.py",
+      "type": "file",
+      "name": "muls_add_pass.py",
+      "filePath": "compilation/passes/muls_add_pass.py",
+      "summary": "将逐元素标量乘法与加法序列融合为单个 muls_add 算子的融合 pass，按模型 routed_scaling_factor 缩放参数注册替换模式。",
+      "tags": ["compilation", "fusion-pass", "optimization", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/muls_add_pass.py:MulsAddPattern",
+      "type": "class",
+      "name": "MulsAddPattern",
+      "filePath": "compilation/passes/muls_add_pass.py",
+      "lineRange": [29, 73],
+      "summary": "定义标量乘加子图的匹配模式与替换为 torch.ops.vllm.muls_add 融合算子的实现。",
+      "tags": ["fusion-pass", "pattern-matching", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:compilation/passes/muls_add_pass.py:MulsAddFusionPass",
+      "type": "class",
+      "name": "MulsAddFusionPass",
+      "filePath": "compilation/passes/muls_add_pass.py",
+      "lineRange": [76, 110],
+      "summary": "读取模型 routed_scaling_factor 注册 MulsAddPattern 并在图上应用 muls-add 融合的 pass 入口类。",
+      "tags": ["fusion-pass", "manager", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:compilation/passes/noop_elimination.py",
+      "type": "file",
+      "name": "noop_elimination.py",
+      "filePath": "compilation/passes/noop_elimination.py",
+      "summary": "消除 fx 计算图中等价的 view/reshape 等空操作节点，通过比较符号化维度判断输入输出形状是否一致并删除冗余节点。",
+      "tags": ["compilation", "fusion-pass", "optimization", "graph-rewrite"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:compilation/passes/noop_elimination.py:NoOpEliminationPass",
+      "type": "class",
+      "name": "NoOpEliminationPass",
+      "filePath": "compilation/passes/noop_elimination.py",
+      "lineRange": [11, 62],
+      "summary": "遍历图节点识别形状不变的 view 类算子，利用 statically_known_true 判断维度等价后用输入节点替换并删除空操作。",
+      "tags": ["fusion-pass", "graph-rewrite", "optimization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/passes/norm_quant_fusion_pass.py",
+      "type": "file",
+      "name": "norm_quant_fusion_pass.py",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "summary": "将 add+RMSNorm 与后续静态/动态量化序列融合为 NPU npu_add_rms_norm_quant / npu_add_rms_norm_dynamic_quant 算子的融合 pass，覆盖带 bias、序列并行等八种变体模式。",
+      "tags": ["compilation", "fusion-pass", "quantization", "layernorm", "npu"],
+      "complexity": "complex",
+      "languageNotes": "通过带 bias、SP、动态量化的正交组合派生出 8 个模式类，再由统一 pass 注册启用。"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantPattern",
+      "type": "class",
+      "name": "AddRMSNormQuantPattern",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [29, 86],
+      "summary": "add+RMSNorm+静态量化基础融合模式，匹配子图并替换为 NPU npu_add_rms_norm_quant 算子。",
+      "tags": ["fusion-pass", "quantization", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantPatternWithBias",
+      "type": "class",
+      "name": "AddRMSNormQuantPatternWithBias",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [89, 149],
+      "summary": "带 bias 的 add+RMSNorm+静态量化融合模式变体。",
+      "tags": ["fusion-pass", "quantization", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantSPPattern",
+      "type": "class",
+      "name": "AddRMSNormQuantSPPattern",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [152, 211],
+      "summary": "序列并行场景下含 all-gather 的 add+RMSNorm+静态量化融合模式。",
+      "tags": ["fusion-pass", "quantization", "sequence-parallel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantSPPatternWithBias",
+      "type": "class",
+      "name": "AddRMSNormQuantSPPatternWithBias",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [214, 276],
+      "summary": "带 bias 且序列并行的 add+RMSNorm+静态量化融合模式变体。",
+      "tags": ["fusion-pass", "quantization", "sequence-parallel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantPattern",
+      "type": "class",
+      "name": "AddRMSNormDynamicQuantPattern",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [279, 319],
+      "summary": "add+RMSNorm+动态量化融合模式，替换为 NPU npu_add_rms_norm_dynamic_quant 算子。",
+      "tags": ["fusion-pass", "quantization", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantPatternWithBias",
+      "type": "class",
+      "name": "AddRMSNormDynamicQuantPatternWithBias",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [322, 375],
+      "summary": "带 bias 的 add+RMSNorm+动态量化融合模式变体。",
+      "tags": ["fusion-pass", "quantization", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantSPPattern",
+      "type": "class",
+      "name": "AddRMSNormDynamicQuantSPPattern",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [378, 418],
+      "summary": "序列并行场景下的 add+RMSNorm+动态量化融合模式。",
+      "tags": ["fusion-pass", "quantization", "sequence-parallel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantSPPatternWithBias",
+      "type": "class",
+      "name": "AddRMSNormDynamicQuantSPPatternWithBias",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [421, 474],
+      "summary": "带 bias 且序列并行的 add+RMSNorm+动态量化融合模式变体。",
+      "tags": ["fusion-pass", "quantization", "sequence-parallel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantFusionPass",
+      "type": "class",
+      "name": "AddRMSNormQuantFusionPass",
+      "filePath": "compilation/passes/norm_quant_fusion_pass.py",
+      "lineRange": [477, 513],
+      "summary": "统一注册全部 add-RMSNorm-量化融合模式（静态/动态、带 bias、序列并行）并在图上应用的 pass 入口类。",
+      "tags": ["fusion-pass", "manager", "quantization", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/passes/qknorm_rope_fusion_pass.py",
+      "type": "file",
+      "name": "qknorm_rope_fusion_pass.py",
+      "filePath": "compilation/passes/qknorm_rope_fusion_pass.py",
+      "summary": "将 QKV 拆分、Q/K RMSNorm 与旋转位置编码序列融合为单个 split_qkv_rmsnorm_rope 设备算子的融合 pass，从模型 attention 层读取 head 维度等参数注册带/不带 bias 两种模式。",
+      "tags": ["compilation", "fusion-pass", "attention", "rope", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPattern",
+      "type": "class",
+      "name": "QKNormRopeFusionPattern",
+      "filePath": "compilation/passes/qknorm_rope_fusion_pass.py",
+      "lineRange": [31, 102],
+      "summary": "QKV split + Q/K RMSNorm + RoPE 子图匹配模式，替换为 DeviceOperator.split_qkv_rmsnorm_rope 融合算子。",
+      "tags": ["fusion-pass", "attention", "rope", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPatternWithBias",
+      "type": "class",
+      "name": "QKNormRopeFusionPatternWithBias",
+      "filePath": "compilation/passes/qknorm_rope_fusion_pass.py",
+      "lineRange": [105, 184],
+      "summary": "带 QKV bias 的 QKNorm-RoPE 融合模式变体。",
+      "tags": ["fusion-pass", "attention", "rope", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPass",
+      "type": "class",
+      "name": "QKNormRopeFusionPass",
+      "filePath": "compilation/passes/qknorm_rope_fusion_pass.py",
+      "lineRange": [187, 244],
+      "summary": "从 vllm_config 提取 attention 层参数注册 QKNorm-RoPE 融合模式并在图上应用的 pass 入口类。",
+      "tags": ["fusion-pass", "manager", "attention", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/passes/sequence_parallelism.py",
+      "type": "file",
+      "name": "sequence_parallelism.py",
+      "filePath": "compilation/passes/sequence_parallelism.py",
+      "summary": "序列并行融合 pass，将 all-reduce + RMSNorm 序列改写为 reduce-scatter + RMSNorm + all-gather 以沿序列维切分计算，覆盖中间层、末层及 Qwen3-VL deepstack 模式。",
+      "tags": ["compilation", "fusion-pass", "sequence-parallel", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:compilation/passes/sequence_parallelism.py:get_sp_min_token_num",
+      "type": "function",
+      "name": "get_sp_min_token_num",
+      "filePath": "compilation/passes/sequence_parallelism.py",
+      "lineRange": [16, 20],
+      "summary": "根据模型是否为 MoE 模型返回启用序列并行所需的最小 token 数阈值。",
+      "tags": ["utility", "sequence-parallel", "moe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism.py:_SequenceParallelPatternHelper",
+      "type": "class",
+      "name": "_SequenceParallelPatternHelper",
+      "filePath": "compilation/passes/sequence_parallelism.py",
+      "lineRange": [23, 53],
+      "summary": "序列并行模式的辅助基类，封装 all-reduce/reduce-scatter/all-gather 通信算子与空张量构造工具。",
+      "tags": ["fusion-pass", "base-class", "sequence-parallel", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism.py:MiddleAllReduceRMSNormPattern",
+      "type": "class",
+      "name": "MiddleAllReduceRMSNormPattern",
+      "filePath": "compilation/passes/sequence_parallelism.py",
+      "lineRange": [56, 99],
+      "summary": "中间层 all-reduce+RMSNorm 改写为 reduce-scatter+RMSNorm+all-gather 的序列并行模式。",
+      "tags": ["fusion-pass", "sequence-parallel", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism.py:LastAllReduceRMSNormPattern",
+      "type": "class",
+      "name": "LastAllReduceRMSNormPattern",
+      "filePath": "compilation/passes/sequence_parallelism.py",
+      "lineRange": [102, 137],
+      "summary": "末层 all-reduce+RMSNorm 的序列并行改写模式。",
+      "tags": ["fusion-pass", "sequence-parallel", "layernorm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism.py:Qwen3VLMiddleAllReduceRMSNormPattern",
+      "type": "class",
+      "name": "Qwen3VLMiddleAllReduceRMSNormPattern",
+      "filePath": "compilation/passes/sequence_parallelism.py",
+      "lineRange": [140, 184],
+      "summary": "针对 Qwen3-VL deepstack input embeds 的中间层序列并行 all-reduce+RMSNorm 改写模式。",
+      "tags": ["fusion-pass", "sequence-parallel", "qwen3-vl", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism.py:SequenceParallelismPass",
+      "type": "class",
+      "name": "SequenceParallelismPass",
+      "filePath": "compilation/passes/sequence_parallelism.py",
+      "lineRange": [187, 234],
+      "summary": "注册全部序列并行改写模式并配合 NoOpEliminationPass 清理冗余算子的 pass 入口类。",
+      "tags": ["fusion-pass", "manager", "sequence-parallel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/passes/sequence_parallelism_moe.py",
+      "type": "file",
+      "name": "sequence_parallelism_moe.py",
+      "filePath": "compilation/passes/sequence_parallelism_moe.py",
+      "summary": "面向 MoE 模型的序列并行融合 pass，针对 all-gather + add + RMSNorm 模式做改写并清理冗余 all-gather-chunk 空操作，含 Qwen3-VL 专用变体。",
+      "tags": ["compilation", "fusion-pass", "sequence-parallel", "moe", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism_moe.py:MiddleLayerAllgatherAddRMSNormPattern",
+      "type": "class",
+      "name": "MiddleLayerAllgatherAddRMSNormPattern",
+      "filePath": "compilation/passes/sequence_parallelism_moe.py",
+      "lineRange": [15, 52],
+      "summary": "MoE 中间层 all-gather+add+RMSNorm 的序列并行改写模式。",
+      "tags": ["fusion-pass", "sequence-parallel", "moe", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism_moe.py:LastLayerAllgatherRMSNormPattern",
+      "type": "class",
+      "name": "LastLayerAllgatherRMSNormPattern",
+      "filePath": "compilation/passes/sequence_parallelism_moe.py",
+      "lineRange": [55, 91],
+      "summary": "MoE 末层 all-gather+RMSNorm 的序列并行改写模式。",
+      "tags": ["fusion-pass", "sequence-parallel", "moe", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism_moe.py:Qwen3VLMiddleLayerAllgatherAddRMSNormPattern",
+      "type": "class",
+      "name": "Qwen3VLMiddleLayerAllgatherAddRMSNormPattern",
+      "filePath": "compilation/passes/sequence_parallelism_moe.py",
+      "lineRange": [94, 142],
+      "summary": "Qwen3-VL MoE 中间层针对 deepstack input embeds 的 all-gather+add+RMSNorm 序列并行改写模式。",
+      "tags": ["fusion-pass", "sequence-parallel", "qwen3-vl", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism_moe.py:AllGatherChunkNoOpPattern",
+      "type": "class",
+      "name": "AllGatherChunkNoOpPattern",
+      "filePath": "compilation/passes/sequence_parallelism_moe.py",
+      "lineRange": [145, 162],
+      "summary": "匹配并消除 all-gather 后 sequence_parallel_chunk 抵消的空操作模式。",
+      "tags": ["fusion-pass", "optimization", "sequence-parallel", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:compilation/passes/sequence_parallelism_moe.py:SequenceParallelismMoePass",
+      "type": "class",
+      "name": "SequenceParallelismMoePass",
+      "filePath": "compilation/passes/sequence_parallelism_moe.py",
+      "lineRange": [165, 204],
+      "summary": "注册 MoE 序列并行改写与 all-gather-chunk 空操作清理模式并在图上应用的 pass 入口类。",
+      "tags": ["fusion-pass", "manager", "sequence-parallel", "moe", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:compilation/passes/utils/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "compilation/passes/utils/__init__.py",
+      "summary": "compilation.passes.utils 子包的空初始化文件，用于将融合 pass 工具目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "compilation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:compilation/passes/utils/npugraph_ex_utils_check.py",
+      "type": "file",
+      "name": "npugraph_ex_utils_check.py",
+      "filePath": "compilation/passes/utils/npugraph_ex_utils_check.py",
+      "summary": "npugraph_ex 融合 pass 的工具函数，提供匹配额外 stream scope 的校验回调，以及带异常保护的融合模式注册辅助函数。",
+      "tags": ["compilation", "fusion-pass", "utility", "validation", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:compilation/passes/utils/npugraph_ex_utils_check.py:extra_stream_scope_check",
+      "type": "function",
+      "name": "extra_stream_scope_check",
+      "filePath": "compilation/passes/utils/npugraph_ex_utils_check.py",
+      "lineRange": [23, 53],
+      "summary": "检查匹配节点是否涉及多个非默认 stream，用于判断融合替换在 npugraph_ex 下是否安全。",
+      "tags": ["validation", "fusion-pass", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:compilation/passes/utils/npugraph_ex_utils_check.py:check_and_register_fusion_pass",
+      "type": "function",
+      "name": "check_and_register_fusion_pass",
+      "filePath": "compilation/passes/utils/npugraph_ex_utils_check.py",
+      "lineRange": [59, 75],
+      "summary": "带异常保护地实例化并注册融合模式类，注册失败时记录告警并将其加入已处理集合避免重复尝试。",
+      "tags": ["registration", "fusion-pass", "utility", "npu"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {"source": "file:compilation/graph_fusion_pass_manager.py", "target": "class:compilation/graph_fusion_pass_manager.py:GraphFusionPassManager", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/graph_fusion_pass_manager.py", "target": "class:compilation/graph_fusion_pass_manager.py:GraphFusionPassManager", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:compilation/passes/allgather_chunk_noop_pass.py", "target": "class:compilation/passes/allgather_chunk_noop_pass.py:AllGatherChunkNoOpCleanupPass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/allgather_chunk_noop_pass.py", "target": "class:compilation/passes/allgather_chunk_noop_pass.py:AllGatherChunkNoOpCleanupPass", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:compilation/passes/allreduce_rmsnorm_fusion_pass.py", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MiddleLayerMatmulAllReduceAddRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/allreduce_rmsnorm_fusion_pass.py", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MiddleLayerMatmulAllReduceAddRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/allreduce_rmsnorm_fusion_pass.py", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:LastLayerMatmulAllReduceAddRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/allreduce_rmsnorm_fusion_pass.py", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:LastLayerMatmulAllReduceAddRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/allreduce_rmsnorm_fusion_pass.py", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MatmulAllReduceAddRMSNormPass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/allreduce_rmsnorm_fusion_pass.py", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MatmulAllReduceAddRMSNormPass", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MatmulAllReduceAddRMSNormPass", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MiddleLayerMatmulAllReduceAddRMSNormPattern", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:MatmulAllReduceAddRMSNormPass", "target": "class:compilation/passes/allreduce_rmsnorm_fusion_pass.py:LastLayerMatmulAllReduceAddRMSNormPattern", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:compilation/passes/base_pattern.py", "target": "class:compilation/passes/base_pattern.py:BasePattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/base_pattern.py", "target": "class:compilation/passes/base_pattern.py:BasePattern", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:compilation/passes/muls_add_pass.py", "target": "class:compilation/passes/muls_add_pass.py:MulsAddPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/muls_add_pass.py", "target": "class:compilation/passes/muls_add_pass.py:MulsAddPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/muls_add_pass.py", "target": "class:compilation/passes/muls_add_pass.py:MulsAddFusionPass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/muls_add_pass.py", "target": "class:compilation/passes/muls_add_pass.py:MulsAddFusionPass", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:compilation/passes/muls_add_pass.py:MulsAddFusionPass", "target": "class:compilation/passes/muls_add_pass.py:MulsAddPattern", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:compilation/passes/noop_elimination.py", "target": "class:compilation/passes/noop_elimination.py:NoOpEliminationPass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/noop_elimination.py", "target": "class:compilation/passes/noop_elimination.py:NoOpEliminationPass", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantPatternWithBias", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantPatternWithBias", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantSPPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantSPPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantSPPatternWithBias", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantSPPatternWithBias", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantPatternWithBias", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantPatternWithBias", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantSPPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantSPPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantSPPatternWithBias", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormDynamicQuantSPPatternWithBias", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantFusionPass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/norm_quant_fusion_pass.py", "target": "class:compilation/passes/norm_quant_fusion_pass.py:AddRMSNormQuantFusionPass", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:compilation/passes/qknorm_rope_fusion_pass.py", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/qknorm_rope_fusion_pass.py", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/qknorm_rope_fusion_pass.py", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPatternWithBias", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/qknorm_rope_fusion_pass.py", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPatternWithBias", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/qknorm_rope_fusion_pass.py", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/qknorm_rope_fusion_pass.py", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPass", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPass", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPattern", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPass", "target": "class:compilation/passes/qknorm_rope_fusion_pass.py:QKNormRopeFusionPatternWithBias", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "function:compilation/passes/sequence_parallelism.py:get_sp_min_token_num", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "function:compilation/passes/sequence_parallelism.py:get_sp_min_token_num", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:_SequenceParallelPatternHelper", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:MiddleAllReduceRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:MiddleAllReduceRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:LastAllReduceRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:LastAllReduceRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:Qwen3VLMiddleAllReduceRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:Qwen3VLMiddleAllReduceRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:SequenceParallelismPass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism.py", "target": "class:compilation/passes/sequence_parallelism.py:SequenceParallelismPass", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:compilation/passes/sequence_parallelism.py:MiddleAllReduceRMSNormPattern", "target": "class:compilation/passes/sequence_parallelism.py:_SequenceParallelPatternHelper", "type": "inherits", "direction": "forward", "weight": 0.9},
+    {"source": "class:compilation/passes/sequence_parallelism.py:LastAllReduceRMSNormPattern", "target": "class:compilation/passes/sequence_parallelism.py:_SequenceParallelPatternHelper", "type": "inherits", "direction": "forward", "weight": 0.9},
+    {"source": "class:compilation/passes/sequence_parallelism.py:Qwen3VLMiddleAllReduceRMSNormPattern", "target": "class:compilation/passes/sequence_parallelism.py:_SequenceParallelPatternHelper", "type": "inherits", "direction": "forward", "weight": 0.9},
+    {"source": "class:compilation/passes/sequence_parallelism.py:SequenceParallelismPass", "target": "function:compilation/passes/sequence_parallelism.py:get_sp_min_token_num", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:compilation/passes/sequence_parallelism.py:SequenceParallelismPass", "target": "class:compilation/passes/noop_elimination.py:NoOpEliminationPass", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:MiddleLayerAllgatherAddRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:MiddleLayerAllgatherAddRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:LastLayerAllgatherRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:LastLayerAllgatherRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:Qwen3VLMiddleLayerAllgatherAddRMSNormPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:Qwen3VLMiddleLayerAllgatherAddRMSNormPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:AllGatherChunkNoOpPattern", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:AllGatherChunkNoOpPattern", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:SequenceParallelismMoePass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/sequence_parallelism_moe.py", "target": "class:compilation/passes/sequence_parallelism_moe.py:SequenceParallelismMoePass", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:compilation/passes/sequence_parallelism_moe.py:SequenceParallelismMoePass", "target": "function:compilation/passes/sequence_parallelism.py:get_sp_min_token_num", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:compilation/passes/utils/npugraph_ex_utils_check.py", "target": "function:compilation/passes/utils/npugraph_ex_utils_check.py:extra_stream_scope_check", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/utils/npugraph_ex_utils_check.py", "target": "function:compilation/passes/utils/npugraph_ex_utils_check.py:extra_stream_scope_check", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:compilation/passes/utils/npugraph_ex_utils_check.py", "target": "function:compilation/passes/utils/npugraph_ex_utils_check.py:check_and_register_fusion_pass", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:compilation/passes/utils/npugraph_ex_utils_check.py", "target": "function:compilation/passes/utils/npugraph_ex_utils_check.py:check_and_register_fusion_pass", "type": "exports", "direction": "forward", "weight": 0.8}
+  ]
+}

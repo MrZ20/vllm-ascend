@@ -1,0 +1,1596 @@
+{
+ "nodes": [
+  {
+   "id": "file:ops/fused_moe/token_dispatcher.py",
+   "type": "file",
+   "name": "token_dispatcher.py",
+   "filePath": "ops/fused_moe/token_dispatcher.py",
+   "summary": "MoE token 分发器抽象与多种实现（MC2/AllGather/All2AllV），负责 token 在专家并行组间的 dispatch 与 combine。",
+   "tags": [
+    "moe",
+    "communication",
+    "factory",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/fused_moe/token_dispatcher.py:MoETokenDispatcher",
+   "type": "class",
+   "name": "MoETokenDispatcher",
+   "filePath": "ops/fused_moe/token_dispatcher.py",
+   "lineRange": [
+    63,
+    98
+   ],
+   "summary": "token 分发器抽象基类，定义 dispatch/combine 接口与 EP 组属性。",
+   "tags": [
+    "moe",
+    "communication",
+    "abstract"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithMC2",
+   "type": "class",
+   "name": "TokenDispatcherWithMC2",
+   "filePath": "ops/fused_moe/token_dispatcher.py",
+   "lineRange": [
+    101,
+    340
+   ],
+   "summary": "基于 MC2 算子的 token 分发器，构建 dispatch/combine 的 kwargs 并调度。",
+   "tags": [
+    "moe",
+    "communication",
+    "mc2"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithAllGather",
+   "type": "class",
+   "name": "TokenDispatcherWithAllGather",
+   "filePath": "ops/fused_moe/token_dispatcher.py",
+   "lineRange": [
+    343,
+    429
+   ],
+   "summary": "基于 all-gather 的 token 分发器实现。",
+   "tags": [
+    "moe",
+    "communication",
+    "all-gather"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithAll2AllV",
+   "type": "class",
+   "name": "TokenDispatcherWithAll2AllV",
+   "filePath": "ops/fused_moe/token_dispatcher.py",
+   "lineRange": [
+    432,
+    666
+   ],
+   "summary": "基于 all-to-all-v 的 token 分发器，含 dispatch/combine 的前后处理流水线。",
+   "tags": [
+    "moe",
+    "communication",
+    "all-to-all"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:ops/gdn.py",
+   "type": "file",
+   "name": "gdn.py",
+   "filePath": "ops/gdn.py",
+   "summary": "门控 Delta 网络（Gated Delta Net）注意力在 Ascend NPU 上的实现，含 causal conv1d host args 处理与图模式参数更新。",
+   "tags": [
+    "attention",
+    "data-model",
+    "npu",
+    "graph-mode"
+   ],
+   "complexity": "complex",
+   "languageNotes": "文件较大（650+ 行），涉及 ACL graph capture 下 conv1d host 参数的 padding 与图参数更新。"
+  },
+  {
+   "id": "function:ops/gdn.py:_pad_conv1d_host_args_to_capture",
+   "type": "function",
+   "name": "_pad_conv1d_host_args_to_capture",
+   "filePath": "ops/gdn.py",
+   "lineRange": [
+    99,
+    141
+   ],
+   "summary": "为图捕获（graph capture）对 conv1d 的 host 端参数做 padding 对齐。",
+   "tags": [
+    "attention",
+    "graph-mode",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:ops/gdn.py:update_conv1d_graph_params",
+   "type": "function",
+   "name": "update_conv1d_graph_params",
+   "filePath": "ops/gdn.py",
+   "lineRange": [
+    144,
+    245
+   ],
+   "summary": "在 ACL graph 模式下更新 conv1d 算子的图参数。",
+   "tags": [
+    "attention",
+    "graph-mode",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/gdn.py:AscendGatedDeltaNetAttention",
+   "type": "class",
+   "name": "AscendGatedDeltaNetAttention",
+   "filePath": "ops/gdn.py",
+   "lineRange": [
+    253,
+    718
+   ],
+   "summary": "Ascend 门控 Delta 网络注意力模块，实现 chunked prefill、kernel 预热与核心前向。",
+   "tags": [
+    "attention",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:ops/layer_shard_linear.py",
+   "type": "file",
+   "name": "layer_shard_linear.py",
+   "filePath": "ops/layer_shard_linear.py",
+   "summary": "分层权重分片（layer shard）线性层支持，按层序列注册权重分片并在加载后串联处理。",
+   "tags": [
+    "data-model",
+    "tensor-parallel",
+    "npu",
+    "service"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/layer_shard_linear.py:register_layer_to_shard_weight_series",
+   "type": "function",
+   "name": "register_layer_to_shard_weight_series",
+   "filePath": "ops/layer_shard_linear.py",
+   "lineRange": [
+    205,
+    247
+   ],
+   "summary": "将单个层注册到权重分片序列中，建立分片的源-目标关系。",
+   "tags": [
+    "tensor-parallel",
+    "registration",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:ops/layer_shard_linear.py:register_all_layers_to_shard_weight_series",
+   "type": "function",
+   "name": "register_all_layers_to_shard_weight_series",
+   "filePath": "ops/layer_shard_linear.py",
+   "lineRange": [
+    279,
+    290
+   ],
+   "summary": "批量注册所有层到权重分片序列。",
+   "tags": [
+    "tensor-parallel",
+    "registration"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/layer_shard_linear.py:SeriesMetadata",
+   "type": "class",
+   "name": "SeriesMetadata",
+   "filePath": "ops/layer_shard_linear.py",
+   "lineRange": [
+    39,
+    146
+   ],
+   "summary": "权重分片序列元数据，跟踪源层判定、加载后处理与层间权重等待/触达。",
+   "tags": [
+    "tensor-parallel",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/layernorm.py",
+   "type": "file",
+   "name": "layernorm.py",
+   "filePath": "ops/layernorm.py",
+   "summary": "Ascend NPU 上的 RMSNorm/LayerNorm 算子封装，含标准、Gemma 与门控（gated）变体。",
+   "tags": [
+    "layernorm",
+    "data-model",
+    "npu",
+    "component"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/layernorm.py:AscendRMSNorm",
+   "type": "class",
+   "name": "AscendRMSNorm",
+   "filePath": "ops/layernorm.py",
+   "lineRange": [
+    28,
+    88
+   ],
+   "summary": "Ascend RMSNorm 算子，提供 NPU 上的 RMS 归一化前向与偏置权重加载。",
+   "tags": [
+    "layernorm",
+    "npu",
+    "component"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/layernorm.py:AscendGemmaRMSNorm",
+   "type": "class",
+   "name": "AscendGemmaRMSNorm",
+   "filePath": "ops/layernorm.py",
+   "lineRange": [
+    91,
+    111
+   ],
+   "summary": "Gemma 风格 RMSNorm 变体的 NPU 实现。",
+   "tags": [
+    "layernorm",
+    "npu",
+    "component"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/layernorm.py:LayerNormFn",
+   "type": "class",
+   "name": "LayerNormFn",
+   "filePath": "ops/layernorm.py",
+   "lineRange": [
+    114,
+    159
+   ],
+   "summary": "通用 LayerNorm 前向函数封装。",
+   "tags": [
+    "layernorm",
+    "npu",
+    "component"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/layernorm.py:AscendRMSNormGated",
+   "type": "class",
+   "name": "AscendRMSNormGated",
+   "filePath": "ops/layernorm.py",
+   "lineRange": [
+    162,
+    201
+   ],
+   "summary": "带门控的 RMSNorm 变体，实现门控归一化前向。",
+   "tags": [
+    "layernorm",
+    "npu",
+    "component"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/linear_op.py",
+   "type": "file",
+   "name": "linear_op.py",
+   "filePath": "ops/linear_op.py",
+   "summary": "自定义并行线性算子层级体系，覆盖列/行并行、序列并行、MLP、O-proj 及 FlashComm2/MatmulAllreduce 等多种通信融合策略。",
+   "tags": [
+    "data-model",
+    "tensor-parallel",
+    "npu",
+    "factory"
+   ],
+   "complexity": "complex",
+   "languageNotes": "文件较大（600+ 行），用类层级对不同张量并行通信模式（all-reduce/sequence/sharded-cp）做策略化封装。"
+  },
+  {
+   "id": "function:ops/linear_op.py:_get_column_parallel_op",
+   "type": "function",
+   "name": "_get_column_parallel_op",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    628,
+    652
+   ],
+   "summary": "选择合适的列并行算子实现。",
+   "tags": [
+    "tensor-parallel",
+    "factory"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/linear_op.py:_get_row_parallel_op",
+   "type": "function",
+   "name": "_get_row_parallel_op",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    655,
+    691
+   ],
+   "summary": "选择合适的行并行算子实现。",
+   "tags": [
+    "tensor-parallel",
+    "factory"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/linear_op.py:get_parallel_op",
+   "type": "function",
+   "name": "get_parallel_op",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    694,
+    723
+   ],
+   "summary": "并行算子工厂入口，按配置选择列/行并行算子实现。",
+   "tags": [
+    "tensor-parallel",
+    "factory",
+    "dispatch"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/linear_op.py:is_moe_layer",
+   "type": "function",
+   "name": "is_moe_layer",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    734,
+    753
+   ],
+   "summary": "判定给定层是否为 MoE 层。",
+   "tags": [
+    "moe",
+    "utility",
+    "validation"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear_op.py:CustomLinearOp",
+   "type": "class",
+   "name": "CustomLinearOp",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    86,
+    125
+   ],
+   "summary": "自定义线性算子基类，封装通信组、TP rank/size 与 apply 调度。",
+   "tags": [
+    "tensor-parallel",
+    "abstract",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear_op.py:CustomColumnParallelOp",
+   "type": "class",
+   "name": "CustomColumnParallelOp",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    128,
+    135
+   ],
+   "summary": "列并行线性算子基类。",
+   "tags": [
+    "tensor-parallel",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear_op.py:CustomRowParallelOp",
+   "type": "class",
+   "name": "CustomRowParallelOp",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    138,
+    167
+   ],
+   "summary": "行并行线性算子基类，含输入并行切分。",
+   "tags": [
+    "tensor-parallel",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear_op.py:OProjRowParallelOp",
+   "type": "class",
+   "name": "OProjRowParallelOp",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    223,
+    269
+   ],
+   "summary": "注意力 O-proj 的行并行算子实现。",
+   "tags": [
+    "tensor-parallel",
+    "attention",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear_op.py:Flashcomm2OProjRowParallelOp",
+   "type": "class",
+   "name": "Flashcomm2OProjRowParallelOp",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    272,
+    382
+   ],
+   "summary": "基于 FlashComm2 的 O-proj 行并行算子，融合通信优化。",
+   "tags": [
+    "tensor-parallel",
+    "communication",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/linear_op.py:MatmulAllreduceRowParallelOp",
+   "type": "class",
+   "name": "MatmulAllreduceRowParallelOp",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    385,
+    420
+   ],
+   "summary": "融合 matmul 与 all-reduce 的行并行算子。",
+   "tags": [
+    "tensor-parallel",
+    "communication",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear_op.py:SequenceRowParallelOp",
+   "type": "class",
+   "name": "SequenceRowParallelOp",
+   "filePath": "ops/linear_op.py",
+   "lineRange": [
+    476,
+    583
+   ],
+   "summary": "序列并行的行并行算子，实现 matmul 与 reduce-scatter 融合。",
+   "tags": [
+    "tensor-parallel",
+    "sequence-parallel",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/linear.py",
+   "type": "file",
+   "name": "linear.py",
+   "filePath": "ops/linear.py",
+   "summary": "Ascend 线性层族，覆盖 QKV/Merged-Column/Row/Column/Replicated 等并行线性层及非量化线性方法。",
+   "tags": [
+    "data-model",
+    "tensor-parallel",
+    "npu",
+    "component"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/linear.py:AscendUnquantizedLinearMethod",
+   "type": "class",
+   "name": "AscendUnquantizedLinearMethod",
+   "filePath": "ops/linear.py",
+   "lineRange": [
+    78,
+    95
+   ],
+   "summary": "非量化线性计算方法，处理权重加载后处理与 apply 前向。",
+   "tags": [
+    "linear",
+    "method",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear.py:AscendLinearBase",
+   "type": "class",
+   "name": "AscendLinearBase",
+   "filePath": "ops/linear.py",
+   "lineRange": [
+    99,
+    128
+   ],
+   "summary": "Ascend 线性层基类，封装公共初始化逻辑。",
+   "tags": [
+    "linear",
+    "abstract",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/linear.py:AscendQKVParallelLinear",
+   "type": "class",
+   "name": "AscendQKVParallelLinear",
+   "filePath": "ops/linear.py",
+   "lineRange": [
+    131,
+    204
+   ],
+   "summary": "QKV 融合并行线性层的 NPU 实现。",
+   "tags": [
+    "linear",
+    "tensor-parallel",
+    "attention"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/linear.py:AscendMergedColumnParallelLinear",
+   "type": "class",
+   "name": "AscendMergedColumnParallelLinear",
+   "filePath": "ops/linear.py",
+   "lineRange": [
+    207,
+    258
+   ],
+   "summary": "合并列并行线性层实现。",
+   "tags": [
+    "linear",
+    "tensor-parallel",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/linear.py:AscendRowParallelLinear",
+   "type": "class",
+   "name": "AscendRowParallelLinear",
+   "filePath": "ops/linear.py",
+   "lineRange": [
+    261,
+    360
+   ],
+   "summary": "行并行线性层实现，含 reduce 通信。",
+   "tags": [
+    "linear",
+    "tensor-parallel",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/linear.py:AscendColumnParallelLinear",
+   "type": "class",
+   "name": "AscendColumnParallelLinear",
+   "filePath": "ops/linear.py",
+   "lineRange": [
+    363,
+    487
+   ],
+   "summary": "列并行线性层实现，含权重加载器。",
+   "tags": [
+    "linear",
+    "tensor-parallel",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/linear.py:AscendReplicatedLinear",
+   "type": "class",
+   "name": "AscendReplicatedLinear",
+   "filePath": "ops/linear.py",
+   "lineRange": [
+    490,
+    572
+   ],
+   "summary": "复制（非并行）线性层实现。",
+   "tags": [
+    "linear",
+    "npu",
+    "component"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/mhc.py",
+   "type": "file",
+   "name": "mhc.py",
+   "filePath": "ops/mhc.py",
+   "summary": "提供 Sinkhorn 归一化的参考实现（hc_split_sinkhorn_ref），用于多头路由/分配相关计算。",
+   "tags": [
+    "utility",
+    "routing",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/mhc.py:hc_split_sinkhorn_ref",
+   "type": "function",
+   "name": "hc_split_sinkhorn_ref",
+   "filePath": "ops/mhc.py",
+   "lineRange": [
+    5,
+    37
+   ],
+   "summary": "Sinkhorn 归一化的参考实现，对分配矩阵做行列归一化迭代。",
+   "tags": [
+    "routing",
+    "utility",
+    "reference"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/mla.py",
+   "type": "file",
+   "name": "mla.py",
+   "filePath": "ops/mla.py",
+   "summary": "多头潜在注意力（MLA）在 Ascend NPU 上的实现，封装 indexer wrapper 与 MLA 前向自定义算子。",
+   "tags": [
+    "attention",
+    "data-model",
+    "npu",
+    "mla"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:ops/mla.py:mla_forward",
+   "type": "function",
+   "name": "mla_forward",
+   "filePath": "ops/mla.py",
+   "lineRange": [
+    179,
+    195
+   ],
+   "summary": "MLA 注意力前向的自定义算子入口。",
+   "tags": [
+    "attention",
+    "forward",
+    "custom-op"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/mla.py:IndexerWrapper",
+   "type": "class",
+   "name": "IndexerWrapper",
+   "filePath": "ops/mla.py",
+   "lineRange": [
+    39,
+    64
+   ],
+   "summary": "MLA indexer 封装，处理潜在向量的索引选择前向。",
+   "tags": [
+    "attention",
+    "mla",
+    "component"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/mla.py:AscendMultiHeadLatentAttention",
+   "type": "class",
+   "name": "AscendMultiHeadLatentAttention",
+   "filePath": "ops/mla.py",
+   "lineRange": [
+    67,
+    176
+   ],
+   "summary": "Ascend 多头潜在注意力模块，实现 MLA 的完整前向。",
+   "tags": [
+    "attention",
+    "mla",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/mm_encoder_attention.py",
+   "type": "file",
+   "name": "mm_encoder_attention.py",
+   "filePath": "ops/mm_encoder_attention.py",
+   "summary": "多模态编码器注意力（MM encoder attention）的 NPU 实现，处理变长序列的 QKV 重排与 cu_seqlens 计算。",
+   "tags": [
+    "attention",
+    "multimodal",
+    "npu",
+    "component"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/mm_encoder_attention.py:AscendMMEncoderAttention",
+   "type": "class",
+   "name": "AscendMMEncoderAttention",
+   "filePath": "ops/mm_encoder_attention.py",
+   "lineRange": [
+    41,
+    177
+   ],
+   "summary": "多模态编码器注意力模块，含序列长度计算、QKV 三维重排与变长注意力前向。",
+   "tags": [
+    "attention",
+    "multimodal",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/qwen2_decoder.py",
+   "type": "file",
+   "name": "qwen2_decoder.py",
+   "filePath": "ops/qwen2_decoder.py",
+   "summary": "Qwen2 解码器在 Ascend 上的优化定制，包含定制 decoder/model/layer/attention/RMSNorm 组件。",
+   "tags": [
+    "data-model",
+    "decoder",
+    "npu",
+    "component"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/qwen2_decoder.py:AscendCustomQwen2Decoder",
+   "type": "class",
+   "name": "AscendCustomQwen2Decoder",
+   "filePath": "ops/qwen2_decoder.py",
+   "lineRange": [
+    23,
+    166
+   ],
+   "summary": "Qwen2 定制解码器构建器，生成针对 NPU 优化的定制模型。",
+   "tags": [
+    "decoder",
+    "npu",
+    "factory"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/qwen2_decoder.py:AscendQwen2Model",
+   "type": "class",
+   "name": "AscendQwen2Model",
+   "filePath": "ops/qwen2_decoder.py",
+   "lineRange": [
+    169,
+    246
+   ],
+   "summary": "Qwen2 模型的 Ascend 定制实现，组织各层前向。",
+   "tags": [
+    "decoder",
+    "model",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/qwen2_decoder.py:AscendQwen2DecoderLayer",
+   "type": "class",
+   "name": "AscendQwen2DecoderLayer",
+   "filePath": "ops/qwen2_decoder.py",
+   "lineRange": [
+    249,
+    287
+   ],
+   "summary": "Qwen2 解码器单层的 NPU 实现。",
+   "tags": [
+    "decoder",
+    "npu",
+    "component"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/qwen2_decoder.py:AscendQwen2Attention",
+   "type": "class",
+   "name": "AscendQwen2Attention",
+   "filePath": "ops/qwen2_decoder.py",
+   "lineRange": [
+    298,
+    346
+   ],
+   "summary": "Qwen2 注意力子层的 NPU 实现。",
+   "tags": [
+    "attention",
+    "decoder",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/qwen2_decoder.py:AscendQwen2RMSNorm",
+   "type": "class",
+   "name": "AscendQwen2RMSNorm",
+   "filePath": "ops/qwen2_decoder.py",
+   "lineRange": [
+    349,
+    356
+   ],
+   "summary": "Qwen2 RMSNorm 子层的 NPU 实现。",
+   "tags": [
+    "layernorm",
+    "decoder",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/register_custom_ops.py",
+   "type": "file",
+   "name": "register_custom_ops.py",
+   "filePath": "ops/register_custom_ops.py",
+   "summary": "向 torch 自定义算子库注册 Ascend NPU 算子（residual 分块、all-gather、pad-reduce、matmul-reduce、rope 等）及其 fake 实现。",
+   "tags": [
+    "registration",
+    "custom-op",
+    "npu",
+    "service"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/register_custom_ops.py:_maybe_chunk_residual_impl",
+   "type": "function",
+   "name": "_maybe_chunk_residual_impl",
+   "filePath": "ops/register_custom_ops.py",
+   "lineRange": [
+    23,
+    37
+   ],
+   "summary": "residual 张量按需分块的自定义算子实现。",
+   "tags": [
+    "custom-op",
+    "npu",
+    "registration"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/register_custom_ops.py:_maybe_all_gather_and_maybe_unpad_impl",
+   "type": "function",
+   "name": "_maybe_all_gather_and_maybe_unpad_impl",
+   "filePath": "ops/register_custom_ops.py",
+   "lineRange": [
+    40,
+    70
+   ],
+   "summary": "按需 all-gather 并去除 padding 的自定义算子实现。",
+   "tags": [
+    "custom-op",
+    "communication",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/register_custom_ops.py:_maybe_pad_and_reduce_impl",
+   "type": "function",
+   "name": "_maybe_pad_and_reduce_impl",
+   "filePath": "ops/register_custom_ops.py",
+   "lineRange": [
+    73,
+    105
+   ],
+   "summary": "按需 padding 并 reduce 的自定义算子实现。",
+   "tags": [
+    "custom-op",
+    "communication",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/rel_pos_attention.py",
+   "type": "file",
+   "name": "rel_pos_attention.py",
+   "filePath": "ops/rel_pos_attention.py",
+   "summary": "相对位置编码注意力（relative position attention）的 Ascend NPU 实现。",
+   "tags": [
+    "attention",
+    "npu",
+    "component"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/rel_pos_attention.py:AscendRelPosAttention",
+   "type": "class",
+   "name": "AscendRelPosAttention",
+   "filePath": "ops/rel_pos_attention.py",
+   "lineRange": [
+    6,
+    68
+   ],
+   "summary": "相对位置注意力模块的 NPU 实现，含相对位置偏置的前向计算。",
+   "tags": [
+    "attention",
+    "npu",
+    "component"
+   ],
+   "complexity": "moderate"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:MoETokenDispatcher",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:MoETokenDispatcher",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithMC2",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithMC2",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithAllGather",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithAllGather",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithAll2AllV",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/token_dispatcher.py",
+   "target": "class:ops/fused_moe/token_dispatcher.py:TokenDispatcherWithAll2AllV",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/gdn.py",
+   "target": "function:ops/gdn.py:_pad_conv1d_host_args_to_capture",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/gdn.py",
+   "target": "function:ops/gdn.py:_pad_conv1d_host_args_to_capture",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/gdn.py",
+   "target": "function:ops/gdn.py:update_conv1d_graph_params",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/gdn.py",
+   "target": "function:ops/gdn.py:update_conv1d_graph_params",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/gdn.py",
+   "target": "class:ops/gdn.py:AscendGatedDeltaNetAttention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/gdn.py",
+   "target": "class:ops/gdn.py:AscendGatedDeltaNetAttention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/layer_shard_linear.py",
+   "target": "function:ops/layer_shard_linear.py:register_layer_to_shard_weight_series",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/layer_shard_linear.py",
+   "target": "function:ops/layer_shard_linear.py:register_layer_to_shard_weight_series",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/layer_shard_linear.py",
+   "target": "function:ops/layer_shard_linear.py:register_all_layers_to_shard_weight_series",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/layer_shard_linear.py",
+   "target": "function:ops/layer_shard_linear.py:register_all_layers_to_shard_weight_series",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/layer_shard_linear.py",
+   "target": "class:ops/layer_shard_linear.py:SeriesMetadata",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/layer_shard_linear.py",
+   "target": "class:ops/layer_shard_linear.py:SeriesMetadata",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:AscendRMSNorm",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:AscendRMSNorm",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:AscendGemmaRMSNorm",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:AscendGemmaRMSNorm",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:LayerNormFn",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:LayerNormFn",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:AscendRMSNormGated",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/layernorm.py",
+   "target": "class:ops/layernorm.py:AscendRMSNormGated",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:_get_column_parallel_op",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:_get_column_parallel_op",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:_get_row_parallel_op",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:_get_row_parallel_op",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:get_parallel_op",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:get_parallel_op",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:is_moe_layer",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "function:ops/linear_op.py:is_moe_layer",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:CustomLinearOp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:CustomLinearOp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:CustomColumnParallelOp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:CustomColumnParallelOp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:CustomRowParallelOp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:CustomRowParallelOp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:OProjRowParallelOp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:OProjRowParallelOp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:Flashcomm2OProjRowParallelOp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:Flashcomm2OProjRowParallelOp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:MatmulAllreduceRowParallelOp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:MatmulAllreduceRowParallelOp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:SequenceRowParallelOp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear_op.py",
+   "target": "class:ops/linear_op.py:SequenceRowParallelOp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendUnquantizedLinearMethod",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendUnquantizedLinearMethod",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendLinearBase",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendLinearBase",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendQKVParallelLinear",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendQKVParallelLinear",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendMergedColumnParallelLinear",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendMergedColumnParallelLinear",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendRowParallelLinear",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendRowParallelLinear",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendColumnParallelLinear",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendColumnParallelLinear",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendReplicatedLinear",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/linear.py",
+   "target": "class:ops/linear.py:AscendReplicatedLinear",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/mhc.py",
+   "target": "function:ops/mhc.py:hc_split_sinkhorn_ref",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/mhc.py",
+   "target": "function:ops/mhc.py:hc_split_sinkhorn_ref",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/mla.py",
+   "target": "function:ops/mla.py:mla_forward",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/mla.py",
+   "target": "function:ops/mla.py:mla_forward",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/mla.py",
+   "target": "class:ops/mla.py:IndexerWrapper",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/mla.py",
+   "target": "class:ops/mla.py:IndexerWrapper",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/mla.py",
+   "target": "class:ops/mla.py:AscendMultiHeadLatentAttention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/mla.py",
+   "target": "class:ops/mla.py:AscendMultiHeadLatentAttention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/mm_encoder_attention.py",
+   "target": "class:ops/mm_encoder_attention.py:AscendMMEncoderAttention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/mm_encoder_attention.py",
+   "target": "class:ops/mm_encoder_attention.py:AscendMMEncoderAttention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendCustomQwen2Decoder",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendCustomQwen2Decoder",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2Model",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2Model",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2DecoderLayer",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2DecoderLayer",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2Attention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2Attention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2RMSNorm",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/qwen2_decoder.py",
+   "target": "class:ops/qwen2_decoder.py:AscendQwen2RMSNorm",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/register_custom_ops.py",
+   "target": "function:ops/register_custom_ops.py:_maybe_chunk_residual_impl",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/register_custom_ops.py",
+   "target": "function:ops/register_custom_ops.py:_maybe_chunk_residual_impl",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/register_custom_ops.py",
+   "target": "function:ops/register_custom_ops.py:_maybe_all_gather_and_maybe_unpad_impl",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/register_custom_ops.py",
+   "target": "function:ops/register_custom_ops.py:_maybe_all_gather_and_maybe_unpad_impl",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/register_custom_ops.py",
+   "target": "function:ops/register_custom_ops.py:_maybe_pad_and_reduce_impl",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/register_custom_ops.py",
+   "target": "function:ops/register_custom_ops.py:_maybe_pad_and_reduce_impl",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/rel_pos_attention.py",
+   "target": "class:ops/rel_pos_attention.py:AscendRelPosAttention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/rel_pos_attention.py",
+   "target": "class:ops/rel_pos_attention.py:AscendRelPosAttention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

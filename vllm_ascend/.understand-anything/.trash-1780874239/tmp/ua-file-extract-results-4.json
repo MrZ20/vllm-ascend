@@ -1,0 +1,2639 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "eplb/core/policy/policy_abstract.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 26,
+      "classes": [
+        {
+          "name": "EplbPolicy",
+          "startLine": 6,
+          "endLine": 30,
+          "methods": [
+            "rebalance_experts"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "EplbPolicy",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "eplb/core/policy/policy_default_eplb.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 350,
+      "nonEmptyLines": 298,
+      "classes": [
+        {
+          "name": "DynamicTable",
+          "startLine": 11,
+          "endLine": 24,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "DefaultEplb",
+          "startLine": 27,
+          "endLine": 350,
+          "methods": [
+            "add_redundant",
+            "original_compute_balanced_pack_redundancy",
+            "compute_balanced_pack_redundancy",
+            "compute_balanced_pack",
+            "get_redundant_num",
+            "calculate_max_heat_per_layer",
+            "constraint_expert_local_exchange",
+            "rebalance_experts"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "DynamicTable",
+          "line": 11,
+          "isDefault": false
+        },
+        {
+          "name": "DefaultEplb",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "add_redundant",
+          "callee": "np.zeros",
+          "lineNumber": 31
+        },
+        {
+          "caller": "add_redundant",
+          "callee": "range",
+          "lineNumber": 32
+        },
+        {
+          "caller": "add_redundant",
+          "callee": "defaultdict",
+          "lineNumber": 33
+        },
+        {
+          "caller": "add_redundant",
+          "callee": "current_expert_table[layer_idx].copy",
+          "lineNumber": 34
+        },
+        {
+          "caller": "add_redundant",
+          "callee": "expert_workload[layer_idx].copy",
+          "lineNumber": 35
+        },
+        {
+          "caller": "add_redundant",
+          "callee": "range",
+          "lineNumber": 36
+        },
+        {
+          "caller": "add_redundant",
+          "callee": "range",
+          "lineNumber": 37
+        },
+        {
+          "caller": "add_redundant",
+          "callee": "range",
+          "lineNumber": 39
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 48
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 49
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 50
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "np.argsort",
+          "lineNumber": 51
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 53
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "route_expert_redundancy[weights[0][0]].append",
+          "lineNumber": 54
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 55
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 65
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 66
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 70
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 71
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 72
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "boxes[index].append",
+          "lineNumber": 78
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "boxes_weights[index].append",
+          "lineNumber": 79
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "np.argsort",
+          "lineNumber": 84
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 90
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "boxes[min_box_index].append",
+          "lineNumber": 99
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "boxes_weights[min_box_index].append",
+          "lineNumber": 100
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 110
+        },
+        {
+          "caller": "original_compute_balanced_pack_redundancy",
+          "callee": "result.append",
+          "lineNumber": 111
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 126
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 127
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 128
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "np.argsort",
+          "lineNumber": 129
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 131
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "route_expert_redundancy[weights[0][0]].append",
+          "lineNumber": 132
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 133
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "RuntimeError",
+          "lineNumber": 139
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 143
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 144
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "np.zeros",
+          "lineNumber": 148
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 152
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "len",
+          "lineNumber": 153
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 154
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "np.argsort",
+          "lineNumber": 160
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 164
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "boxes[min_box_index].append",
+          "lineNumber": 170
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "boxes_weights[min_box_index].append",
+          "lineNumber": 171
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "range",
+          "lineNumber": 179
+        },
+        {
+          "caller": "compute_balanced_pack_redundancy",
+          "callee": "result.append",
+          "lineNumber": 180
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "np.argsort",
+          "lineNumber": 195
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "len",
+          "lineNumber": 197
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "RuntimeError",
+          "lineNumber": 199
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "range",
+          "lineNumber": 203
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "range",
+          "lineNumber": 204
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "range",
+          "lineNumber": 210
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "boxes[min_box_index].append",
+          "lineNumber": 215
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "boxes_weights[min_box_index].append",
+          "lineNumber": 216
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "range",
+          "lineNumber": 224
+        },
+        {
+          "caller": "compute_balanced_pack",
+          "callee": "result.append",
+          "lineNumber": 225
+        },
+        {
+          "caller": "get_redundant_num",
+          "callee": "np.sum",
+          "lineNumber": 239
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "range",
+          "lineNumber": 245
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "np.sum",
+          "lineNumber": 246
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "max_heat_per_layer.append",
+          "lineNumber": 247
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "np.max",
+          "lineNumber": 247
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 252
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "len",
+          "lineNumber": 252
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 253
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "len",
+          "lineNumber": 253
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "int",
+          "lineNumber": 254
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "int",
+          "lineNumber": 255
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "len",
+          "lineNumber": 256
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 262
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 264
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "remaining_elements.append",
+          "lineNumber": 271
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 274
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "DynamicTable",
+          "lineNumber": 284
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.array",
+          "lineNumber": 285
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.array",
+          "lineNumber": 286
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "cast",
+          "lineNumber": 290
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.unique",
+          "lineNumber": 291
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.get_redundant_num",
+          "lineNumber": 292
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "len",
+          "lineNumber": 293
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.add_redundant",
+          "lineNumber": 294
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.calculate_max_heat_per_layer",
+          "lineNumber": 295
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "sum",
+          "lineNumber": 296
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "ValueError",
+          "lineNumber": 304
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "ValueError",
+          "lineNumber": 309
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "ValueError",
+          "lineNumber": 312
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 319
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 319
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 321
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 322
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 325
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "enumerate",
+          "lineNumber": 326
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.original_compute_balanced_pack_redundancy",
+          "lineNumber": 330
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "max",
+          "lineNumber": 335
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.constraint_expert_local_exchange",
+          "lineNumber": 337
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 340
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "layer_changed_ratio.append",
+          "lineNumber": 341
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.argsort",
+          "lineNumber": 343
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "sum",
+          "lineNumber": 344
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.array(new_global_deployment).tolist",
+          "lineNumber": 350
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.array",
+          "lineNumber": 350
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "eplb/core/policy/policy_factory.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 28,
+      "classes": [
+        {
+          "name": "PolicyFactory",
+          "startLine": 10,
+          "endLine": 30,
+          "methods": [
+            "generate_policy"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "PolicyFactory",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "generate_policy",
+          "callee": "policy.get",
+          "lineNumber": 26
+        },
+        {
+          "caller": "generate_policy",
+          "callee": "policy_class",
+          "lineNumber": 27
+        },
+        {
+          "caller": "generate_policy",
+          "callee": "warm_up",
+          "lineNumber": 29
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "eplb/core/policy/policy_flashlb.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1026,
+      "nonEmptyLines": 863,
+      "functions": [
+        {
+          "name": "min_max_replica",
+          "startLine": 25,
+          "endLine": 62,
+          "params": [
+            "mu",
+            "var",
+            "num_available_replicas",
+            "current_replicas",
+            "z_score"
+          ]
+        },
+        {
+          "name": "max_delta_replica",
+          "startLine": 66,
+          "endLine": 103,
+          "params": [
+            "mu",
+            "var",
+            "num_available_replicas",
+            "current_replicas",
+            "z_score"
+          ]
+        },
+        {
+          "name": "percentage_replica",
+          "startLine": 107,
+          "endLine": 156,
+          "params": [
+            "mu",
+            "var",
+            "num_available_replicas",
+            "current_replicas",
+            "z_score"
+          ]
+        },
+        {
+          "name": "make_replica",
+          "startLine": 159,
+          "endLine": 172,
+          "params": [
+            "mu",
+            "var",
+            "num_available_replicas",
+            "current_replicas",
+            "z_score",
+            "method"
+          ]
+        },
+        {
+          "name": "compute_updated_device_variance",
+          "startLine": 176,
+          "endLine": 208,
+          "params": [
+            "new_expert_id",
+            "device_slots",
+            "current_device_var",
+            "expert_var",
+            "expert_cov",
+            "expert_replicas"
+          ]
+        },
+        {
+          "name": "lpt_deployment",
+          "startLine": 212,
+          "endLine": 290,
+          "params": [
+            "mu",
+            "var",
+            "cov",
+            "deployment",
+            "deployed_replicas",
+            "total_replicas",
+            "z_score"
+          ]
+        },
+        {
+          "name": "compute_score",
+          "startLine": 294,
+          "endLine": 323,
+          "params": [
+            "val_data",
+            "simulated_replicas",
+            "simulated_deployment"
+          ]
+        },
+        {
+          "name": "generate_layered_experts",
+          "startLine": 966,
+          "endLine": 1014,
+          "params": [
+            "num_layers",
+            "layer_shape",
+            "expert_min",
+            "expert_max"
+          ]
+        },
+        {
+          "name": "warm_up",
+          "startLine": 1017,
+          "endLine": 1026,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "FlashTree",
+          "startLine": 326,
+          "endLine": 504,
+          "methods": [
+            "__init__",
+            "compute_statistics",
+            "neighbor_search",
+            "optimize_balanceness"
+          ],
+          "properties": []
+        },
+        {
+          "name": "FlashLBConfig",
+          "startLine": 507,
+          "endLine": 512,
+          "methods": [],
+          "properties": [
+            "layers_upper_bound",
+            "z_score",
+            "depth",
+            "width",
+            "sample_size"
+          ]
+        },
+        {
+          "name": "FlashLB",
+          "startLine": 515,
+          "endLine": 963,
+          "methods": [
+            "__init__",
+            "min_max_replica",
+            "compute_statistics",
+            "sliding_update_stats",
+            "incremental_update_stats",
+            "register_hotness",
+            "need_update",
+            "compute_match",
+            "minimize_redeploy_with_inner_permutation",
+            "rebalance_experts"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "min_max_replica",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "max_delta_replica",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "percentage_replica",
+          "line": 106,
+          "isDefault": false
+        },
+        {
+          "name": "make_replica",
+          "line": 159,
+          "isDefault": false
+        },
+        {
+          "name": "compute_updated_device_variance",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "lpt_deployment",
+          "line": 211,
+          "isDefault": false
+        },
+        {
+          "name": "compute_score",
+          "line": 293,
+          "isDefault": false
+        },
+        {
+          "name": "FlashTree",
+          "line": 326,
+          "isDefault": false
+        },
+        {
+          "name": "FlashLBConfig",
+          "line": 507,
+          "isDefault": false
+        },
+        {
+          "name": "FlashLB",
+          "line": 515,
+          "isDefault": false
+        },
+        {
+          "name": "generate_layered_experts",
+          "line": 966,
+          "isDefault": false
+        },
+        {
+          "name": "warm_up",
+          "line": 1017,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "min_max_replica",
+          "callee": "np.sqrt",
+          "lineNumber": 44
+        },
+        {
+          "caller": "min_max_replica",
+          "callee": "np.ones",
+          "lineNumber": 45
+        },
+        {
+          "caller": "min_max_replica",
+          "callee": "range",
+          "lineNumber": 49
+        },
+        {
+          "caller": "min_max_replica",
+          "callee": "range",
+          "lineNumber": 52
+        },
+        {
+          "caller": "min_max_replica",
+          "callee": "np.sqrt",
+          "lineNumber": 59
+        },
+        {
+          "caller": "max_delta_replica",
+          "callee": "np.sqrt",
+          "lineNumber": 85
+        },
+        {
+          "caller": "max_delta_replica",
+          "callee": "np.ones",
+          "lineNumber": 86
+        },
+        {
+          "caller": "max_delta_replica",
+          "callee": "range",
+          "lineNumber": 90
+        },
+        {
+          "caller": "max_delta_replica",
+          "callee": "range",
+          "lineNumber": 93
+        },
+        {
+          "caller": "max_delta_replica",
+          "callee": "np.sqrt",
+          "lineNumber": 100
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.sqrt",
+          "lineNumber": 126
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.sum",
+          "lineNumber": 127
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.ones",
+          "lineNumber": 129
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "range",
+          "lineNumber": 133
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.zeros",
+          "lineNumber": 134
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.floor(quotas).astype",
+          "lineNumber": 145
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.floor",
+          "lineNumber": 145
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.sum",
+          "lineNumber": 147
+        },
+        {
+          "caller": "percentage_replica",
+          "callee": "np.argsort",
+          "lineNumber": 151
+        },
+        {
+          "caller": "make_replica",
+          "callee": "percentage_replica",
+          "lineNumber": 168
+        },
+        {
+          "caller": "make_replica",
+          "callee": "max_delta_replica",
+          "lineNumber": 170
+        },
+        {
+          "caller": "make_replica",
+          "callee": "min_max_replica",
+          "lineNumber": 172
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "np.argsort",
+          "lineNumber": 241
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "np.ones_like",
+          "lineNumber": 243
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "np.zeros",
+          "lineNumber": 244
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "np.zeros",
+          "lineNumber": 245
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "np.zeros",
+          "lineNumber": 246
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "range",
+          "lineNumber": 249
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "compute_updated_device_variance",
+          "lineNumber": 253
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "range",
+          "lineNumber": 261
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "range",
+          "lineNumber": 266
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "compute_updated_device_variance",
+          "lineNumber": 273
+        },
+        {
+          "caller": "lpt_deployment",
+          "callee": "np.sqrt",
+          "lineNumber": 277
+        },
+        {
+          "caller": "compute_score",
+          "callee": "np.empty",
+          "lineNumber": 309
+        },
+        {
+          "caller": "compute_score",
+          "callee": "range",
+          "lineNumber": 310
+        },
+        {
+          "caller": "compute_score",
+          "callee": "range",
+          "lineNumber": 313
+        },
+        {
+          "caller": "compute_score",
+          "callee": "range",
+          "lineNumber": 315
+        },
+        {
+          "caller": "compute_score",
+          "callee": "max",
+          "lineNumber": 319
+        },
+        {
+          "caller": "compute_score",
+          "callee": "np.mean",
+          "lineNumber": 323
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 328
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 328
+        },
+        {
+          "caller": "__init__",
+          "callee": "FlashTree.compute_statistics",
+          "lineNumber": 336
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.mean",
+          "lineNumber": 341
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.sum",
+          "lineNumber": 344
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.zeros",
+          "lineNumber": 347
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.zeros",
+          "lineNumber": 348
+        },
+        {
+          "caller": "neighbor_search",
+          "callee": "min",
+          "lineNumber": 371
+        },
+        {
+          "caller": "neighbor_search",
+          "callee": "max",
+          "lineNumber": 371
+        },
+        {
+          "caller": "neighbor_search",
+          "callee": "get_score",
+          "lineNumber": 373
+        },
+        {
+          "caller": "neighbor_search",
+          "callee": "range",
+          "lineNumber": 376
+        },
+        {
+          "caller": "neighbor_search",
+          "callee": "get_score",
+          "lineNumber": 379
+        },
+        {
+          "caller": "neighbor_search",
+          "callee": "get_score",
+          "lineNumber": 385
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.ones",
+          "lineNumber": 403
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "make_replica",
+          "lineNumber": 404
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.ones",
+          "lineNumber": 405
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "lpt_deployment",
+          "lineNumber": 406
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.zeros",
+          "lineNumber": 407
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "compute_score",
+          "lineNumber": 409
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "math.ceil",
+          "lineNumber": 412
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.sqrt",
+          "lineNumber": 413
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.argsort",
+          "lineNumber": 414
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.zeros",
+          "lineNumber": 416
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.ones",
+          "lineNumber": 417
+        },
+        {
+          "caller": "_lpt_deployment",
+          "callee": "lpt_deployment",
+          "lineNumber": 421
+        },
+        {
+          "caller": "_lpt_deployment",
+          "callee": "np.zeros_like",
+          "lineNumber": 421
+        },
+        {
+          "caller": "get_score",
+          "callee": "deployed_replicas.copy",
+          "lineNumber": 449
+        },
+        {
+          "caller": "get_score",
+          "callee": "f",
+          "lineNumber": 452
+        },
+        {
+          "caller": "get_score",
+          "callee": "compute_score",
+          "lineNumber": 455
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "range",
+          "lineNumber": 458
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "make_replica",
+          "lineNumber": 464
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.ones",
+          "lineNumber": 465
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "make_replica",
+          "lineNumber": 467
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.ones",
+          "lineNumber": 468
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "make_replica",
+          "lineNumber": 470
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.ones",
+          "lineNumber": 471
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "(simulation_replicas[:interval_size] - 1).sum",
+          "lineNumber": 474
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "self.neighbor_search",
+          "lineNumber": 476
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "get_score",
+          "lineNumber": 486
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.ones",
+          "lineNumber": 498
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "lpt_deployment",
+          "lineNumber": 499
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "np.zeros_like",
+          "lineNumber": 500
+        },
+        {
+          "caller": "optimize_balanceness",
+          "callee": "compute_score",
+          "lineNumber": 502
+        },
+        {
+          "caller": "__init__",
+          "callee": "FlashLBConfig",
+          "lineNumber": 532
+        },
+        {
+          "caller": "min_max_replica",
+          "callee": "min_max_replica",
+          "lineNumber": 562
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.mean",
+          "lineNumber": 578
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.sum",
+          "lineNumber": 581
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.zeros",
+          "lineNumber": 585
+        },
+        {
+          "caller": "compute_statistics",
+          "callee": "np.zeros",
+          "lineNumber": 586
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "mean.astype",
+          "lineNumber": 609
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "cov.astype",
+          "lineNumber": 610
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "x_old.astype",
+          "lineNumber": 611
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "x_new.astype",
+          "lineNumber": 612
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "np.sum",
+          "lineNumber": 615
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "np.sum",
+          "lineNumber": 616
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "np.dot",
+          "lineNumber": 624
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "np.dot",
+          "lineNumber": 625
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "np.outer",
+          "lineNumber": 628
+        },
+        {
+          "caller": "sliding_update_stats",
+          "callee": "np.diag",
+          "lineNumber": 631
+        },
+        {
+          "caller": "incremental_update_stats",
+          "callee": "np.sum",
+          "lineNumber": 654
+        },
+        {
+          "caller": "incremental_update_stats",
+          "callee": "np.dot",
+          "lineNumber": 664
+        },
+        {
+          "caller": "incremental_update_stats",
+          "callee": "np.outer",
+          "lineNumber": 665
+        },
+        {
+          "caller": "incremental_update_stats",
+          "callee": "mean.reshape",
+          "lineNumber": 669
+        },
+        {
+          "caller": "incremental_update_stats",
+          "callee": "np.dot",
+          "lineNumber": 672
+        },
+        {
+          "caller": "incremental_update_stats",
+          "callee": "np.dot",
+          "lineNumber": 672
+        },
+        {
+          "caller": "incremental_update_stats",
+          "callee": "np.diag",
+          "lineNumber": 675
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "np.zeros",
+          "lineNumber": 691
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "range",
+          "lineNumber": 692
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "range",
+          "lineNumber": 693
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "deployment[layer].ravel",
+          "lineNumber": 694
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "rank_load[stage, layer].ravel",
+          "lineNumber": 695
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "np.add.at",
+          "lineNumber": 696
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "range",
+          "lineNumber": 701
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "np.zeros",
+          "lineNumber": 707
+        },
+        {
+          "caller": "register_hotness",
+          "callee": "min",
+          "lineNumber": 725
+        },
+        {
+          "caller": "need_update",
+          "callee": "self.average_to_peak_history.get",
+          "lineNumber": 742
+        },
+        {
+          "caller": "need_update",
+          "callee": "compute_score",
+          "lineNumber": 749
+        },
+        {
+          "caller": "compute_match",
+          "callee": "np.zeros",
+          "lineNumber": 775
+        },
+        {
+          "caller": "compute_match",
+          "callee": "range",
+          "lineNumber": 776
+        },
+        {
+          "caller": "compute_match",
+          "callee": "range",
+          "lineNumber": 777
+        },
+        {
+          "caller": "compute_match",
+          "callee": "range",
+          "lineNumber": 779
+        },
+        {
+          "caller": "compute_match",
+          "callee": "min",
+          "lineNumber": 780
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "ValueError",
+          "lineNumber": 798
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "np.array",
+          "lineNumber": 805
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "np.bincount",
+          "lineNumber": 805
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "np.array",
+          "lineNumber": 806
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "np.bincount",
+          "lineNumber": 806
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "FlashLB.compute_match",
+          "lineNumber": 809
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "linear_sum_assignment",
+          "lineNumber": 811
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "list",
+          "lineNumber": 812
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "zip",
+          "lineNumber": 812
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "row_ind.tolist",
+          "lineNumber": 812
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "col_ind.tolist",
+          "lineNumber": 812
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "np.empty_like",
+          "lineNumber": 815
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "enumerate",
+          "lineNumber": 821
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "val_to_positions.setdefault(v, []).append",
+          "lineNumber": 822
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "val_to_positions.setdefault",
+          "lineNumber": 822
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "np.empty",
+          "lineNumber": 824
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "set",
+          "lineNumber": 826
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "enumerate",
+          "lineNumber": 829
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "val_to_positions.get",
+          "lineNumber": 830
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "positions.pop",
+          "lineNumber": 832
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "used_dst_positions.add",
+          "lineNumber": 835
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "range",
+          "lineNumber": 838
+        },
+        {
+          "caller": "minimize_redeploy_with_inner_permutation",
+          "callee": "range",
+          "lineNumber": 840
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "get_dynamic_eplb_group",
+          "lineNumber": 865
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "logger.info",
+          "lineNumber": 870
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.array",
+          "lineNumber": 871
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.array",
+          "lineNumber": 872
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "min",
+          "lineNumber": 878
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.unique",
+          "lineNumber": 880
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "current_deployment[0].reshape",
+          "lineNumber": 880
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "len",
+          "lineNumber": 882
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "current_deployment[0].reshape",
+          "lineNumber": 882
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.register_hotness",
+          "lineNumber": 885
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 888
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.bincount",
+          "lineNumber": 890
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "current_deployment[layer].reshape",
+          "lineNumber": 891
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 895
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 896
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 897
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 898
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 899
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.zeros",
+          "lineNumber": 900
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 903
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.need_update",
+          "lineNumber": 904
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.average_to_peak_history.get",
+          "lineNumber": 908
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.arange",
+          "lineNumber": 920
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "max",
+          "lineNumber": 924
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "data[-window * self.sample_size :].reshape((-1, window, *shape[1:])).sum",
+          "lineNumber": 925
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "data[-window * self.sample_size :].reshape",
+          "lineNumber": 925
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "FlashTree",
+          "lineNumber": 927
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "flash_tree.optimize_balanceness",
+          "lineNumber": 928
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.current_deployment.get",
+          "lineNumber": 934
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "FlashLB.minimize_redeploy_with_inner_permutation",
+          "lineNumber": 939
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "compute_score",
+          "lineNumber": 942
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.current_deployed_replicas.get",
+          "lineNumber": 943
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.argsort",
+          "lineNumber": 949
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "len",
+          "lineNumber": 962
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "range",
+          "lineNumber": 995
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "torch.arange",
+          "lineNumber": 997
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "torch.randint",
+          "lineNumber": 1000
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "torch.cat",
+          "lineNumber": 1005
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "torch.randperm",
+          "lineNumber": 1006
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "layer_shuffled.reshape",
+          "lineNumber": 1010
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "layers.append",
+          "lineNumber": 1011
+        },
+        {
+          "caller": "generate_layered_experts",
+          "callee": "torch.stack",
+          "lineNumber": 1014
+        },
+        {
+          "caller": "warm_up",
+          "callee": "FlashLB",
+          "lineNumber": 1022
+        },
+        {
+          "caller": "warm_up",
+          "callee": "generate_layered_experts",
+          "lineNumber": 1024
+        },
+        {
+          "caller": "warm_up",
+          "callee": "algo.rebalance_experts",
+          "lineNumber": 1026
+        },
+        {
+          "caller": "warm_up",
+          "callee": "torch.randint",
+          "lineNumber": 1026
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 12,
+        "functionCount": 9,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "eplb/core/policy/policy_random.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 19,
+      "classes": [
+        {
+          "name": "RandomLoadBalance",
+          "startLine": 11,
+          "endLine": 26,
+          "methods": [
+            "rebalance_experts"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "RandomLoadBalance",
+          "line": 11,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "rebalance_experts",
+          "callee": "copy.deepcopy",
+          "lineNumber": 13
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "len",
+          "lineNumber": 14
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 16
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "new_table[i][indices[0]][-1].clone",
+          "lineNumber": 22
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "eplb/core/policy/policy_swift_balancer.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 751,
+      "nonEmptyLines": 625,
+      "classes": [
+        {
+          "name": "DynamicTable",
+          "startLine": 13,
+          "endLine": 26,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "SwiftBalanceEplb",
+          "startLine": 29,
+          "endLine": 751,
+          "methods": [
+            "__init__",
+            "calculate_max_heat_per_layer",
+            "get_original_workload",
+            "constraint_expert_local_exchange",
+            "calculate_imbalance",
+            "statistics_expert_distribution",
+            "compute_redundant_assignments",
+            "fill_in_undeployed_ranks",
+            "non_redundant_expert_information",
+            "recomputing_initial_weight",
+            "distribute_redundant_experts",
+            "redundancy_again",
+            "redundant_expert_deployment",
+            "swap_experts_between_ranks",
+            "expert_exchange_between_ranks",
+            "exchange_experts",
+            "rebalance_experts"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "DynamicTable",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "SwiftBalanceEplb",
+          "line": 29,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "torch.npu.device_count",
+          "lineNumber": 42
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "range",
+          "lineNumber": 47
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "np.sum",
+          "lineNumber": 48
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "max_heat_per_layer.append",
+          "lineNumber": 49
+        },
+        {
+          "caller": "calculate_max_heat_per_layer",
+          "callee": "np.max",
+          "lineNumber": 49
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "np.zeros",
+          "lineNumber": 60
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "range",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "defaultdict",
+          "lineNumber": 62
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "current_expert_table[layer_idx].copy",
+          "lineNumber": 63
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "expert_workload[layer_idx].copy",
+          "lineNumber": 64
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "range",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "range",
+          "lineNumber": 66
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "int",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_original_workload",
+          "callee": "range",
+          "lineNumber": 68
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 77
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "len",
+          "lineNumber": 77
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 78
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "len",
+          "lineNumber": 78
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "int",
+          "lineNumber": 79
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "int",
+          "lineNumber": 80
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "len",
+          "lineNumber": 81
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 87
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 89
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "remaining_elements.append",
+          "lineNumber": 96
+        },
+        {
+          "caller": "constraint_expert_local_exchange",
+          "callee": "range",
+          "lineNumber": 99
+        },
+        {
+          "caller": "calculate_imbalance",
+          "callee": "np.zeros_like",
+          "lineNumber": 111
+        },
+        {
+          "caller": "calculate_imbalance",
+          "callee": "enumerate",
+          "lineNumber": 112
+        },
+        {
+          "caller": "calculate_imbalance",
+          "callee": "enumerate",
+          "lineNumber": 117
+        },
+        {
+          "caller": "calculate_imbalance",
+          "callee": "abs",
+          "lineNumber": 131
+        },
+        {
+          "caller": "calculate_imbalance",
+          "callee": "per_layer_imbalance.append",
+          "lineNumber": 135
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "len",
+          "lineNumber": 157
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "range",
+          "lineNumber": 158
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "np.zeros",
+          "lineNumber": 160
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "set",
+          "lineNumber": 161
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "range",
+          "lineNumber": 163
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "range",
+          "lineNumber": 164
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "int",
+          "lineNumber": 165
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "existing_experts.add",
+          "lineNumber": 167
+        },
+        {
+          "caller": "statistics_expert_distribution",
+          "callee": "redundant_expert_pos[rank_id].append",
+          "lineNumber": 170
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "initial_weights.copy",
+          "lineNumber": 196
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "np.zeros",
+          "lineNumber": 197
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "range",
+          "lineNumber": 199
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "np.argsort",
+          "lineNumber": 200
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "np.zeros",
+          "lineNumber": 213
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "range",
+          "lineNumber": 219
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "range",
+          "lineNumber": 220
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "redundant_expert_list.append",
+          "lineNumber": 221
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "float",
+          "lineNumber": 221
+        },
+        {
+          "caller": "compute_redundant_assignments",
+          "callee": "redundant_expert_list.sort",
+          "lineNumber": 223
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "self.recomputing_initial_weight",
+          "lineNumber": 242
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "np.argsort",
+          "lineNumber": 246
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "np.isclose",
+          "lineNumber": 253
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "ValueError",
+          "lineNumber": 254
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "rev_expert_per_rank[rank_idx].add",
+          "lineNumber": 258
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "np.zeros",
+          "lineNumber": 265
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "len",
+          "lineNumber": 265
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "enumerate",
+          "lineNumber": 266
+        },
+        {
+          "caller": "fill_in_undeployed_ranks",
+          "callee": "enumerate",
+          "lineNumber": 267
+        },
+        {
+          "caller": "non_redundant_expert_information",
+          "callee": "np.full",
+          "lineNumber": 296
+        },
+        {
+          "caller": "non_redundant_expert_information",
+          "callee": "np.zeros",
+          "lineNumber": 297
+        },
+        {
+          "caller": "non_redundant_expert_information",
+          "callee": "enumerate",
+          "lineNumber": 299
+        },
+        {
+          "caller": "non_redundant_expert_information",
+          "callee": "enumerate",
+          "lineNumber": 300
+        },
+        {
+          "caller": "recomputing_initial_weight",
+          "callee": "np.zeros",
+          "lineNumber": 316
+        },
+        {
+          "caller": "recomputing_initial_weight",
+          "callee": "np.full",
+          "lineNumber": 323
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "len",
+          "lineNumber": 363
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "defaultdict",
+          "lineNumber": 364
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "np.zeros",
+          "lineNumber": 365
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "range",
+          "lineNumber": 370
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "len",
+          "lineNumber": 371
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "redundant_expert_pos[candidate].pop",
+          "lineNumber": 381
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "rev_expert_per_rank[candidate].add",
+          "lineNumber": 386
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "range",
+          "lineNumber": 389
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "len",
+          "lineNumber": 390
+        },
+        {
+          "caller": "distribute_redundant_experts",
+          "callee": "undeployed_ranks.append",
+          "lineNumber": 391
+        },
+        {
+          "caller": "redundancy_again",
+          "callee": "self.statistics_expert_distribution",
+          "lineNumber": 422
+        },
+        {
+          "caller": "redundancy_again",
+          "callee": "initial_weights.append",
+          "lineNumber": 427
+        },
+        {
+          "caller": "redundancy_again",
+          "callee": "self.compute_redundant_assignments",
+          "lineNumber": 429
+        },
+        {
+          "caller": "redundancy_again",
+          "callee": "self.non_redundant_expert_information",
+          "lineNumber": 433
+        },
+        {
+          "caller": "redundancy_again",
+          "callee": "self.distribute_redundant_experts",
+          "lineNumber": 437
+        },
+        {
+          "caller": "redundancy_again",
+          "callee": "len",
+          "lineNumber": 441
+        },
+        {
+          "caller": "redundancy_again",
+          "callee": "self.fill_in_undeployed_ranks",
+          "lineNumber": 442
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "range",
+          "lineNumber": 474
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "self.redundancy_again",
+          "lineNumber": 485
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "all_node_assignments.append",
+          "lineNumber": 487
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "all_node_loads.append",
+          "lineNumber": 488
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "updated_weights.append",
+          "lineNumber": 489
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "num_com_between_rank.append",
+          "lineNumber": 490
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "rev_expert_per_rank.append",
+          "lineNumber": 491
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "self.redundancy_again",
+          "lineNumber": 500
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "all_node_assignments.append",
+          "lineNumber": 502
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "all_node_loads.append",
+          "lineNumber": 503
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "updated_weights.append",
+          "lineNumber": 504
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "num_com_between_rank.append",
+          "lineNumber": 505
+        },
+        {
+          "caller": "redundant_expert_deployment",
+          "callee": "rev_expert_per_rank.append",
+          "lineNumber": 506
+        },
+        {
+          "caller": "swap_experts_between_ranks",
+          "callee": "float",
+          "lineNumber": 532
+        },
+        {
+          "caller": "swap_experts_between_ranks",
+          "callee": "float",
+          "lineNumber": 537
+        },
+        {
+          "caller": "swap_experts_between_ranks",
+          "callee": "max",
+          "lineNumber": 541
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "range",
+          "lineNumber": 579
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "len",
+          "lineNumber": 579
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "rank_deploy_sets.append",
+          "lineNumber": 580
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "set",
+          "lineNumber": 580
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "np.argsort",
+          "lineNumber": 587
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "int",
+          "lineNumber": 588
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "float",
+          "lineNumber": 589
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "self.swap_experts_between_ranks",
+          "lineNumber": 601
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "rank_deploy_sets[max_load_rank_id].remove",
+          "lineNumber": 614
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "rank_deploy_sets[swap_rank_id].remove",
+          "lineNumber": 615
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "rank_deploy_sets[max_load_rank_id].add",
+          "lineNumber": 616
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "rank_deploy_sets[swap_rank_id].add",
+          "lineNumber": 617
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "rev_expert_per_rank[max_load_rank_id].add",
+          "lineNumber": 622
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "rev_expert_per_rank[swap_rank_id].add",
+          "lineNumber": 623
+        },
+        {
+          "caller": "expert_exchange_between_ranks",
+          "callee": "list",
+          "lineNumber": 631
+        },
+        {
+          "caller": "exchange_experts",
+          "callee": "range",
+          "lineNumber": 650
+        },
+        {
+          "caller": "exchange_experts",
+          "callee": "len",
+          "lineNumber": 650
+        },
+        {
+          "caller": "exchange_experts",
+          "callee": "self.expert_exchange_between_ranks",
+          "lineNumber": 651
+        },
+        {
+          "caller": "exchange_experts",
+          "callee": "np.array",
+          "lineNumber": 662
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "DynamicTable",
+          "lineNumber": 686
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "expert_workload.numpy",
+          "lineNumber": 687
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "current_expert_table.numpy",
+          "lineNumber": 688
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.unique",
+          "lineNumber": 693
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "len",
+          "lineNumber": 694
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.get_original_workload",
+          "lineNumber": 695
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "layer_workloads[0].sum",
+          "lineNumber": 699
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.calculate_imbalance",
+          "lineNumber": 704
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "info.placement_table.copy",
+          "lineNumber": 706
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.calculate_max_heat_per_layer",
+          "lineNumber": 708
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "sum",
+          "lineNumber": 709
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 712
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "max_heat_per_layer_after.append",
+          "lineNumber": 717
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.redundant_expert_deployment",
+          "lineNumber": 721
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.exchange_experts",
+          "lineNumber": 724
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "max_heat_per_layer_after.append",
+          "lineNumber": 733
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "self.constraint_expert_local_exchange",
+          "lineNumber": 735
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "range",
+          "lineNumber": 738
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "layer_changed_ratio.append",
+          "lineNumber": 740
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "layer_changed_ratio.append",
+          "lineNumber": 742
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "np.argsort",
+          "lineNumber": 744
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "sum",
+          "lineNumber": 745
+        },
+        {
+          "caller": "rebalance_experts",
+          "callee": "new_deployment.tolist",
+          "lineNumber": 751
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    }
+  ]
+}

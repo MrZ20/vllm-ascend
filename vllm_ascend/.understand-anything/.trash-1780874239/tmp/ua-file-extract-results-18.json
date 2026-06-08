@@ -1,0 +1,7028 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "patch/platform/patch_mamba_config_310.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 103,
+      "nonEmptyLines": 92,
+      "functions": [
+        {
+          "name": "verify_and_update_config",
+          "startLine": 16,
+          "endLine": 100,
+          "params": [
+            "vllm_config"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "verify_and_update_config",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "verify_and_update_config",
+          "callee": "MambaModelConfig.verify_and_update_config",
+          "lineNumber": 30
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "RuntimeError",
+          "lineNumber": 42
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "FullAttentionSpec",
+          "lineNumber": 44
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_config.get_num_kv_heads",
+          "lineNumber": 46
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_config.get_head_size",
+          "lineNumber": 47
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "ModelRegistry.resolve_model_cls",
+          "lineNumber": 51
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "MambaSpec",
+          "lineNumber": 57
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_cls.get_mamba_state_shape_from_config",
+          "lineNumber": 58
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_cls.get_mamba_state_dtype_from_config",
+          "lineNumber": 59
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_config.get_mamba_chunk_size",
+          "lineNumber": 69
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "cdiv",
+          "lineNumber": 70
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "lcm",
+          "lineNumber": 71
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "cdiv",
+          "lineNumber": 72
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "cdiv",
+          "lineNumber": 75
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 80
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 95
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_mamba_config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 119,
+      "nonEmptyLines": 103,
+      "functions": [
+        {
+          "name": "verify_and_update_config",
+          "startLine": 13,
+          "endLine": 116,
+          "params": [
+            "vllm_config"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "verify_and_update_config",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "verify_and_update_config",
+          "callee": "MambaModelConfig.verify_and_update_config",
+          "lineNumber": 28
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "ModelRegistry.resolve_model_cls",
+          "lineNumber": 40
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_cls.get_mamba_state_shape_from_config",
+          "lineNumber": 46
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_cls.get_mamba_state_dtype_from_config",
+          "lineNumber": 47
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "zip",
+          "lineNumber": 49
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "mamba_sizes.append",
+          "lineNumber": 50
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "math.prod",
+          "lineNumber": 50
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "get_dtype_size",
+          "lineNumber": 50
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "max",
+          "lineNumber": 51
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "min",
+          "lineNumber": 51
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "len",
+          "lineNumber": 56
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "len",
+          "lineNumber": 56
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_config.get_num_kv_heads",
+          "lineNumber": 63
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "get_dtype_size",
+          "lineNumber": 66
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "get_dtype_size",
+          "lineNumber": 67
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_config.get_num_kv_heads",
+          "lineNumber": 70
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "model_config.get_head_size",
+          "lineNumber": 71
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "get_dtype_size",
+          "lineNumber": 72
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "get_dtype_size",
+          "lineNumber": 73
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "cdiv",
+          "lineNumber": 75
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 85
+        },
+        {
+          "caller": "verify_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 100
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_mamba_manager.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 48,
+      "classes": [
+        {
+          "name": "AscendMambaManager",
+          "startLine": 18,
+          "endLine": 49,
+          "methods": [
+            "__init__",
+            "find_longest_cache_hit"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendMambaManager",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 20
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 20
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "isinstance",
+          "lineNumber": 37
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "tuple",
+          "lineNumber": 38
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "range",
+          "lineNumber": 38
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "len",
+          "lineNumber": 38
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "range",
+          "lineNumber": 41
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "block_pool.get_cached_block",
+          "lineNumber": 42
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "zip",
+          "lineNumber": 45
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "computed.extend",
+          "lineNumber": 46
+        },
+        {
+          "caller": "find_longest_cache_hit",
+          "callee": "computed.append",
+          "lineNumber": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "patch/platform/patch_minimax_m2_config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 282,
+      "nonEmptyLines": 237,
+      "functions": [
+        {
+          "name": "_get_model_type",
+          "startLine": 38,
+          "endLine": 58,
+          "params": [
+            "cfg"
+          ]
+        },
+        {
+          "name": "_should_disable_fp8",
+          "startLine": 61,
+          "endLine": 62,
+          "params": [
+            "cfg",
+            "quant_method"
+          ]
+        },
+        {
+          "name": "_disable_fp8",
+          "startLine": 65,
+          "endLine": 71,
+          "params": [
+            "cfg",
+            "log"
+          ]
+        },
+        {
+          "name": "_patched_verify_quantization",
+          "startLine": 74,
+          "endLine": 107,
+          "params": []
+        },
+        {
+          "name": "_patched_verify_cuda_graph",
+          "startLine": 110,
+          "endLine": 129,
+          "params": []
+        },
+        {
+          "name": "_patch_speculative_minimax_whitelist",
+          "startLine": 142,
+          "endLine": 253,
+          "params": []
+        },
+        {
+          "name": "_patch_eagle3_registry_alias",
+          "startLine": 256,
+          "endLine": 278,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_get_model_type",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "_should_disable_fp8",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "_disable_fp8",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_verify_quantization",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_verify_cuda_graph",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "_patch_speculative_minimax_whitelist",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "_patch_eagle3_registry_alias",
+          "line": 256,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_get_model_type",
+          "callee": "getattr",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_get_model_type",
+          "callee": "getattr",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_get_model_type",
+          "callee": "getattr",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_get_model_type",
+          "callee": "getattr",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_get_model_type",
+          "callee": "getattr",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_get_model_type",
+          "callee": "getattr",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_get_model_type",
+          "callee": "getattr",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_should_disable_fp8",
+          "callee": "_get_model_type",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_disable_fp8",
+          "callee": "_should_disable_fp8",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_disable_fp8",
+          "callee": "getattr",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_disable_fp8",
+          "callee": "logger.info",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_patched_verify_quantization",
+          "callee": "getattr",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_platform_verify_hook",
+          "callee": "_should_disable_fp8",
+          "lineNumber": 89
+        },
+        {
+          "caller": "_platform_verify_hook",
+          "callee": "_disable_fp8",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_platform_verify_hook",
+          "callee": "orig_platform_verify",
+          "lineNumber": 94
+        },
+        {
+          "caller": "_patched_verify_quantization",
+          "callee": "_disable_fp8",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_patched_verify_quantization",
+          "callee": "_original_verify_quantization",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_patched_verify_quantization",
+          "callee": "_disable_fp8",
+          "lineNumber": 107
+        },
+        {
+          "caller": "_patched_verify_cuda_graph",
+          "callee": "_get_model_type",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_patched_verify_cuda_graph",
+          "callee": "getattr",
+          "lineNumber": 116
+        },
+        {
+          "caller": "_patched_verify_cuda_graph",
+          "callee": "os.environ.get",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_patched_verify_cuda_graph",
+          "callee": "logger.info",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_patched_verify_cuda_graph",
+          "callee": "logger.warning",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_patched_verify_cuda_graph",
+          "callee": "_original_verify_cuda_graph",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "logger.debug",
+          "lineNumber": 152
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "getattr",
+          "lineNumber": 157
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "logger.debug",
+          "lineNumber": 159
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "getattr",
+          "lineNumber": 164
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "logger.debug",
+          "lineNumber": 165
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "getattr",
+          "lineNumber": 170
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "getattr",
+          "lineNumber": 173
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "isinstance",
+          "lineNumber": 174
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "model_validators.get",
+          "lineNumber": 175
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "getattr",
+          "lineNumber": 176
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "inner_verify",
+          "lineNumber": 180
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "getattr",
+          "lineNumber": 182
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "getattr",
+          "lineNumber": 186
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "getattr",
+          "lineNumber": 187
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "getattr",
+          "lineNumber": 187
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "str(model_type).lower",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "str",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "logger.debug",
+          "lineNumber": 189
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "str(e).lower",
+          "lineNumber": 195
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "str",
+          "lineNumber": 195
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "getattr",
+          "lineNumber": 199
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "callable",
+          "lineNumber": 200
+        },
+        {
+          "caller": "_patched_verify_args",
+          "callee": "verify_vocab",
+          "lineNumber": 201
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "object.__setattr__",
+          "lineNumber": 212
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "logger.warning",
+          "lineNumber": 214
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "logger.debug",
+          "lineNumber": 222
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "rebuild_dataclass",
+          "lineNumber": 229
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "logger.warning",
+          "lineNumber": 231
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "rebuild_dataclass",
+          "lineNumber": 247
+        },
+        {
+          "caller": "_patch_speculative_minimax_whitelist",
+          "callee": "logger.debug",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_patch_eagle3_registry_alias",
+          "callee": "hasattr",
+          "lineNumber": 264
+        },
+        {
+          "caller": "_patch_eagle3_registry_alias",
+          "callee": "isinstance",
+          "lineNumber": 266
+        },
+        {
+          "caller": "_patch_eagle3_registry_alias",
+          "callee": "models.setdefault",
+          "lineNumber": 267
+        },
+        {
+          "caller": "_patch_eagle3_registry_alias",
+          "callee": "getattr",
+          "lineNumber": 270
+        },
+        {
+          "caller": "_patch_eagle3_registry_alias",
+          "callee": "hasattr",
+          "lineNumber": 271
+        },
+        {
+          "caller": "_patch_eagle3_registry_alias",
+          "callee": "model_registry.models.setdefault",
+          "lineNumber": 273
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 520,
+      "nonEmptyLines": 432,
+      "functions": [
+        {
+          "name": "_patched_init",
+          "startLine": 50,
+          "endLine": 60,
+          "params": [
+            "tokenizer",
+            "tools"
+          ]
+        },
+        {
+          "name": "_extract_types_from_schema_fallback",
+          "startLine": 63,
+          "endLine": 98,
+          "params": [
+            "schema"
+          ]
+        },
+        {
+          "name": "_extract_param_types_from_schema",
+          "startLine": 101,
+          "endLine": 104,
+          "params": [
+            "schema"
+          ]
+        },
+        {
+          "name": "_coerce_param_value_fallback",
+          "startLine": 107,
+          "endLine": 156,
+          "params": [
+            "value",
+            "param_types"
+          ]
+        },
+        {
+          "name": "_coerce_param_value",
+          "startLine": 159,
+          "endLine": 162,
+          "params": [
+            "value",
+            "param_types"
+          ]
+        },
+        {
+          "name": "_get_param_types_from_config",
+          "startLine": 165,
+          "endLine": 172,
+          "params": [
+            "param_name",
+            "param_config"
+          ]
+        },
+        {
+          "name": "_patched_parse_single_invoke",
+          "startLine": 175,
+          "endLine": 202,
+          "params": [
+            "invoke_str",
+            "tools"
+          ]
+        },
+        {
+          "name": "_reset_streaming_state",
+          "startLine": 205,
+          "endLine": 215,
+          "params": [
+            "tool_call_started"
+          ]
+        },
+        {
+          "name": "_ensure_streaming_slots",
+          "startLine": 218,
+          "endLine": 224,
+          "params": [
+            "tool_count"
+          ]
+        },
+        {
+          "name": "_get_param_config",
+          "startLine": 227,
+          "endLine": 231,
+          "params": [
+            "function_name"
+          ]
+        },
+        {
+          "name": "_serialize_partial_param_value",
+          "startLine": 234,
+          "endLine": 266,
+          "params": [
+            "value",
+            "param_types",
+            "is_complete"
+          ]
+        },
+        {
+          "name": "_build_partial_arguments",
+          "startLine": 269,
+          "endLine": 323,
+          "params": [
+            "invoke_body",
+            "invoke_complete",
+            "param_config"
+          ]
+        },
+        {
+          "name": "_get_invoke_states",
+          "startLine": 326,
+          "endLine": 386,
+          "params": [
+            "current_text"
+          ]
+        },
+        {
+          "name": "_finalize_completed_tool_call",
+          "startLine": 389,
+          "endLine": 406,
+          "params": [
+            "idx",
+            "invoke_state"
+          ]
+        },
+        {
+          "name": "_extract_delta_tool_call",
+          "startLine": 409,
+          "endLine": 457,
+          "params": [
+            "current_text"
+          ]
+        },
+        {
+          "name": "_patched_extract_tool_calls_streaming",
+          "startLine": 460,
+          "endLine": 507,
+          "params": [
+            "previous_text",
+            "current_text",
+            "delta_text",
+            "previous_token_ids",
+            "current_token_ids",
+            "delta_token_ids",
+            "request"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_patched_init",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "_extract_types_from_schema_fallback",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "_extract_param_types_from_schema",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "_coerce_param_value_fallback",
+          "line": 107,
+          "isDefault": false
+        },
+        {
+          "name": "_coerce_param_value",
+          "line": 159,
+          "isDefault": false
+        },
+        {
+          "name": "_get_param_types_from_config",
+          "line": 165,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_parse_single_invoke",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "_reset_streaming_state",
+          "line": 205,
+          "isDefault": false
+        },
+        {
+          "name": "_ensure_streaming_slots",
+          "line": 218,
+          "isDefault": false
+        },
+        {
+          "name": "_get_param_config",
+          "line": 227,
+          "isDefault": false
+        },
+        {
+          "name": "_serialize_partial_param_value",
+          "line": 234,
+          "isDefault": false
+        },
+        {
+          "name": "_build_partial_arguments",
+          "line": 269,
+          "isDefault": false
+        },
+        {
+          "name": "_get_invoke_states",
+          "line": 326,
+          "isDefault": false
+        },
+        {
+          "name": "_finalize_completed_tool_call",
+          "line": 389,
+          "isDefault": false
+        },
+        {
+          "name": "_extract_delta_tool_call",
+          "line": 409,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_extract_tool_calls_streaming",
+          "line": 460,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_patched_init",
+          "callee": "_original_init",
+          "lineNumber": 55
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "set",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "schema.get",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.update",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "schema.get",
+          "lineNumber": 74
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 75
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 78
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 79
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 81
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 84
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 85
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 89
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.add",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "schema.get",
+          "lineNumber": 93
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "isinstance",
+          "lineNumber": 94
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "types.update",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "_extract_types_from_schema_fallback",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_extract_types_from_schema_fallback",
+          "callee": "list",
+          "lineNumber": 98
+        },
+        {
+          "caller": "_extract_param_types_from_schema",
+          "callee": "callable",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_extract_param_types_from_schema",
+          "callee": "_extract_types_from_schema",
+          "lineNumber": 103
+        },
+        {
+          "caller": "_extract_param_types_from_schema",
+          "callee": "_extract_types_from_schema_fallback",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "type_aliases.get",
+          "lineNumber": 117
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "t.lower",
+          "lineNumber": 117
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "t.lower",
+          "lineNumber": 117
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "value.lower",
+          "lineNumber": 124
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "int",
+          "lineNumber": 131
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "float",
+          "lineNumber": 136
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "int",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "int",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "value.lower().strip",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "value.lower",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "json.loads",
+          "lineNumber": 149
+        },
+        {
+          "caller": "_coerce_param_value_fallback",
+          "callee": "json.loads",
+          "lineNumber": 154
+        },
+        {
+          "caller": "_coerce_param_value",
+          "callee": "callable",
+          "lineNumber": 160
+        },
+        {
+          "caller": "_coerce_param_value",
+          "callee": "_coerce_to_schema_type",
+          "lineNumber": 161
+        },
+        {
+          "caller": "_coerce_param_value",
+          "callee": "_coerce_param_value_fallback",
+          "lineNumber": 162
+        },
+        {
+          "caller": "_get_param_types_from_config",
+          "callee": "param_config.get",
+          "lineNumber": 169
+        },
+        {
+          "caller": "_get_param_types_from_config",
+          "callee": "isinstance",
+          "lineNumber": 170
+        },
+        {
+          "caller": "_get_param_types_from_config",
+          "callee": "_extract_param_types_from_schema",
+          "lineNumber": 172
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "re.search",
+          "lineNumber": 180
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "self._extract_name",
+          "lineNumber": 184
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "name_match.group",
+          "lineNumber": 184
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "find_tool_properties",
+          "lineNumber": 185
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "self.parameter_complete_regex.findall",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "re.search",
+          "lineNumber": 189
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "self._extract_name",
+          "lineNumber": 191
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "param_match.group",
+          "lineNumber": 191
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "param_match.group(2).strip",
+          "lineNumber": 192
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "param_match.group",
+          "lineNumber": 192
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "_get_param_types_from_config",
+          "lineNumber": 193
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "_coerce_param_value",
+          "lineNumber": 194
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "ToolCall",
+          "lineNumber": 196
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "FunctionCall",
+          "lineNumber": 198
+        },
+        {
+          "caller": "_patched_parse_single_invoke",
+          "callee": "json.dumps",
+          "lineNumber": 200
+        },
+        {
+          "caller": "_reset_streaming_state",
+          "callee": "self.prev_tool_call_arr.clear",
+          "lineNumber": 210
+        },
+        {
+          "caller": "_reset_streaming_state",
+          "callee": "self.streamed_args_for_tool.clear",
+          "lineNumber": 211
+        },
+        {
+          "caller": "_reset_streaming_state",
+          "callee": "self._tool_call_ids.clear",
+          "lineNumber": 212
+        },
+        {
+          "caller": "_reset_streaming_state",
+          "callee": "self._tool_name_sent.clear",
+          "lineNumber": 213
+        },
+        {
+          "caller": "_ensure_streaming_slots",
+          "callee": "len",
+          "lineNumber": 219
+        },
+        {
+          "caller": "_ensure_streaming_slots",
+          "callee": "self.streamed_args_for_tool.append",
+          "lineNumber": 220
+        },
+        {
+          "caller": "_ensure_streaming_slots",
+          "callee": "len",
+          "lineNumber": 221
+        },
+        {
+          "caller": "_ensure_streaming_slots",
+          "callee": "self._tool_call_ids.append",
+          "lineNumber": 222
+        },
+        {
+          "caller": "_ensure_streaming_slots",
+          "callee": "self._generate_tool_call_id",
+          "lineNumber": 222
+        },
+        {
+          "caller": "_ensure_streaming_slots",
+          "callee": "len",
+          "lineNumber": 223
+        },
+        {
+          "caller": "_ensure_streaming_slots",
+          "callee": "self._tool_name_sent.append",
+          "lineNumber": 224
+        },
+        {
+          "caller": "_get_param_config",
+          "callee": "find_tool_properties",
+          "lineNumber": 231
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "value.strip",
+          "lineNumber": 241
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "_coerce_param_value",
+          "lineNumber": 243
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "json.dumps",
+          "lineNumber": 244
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "t.lower",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "\"null\".startswith",
+          "lineNumber": 252
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "value.lower",
+          "lineNumber": 252
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "value.lower",
+          "lineNumber": 253
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "value.lower",
+          "lineNumber": 256
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "any",
+          "lineNumber": 257
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "candidate.startswith",
+          "lineNumber": 257
+        },
+        {
+          "caller": "_serialize_partial_param_value",
+          "callee": "json.dumps",
+          "lineNumber": 266
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "invoke_body.find",
+          "lineNumber": 280
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "len",
+          "lineNumber": 284
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "invoke_body.find",
+          "lineNumber": 285
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "self._extract_name",
+          "lineNumber": 289
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "invoke_body.find",
+          "lineNumber": 291
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "len",
+          "lineNumber": 295
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "len",
+          "lineNumber": 298
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "param_value.strip",
+          "lineNumber": 300
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "_get_param_types_from_config",
+          "lineNumber": 303
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "self._serialize_partial_param_value",
+          "lineNumber": 304
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "args_parts.append",
+          "lineNumber": 312
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "json.dumps",
+          "lineNumber": 312
+        },
+        {
+          "caller": "_build_partial_arguments",
+          "callee": "\",\".join",
+          "lineNumber": 320
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "current_text.find",
+          "lineNumber": 330
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "len",
+          "lineNumber": 336
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "tool_payload.find",
+          "lineNumber": 338
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "tool_payload.find",
+          "lineNumber": 345
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "len",
+          "lineNumber": 349
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "tool_payload.find",
+          "lineNumber": 350
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "len",
+          "lineNumber": 355
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "len",
+          "lineNumber": 358
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "invoke_str.find",
+          "lineNumber": 360
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "self._extract_name",
+          "lineNumber": 364
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "self._get_param_config",
+          "lineNumber": 365
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "self._build_partial_arguments",
+          "lineNumber": 367
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "self._parse_single_invoke",
+          "lineNumber": 373
+        },
+        {
+          "caller": "_get_invoke_states",
+          "callee": "invoke_states.append",
+          "lineNumber": 374
+        },
+        {
+          "caller": "_finalize_completed_tool_call",
+          "callee": "len",
+          "lineNumber": 394
+        },
+        {
+          "caller": "_finalize_completed_tool_call",
+          "callee": "self.prev_tool_call_arr.append",
+          "lineNumber": 401
+        },
+        {
+          "caller": "_finalize_completed_tool_call",
+          "callee": "json.loads",
+          "lineNumber": 404
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "self._get_invoke_states",
+          "lineNumber": 413
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "self._ensure_streaming_slots",
+          "lineNumber": 417
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "len",
+          "lineNumber": 417
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "enumerate",
+          "lineNumber": 419
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "self._finalize_completed_tool_call",
+          "lineNumber": 429
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "DeltaToolCall",
+          "lineNumber": 430
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "DeltaFunctionCall",
+          "lineNumber": 434
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "args_json.startswith",
+          "lineNumber": 441
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "len",
+          "lineNumber": 442
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "extract_intermediate_diff",
+          "lineNumber": 444
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "self._finalize_completed_tool_call",
+          "lineNumber": 449
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "DeltaToolCall",
+          "lineNumber": 450
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "DeltaFunctionCall",
+          "lineNumber": 452
+        },
+        {
+          "caller": "_extract_delta_tool_call",
+          "callee": "self._finalize_completed_tool_call",
+          "lineNumber": 455
+        },
+        {
+          "caller": "_patched_extract_tool_calls_streaming",
+          "callee": "self._reset_streaming_state",
+          "lineNumber": 474
+        },
+        {
+          "caller": "_patched_extract_tool_calls_streaming",
+          "callee": "self._reset_streaming_state",
+          "lineNumber": 481
+        },
+        {
+          "caller": "_patched_extract_tool_calls_streaming",
+          "callee": "DeltaMessage",
+          "lineNumber": 484
+        },
+        {
+          "caller": "_patched_extract_tool_calls_streaming",
+          "callee": "delta_text.index",
+          "lineNumber": 488
+        },
+        {
+          "caller": "_patched_extract_tool_calls_streaming",
+          "callee": "self._extract_delta_tool_call",
+          "lineNumber": 491
+        },
+        {
+          "caller": "_patched_extract_tool_calls_streaming",
+          "callee": "DeltaMessage",
+          "lineNumber": 494
+        },
+        {
+          "caller": "_patched_extract_tool_calls_streaming",
+          "callee": "DeltaMessage",
+          "lineNumber": 505
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 16,
+        "functionCount": 16,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_minimax_usage_accounting.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 395,
+      "nonEmptyLines": 321,
+      "functions": [
+        {
+          "name": "_rebuild_model_field",
+          "startLine": 55,
+          "endLine": 58,
+          "params": [
+            "model_cls",
+            "field_name",
+            "annotation"
+          ]
+        },
+        {
+          "name": "_count_minimax_reasoning_tokens",
+          "startLine": 66,
+          "endLine": 76,
+          "params": [
+            "token_ids",
+            "end_token_id"
+          ]
+        },
+        {
+          "name": "_patched_count_reasoning_tokens",
+          "startLine": 79,
+          "endLine": 80,
+          "params": [
+            "token_ids"
+          ]
+        },
+        {
+          "name": "_count_reasoning_tokens_for_usage",
+          "startLine": 87,
+          "endLine": 93,
+          "params": [
+            "token_ids",
+            "reasoning_parser"
+          ]
+        },
+        {
+          "name": "_clamp_reasoning_tokens",
+          "startLine": 96,
+          "endLine": 102,
+          "params": [
+            "reasoning_tokens",
+            "completion_tokens"
+          ]
+        },
+        {
+          "name": "_make_usage_info",
+          "startLine": 105,
+          "endLine": 123,
+          "params": [
+            "prompt_tokens",
+            "completion_tokens",
+            "num_cached_tokens",
+            "reasoning_tokens"
+          ]
+        },
+        {
+          "name": "_create_usage_tracking_state",
+          "startLine": 141,
+          "endLine": 151,
+          "params": [
+            "num_choices",
+            "reasoning_parser",
+            "enable_prompt_tokens_details"
+          ]
+        },
+        {
+          "name": "_update_usage_tracking_state",
+          "startLine": 154,
+          "endLine": 173,
+          "params": [
+            "state",
+            "res"
+          ]
+        },
+        {
+          "name": "_tracked_result_generator",
+          "startLine": 176,
+          "endLine": 182,
+          "params": [
+            "result_generator",
+            "state"
+          ]
+        },
+        {
+          "name": "_sum_reasoning_tokens_for_usage",
+          "startLine": 185,
+          "endLine": 193,
+          "params": [
+            "raw_output_token_ids",
+            "reasoning_parser"
+          ]
+        },
+        {
+          "name": "_reasoning_tokens_for_choice",
+          "startLine": 196,
+          "endLine": 207,
+          "params": [
+            "state",
+            "choice_index"
+          ]
+        },
+        {
+          "name": "_make_full_response_usage",
+          "startLine": 210,
+          "endLine": 225,
+          "params": [
+            "state"
+          ]
+        },
+        {
+          "name": "_usage_reasoning_tokens_for_stream_chunk",
+          "startLine": 228,
+          "endLine": 245,
+          "params": [
+            "state",
+            "chunk",
+            "completion_tokens"
+          ]
+        },
+        {
+          "name": "_inject_stream_usage_details",
+          "startLine": 248,
+          "endLine": 293,
+          "params": [
+            "data",
+            "state"
+          ]
+        },
+        {
+          "name": "_wrapped_chat_completion_stream_generator",
+          "startLine": 305,
+          "endLine": 340,
+          "params": [
+            "request",
+            "result_generator",
+            "request_id",
+            "model_name",
+            "conversation",
+            "tokenizer",
+            "request_metadata",
+            "reasoning_parser"
+          ]
+        },
+        {
+          "name": "_wrapped_chat_completion_full_generator",
+          "startLine": 343,
+          "endLine": 382,
+          "params": [
+            "request",
+            "result_generator",
+            "request_id",
+            "model_name",
+            "conversation",
+            "tokenizer",
+            "request_metadata",
+            "reasoning_parser"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "CompletionTokenUsageInfo",
+          "startLine": 34,
+          "endLine": 38,
+          "methods": [],
+          "properties": [
+            "reasoning_tokens",
+            "audio_tokens",
+            "accepted_prediction_tokens",
+            "rejected_prediction_tokens"
+          ]
+        },
+        {
+          "name": "UsageInfo",
+          "startLine": 41,
+          "endLine": 42,
+          "methods": [],
+          "properties": [
+            "completion_tokens_details"
+          ]
+        },
+        {
+          "name": "_UsageTrackingState",
+          "startLine": 131,
+          "endLine": 138,
+          "methods": [],
+          "properties": [
+            "completion_tokens",
+            "raw_output_token_ids",
+            "reasoning_parser",
+            "enable_prompt_tokens_details",
+            "num_prompt_tokens",
+            "num_cached_tokens",
+            "final_res"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CompletionTokenUsageInfo",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "UsageInfo",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "_rebuild_model_field",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "_count_minimax_reasoning_tokens",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_count_reasoning_tokens",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "_count_reasoning_tokens_for_usage",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "_clamp_reasoning_tokens",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "_make_usage_info",
+          "line": 105,
+          "isDefault": false
+        },
+        {
+          "name": "_UsageTrackingState",
+          "line": 130,
+          "isDefault": false
+        },
+        {
+          "name": "_create_usage_tracking_state",
+          "line": 141,
+          "isDefault": false
+        },
+        {
+          "name": "_update_usage_tracking_state",
+          "line": 154,
+          "isDefault": false
+        },
+        {
+          "name": "_tracked_result_generator",
+          "line": 176,
+          "isDefault": false
+        },
+        {
+          "name": "_sum_reasoning_tokens_for_usage",
+          "line": 185,
+          "isDefault": false
+        },
+        {
+          "name": "_reasoning_tokens_for_choice",
+          "line": 196,
+          "isDefault": false
+        },
+        {
+          "name": "_make_full_response_usage",
+          "line": 210,
+          "isDefault": false
+        },
+        {
+          "name": "_usage_reasoning_tokens_for_stream_chunk",
+          "line": 228,
+          "isDefault": false
+        },
+        {
+          "name": "_inject_stream_usage_details",
+          "line": 248,
+          "isDefault": false
+        },
+        {
+          "name": "_wrapped_chat_completion_stream_generator",
+          "line": 305,
+          "isDefault": false
+        },
+        {
+          "name": "_wrapped_chat_completion_full_generator",
+          "line": 343,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_rebuild_model_field",
+          "callee": "model_cls.model_rebuild",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_count_minimax_reasoning_tokens",
+          "callee": "enumerate",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_count_minimax_reasoning_tokens",
+          "callee": "len",
+          "lineNumber": 76
+        },
+        {
+          "caller": "_patched_count_reasoning_tokens",
+          "callee": "_count_minimax_reasoning_tokens",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_count_reasoning_tokens_for_usage",
+          "callee": "reasoning_parser.count_reasoning_tokens",
+          "lineNumber": 93
+        },
+        {
+          "caller": "_clamp_reasoning_tokens",
+          "callee": "max",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_clamp_reasoning_tokens",
+          "callee": "min",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_make_usage_info",
+          "callee": "UsageInfo",
+          "lineNumber": 113
+        },
+        {
+          "caller": "_make_usage_info",
+          "callee": "_clamp_reasoning_tokens",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_make_usage_info",
+          "callee": "CompletionTokenUsageInfo",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_make_usage_info",
+          "callee": "chat_serving.PromptTokenUsageInfo",
+          "lineNumber": 122
+        },
+        {
+          "caller": "_create_usage_tracking_state",
+          "callee": "_UsageTrackingState",
+          "lineNumber": 146
+        },
+        {
+          "caller": "_create_usage_tracking_state",
+          "callee": "range",
+          "lineNumber": 148
+        },
+        {
+          "caller": "_update_usage_tracking_state",
+          "callee": "len",
+          "lineNumber": 159
+        },
+        {
+          "caller": "_update_usage_tracking_state",
+          "callee": "len",
+          "lineNumber": 161
+        },
+        {
+          "caller": "_update_usage_tracking_state",
+          "callee": "len",
+          "lineNumber": 170
+        },
+        {
+          "caller": "_update_usage_tracking_state",
+          "callee": "chat_serving.as_list",
+          "lineNumber": 171
+        },
+        {
+          "caller": "_update_usage_tracking_state",
+          "callee": "len",
+          "lineNumber": 172
+        },
+        {
+          "caller": "_update_usage_tracking_state",
+          "callee": "state.raw_output_token_ids[output.index].extend",
+          "lineNumber": 173
+        },
+        {
+          "caller": "_tracked_result_generator",
+          "callee": "_update_usage_tracking_state",
+          "lineNumber": 181
+        },
+        {
+          "caller": "_sum_reasoning_tokens_for_usage",
+          "callee": "sum",
+          "lineNumber": 191
+        },
+        {
+          "caller": "_sum_reasoning_tokens_for_usage",
+          "callee": "_count_reasoning_tokens_for_usage",
+          "lineNumber": 192
+        },
+        {
+          "caller": "_reasoning_tokens_for_choice",
+          "callee": "len",
+          "lineNumber": 202
+        },
+        {
+          "caller": "_reasoning_tokens_for_choice",
+          "callee": "_count_reasoning_tokens_for_usage",
+          "lineNumber": 204
+        },
+        {
+          "caller": "_make_full_response_usage",
+          "callee": "self._make_usage_info",
+          "lineNumber": 217
+        },
+        {
+          "caller": "_make_full_response_usage",
+          "callee": "sum",
+          "lineNumber": 219
+        },
+        {
+          "caller": "_make_full_response_usage",
+          "callee": "_sum_reasoning_tokens_for_usage",
+          "lineNumber": 221
+        },
+        {
+          "caller": "_usage_reasoning_tokens_for_stream_chunk",
+          "callee": "chunk.get",
+          "lineNumber": 236
+        },
+        {
+          "caller": "_usage_reasoning_tokens_for_stream_chunk",
+          "callee": "choices[0].get",
+          "lineNumber": 238
+        },
+        {
+          "caller": "_usage_reasoning_tokens_for_stream_chunk",
+          "callee": "_reasoning_tokens_for_choice",
+          "lineNumber": 239
+        },
+        {
+          "caller": "_usage_reasoning_tokens_for_stream_chunk",
+          "callee": "_sum_reasoning_tokens_for_usage",
+          "lineNumber": 241
+        },
+        {
+          "caller": "_usage_reasoning_tokens_for_stream_chunk",
+          "callee": "_clamp_reasoning_tokens",
+          "lineNumber": 245
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "data.startswith",
+          "lineNumber": 254
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "len",
+          "lineNumber": 257
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "payload.endswith",
+          "lineNumber": 258
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "len",
+          "lineNumber": 259
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "json.loads",
+          "lineNumber": 264
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "chunk.get",
+          "lineNumber": 268
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "isinstance",
+          "lineNumber": 269
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "usage.get",
+          "lineNumber": 279
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "_usage_reasoning_tokens_for_stream_chunk",
+          "lineNumber": 280
+        },
+        {
+          "caller": "_inject_stream_usage_details",
+          "callee": "json.dumps",
+          "lineNumber": 293
+        },
+        {
+          "caller": "_wrapped_chat_completion_stream_generator",
+          "callee": "_create_usage_tracking_state",
+          "lineNumber": 318
+        },
+        {
+          "caller": "_wrapped_chat_completion_stream_generator",
+          "callee": "original_stream_generator",
+          "lineNumber": 325
+        },
+        {
+          "caller": "_wrapped_chat_completion_stream_generator",
+          "callee": "_tracked_result_generator",
+          "lineNumber": 327
+        },
+        {
+          "caller": "_wrapped_chat_completion_stream_generator",
+          "callee": "_inject_stream_usage_details",
+          "lineNumber": 336
+        },
+        {
+          "caller": "_wrapped_chat_completion_stream_generator",
+          "callee": "_make_full_response_usage",
+          "lineNumber": 338
+        },
+        {
+          "caller": "_wrapped_chat_completion_full_generator",
+          "callee": "_create_usage_tracking_state",
+          "lineNumber": 355
+        },
+        {
+          "caller": "_wrapped_chat_completion_full_generator",
+          "callee": "original_full_generator",
+          "lineNumber": 362
+        },
+        {
+          "caller": "_wrapped_chat_completion_full_generator",
+          "callee": "_tracked_result_generator",
+          "lineNumber": 364
+        },
+        {
+          "caller": "_wrapped_chat_completion_full_generator",
+          "callee": "isinstance",
+          "lineNumber": 373
+        },
+        {
+          "caller": "_wrapped_chat_completion_full_generator",
+          "callee": "_make_full_response_usage",
+          "lineNumber": 376
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 19,
+        "functionCount": 16,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "patch/platform/patch_mla_prefill_backend.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 43,
+      "callGraph": [
+        {
+          "caller": "run_prefill_new_tokens",
+          "callee": "NotImplementedError",
+          "lineNumber": 39
+        },
+        {
+          "caller": "run_prefill_context_chunk",
+          "callee": "NotImplementedError",
+          "lineNumber": 48
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_multiproc_executor.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 211,
+      "nonEmptyLines": 186,
+      "classes": [
+        {
+          "name": "AscendMultiprocExecutor",
+          "startLine": 24,
+          "endLine": 158,
+          "methods": [
+            "_init_executor",
+            "_get_parallel_sizes",
+            "_post_init_executor",
+            "_is_driver_worker"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendWorkerProc",
+          "startLine": 161,
+          "endLine": 208,
+          "methods": [
+            "make_worker_process"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendMultiprocExecutor",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "AscendWorkerProc",
+          "line": 161,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_init_executor",
+          "callee": "weakref.finalize",
+          "lineNumber": 28
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self._get_parallel_sizes",
+          "lineNumber": 32
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "set_multiprocessing_worker_envs",
+          "lineNumber": 41
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "get_distributed_init_method",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "get_loopback_ip",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "get_open_port",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "MessageQueue",
+          "lineNumber": 55
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self.rpc_broadcast_mq.export_handle",
+          "lineNumber": 61
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "get_mp_context",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "context.Lock",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "context.get_start_method",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "range",
+          "lineNumber": 75
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self._is_driver_worker",
+          "lineNumber": 77
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "AscendWorkerProc.make_worker_process",
+          "lineNumber": 78
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "unready_workers.append",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "inherited_fds.append",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "unready_worker_handle.death_writer.fileno",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "inherited_fds.append",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "unready_worker_handle.ready_pipe.fileno",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "AscendWorkerProc.wait_for_ready",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self.start_worker_monitor",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "range",
+          "lineNumber": 106
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self.response_mqs.append",
+          "lineNumber": 110
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self.response_mqs.append",
+          "lineNumber": 114
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self.rpc_broadcast_mq.wait_until_ready",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "response_mq.wait_until_ready",
+          "lineNumber": 124
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self._post_init_executor",
+          "lineNumber": 126
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "uw.death_writer.close",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self._ensure_worker_termination",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_init_executor",
+          "callee": "self._get_output_rank",
+          "lineNumber": 139
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "get_mp_context",
+          "lineNumber": 173
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "context.Pipe",
+          "lineNumber": 175
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "context.Pipe",
+          "lineNumber": 177
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "inherited_fds.copy",
+          "lineNumber": 179
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "inherited_fds.extend",
+          "lineNumber": 180
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "ready_reader.fileno",
+          "lineNumber": 180
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "death_writer.fileno",
+          "lineNumber": 180
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "context.Process",
+          "lineNumber": 195
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "proc.start",
+          "lineNumber": 202
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "ready_writer.close",
+          "lineNumber": 204
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "death_reader.close",
+          "lineNumber": 205
+        },
+        {
+          "caller": "make_worker_process",
+          "callee": "UnreadyWorkerProcHandle",
+          "lineNumber": 208
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "patch/platform/patch_profiling_chunk.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 229,
+      "nonEmptyLines": 179,
+      "functions": [
+        {
+          "name": "_record_execution_timing",
+          "startLine": 45,
+          "endLine": 127,
+          "params": [
+            "scheduler",
+            "scheduler_output",
+            "model_output"
+          ]
+        },
+        {
+          "name": "_ensure_update_from_output_wrapped",
+          "startLine": 135,
+          "endLine": 150,
+          "params": [
+            "scheduler"
+          ]
+        },
+        {
+          "name": "_ensure_schedule_wrapped",
+          "startLine": 153,
+          "endLine": 176,
+          "params": [
+            "scheduler"
+          ]
+        },
+        {
+          "name": "_apply_profiling_patches",
+          "startLine": 184,
+          "endLine": 207,
+          "params": []
+        },
+        {
+          "name": "_patched_run_engine_core",
+          "startLine": 224,
+          "endLine": 226,
+          "params": [
+            "*args",
+            "**kwargs"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_record_execution_timing",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "_ensure_update_from_output_wrapped",
+          "line": 135,
+          "isDefault": false
+        },
+        {
+          "name": "_ensure_schedule_wrapped",
+          "line": 153,
+          "isDefault": false
+        },
+        {
+          "name": "_apply_profiling_patches",
+          "line": 184,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_run_engine_core",
+          "line": 224,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "get_ascend_config",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 74
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 84
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 93
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "request_chunks.append",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 98
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 100
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "getattr",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "enumerate",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "len",
+          "lineNumber": 105
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "request_chunks.append",
+          "lineNumber": 108
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "profiling_mgr.predictor.set_target_latency",
+          "lineNumber": 112
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "logger.debug",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "profiling_mgr.record_batch_execution_time",
+          "lineNumber": 124
+        },
+        {
+          "caller": "_record_execution_timing",
+          "callee": "logger.debug",
+          "lineNumber": 127
+        },
+        {
+          "caller": "_ensure_update_from_output_wrapped",
+          "callee": "hasattr",
+          "lineNumber": 140
+        },
+        {
+          "caller": "_ensure_update_from_output_wrapped",
+          "callee": "type",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_wrapped_update_from_output",
+          "callee": "_record_execution_timing",
+          "lineNumber": 147
+        },
+        {
+          "caller": "_wrapped_update_from_output",
+          "callee": "_original_update_from_output",
+          "lineNumber": 148
+        },
+        {
+          "caller": "_ensure_schedule_wrapped",
+          "callee": "hasattr",
+          "lineNumber": 164
+        },
+        {
+          "caller": "_ensure_schedule_wrapped",
+          "callee": "type",
+          "lineNumber": 167
+        },
+        {
+          "caller": "_wrapped_schedule",
+          "callee": "_original_schedule",
+          "lineNumber": 171
+        },
+        {
+          "caller": "_wrapped_schedule",
+          "callee": "getattr",
+          "lineNumber": 172
+        },
+        {
+          "caller": "_patched_engine_core_init",
+          "callee": "original_init",
+          "lineNumber": 198
+        },
+        {
+          "caller": "_patched_engine_core_init",
+          "callee": "hasattr",
+          "lineNumber": 200
+        },
+        {
+          "caller": "_patched_engine_core_init",
+          "callee": "logger.info",
+          "lineNumber": 201
+        },
+        {
+          "caller": "_patched_engine_core_init",
+          "callee": "self.scheduler.run_profiling_chunk_init",
+          "lineNumber": 202
+        },
+        {
+          "caller": "_patched_engine_core_init",
+          "callee": "_ensure_update_from_output_wrapped",
+          "lineNumber": 204
+        },
+        {
+          "caller": "_patched_engine_core_init",
+          "callee": "_ensure_schedule_wrapped",
+          "lineNumber": 205
+        },
+        {
+          "caller": "_patched_run_engine_core",
+          "callee": "_apply_profiling_patches",
+          "lineNumber": 225
+        },
+        {
+          "caller": "_patched_run_engine_core",
+          "callee": "_original_run_engine_core",
+          "lineNumber": 226
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_scheduler.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 45,
+      "nonEmptyLines": 41,
+      "functions": [
+        {
+          "name": "_mamba_block_aligned_split",
+          "startLine": 5,
+          "endLine": 42,
+          "params": [
+            "request",
+            "num_new_tokens",
+            "num_new_local_computed_tokens",
+            "num_external_computed_tokens"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_mamba_block_aligned_split",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_mamba_block_aligned_split",
+          "callee": "max",
+          "lineNumber": 19
+        },
+        {
+          "caller": "_mamba_block_aligned_split",
+          "callee": "max",
+          "lineNumber": 31
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_speculative_config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 130,
+      "nonEmptyLines": 111,
+      "functions": [
+        {
+          "name": "hf_config_override",
+          "startLine": 15,
+          "endLine": 127,
+          "params": [
+            "hf_config"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "hf_config_override",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 22
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 24
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 25
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 29
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 30
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 34
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 35
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 45
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 46
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 55
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 56
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 66
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 67
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 78
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 79
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hasattr",
+          "lineNumber": 83
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 89
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 90
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 95
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 96
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 101
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 102
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 107
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 108
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 116
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 117
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "getattr",
+          "lineNumber": 121
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 122
+        },
+        {
+          "caller": "hf_config_override",
+          "callee": "hf_config.update",
+          "lineNumber": 125
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_tool_choice_none_content.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 161,
+      "nonEmptyLines": 119,
+      "functions": [
+        {
+          "name": "_omit_empty_tool_calls",
+          "startLine": 40,
+          "endLine": 56,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "_patched_chat_completion_response_model_dump",
+          "startLine": 59,
+          "endLine": 60,
+          "params": [
+            "*args",
+            "**kwargs"
+          ]
+        },
+        {
+          "name": "_patched_chat_completion_stream_response_model_dump",
+          "startLine": 63,
+          "endLine": 64,
+          "params": [
+            "*args",
+            "**kwargs"
+          ]
+        },
+        {
+          "name": "_patched_chat_completion_stream_response_model_dump_json",
+          "startLine": 67,
+          "endLine": 73,
+          "params": [
+            "*args",
+            "**kwargs"
+          ]
+        },
+        {
+          "name": "_is_forced_tool_choice",
+          "startLine": 81,
+          "endLine": 86,
+          "params": [
+            "request"
+          ]
+        },
+        {
+          "name": "_set_no_forced_tool_call",
+          "startLine": 89,
+          "endLine": 92,
+          "params": [
+            "request",
+            "value"
+          ]
+        },
+        {
+          "name": "_patch_named_tool_choice_bool",
+          "startLine": 95,
+          "endLine": 109,
+          "params": []
+        },
+        {
+          "name": "_patched_parse_tool_calls_from_content",
+          "startLine": 118,
+          "endLine": 136,
+          "params": [
+            "request",
+            "tokenizer",
+            "enable_auto_tools",
+            "tool_parser_cls",
+            "content"
+          ]
+        },
+        {
+          "name": "_patched_delegating_parse_tool_calls",
+          "startLine": 144,
+          "endLine": 158,
+          "params": [
+            "request",
+            "content",
+            "enable_auto_tools"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_omit_empty_tool_calls",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_chat_completion_response_model_dump",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_chat_completion_stream_response_model_dump",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_chat_completion_stream_response_model_dump_json",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "_is_forced_tool_choice",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "_set_no_forced_tool_call",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "_patch_named_tool_choice_bool",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_parse_tool_calls_from_content",
+          "line": 118,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_delegating_parse_tool_calls",
+          "line": 144,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "isinstance",
+          "lineNumber": 41
+        },
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "payload.get",
+          "lineNumber": 44
+        },
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "isinstance",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "isinstance",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "choice.get",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "isinstance",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "message.get",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_omit_empty_tool_calls",
+          "callee": "message.pop",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_patched_chat_completion_response_model_dump",
+          "callee": "_omit_empty_tool_calls",
+          "lineNumber": 60
+        },
+        {
+          "caller": "_patched_chat_completion_response_model_dump",
+          "callee": "_original_chat_completion_response_model_dump",
+          "lineNumber": 60
+        },
+        {
+          "caller": "_patched_chat_completion_stream_response_model_dump",
+          "callee": "_omit_empty_tool_calls",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_patched_chat_completion_stream_response_model_dump",
+          "callee": "_original_chat_completion_stream_response_model_dump",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_patched_chat_completion_stream_response_model_dump_json",
+          "callee": "dict",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_patched_chat_completion_stream_response_model_dump_json",
+          "callee": "dump_kwargs.pop",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_patched_chat_completion_stream_response_model_dump_json",
+          "callee": "dump_kwargs.pop",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_patched_chat_completion_stream_response_model_dump_json",
+          "callee": "_patched_chat_completion_stream_response_model_dump",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_patched_chat_completion_stream_response_model_dump_json",
+          "callee": "json.dumps",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_is_forced_tool_choice",
+          "callee": "getattr",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_is_forced_tool_choice",
+          "callee": "isinstance",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_set_no_forced_tool_call",
+          "callee": "getattr",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_set_no_forced_tool_call",
+          "callee": "isinstance",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_set_no_forced_tool_call",
+          "callee": "setattr",
+          "lineNumber": 92
+        },
+        {
+          "caller": "_patch_named_tool_choice_bool",
+          "callee": "getattr",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_patch_named_tool_choice_bool",
+          "callee": "getattr",
+          "lineNumber": 99
+        },
+        {
+          "caller": "_patched_named_tool_choice_bool",
+          "callee": "getattr",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_patched_named_tool_choice_bool",
+          "callee": "original_bool",
+          "lineNumber": 105
+        },
+        {
+          "caller": "_patched_parse_tool_calls_from_content",
+          "callee": "_is_forced_tool_choice",
+          "lineNumber": 125
+        },
+        {
+          "caller": "_patched_parse_tool_calls_from_content",
+          "callee": "_set_no_forced_tool_call",
+          "lineNumber": 126
+        },
+        {
+          "caller": "_patched_parse_tool_calls_from_content",
+          "callee": "_set_no_forced_tool_call",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_patched_parse_tool_calls_from_content",
+          "callee": "_original_parse_tool_calls_from_content",
+          "lineNumber": 130
+        },
+        {
+          "caller": "_patched_delegating_parse_tool_calls",
+          "callee": "_is_forced_tool_choice",
+          "lineNumber": 150
+        },
+        {
+          "caller": "_patched_delegating_parse_tool_calls",
+          "callee": "_original_delegating_parse_tool_calls",
+          "lineNumber": 153
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/platform/patch_torch_accelerator.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 16,
+      "nonEmptyLines": 11,
+      "functions": [
+        {
+          "name": "patch_empty_cache",
+          "startLine": 4,
+          "endLine": 5,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "patch_empty_cache",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "patch_empty_cache",
+          "callee": "torch.npu.empty_cache",
+          "lineNumber": 5
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/worker/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 71,
+      "nonEmptyLines": 60,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/worker/_hccl_pg_registry.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 295,
+      "nonEmptyLines": 245,
+      "functions": [
+        {
+          "name": "make_hccl_pg_key",
+          "startLine": 65,
+          "endLine": 91,
+          "params": [
+            "ranks",
+            "backend",
+            "pg_options",
+            "reuse_domain"
+          ]
+        },
+        {
+          "name": "_normalize_hccl_pg_options",
+          "startLine": 161,
+          "endLine": 180,
+          "params": [
+            "pg_options"
+          ]
+        },
+        {
+          "name": "_has_unknown_non_default_fields",
+          "startLine": 183,
+          "endLine": 216,
+          "params": [
+            "pg_options"
+          ]
+        },
+        {
+          "name": "_global_ranks_match_requested_ranks",
+          "startLine": 219,
+          "endLine": 243,
+          "params": [
+            "ranks",
+            "pg_options"
+          ]
+        },
+        {
+          "name": "_freeze_for_key",
+          "startLine": 246,
+          "endLine": 255,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "_is_default_option_value",
+          "startLine": 258,
+          "endLine": 271,
+          "params": [
+            "name",
+            "value"
+          ]
+        },
+        {
+          "name": "_is_non_group_member",
+          "startLine": 274,
+          "endLine": 280,
+          "params": [
+            "handle"
+          ]
+        },
+        {
+          "name": "_load_non_group_member_sentinel",
+          "startLine": 283,
+          "endLine": 289,
+          "params": []
+        },
+        {
+          "name": "_destroy_process_group",
+          "startLine": 292,
+          "endLine": 295,
+          "params": [
+            "handle"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "HcclPgKey",
+          "startLine": 52,
+          "endLine": 56,
+          "methods": [],
+          "properties": [
+            "backend",
+            "ranks",
+            "options_key",
+            "reuse_domain"
+          ]
+        },
+        {
+          "name": "RegistryEntry",
+          "startLine": 60,
+          "endLine": 62,
+          "methods": [],
+          "properties": [
+            "handle",
+            "refcount"
+          ]
+        },
+        {
+          "name": "HcclPgRegistry",
+          "startLine": 94,
+          "endLine": 158,
+          "methods": [
+            "__init__",
+            "acquire",
+            "release",
+            "clear"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "HcclPgKey",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "RegistryEntry",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "make_hccl_pg_key",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "HcclPgRegistry",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "_normalize_hccl_pg_options",
+          "line": 161,
+          "isDefault": false
+        },
+        {
+          "name": "_has_unknown_non_default_fields",
+          "line": 183,
+          "isDefault": false
+        },
+        {
+          "name": "_global_ranks_match_requested_ranks",
+          "line": 219,
+          "isDefault": false
+        },
+        {
+          "name": "_freeze_for_key",
+          "line": 246,
+          "isDefault": false
+        },
+        {
+          "name": "_is_default_option_value",
+          "line": 258,
+          "isDefault": false
+        },
+        {
+          "name": "_is_non_group_member",
+          "line": 274,
+          "isDefault": false
+        },
+        {
+          "name": "_load_non_group_member_sentinel",
+          "line": 283,
+          "isDefault": false
+        },
+        {
+          "name": "_destroy_process_group",
+          "line": 292,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "make_hccl_pg_key",
+          "callee": "_normalize_hccl_pg_options",
+          "lineNumber": 80
+        },
+        {
+          "caller": "make_hccl_pg_key",
+          "callee": "_global_ranks_match_requested_ranks",
+          "lineNumber": 83
+        },
+        {
+          "caller": "make_hccl_pg_key",
+          "callee": "HcclPgKey",
+          "lineNumber": 86
+        },
+        {
+          "caller": "make_hccl_pg_key",
+          "callee": "tuple",
+          "lineNumber": 88
+        },
+        {
+          "caller": "__init__",
+          "callee": "Lock",
+          "lineNumber": 105
+        },
+        {
+          "caller": "acquire",
+          "callee": "make_hccl_pg_key",
+          "lineNumber": 116
+        },
+        {
+          "caller": "acquire",
+          "callee": "create_fn",
+          "lineNumber": 118
+        },
+        {
+          "caller": "acquire",
+          "callee": "self._entries.get",
+          "lineNumber": 121
+        },
+        {
+          "caller": "acquire",
+          "callee": "create_fn",
+          "lineNumber": 126
+        },
+        {
+          "caller": "acquire",
+          "callee": "self._entries.get",
+          "lineNumber": 129
+        },
+        {
+          "caller": "acquire",
+          "callee": "RegistryEntry",
+          "lineNumber": 131
+        },
+        {
+          "caller": "acquire",
+          "callee": "_is_non_group_member",
+          "lineNumber": 134
+        },
+        {
+          "caller": "acquire",
+          "callee": "_destroy_process_group",
+          "lineNumber": 135
+        },
+        {
+          "caller": "release",
+          "callee": "self._entries.get",
+          "lineNumber": 140
+        },
+        {
+          "caller": "release",
+          "callee": "_is_non_group_member",
+          "lineNumber": 148
+        },
+        {
+          "caller": "release",
+          "callee": "_destroy_process_group",
+          "lineNumber": 151
+        },
+        {
+          "caller": "clear",
+          "callee": "self._entries.clear",
+          "lineNumber": 156
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "dict",
+          "lineNumber": 166
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "isinstance",
+          "lineNumber": 166
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "_has_unknown_non_default_fields",
+          "lineNumber": 167
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "options_dict.get",
+          "lineNumber": 174
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "getattr",
+          "lineNumber": 176
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "_is_default_option_value",
+          "lineNumber": 177
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "normalized_items.append",
+          "lineNumber": 179
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "_freeze_for_key",
+          "lineNumber": 179
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "tuple",
+          "lineNumber": 180
+        },
+        {
+          "caller": "_normalize_hccl_pg_options",
+          "callee": "sorted",
+          "lineNumber": 180
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "isinstance",
+          "lineNumber": 185
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "dict",
+          "lineNumber": 186
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "vars",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "hasattr",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "list",
+          "lineNumber": 191
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "options_dict.keys",
+          "lineNumber": 191
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "dir",
+          "lineNumber": 193
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "name.startswith",
+          "lineNumber": 193
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "getattr",
+          "lineNumber": 204
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "callable",
+          "lineNumber": 207
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "_is_default_option_value",
+          "lineNumber": 209
+        },
+        {
+          "caller": "_has_unknown_non_default_fields",
+          "callee": "logger.warning",
+          "lineNumber": 211
+        },
+        {
+          "caller": "_global_ranks_match_requested_ranks",
+          "callee": "isinstance",
+          "lineNumber": 223
+        },
+        {
+          "caller": "_global_ranks_match_requested_ranks",
+          "callee": "pg_options.get",
+          "lineNumber": 224
+        },
+        {
+          "caller": "_global_ranks_match_requested_ranks",
+          "callee": "getattr",
+          "lineNumber": 226
+        },
+        {
+          "caller": "_global_ranks_match_requested_ranks",
+          "callee": "tuple",
+          "lineNumber": 230
+        },
+        {
+          "caller": "_global_ranks_match_requested_ranks",
+          "callee": "tuple",
+          "lineNumber": 233
+        },
+        {
+          "caller": "_global_ranks_match_requested_ranks",
+          "callee": "logger.warning",
+          "lineNumber": 237
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "isinstance",
+          "lineNumber": 247
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "tuple",
+          "lineNumber": 248
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "str",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "_freeze_for_key",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "sorted",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "value.items",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "str",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "isinstance",
+          "lineNumber": 251
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "tuple",
+          "lineNumber": 252
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "_freeze_for_key",
+          "lineNumber": 252
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "isinstance",
+          "lineNumber": 253
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "tuple",
+          "lineNumber": 254
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "_freeze_for_key",
+          "lineNumber": 254
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "sorted",
+          "lineNumber": 254
+        },
+        {
+          "caller": "_freeze_for_key",
+          "callee": "str",
+          "lineNumber": 254
+        },
+        {
+          "caller": "_is_default_option_value",
+          "callee": "cast",
+          "lineNumber": 262
+        },
+        {
+          "caller": "_is_default_option_value",
+          "callee": "isinstance",
+          "lineNumber": 263
+        },
+        {
+          "caller": "_is_default_option_value",
+          "callee": "isinstance",
+          "lineNumber": 263
+        },
+        {
+          "caller": "_is_default_option_value",
+          "callee": "tuple",
+          "lineNumber": 264
+        },
+        {
+          "caller": "_is_non_group_member",
+          "callee": "_load_non_group_member_sentinel",
+          "lineNumber": 278
+        },
+        {
+          "caller": "_load_non_group_member_sentinel",
+          "callee": "object",
+          "lineNumber": 289
+        },
+        {
+          "caller": "_destroy_process_group",
+          "callee": "destroy_process_group",
+          "lineNumber": 295
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 12,
+        "functionCount": 9,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "patch/worker/patch_cudagraph.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 32,
+      "functions": [
+        {
+          "name": "_create_padded_batch_descriptor",
+          "startLine": 6,
+          "endLine": 35,
+          "params": [
+            "num_tokens",
+            "uniform_decode",
+            "has_lora",
+            "num_active_loras"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_create_padded_batch_descriptor",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_create_padded_batch_descriptor",
+          "callee": "self.cudagraph_mode.has_mode",
+          "lineNumber": 20
+        },
+        {
+          "caller": "_create_padded_batch_descriptor",
+          "callee": "min",
+          "lineNumber": 23
+        },
+        {
+          "caller": "_create_padded_batch_descriptor",
+          "callee": "min",
+          "lineNumber": 27
+        },
+        {
+          "caller": "_create_padded_batch_descriptor",
+          "callee": "BatchDescriptor",
+          "lineNumber": 29
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/worker/patch_deepseek_compressor.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 156,
+      "nonEmptyLines": 132,
+      "classes": [
+        {
+          "name": "AscendCompressorStateCache",
+          "startLine": 29,
+          "endLine": 75,
+          "methods": [
+            "__init__",
+            "get_kv_cache_spec",
+            "forward",
+            "get_attn_backend"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendDeepseekV4IndexerCache",
+          "startLine": 78,
+          "endLine": 109,
+          "methods": [
+            "__init__",
+            "get_kv_cache_spec",
+            "forward",
+            "get_attn_backend"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendDeepseekV4SWACache",
+          "startLine": 112,
+          "endLine": 151,
+          "methods": [
+            "__init__",
+            "get_kv_cache_spec",
+            "forward",
+            "get_attn_backend"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendCompressorStateCache",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "AscendDeepseekV4IndexerCache",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "AscendDeepseekV4SWACache",
+          "line": 112,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "torch.nn.Module.__init__",
+          "lineNumber": 38
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.tensor",
+          "lineNumber": 42
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 43
+        },
+        {
+          "caller": "__init__",
+          "callee": "ValueError",
+          "lineNumber": 45
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 57
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "SlidingWindowMLASpec",
+          "lineNumber": 62
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 87
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 87
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 90
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "AscendMLAAttentionSpec",
+          "lineNumber": 94
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 103
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 121
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 121
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 132
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 136
+        },
+        {
+          "caller": "get_kv_cache_spec",
+          "callee": "SlidingWindowMLASpec",
+          "lineNumber": 137
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 0,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "patch/worker/patch_deepseek_mtp.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 87,
+      "nonEmptyLines": 71,
+      "functions": [
+        {
+          "name": "get_spec_layer_idx_from_weight_name",
+          "startLine": 13,
+          "endLine": 23,
+          "params": [
+            "config",
+            "weight_name"
+          ]
+        },
+        {
+          "name": "get_spec_layer_idx_from_weight_name_020",
+          "startLine": 26,
+          "endLine": 34,
+          "params": [
+            "config",
+            "weight_name"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendDeepSeekMultiTokenPredictorLayer",
+          "startLine": 37,
+          "endLine": 66,
+          "methods": [
+            "__init__",
+            "forward"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendDeepSeekMTP",
+          "startLine": 69,
+          "endLine": 74,
+          "methods": [
+            "_rewrite_spec_layer_name"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_spec_layer_idx_from_weight_name",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "get_spec_layer_idx_from_weight_name_020",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "AscendDeepSeekMultiTokenPredictorLayer",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "AscendDeepSeekMTP",
+          "line": 69,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_spec_layer_idx_from_weight_name",
+          "callee": "hasattr",
+          "lineNumber": 14
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name",
+          "callee": "range",
+          "lineNumber": 16
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name",
+          "callee": "weight_name.startswith",
+          "lineNumber": 18
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name",
+          "callee": "weight_name.startswith",
+          "lineNumber": 19
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name",
+          "callee": "weight_name.startswith",
+          "lineNumber": 20
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name_020",
+          "callee": "hasattr",
+          "lineNumber": 29
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name_020",
+          "callee": "range",
+          "lineNumber": 31
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name_020",
+          "callee": "weight_name.startswith",
+          "lineNumber": 32
+        },
+        {
+          "caller": "get_spec_layer_idx_from_weight_name_020",
+          "callee": "weight_name.startswith",
+          "lineNumber": 32
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 39
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 39
+        },
+        {
+          "caller": "__init__",
+          "callee": "getattr",
+          "lineNumber": 40
+        },
+        {
+          "caller": "__init__",
+          "callee": "quant_description.get",
+          "lineNumber": 41
+        },
+        {
+          "caller": "__init__",
+          "callee": "nn.Linear",
+          "lineNumber": 44
+        },
+        {
+          "caller": "forward",
+          "callee": "torch.where",
+          "lineNumber": 56
+        },
+        {
+          "caller": "forward",
+          "callee": "positions.unsqueeze",
+          "lineNumber": 56
+        },
+        {
+          "caller": "forward",
+          "callee": "self.enorm",
+          "lineNumber": 57
+        },
+        {
+          "caller": "forward",
+          "callee": "self.rot",
+          "lineNumber": 59
+        },
+        {
+          "caller": "forward",
+          "callee": "self.hnorm",
+          "lineNumber": 60
+        },
+        {
+          "caller": "forward",
+          "callee": "self.eh_proj",
+          "lineNumber": 62
+        },
+        {
+          "caller": "forward",
+          "callee": "torch.cat",
+          "lineNumber": 62
+        },
+        {
+          "caller": "forward",
+          "callee": "self.mtp_block",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_rewrite_spec_layer_name",
+          "callee": "super()._rewrite_spec_layer_name",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_rewrite_spec_layer_name",
+          "callee": "super",
+          "lineNumber": 72
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 2,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "patch/worker/patch_distributed.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 233,
+      "nonEmptyLines": 195,
+      "functions": [
+        {
+          "name": "_normalize_backend",
+          "startLine": 35,
+          "endLine": 36,
+          "params": [
+            "backend"
+          ]
+        },
+        {
+          "name": "_resolve_reuse_domain",
+          "startLine": 39,
+          "endLine": 43,
+          "params": [
+            "group_name"
+          ]
+        },
+        {
+          "name": "_create_device_group",
+          "startLine": 46,
+          "endLine": 55,
+          "params": [
+            "ranks",
+            "backend",
+            "hccl_pg_options"
+          ]
+        },
+        {
+          "name": "_acquire_hccl_group",
+          "startLine": 58,
+          "endLine": 76,
+          "params": [
+            "ranks",
+            "backend",
+            "hccl_pg_options",
+            "reuse_domain"
+          ]
+        },
+        {
+          "name": "_wrap_destroy_distributed_environment",
+          "startLine": 79,
+          "endLine": 91,
+          "params": [
+            "destroy_fn"
+          ]
+        },
+        {
+          "name": "_patch_destroy_distributed_environment",
+          "startLine": 94,
+          "endLine": 97,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "GroupCoordinatorPatch",
+          "startLine": 100,
+          "endLine": 229,
+          "methods": [
+            "__init__",
+            "destroy",
+            "all_to_all"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_normalize_backend",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "_resolve_reuse_domain",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "_create_device_group",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "_acquire_hccl_group",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "_wrap_destroy_distributed_environment",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "_patch_destroy_distributed_environment",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "GroupCoordinatorPatch",
+          "line": 100,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_normalize_backend",
+          "callee": "str",
+          "lineNumber": 36
+        },
+        {
+          "caller": "_resolve_reuse_domain",
+          "callee": "group_name.split",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_create_device_group",
+          "callee": "torch.distributed.new_group",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_acquire_hccl_group",
+          "callee": "make_hccl_pg_key",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_acquire_hccl_group",
+          "callee": "_HCCL_PG_REGISTRY.acquire",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_acquire_hccl_group",
+          "callee": "_create_device_group",
+          "lineNumber": 74
+        },
+        {
+          "caller": "_wrap_destroy_distributed_environment",
+          "callee": "getattr",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_wrap_destroy_distributed_environment",
+          "callee": "cast",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_wrap_destroy_distributed_environment",
+          "callee": "wraps",
+          "lineNumber": 83
+        },
+        {
+          "caller": "wrapped",
+          "callee": "destroy_fn",
+          "lineNumber": 86
+        },
+        {
+          "caller": "wrapped",
+          "callee": "_HCCL_PG_REGISTRY.clear",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_wrap_destroy_distributed_environment",
+          "callee": "cast",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_patch_destroy_distributed_environment",
+          "callee": "_wrap_destroy_distributed_environment",
+          "lineNumber": 95
+        },
+        {
+          "caller": "__init__",
+          "callee": "_get_unique_name",
+          "lineNumber": 111
+        },
+        {
+          "caller": "__init__",
+          "callee": "_register_group",
+          "lineNumber": 112
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.distributed.get_rank",
+          "lineNumber": 114
+        },
+        {
+          "caller": "__init__",
+          "callee": "_normalize_backend",
+          "lineNumber": 116
+        },
+        {
+          "caller": "__init__",
+          "callee": "_resolve_reuse_domain",
+          "lineNumber": 128
+        },
+        {
+          "caller": "__init__",
+          "callee": "create_hccl_pg_options",
+          "lineNumber": 132
+        },
+        {
+          "caller": "__init__",
+          "callee": "_acquire_hccl_group",
+          "lineNumber": 133
+        },
+        {
+          "caller": "__init__",
+          "callee": "self._acquired_hccl_keys.append",
+          "lineNumber": 140
+        },
+        {
+          "caller": "__init__",
+          "callee": "self._unshared_hccl_groups.append",
+          "lineNumber": 142
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.distributed.new_group",
+          "lineNumber": 146
+        },
+        {
+          "caller": "__init__",
+          "callee": "len",
+          "lineNumber": 149
+        },
+        {
+          "caller": "__init__",
+          "callee": "ranks.index",
+          "lineNumber": 150
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.npu.current_device",
+          "lineNumber": 157
+        },
+        {
+          "caller": "__init__",
+          "callee": "NPUCommunicator",
+          "lineNumber": 159
+        },
+        {
+          "caller": "__init__",
+          "callee": "MessageQueue.create_from_process_group",
+          "lineNumber": 169
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.destroy",
+          "lineNumber": 176
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.exception",
+          "lineNumber": 178
+        },
+        {
+          "caller": "destroy",
+          "callee": "getattr",
+          "lineNumber": 182
+        },
+        {
+          "caller": "destroy",
+          "callee": "torch.distributed.destroy_process_group",
+          "lineNumber": 184
+        },
+        {
+          "caller": "destroy",
+          "callee": "hasattr",
+          "lineNumber": 185
+        },
+        {
+          "caller": "destroy",
+          "callee": "hasattr",
+          "lineNumber": 188
+        },
+        {
+          "caller": "destroy",
+          "callee": "reversed",
+          "lineNumber": 189
+        },
+        {
+          "caller": "destroy",
+          "callee": "_HCCL_PG_REGISTRY.release",
+          "lineNumber": 190
+        },
+        {
+          "caller": "destroy",
+          "callee": "hasattr",
+          "lineNumber": 193
+        },
+        {
+          "caller": "destroy",
+          "callee": "reversed",
+          "lineNumber": 194
+        },
+        {
+          "caller": "destroy",
+          "callee": "torch.distributed.destroy_process_group",
+          "lineNumber": 195
+        },
+        {
+          "caller": "destroy",
+          "callee": "getattr",
+          "lineNumber": 198
+        },
+        {
+          "caller": "destroy",
+          "callee": "torch.distributed.destroy_process_group",
+          "lineNumber": 200
+        },
+        {
+          "caller": "destroy",
+          "callee": "hasattr",
+          "lineNumber": 201
+        },
+        {
+          "caller": "destroy",
+          "callee": "getattr",
+          "lineNumber": 204
+        },
+        {
+          "caller": "destroy",
+          "callee": "device_communicator.destroy",
+          "lineNumber": 206
+        },
+        {
+          "caller": "destroy",
+          "callee": "getattr",
+          "lineNumber": 209
+        },
+        {
+          "caller": "all_to_all",
+          "callee": "input_.dim",
+          "lineNumber": 222
+        },
+        {
+          "caller": "all_to_all",
+          "callee": "input_.dim",
+          "lineNumber": 222
+        },
+        {
+          "caller": "all_to_all",
+          "callee": "input_.size",
+          "lineNumber": 223
+        },
+        {
+          "caller": "all_to_all",
+          "callee": "input_.dim",
+          "lineNumber": 225
+        },
+        {
+          "caller": "all_to_all",
+          "callee": "input_.dim",
+          "lineNumber": 225
+        },
+        {
+          "caller": "all_to_all",
+          "callee": "input_.size",
+          "lineNumber": 226
+        },
+        {
+          "caller": "all_to_all",
+          "callee": "self.device_communicator.all_to_all",
+          "lineNumber": 229
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 7,
+        "functionCount": 6,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "patch/worker/patch_draft_quarot.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 145,
+      "nonEmptyLines": 118,
+      "functions": [
+        {
+          "name": "get_embedding_tensor",
+          "startLine": 17,
+          "endLine": 39,
+          "params": [
+            "directory_path"
+          ]
+        },
+        {
+          "name": "get_rotation_path",
+          "startLine": 42,
+          "endLine": 53,
+          "params": [
+            "target_vllm_config"
+          ]
+        },
+        {
+          "name": "get_rotataion_matrix",
+          "startLine": 56,
+          "endLine": 70,
+          "params": [
+            "rotation_path"
+          ]
+        },
+        {
+          "name": "compute_rotataion_matrix3",
+          "startLine": 73,
+          "endLine": 77,
+          "params": [
+            "Q"
+          ]
+        },
+        {
+          "name": "patch_load_weights",
+          "startLine": 80,
+          "endLine": 88,
+          "params": [
+            "target_vllm_config"
+          ]
+        },
+        {
+          "name": "make_load_weights",
+          "startLine": 91,
+          "endLine": 145,
+          "params": [
+            "target_model_path",
+            "rotation_path"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_embedding_tensor",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "get_rotation_path",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "get_rotataion_matrix",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "compute_rotataion_matrix3",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "patch_load_weights",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "make_load_weights",
+          "line": 91,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_embedding_tensor",
+          "callee": "os.path.isdir",
+          "lineNumber": 22
+        },
+        {
+          "caller": "get_embedding_tensor",
+          "callee": "os.listdir",
+          "lineNumber": 26
+        },
+        {
+          "caller": "get_embedding_tensor",
+          "callee": "filename.endswith",
+          "lineNumber": 27
+        },
+        {
+          "caller": "get_embedding_tensor",
+          "callee": "os.path.join",
+          "lineNumber": 28
+        },
+        {
+          "caller": "get_embedding_tensor",
+          "callee": "load_file",
+          "lineNumber": 31
+        },
+        {
+          "caller": "get_embedding_tensor",
+          "callee": "state_dict.items",
+          "lineNumber": 34
+        },
+        {
+          "caller": "get_embedding_tensor",
+          "callee": "key.lower",
+          "lineNumber": 35
+        },
+        {
+          "caller": "get_rotation_path",
+          "callee": "Path",
+          "lineNumber": 53
+        },
+        {
+          "caller": "get_rotataion_matrix",
+          "callee": "load_file",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_rotataion_matrix",
+          "callee": "logger.error",
+          "lineNumber": 66
+        },
+        {
+          "caller": "compute_rotataion_matrix3",
+          "callee": "torch.block_diag",
+          "lineNumber": 77
+        },
+        {
+          "caller": "patch_load_weights",
+          "callee": "Path",
+          "lineNumber": 81
+        },
+        {
+          "caller": "patch_load_weights",
+          "callee": "get_rotation_path",
+          "lineNumber": 82
+        },
+        {
+          "caller": "patch_load_weights",
+          "callee": "make_load_weights",
+          "lineNumber": 88
+        },
+        {
+          "caller": "load_weights",
+          "callee": "get_rotataion_matrix",
+          "lineNumber": 93
+        },
+        {
+          "caller": "load_weights",
+          "callee": "compute_rotataion_matrix3",
+          "lineNumber": 94
+        },
+        {
+          "caller": "load_weights",
+          "callee": "isinstance",
+          "lineNumber": 95
+        },
+        {
+          "caller": "load_weights",
+          "callee": "getattr",
+          "lineNumber": 96
+        },
+        {
+          "caller": "load_weights",
+          "callee": "name.replace",
+          "lineNumber": 107
+        },
+        {
+          "caller": "load_weights",
+          "callee": "(loaded_weight.to(torch.float32) @ Q3.to(torch.float32)).to",
+          "lineNumber": 114
+        },
+        {
+          "caller": "load_weights",
+          "callee": "loaded_weight.to",
+          "lineNumber": 114
+        },
+        {
+          "caller": "load_weights",
+          "callee": "Q3.to",
+          "lineNumber": 114
+        },
+        {
+          "caller": "load_weights",
+          "callee": "process_eagle_weight",
+          "lineNumber": 118
+        },
+        {
+          "caller": "load_weights",
+          "callee": "(get_embedding_tensor(target_model_path).to(torch.float32) @ Q.T.to(torch.float32)).to",
+          "lineNumber": 123
+        },
+        {
+          "caller": "load_weights",
+          "callee": "get_embedding_tensor(target_model_path).to",
+          "lineNumber": 123
+        },
+        {
+          "caller": "load_weights",
+          "callee": "get_embedding_tensor",
+          "lineNumber": 123
+        },
+        {
+          "caller": "load_weights",
+          "callee": "Q.T.to",
+          "lineNumber": 123
+        },
+        {
+          "caller": "load_weights",
+          "callee": "process_eagle_weight",
+          "lineNumber": 129
+        },
+        {
+          "caller": "load_weights",
+          "callee": "skip_substrs.append",
+          "lineNumber": 133
+        },
+        {
+          "caller": "load_weights",
+          "callee": "skip_substrs.append",
+          "lineNumber": 135
+        },
+        {
+          "caller": "load_weights",
+          "callee": "skip_substrs.append",
+          "lineNumber": 137
+        },
+        {
+          "caller": "load_weights",
+          "callee": "AutoWeightsLoader",
+          "lineNumber": 138
+        },
+        {
+          "caller": "load_weights",
+          "callee": "loader.load_weights",
+          "lineNumber": 143
+        },
+        {
+          "caller": "load_weights",
+          "callee": "model_weights.items",
+          "lineNumber": 143
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/worker/patch_gdn_attn.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 869,
+      "nonEmptyLines": 748,
+      "functions": [
+        {
+          "name": "_next_power_of_2",
+          "startLine": 119,
+          "endLine": 122,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "_prepare_chunk_counts_cpu",
+          "startLine": 125,
+          "endLine": 127,
+          "params": [
+            "cu_seqlens_cpu",
+            "chunk_size"
+          ]
+        },
+        {
+          "name": "_fill_chunk_indices_cpu",
+          "startLine": 130,
+          "endLine": 145,
+          "params": [
+            "out",
+            "chunk_counts"
+          ]
+        },
+        {
+          "name": "_fill_chunk_offsets_cpu",
+          "startLine": 148,
+          "endLine": 152,
+          "params": [
+            "out",
+            "chunk_counts"
+          ]
+        },
+        {
+          "name": "_fill_update_chunk_offsets_cpu",
+          "startLine": 155,
+          "endLine": 163,
+          "params": [
+            "out",
+            "chunk_counts"
+          ]
+        },
+        {
+          "name": "_fill_final_chunk_indices_cpu",
+          "startLine": 166,
+          "endLine": 170,
+          "params": [
+            "out",
+            "chunk_counts"
+          ]
+        },
+        {
+          "name": "_build_chunk_meta_shape_info",
+          "startLine": 173,
+          "endLine": 194,
+          "params": [
+            "builder",
+            "cu_seqlens_cpu"
+          ]
+        },
+        {
+          "name": "_count_chunk_indices_cpu",
+          "startLine": 197,
+          "endLine": 206,
+          "params": [
+            "seq_lens_cpu",
+            "chunk_size"
+          ]
+        },
+        {
+          "name": "_build_chunk_meta_size_info",
+          "startLine": 209,
+          "endLine": 225,
+          "params": [
+            "builder",
+            "cu_seqlens_cpu"
+          ]
+        },
+        {
+          "name": "_allocate_chunk_meta_cpu_tensors",
+          "startLine": 228,
+          "endLine": 254,
+          "params": [
+            "shape_info"
+          ]
+        },
+        {
+          "name": "_slice_chunk_meta_slot_tensors",
+          "startLine": 257,
+          "endLine": 268,
+          "params": [
+            "slot",
+            "shape_info"
+          ]
+        },
+        {
+          "name": "_fill_chunk_meta_cpu_tensors",
+          "startLine": 271,
+          "endLine": 298,
+          "params": [
+            "tensors",
+            "shape_info"
+          ]
+        },
+        {
+          "name": "_fill_chunk_meta_device_tensors",
+          "startLine": 301,
+          "endLine": 337,
+          "params": [
+            "builder",
+            "cu_seqlens",
+            "tensors"
+          ]
+        },
+        {
+          "name": "_build_chunked_prefill_metadata",
+          "startLine": 340,
+          "endLine": 354,
+          "params": [
+            "builder",
+            "tensors",
+            "slot"
+          ]
+        },
+        {
+          "name": "_get_gdn_num_heads",
+          "startLine": 357,
+          "endLine": 361,
+          "params": [
+            "builder"
+          ]
+        },
+        {
+          "name": "_allocate_chunked_prefill_slot",
+          "startLine": 364,
+          "endLine": 398,
+          "params": [
+            "builder",
+            "device"
+          ]
+        },
+        {
+          "name": "_ensure_chunk_meta_state",
+          "startLine": 401,
+          "endLine": 417,
+          "params": [
+            "builder",
+            "device"
+          ]
+        },
+        {
+          "name": "_build_spec_sequence_masks_cpu",
+          "startLine": 420,
+          "endLine": 427,
+          "params": [
+            "builder",
+            "num_decode_draft_tokens_cpu"
+          ]
+        },
+        {
+          "name": "_build_non_spec_query_start_loc_cpu",
+          "startLine": 430,
+          "endLine": 451,
+          "params": [
+            "builder",
+            "common_attn_metadata",
+            "num_decode_draft_tokens_cpu"
+          ]
+        },
+        {
+          "name": "_build_spec_query_start_loc_cpu",
+          "startLine": 454,
+          "endLine": 476,
+          "params": [
+            "builder",
+            "common_attn_metadata",
+            "num_decode_draft_tokens_cpu"
+          ]
+        },
+        {
+          "name": "_allocate_causal_conv1d_host_slot",
+          "startLine": 479,
+          "endLine": 497,
+          "params": [
+            "builder",
+            "device"
+          ]
+        },
+        {
+          "name": "_ensure_causal_conv1d_host_meta_state",
+          "startLine": 500,
+          "endLine": 510,
+          "params": [
+            "builder",
+            "device"
+          ]
+        },
+        {
+          "name": "_acquire_causal_conv1d_host_slot",
+          "startLine": 513,
+          "endLine": 516,
+          "params": [
+            "builder"
+          ]
+        },
+        {
+          "name": "_allocate_spec_causal_conv1d_host_slot",
+          "startLine": 519,
+          "endLine": 541,
+          "params": [
+            "builder",
+            "device"
+          ]
+        },
+        {
+          "name": "_ensure_spec_causal_conv1d_host_meta_state",
+          "startLine": 544,
+          "endLine": 554,
+          "params": [
+            "builder",
+            "device"
+          ]
+        },
+        {
+          "name": "_acquire_spec_causal_conv1d_host_slot",
+          "startLine": 557,
+          "endLine": 562,
+          "params": [
+            "builder"
+          ]
+        },
+        {
+          "name": "_copy_to_pinned_cpu",
+          "startLine": 565,
+          "endLine": 586,
+          "params": [
+            "tensor",
+            "pinned_buffer"
+          ]
+        },
+        {
+          "name": "_build_non_spec_causal_conv1d_host_meta",
+          "startLine": 589,
+          "endLine": 623,
+          "params": [
+            "builder",
+            "attn_metadata",
+            "non_spec_query_start_loc_cpu"
+          ]
+        },
+        {
+          "name": "_build_non_spec_decode_causal_conv1d_host_meta",
+          "startLine": 626,
+          "endLine": 648,
+          "params": [
+            "builder",
+            "attn_metadata",
+            "non_spec_query_start_loc_cpu"
+          ]
+        },
+        {
+          "name": "_build_spec_causal_conv1d_host_meta",
+          "startLine": 651,
+          "endLine": 680,
+          "params": [
+            "builder",
+            "attn_metadata",
+            "spec_query_start_loc_cpu"
+          ]
+        },
+        {
+          "name": "_build_non_spec_chunked_prefill_meta_cpu",
+          "startLine": 683,
+          "endLine": 687,
+          "params": [
+            "builder",
+            "cu_seqlens_cpu"
+          ]
+        },
+        {
+          "name": "_build_non_spec_chunked_prefill_meta",
+          "startLine": 690,
+          "endLine": 706,
+          "params": [
+            "builder",
+            "cu_seqlens_cpu",
+            "cu_seqlens"
+          ]
+        },
+        {
+          "name": "_patched_build",
+          "startLine": 709,
+          "endLine": 744,
+          "params": [
+            "common_prefix_len",
+            "common_attn_metadata",
+            "num_accepted_tokens",
+            "num_decode_draft_tokens_cpu",
+            "fast_build"
+          ]
+        },
+        {
+          "name": "_patched_build_prefill",
+          "startLine": 747,
+          "endLine": 780,
+          "params": [
+            "attn_metadata",
+            "common_attn_metadata",
+            "num_decode_draft_tokens_cpu"
+          ]
+        },
+        {
+          "name": "_init_reorder_batch_threshold",
+          "startLine": 783,
+          "endLine": 803,
+          "params": [
+            "reorder_batch_threshold",
+            "supports_spec_as_decode",
+            "supports_dcp_with_varlen"
+          ]
+        },
+        {
+          "name": "_patched_build_spec",
+          "startLine": 806,
+          "endLine": 832,
+          "params": [
+            "attn_metadata",
+            "common_attn_metadata",
+            "num_decode_draft_tokens_cpu"
+          ]
+        },
+        {
+          "name": "_patched_build_decode",
+          "startLine": 835,
+          "endLine": 860,
+          "params": [
+            "attn_metadata",
+            "common_attn_metadata",
+            "num_decode_draft_tokens_cpu"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "GDNChunkedPrefillMetadata",
+          "startLine": 40,
+          "endLine": 47,
+          "methods": [],
+          "properties": [
+            "chunk_indices_chunk64",
+            "chunk_offsets_chunk64",
+            "update_chunk_offsets_chunk64",
+            "final_chunk_indices_chunk64",
+            "chunk_indices_large_block",
+            "block_indices_cumsum",
+            "_buffer_slot"
+          ]
+        },
+        {
+          "name": "GDNCausalConv1dHostMetadata",
+          "startLine": 51,
+          "endLine": 55,
+          "methods": [],
+          "properties": [
+            "query_start_loc_cpu",
+            "cache_indices_cpu",
+            "has_initial_state_cpu",
+            "_buffer_slot"
+          ]
+        },
+        {
+          "name": "GDNSpecCausalConv1dHostMetadata",
+          "startLine": 59,
+          "endLine": 63,
+          "methods": [],
+          "properties": [
+            "query_start_loc_cpu",
+            "cache_indices_cpu",
+            "num_accepted_tokens_cpu",
+            "_buffer_slot"
+          ]
+        },
+        {
+          "name": "GDNPrefillFallbackMeta",
+          "startLine": 67,
+          "endLine": 69,
+          "methods": [],
+          "properties": [
+            "causal_conv1d",
+            "chunk"
+          ]
+        },
+        {
+          "name": "GDNDecodeFallbackMeta",
+          "startLine": 73,
+          "endLine": 74,
+          "methods": [],
+          "properties": [
+            "causal_conv1d"
+          ]
+        },
+        {
+          "name": "GDNSpecDecodeFallbackMeta",
+          "startLine": 78,
+          "endLine": 79,
+          "methods": [],
+          "properties": [
+            "spec_causal_conv1d"
+          ]
+        },
+        {
+          "name": "_GDNChunkedPrefillBufferSlot",
+          "startLine": 83,
+          "endLine": 89,
+          "methods": [],
+          "properties": [
+            "chunk_indices_chunk64",
+            "chunk_offsets_chunk64",
+            "update_chunk_offsets_chunk64",
+            "final_chunk_indices_chunk64",
+            "chunk_indices_large_block",
+            "block_indices_cumsum"
+          ]
+        },
+        {
+          "name": "_GDNCausalConv1dHostBufferSlot",
+          "startLine": 93,
+          "endLine": 95,
+          "methods": [],
+          "properties": [
+            "cache_indices_cpu",
+            "has_initial_state_cpu"
+          ]
+        },
+        {
+          "name": "_GDNSpecCausalConv1dHostBufferSlot",
+          "startLine": 99,
+          "endLine": 101,
+          "methods": [],
+          "properties": [
+            "cache_indices_cpu",
+            "num_accepted_tokens_cpu"
+          ]
+        },
+        {
+          "name": "_GDNChunkMetaSizeInfo",
+          "startLine": 105,
+          "endLine": 109,
+          "methods": [],
+          "properties": [
+            "num_seqs",
+            "num_chunk_indices_chunk64",
+            "num_chunk_indices_large_block",
+            "num_block_indices_cumsum"
+          ]
+        },
+        {
+          "name": "_GDNChunkMetaShapeInfo",
+          "startLine": 113,
+          "endLine": 116,
+          "methods": [],
+          "properties": [
+            "chunk_counts_chunk64",
+            "chunk_counts_large_block",
+            "chunk_counts_cumsum"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GDNChunkedPrefillMetadata",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "GDNCausalConv1dHostMetadata",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "GDNSpecCausalConv1dHostMetadata",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "GDNPrefillFallbackMeta",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "GDNDecodeFallbackMeta",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "GDNSpecDecodeFallbackMeta",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "_GDNChunkedPrefillBufferSlot",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "_GDNCausalConv1dHostBufferSlot",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "_GDNSpecCausalConv1dHostBufferSlot",
+          "line": 98,
+          "isDefault": false
+        },
+        {
+          "name": "_GDNChunkMetaSizeInfo",
+          "line": 104,
+          "isDefault": false
+        },
+        {
+          "name": "_GDNChunkMetaShapeInfo",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "_next_power_of_2",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "_prepare_chunk_counts_cpu",
+          "line": 125,
+          "isDefault": false
+        },
+        {
+          "name": "_fill_chunk_indices_cpu",
+          "line": 130,
+          "isDefault": false
+        },
+        {
+          "name": "_fill_chunk_offsets_cpu",
+          "line": 148,
+          "isDefault": false
+        },
+        {
+          "name": "_fill_update_chunk_offsets_cpu",
+          "line": 155,
+          "isDefault": false
+        },
+        {
+          "name": "_fill_final_chunk_indices_cpu",
+          "line": 166,
+          "isDefault": false
+        },
+        {
+          "name": "_build_chunk_meta_shape_info",
+          "line": 173,
+          "isDefault": false
+        },
+        {
+          "name": "_count_chunk_indices_cpu",
+          "line": 197,
+          "isDefault": false
+        },
+        {
+          "name": "_build_chunk_meta_size_info",
+          "line": 209,
+          "isDefault": false
+        },
+        {
+          "name": "_allocate_chunk_meta_cpu_tensors",
+          "line": 228,
+          "isDefault": false
+        },
+        {
+          "name": "_slice_chunk_meta_slot_tensors",
+          "line": 257,
+          "isDefault": false
+        },
+        {
+          "name": "_fill_chunk_meta_cpu_tensors",
+          "line": 271,
+          "isDefault": false
+        },
+        {
+          "name": "_fill_chunk_meta_device_tensors",
+          "line": 301,
+          "isDefault": false
+        },
+        {
+          "name": "_build_chunked_prefill_metadata",
+          "line": 340,
+          "isDefault": false
+        },
+        {
+          "name": "_get_gdn_num_heads",
+          "line": 357,
+          "isDefault": false
+        },
+        {
+          "name": "_allocate_chunked_prefill_slot",
+          "line": 364,
+          "isDefault": false
+        },
+        {
+          "name": "_ensure_chunk_meta_state",
+          "line": 401,
+          "isDefault": false
+        },
+        {
+          "name": "_build_spec_sequence_masks_cpu",
+          "line": 420,
+          "isDefault": false
+        },
+        {
+          "name": "_build_non_spec_query_start_loc_cpu",
+          "line": 430,
+          "isDefault": false
+        },
+        {
+          "name": "_build_spec_query_start_loc_cpu",
+          "line": 454,
+          "isDefault": false
+        },
+        {
+          "name": "_allocate_causal_conv1d_host_slot",
+          "line": 479,
+          "isDefault": false
+        },
+        {
+          "name": "_ensure_causal_conv1d_host_meta_state",
+          "line": 500,
+          "isDefault": false
+        },
+        {
+          "name": "_acquire_causal_conv1d_host_slot",
+          "line": 513,
+          "isDefault": false
+        },
+        {
+          "name": "_allocate_spec_causal_conv1d_host_slot",
+          "line": 519,
+          "isDefault": false
+        },
+        {
+          "name": "_ensure_spec_causal_conv1d_host_meta_state",
+          "line": 544,
+          "isDefault": false
+        },
+        {
+          "name": "_acquire_spec_causal_conv1d_host_slot",
+          "line": 557,
+          "isDefault": false
+        },
+        {
+          "name": "_copy_to_pinned_cpu",
+          "line": 565,
+          "isDefault": false
+        },
+        {
+          "name": "_build_non_spec_causal_conv1d_host_meta",
+          "line": 589,
+          "isDefault": false
+        },
+        {
+          "name": "_build_non_spec_decode_causal_conv1d_host_meta",
+          "line": 626,
+          "isDefault": false
+        },
+        {
+          "name": "_build_spec_causal_conv1d_host_meta",
+          "line": 651,
+          "isDefault": false
+        },
+        {
+          "name": "_build_non_spec_chunked_prefill_meta_cpu",
+          "line": 683,
+          "isDefault": false
+        },
+        {
+          "name": "_build_non_spec_chunked_prefill_meta",
+          "line": 690,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_build",
+          "line": 709,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_build_prefill",
+          "line": 747,
+          "isDefault": false
+        },
+        {
+          "name": "_init_reorder_batch_threshold",
+          "line": 783,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_build_spec",
+          "line": 806,
+          "isDefault": false
+        },
+        {
+          "name": "_patched_build_decode",
+          "line": 835,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_next_power_of_2",
+          "callee": "(value - 1).bit_length",
+          "lineNumber": 122
+        },
+        {
+          "caller": "_prepare_chunk_counts_cpu",
+          "callee": "torch.div",
+          "lineNumber": 127
+        },
+        {
+          "caller": "_fill_chunk_indices_cpu",
+          "callee": "chunk_counts.tolist",
+          "lineNumber": 133
+        },
+        {
+          "caller": "_fill_chunk_indices_cpu",
+          "callee": "out[cursor : cursor + num_chunks, 0].fill_",
+          "lineNumber": 138
+        },
+        {
+          "caller": "_fill_chunk_indices_cpu",
+          "callee": "torch.arange",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_fill_chunk_offsets_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 150
+        },
+        {
+          "caller": "_fill_chunk_offsets_cpu",
+          "callee": "torch.cumsum",
+          "lineNumber": 151
+        },
+        {
+          "caller": "_fill_chunk_offsets_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 151
+        },
+        {
+          "caller": "_fill_chunk_offsets_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 152
+        },
+        {
+          "caller": "_fill_update_chunk_offsets_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 157
+        },
+        {
+          "caller": "_fill_update_chunk_offsets_cpu",
+          "callee": "torch.cumsum",
+          "lineNumber": 158
+        },
+        {
+          "caller": "_fill_update_chunk_offsets_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 161
+        },
+        {
+          "caller": "_fill_update_chunk_offsets_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 163
+        },
+        {
+          "caller": "_fill_final_chunk_indices_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 167
+        },
+        {
+          "caller": "_fill_final_chunk_indices_cpu",
+          "callee": "torch.cumsum",
+          "lineNumber": 168
+        },
+        {
+          "caller": "_fill_final_chunk_indices_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 168
+        },
+        {
+          "caller": "_fill_final_chunk_indices_cpu",
+          "callee": "out[: chunk_counts.numel()].sub_",
+          "lineNumber": 169
+        },
+        {
+          "caller": "_fill_final_chunk_indices_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 169
+        },
+        {
+          "caller": "_fill_final_chunk_indices_cpu",
+          "callee": "chunk_counts.numel",
+          "lineNumber": 170
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "_prepare_chunk_counts_cpu",
+          "lineNumber": 174
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "_prepare_chunk_counts_cpu",
+          "lineNumber": 178
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "_prepare_chunk_counts_cpu",
+          "lineNumber": 182
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "_GDNChunkMetaShapeInfo",
+          "lineNumber": 186
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "chunk_counts_chunk64.numel",
+          "lineNumber": 187
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "int",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "chunk_counts_chunk64.sum().item",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "chunk_counts_chunk64.sum",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "int",
+          "lineNumber": 189
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "chunk_counts_large_block.sum().item",
+          "lineNumber": 189
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "chunk_counts_large_block.sum",
+          "lineNumber": 189
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "int",
+          "lineNumber": 190
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "chunk_counts_cumsum.sum().item",
+          "lineNumber": 190
+        },
+        {
+          "caller": "_build_chunk_meta_shape_info",
+          "callee": "chunk_counts_cumsum.sum",
+          "lineNumber": 190
+        },
+        {
+          "caller": "_count_chunk_indices_cpu",
+          "callee": "int",
+          "lineNumber": 198
+        },
+        {
+          "caller": "_count_chunk_indices_cpu",
+          "callee": "torch.div(\n            seq_lens_cpu + chunk_size - 1,\n            chunk_size,\n            rounding_mode=\"floor\",\n        )\n        .sum()\n        .item",
+          "lineNumber": 199
+        },
+        {
+          "caller": "_count_chunk_indices_cpu",
+          "callee": "torch.div(\n            seq_lens_cpu + chunk_size - 1,\n            chunk_size,\n            rounding_mode=\"floor\",\n        )\n        .sum",
+          "lineNumber": 199
+        },
+        {
+          "caller": "_count_chunk_indices_cpu",
+          "callee": "torch.div",
+          "lineNumber": 199
+        },
+        {
+          "caller": "_build_chunk_meta_size_info",
+          "callee": "_GDNChunkMetaSizeInfo",
+          "lineNumber": 211
+        },
+        {
+          "caller": "_build_chunk_meta_size_info",
+          "callee": "seq_lens_cpu.numel",
+          "lineNumber": 212
+        },
+        {
+          "caller": "_build_chunk_meta_size_info",
+          "callee": "_count_chunk_indices_cpu",
+          "lineNumber": 213
+        },
+        {
+          "caller": "_build_chunk_meta_size_info",
+          "callee": "_count_chunk_indices_cpu",
+          "lineNumber": 217
+        },
+        {
+          "caller": "_build_chunk_meta_size_info",
+          "callee": "_count_chunk_indices_cpu",
+          "lineNumber": 221
+        },
+        {
+          "caller": "_allocate_chunk_meta_cpu_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 230
+        },
+        {
+          "caller": "_allocate_chunk_meta_cpu_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 234
+        },
+        {
+          "caller": "_allocate_chunk_meta_cpu_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 238
+        },
+        {
+          "caller": "_allocate_chunk_meta_cpu_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 242
+        },
+        {
+          "caller": "_allocate_chunk_meta_cpu_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 246
+        },
+        {
+          "caller": "_allocate_chunk_meta_cpu_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 250
+        },
+        {
+          "caller": "_fill_chunk_meta_cpu_tensors",
+          "callee": "_fill_chunk_indices_cpu",
+          "lineNumber": 275
+        },
+        {
+          "caller": "_fill_chunk_meta_cpu_tensors",
+          "callee": "_fill_chunk_offsets_cpu",
+          "lineNumber": 279
+        },
+        {
+          "caller": "_fill_chunk_meta_cpu_tensors",
+          "callee": "_fill_update_chunk_offsets_cpu",
+          "lineNumber": 283
+        },
+        {
+          "caller": "_fill_chunk_meta_cpu_tensors",
+          "callee": "_fill_final_chunk_indices_cpu",
+          "lineNumber": 287
+        },
+        {
+          "caller": "_fill_chunk_meta_cpu_tensors",
+          "callee": "_fill_chunk_indices_cpu",
+          "lineNumber": 291
+        },
+        {
+          "caller": "_fill_chunk_meta_cpu_tensors",
+          "callee": "_fill_chunk_indices_cpu",
+          "lineNumber": 295
+        },
+        {
+          "caller": "_fill_chunk_meta_device_tensors",
+          "callee": "_validate_cu_seqlens",
+          "lineNumber": 309
+        },
+        {
+          "caller": "_fill_chunk_meta_device_tensors",
+          "callee": "_build_seq_lens",
+          "lineNumber": 312
+        },
+        {
+          "caller": "_fill_chunk_meta_device_tensors",
+          "callee": "build_chunk_meta_device",
+          "lineNumber": 314
+        },
+        {
+          "caller": "_fill_chunk_meta_device_tensors",
+          "callee": "build_chunk_meta_device",
+          "lineNumber": 324
+        },
+        {
+          "caller": "_fill_chunk_meta_device_tensors",
+          "callee": "build_chunk_meta_device",
+          "lineNumber": 331
+        },
+        {
+          "caller": "_build_chunked_prefill_metadata",
+          "callee": "GDNChunkedPrefillMetadata",
+          "lineNumber": 346
+        },
+        {
+          "caller": "_get_gdn_num_heads",
+          "callee": "getattr",
+          "lineNumber": 358
+        },
+        {
+          "caller": "_get_gdn_num_heads",
+          "callee": "hasattr",
+          "lineNumber": 359
+        },
+        {
+          "caller": "_get_gdn_num_heads",
+          "callee": "builder.vllm_config.model_config.get_num_attention_heads",
+          "lineNumber": 361
+        },
+        {
+          "caller": "_allocate_chunked_prefill_slot",
+          "callee": "_GDNChunkedPrefillBufferSlot",
+          "lineNumber": 367
+        },
+        {
+          "caller": "_allocate_chunked_prefill_slot",
+          "callee": "torch.empty",
+          "lineNumber": 368
+        },
+        {
+          "caller": "_allocate_chunked_prefill_slot",
+          "callee": "torch.empty",
+          "lineNumber": 373
+        },
+        {
+          "caller": "_allocate_chunked_prefill_slot",
+          "callee": "torch.empty",
+          "lineNumber": 378
+        },
+        {
+          "caller": "_allocate_chunked_prefill_slot",
+          "callee": "torch.empty",
+          "lineNumber": 383
+        },
+        {
+          "caller": "_allocate_chunked_prefill_slot",
+          "callee": "torch.empty",
+          "lineNumber": 388
+        },
+        {
+          "caller": "_allocate_chunked_prefill_slot",
+          "callee": "torch.empty",
+          "lineNumber": 393
+        },
+        {
+          "caller": "_ensure_chunk_meta_state",
+          "callee": "getattr",
+          "lineNumber": 402
+        },
+        {
+          "caller": "_ensure_chunk_meta_state",
+          "callee": "_get_gdn_num_heads",
+          "lineNumber": 408
+        },
+        {
+          "caller": "_ensure_chunk_meta_state",
+          "callee": "max",
+          "lineNumber": 409
+        },
+        {
+          "caller": "_ensure_chunk_meta_state",
+          "callee": "_next_power_of_2",
+          "lineNumber": 410
+        },
+        {
+          "caller": "_ensure_chunk_meta_state",
+          "callee": "_allocate_chunked_prefill_slot",
+          "lineNumber": 415
+        },
+        {
+          "caller": "_ensure_chunk_meta_state",
+          "callee": "_allocate_chunked_prefill_slot",
+          "lineNumber": 416
+        },
+        {
+          "caller": "_build_spec_sequence_masks_cpu",
+          "callee": "getattr",
+          "lineNumber": 422
+        },
+        {
+          "caller": "_build_spec_sequence_masks_cpu",
+          "callee": "num_decode_draft_tokens_cpu[num_decode_draft_tokens_cpu >= 0].sum().item",
+          "lineNumber": 424
+        },
+        {
+          "caller": "_build_spec_sequence_masks_cpu",
+          "callee": "num_decode_draft_tokens_cpu[num_decode_draft_tokens_cpu >= 0].sum",
+          "lineNumber": 424
+        },
+        {
+          "caller": "_build_non_spec_query_start_loc_cpu",
+          "callee": "_build_spec_sequence_masks_cpu",
+          "lineNumber": 436
+        },
+        {
+          "caller": "_build_non_spec_query_start_loc_cpu",
+          "callee": "torch.zeros",
+          "lineNumber": 442
+        },
+        {
+          "caller": "_build_non_spec_query_start_loc_cpu",
+          "callee": "non_spec_query_lens_cpu.numel",
+          "lineNumber": 443
+        },
+        {
+          "caller": "_build_non_spec_query_start_loc_cpu",
+          "callee": "torch.cumsum",
+          "lineNumber": 446
+        },
+        {
+          "caller": "_build_spec_query_start_loc_cpu",
+          "callee": "_build_spec_sequence_masks_cpu",
+          "lineNumber": 460
+        },
+        {
+          "caller": "_build_spec_query_start_loc_cpu",
+          "callee": "torch.zeros",
+          "lineNumber": 467
+        },
+        {
+          "caller": "_build_spec_query_start_loc_cpu",
+          "callee": "spec_query_lens_cpu.numel",
+          "lineNumber": 468
+        },
+        {
+          "caller": "_build_spec_query_start_loc_cpu",
+          "callee": "torch.cumsum",
+          "lineNumber": 471
+        },
+        {
+          "caller": "_allocate_causal_conv1d_host_slot",
+          "callee": "_GDNCausalConv1dHostBufferSlot",
+          "lineNumber": 484
+        },
+        {
+          "caller": "_allocate_causal_conv1d_host_slot",
+          "callee": "torch.empty",
+          "lineNumber": 485
+        },
+        {
+          "caller": "_allocate_causal_conv1d_host_slot",
+          "callee": "torch.empty",
+          "lineNumber": 491
+        },
+        {
+          "caller": "_ensure_causal_conv1d_host_meta_state",
+          "callee": "getattr",
+          "lineNumber": 501
+        },
+        {
+          "caller": "_ensure_causal_conv1d_host_meta_state",
+          "callee": "_allocate_causal_conv1d_host_slot",
+          "lineNumber": 508
+        },
+        {
+          "caller": "_ensure_causal_conv1d_host_meta_state",
+          "callee": "_allocate_causal_conv1d_host_slot",
+          "lineNumber": 509
+        },
+        {
+          "caller": "_acquire_causal_conv1d_host_slot",
+          "callee": "len",
+          "lineNumber": 515
+        },
+        {
+          "caller": "_allocate_spec_causal_conv1d_host_slot",
+          "callee": "getattr",
+          "lineNumber": 526
+        },
+        {
+          "caller": "_allocate_spec_causal_conv1d_host_slot",
+          "callee": "_GDNSpecCausalConv1dHostBufferSlot",
+          "lineNumber": 528
+        },
+        {
+          "caller": "_allocate_spec_causal_conv1d_host_slot",
+          "callee": "torch.empty",
+          "lineNumber": 529
+        },
+        {
+          "caller": "_allocate_spec_causal_conv1d_host_slot",
+          "callee": "torch.empty",
+          "lineNumber": 535
+        },
+        {
+          "caller": "_ensure_spec_causal_conv1d_host_meta_state",
+          "callee": "getattr",
+          "lineNumber": 545
+        },
+        {
+          "caller": "_ensure_spec_causal_conv1d_host_meta_state",
+          "callee": "_allocate_spec_causal_conv1d_host_slot",
+          "lineNumber": 552
+        },
+        {
+          "caller": "_ensure_spec_causal_conv1d_host_meta_state",
+          "callee": "_allocate_spec_causal_conv1d_host_slot",
+          "lineNumber": 553
+        },
+        {
+          "caller": "_acquire_spec_causal_conv1d_host_slot",
+          "callee": "len",
+          "lineNumber": 561
+        },
+        {
+          "caller": "_copy_to_pinned_cpu",
+          "callee": "tensor.numel",
+          "lineNumber": 572
+        },
+        {
+          "caller": "_copy_to_pinned_cpu",
+          "callee": "pinned_buffer.numel",
+          "lineNumber": 573
+        },
+        {
+          "caller": "_copy_to_pinned_cpu",
+          "callee": "torch.empty",
+          "lineNumber": 574
+        },
+        {
+          "caller": "_copy_to_pinned_cpu",
+          "callee": "cpu_tensor.copy_",
+          "lineNumber": 582
+        },
+        {
+          "caller": "_copy_to_pinned_cpu",
+          "callee": "tensor.reshape",
+          "lineNumber": 583
+        },
+        {
+          "caller": "_build_non_spec_causal_conv1d_host_meta",
+          "callee": "RuntimeError",
+          "lineNumber": 596
+        },
+        {
+          "caller": "_build_non_spec_causal_conv1d_host_meta",
+          "callee": "RuntimeError",
+          "lineNumber": 600
+        },
+        {
+          "caller": "_build_non_spec_causal_conv1d_host_meta",
+          "callee": "_acquire_causal_conv1d_host_slot",
+          "lineNumber": 607
+        },
+        {
+          "caller": "_build_non_spec_causal_conv1d_host_meta",
+          "callee": "_copy_to_pinned_cpu",
+          "lineNumber": 609
+        },
+        {
+          "caller": "_build_non_spec_causal_conv1d_host_meta",
+          "callee": "_copy_to_pinned_cpu",
+          "lineNumber": 613
+        },
+        {
+          "caller": "_build_non_spec_causal_conv1d_host_meta",
+          "callee": "GDNCausalConv1dHostMetadata",
+          "lineNumber": 618
+        },
+        {
+          "caller": "_build_non_spec_decode_causal_conv1d_host_meta",
+          "callee": "RuntimeError",
+          "lineNumber": 632
+        },
+        {
+          "caller": "_build_non_spec_decode_causal_conv1d_host_meta",
+          "callee": "_acquire_causal_conv1d_host_slot",
+          "lineNumber": 636
+        },
+        {
+          "caller": "_build_non_spec_decode_causal_conv1d_host_meta",
+          "callee": "_copy_to_pinned_cpu",
+          "lineNumber": 638
+        },
+        {
+          "caller": "_build_non_spec_decode_causal_conv1d_host_meta",
+          "callee": "GDNCausalConv1dHostMetadata",
+          "lineNumber": 643
+        },
+        {
+          "caller": "_build_spec_causal_conv1d_host_meta",
+          "callee": "RuntimeError",
+          "lineNumber": 658
+        },
+        {
+          "caller": "_build_spec_causal_conv1d_host_meta",
+          "callee": "_acquire_spec_causal_conv1d_host_slot",
+          "lineNumber": 662
+        },
+        {
+          "caller": "_build_spec_causal_conv1d_host_meta",
+          "callee": "_copy_to_pinned_cpu",
+          "lineNumber": 665
+        },
+        {
+          "caller": "_build_spec_causal_conv1d_host_meta",
+          "callee": "attn_metadata.spec_state_indices_tensor[:num_spec_decodes, 0].contiguous",
+          "lineNumber": 666
+        },
+        {
+          "caller": "_build_spec_causal_conv1d_host_meta",
+          "callee": "_copy_to_pinned_cpu",
+          "lineNumber": 670
+        },
+        {
+          "caller": "_build_spec_causal_conv1d_host_meta",
+          "callee": "attn_metadata.num_accepted_tokens[:num_spec_decodes].contiguous",
+          "lineNumber": 671
+        },
+        {
+          "caller": "_build_spec_causal_conv1d_host_meta",
+          "callee": "GDNSpecCausalConv1dHostMetadata",
+          "lineNumber": 675
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta_cpu",
+          "callee": "_build_chunk_meta_shape_info",
+          "lineNumber": 684
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta_cpu",
+          "callee": "_allocate_chunk_meta_cpu_tensors",
+          "lineNumber": 685
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta_cpu",
+          "callee": "_fill_chunk_meta_cpu_tensors",
+          "lineNumber": 686
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta_cpu",
+          "callee": "_build_chunked_prefill_metadata",
+          "lineNumber": 687
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta",
+          "callee": "_build_non_spec_chunked_prefill_meta_cpu",
+          "lineNumber": 697
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta",
+          "callee": "_build_chunk_meta_size_info",
+          "lineNumber": 699
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta",
+          "callee": "len",
+          "lineNumber": 700
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta",
+          "callee": "_slice_chunk_meta_slot_tensors",
+          "lineNumber": 704
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta",
+          "callee": "_fill_chunk_meta_device_tensors",
+          "lineNumber": 705
+        },
+        {
+          "caller": "_build_non_spec_chunked_prefill_meta",
+          "callee": "_build_chunked_prefill_metadata",
+          "lineNumber": 706
+        },
+        {
+          "caller": "_patched_build",
+          "callee": "_ORIGINAL_BUILD",
+          "lineNumber": 717
+        },
+        {
+          "caller": "_patched_build",
+          "callee": "_patched_build_spec",
+          "lineNumber": 729
+        },
+        {
+          "caller": "_patched_build",
+          "callee": "_patched_build_prefill",
+          "lineNumber": 732
+        },
+        {
+          "caller": "_patched_build",
+          "callee": "_patched_build_decode",
+          "lineNumber": 735
+        },
+        {
+          "caller": "_patched_build",
+          "callee": "self.non_spec_state_indices_tensor[attn_metadata.num_actual_tokens :].fill_",
+          "lineNumber": 743
+        },
+        {
+          "caller": "_patched_build_prefill",
+          "callee": "_ensure_chunk_meta_state",
+          "lineNumber": 755
+        },
+        {
+          "caller": "_patched_build_prefill",
+          "callee": "_ensure_causal_conv1d_host_meta_state",
+          "lineNumber": 756
+        },
+        {
+          "caller": "_patched_build_prefill",
+          "callee": "_build_non_spec_query_start_loc_cpu",
+          "lineNumber": 760
+        },
+        {
+          "caller": "_patched_build_prefill",
+          "callee": "RuntimeError",
+          "lineNumber": 767
+        },
+        {
+          "caller": "_patched_build_prefill",
+          "callee": "GDNPrefillFallbackMeta",
+          "lineNumber": 768
+        },
+        {
+          "caller": "_patched_build_prefill",
+          "callee": "_build_non_spec_causal_conv1d_host_meta",
+          "lineNumber": 769
+        },
+        {
+          "caller": "_patched_build_prefill",
+          "callee": "_build_non_spec_chunked_prefill_meta",
+          "lineNumber": 774
+        },
+        {
+          "caller": "_init_reorder_batch_threshold",
+          "callee": "_ORIGINAL_INIT_THRESHOLD",
+          "lineNumber": 789
+        },
+        {
+          "caller": "_init_reorder_batch_threshold",
+          "callee": "hasattr",
+          "lineNumber": 800
+        },
+        {
+          "caller": "_patched_build_spec",
+          "callee": "_ensure_spec_causal_conv1d_host_meta_state",
+          "lineNumber": 813
+        },
+        {
+          "caller": "_patched_build_spec",
+          "callee": "_build_spec_query_start_loc_cpu",
+          "lineNumber": 817
+        },
+        {
+          "caller": "_patched_build_spec",
+          "callee": "RuntimeError",
+          "lineNumber": 824
+        },
+        {
+          "caller": "_patched_build_spec",
+          "callee": "GDNSpecDecodeFallbackMeta",
+          "lineNumber": 825
+        },
+        {
+          "caller": "_patched_build_spec",
+          "callee": "_build_spec_causal_conv1d_host_meta",
+          "lineNumber": 826
+        },
+        {
+          "caller": "_patched_build_decode",
+          "callee": "_ensure_causal_conv1d_host_meta_state",
+          "lineNumber": 842
+        },
+        {
+          "caller": "_patched_build_decode",
+          "callee": "_build_non_spec_query_start_loc_cpu",
+          "lineNumber": 846
+        },
+        {
+          "caller": "_patched_build_decode",
+          "callee": "RuntimeError",
+          "lineNumber": 852
+        },
+        {
+          "caller": "_patched_build_decode",
+          "callee": "GDNDecodeFallbackMeta",
+          "lineNumber": 853
+        },
+        {
+          "caller": "_patched_build_decode",
+          "callee": "_build_non_spec_decode_causal_conv1d_host_meta",
+          "lineNumber": 854
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 48,
+        "functionCount": 37,
+        "classCount": 11
+      }
+    },
+    {
+      "path": "patch/worker/patch_gqa_c8.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 73,
+      "nonEmptyLines": 62,
+      "functions": [
+        {
+          "name": "_patched_causal_lm_load_weights",
+          "startLine": 32,
+          "endLine": 65,
+          "params": [
+            "weights",
+            "original_load_weights"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_patched_causal_lm_load_weights",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "callable",
+          "lineNumber": 36
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "getattr",
+          "lineNumber": 36
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "original_load_weights",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "dict",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "self.named_parameters",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "set",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_intercept_c8_scales",
+          "callee": "quant_config.get_cache_scale",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_intercept_c8_scales",
+          "callee": "getattr",
+          "lineNumber": 50
+        },
+        {
+          "caller": "_intercept_c8_scales",
+          "callee": "weight_loader",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_intercept_c8_scales",
+          "callee": "loaded_weight.squeeze",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_intercept_c8_scales",
+          "callee": "c8_loaded_params.add",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_intercept_c8_scales",
+          "callee": "logger.warning",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "original_load_weights",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "_intercept_c8_scales",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_patched_causal_lm_load_weights",
+          "callee": "loaded_params.update",
+          "lineNumber": 64
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/worker/patch_idex_310.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 24,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "patch/worker/patch_kimi_k25.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 75,
+      "functions": [
+        {
+          "name": "get_rope_shape",
+          "startLine": 31,
+          "endLine": 41,
+          "params": [
+            "org",
+            "interpolation_mode",
+            "shape"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendLearnable2DInterpPosEmbDivided_fixed",
+          "startLine": 44,
+          "endLine": 68,
+          "methods": [
+            "forward"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_rope_shape",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "AscendLearnable2DInterpPosEmbDivided_fixed",
+          "line": 44,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_rope_shape",
+          "callee": "F.interpolate(\n            org.permute((2, 0, 1)).unsqueeze(0),\n            size=shape,\n            mode=interpolation_mode,\n        )\n        .squeeze(0)\n        .permute((1, 2, 0))\n        .flatten",
+          "lineNumber": 33
+        },
+        {
+          "caller": "get_rope_shape",
+          "callee": "F.interpolate(\n            org.permute((2, 0, 1)).unsqueeze(0),\n            size=shape,\n            mode=interpolation_mode,\n        )\n        .squeeze(0)\n        .permute",
+          "lineNumber": 33
+        },
+        {
+          "caller": "get_rope_shape",
+          "callee": "F.interpolate(\n            org.permute((2, 0, 1)).unsqueeze(0),\n            size=shape,\n            mode=interpolation_mode,\n        )\n        .squeeze",
+          "lineNumber": 33
+        },
+        {
+          "caller": "get_rope_shape",
+          "callee": "F.interpolate",
+          "lineNumber": 33
+        },
+        {
+          "caller": "get_rope_shape",
+          "callee": "org.permute((2, 0, 1)).unsqueeze",
+          "lineNumber": 34
+        },
+        {
+          "caller": "get_rope_shape",
+          "callee": "org.permute",
+          "lineNumber": 34
+        },
+        {
+          "caller": "forward",
+          "callee": "grid_thws.tolist",
+          "lineNumber": 47
+        },
+        {
+          "caller": "forward",
+          "callee": "self.weight.flatten",
+          "lineNumber": 52
+        },
+        {
+          "caller": "forward",
+          "callee": "get_rope_shape",
+          "lineNumber": 54
+        },
+        {
+          "caller": "forward",
+          "callee": "pos_emb_2d.unsqueeze(0).repeat",
+          "lineNumber": 63
+        },
+        {
+          "caller": "forward",
+          "callee": "pos_emb_2d.unsqueeze",
+          "lineNumber": 63
+        },
+        {
+          "caller": "forward",
+          "callee": "pos_embs.append",
+          "lineNumber": 65
+        },
+        {
+          "caller": "forward",
+          "callee": "pos_emb_3d.reshape",
+          "lineNumber": 65
+        },
+        {
+          "caller": "forward",
+          "callee": "torch.cat",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_patched_moonvit_to",
+          "callee": "tuple",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_patched_moonvit_to",
+          "callee": "isinstance",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_patched_moonvit_to",
+          "callee": "kwargs.pop",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_patched_moonvit_to",
+          "callee": "_original_moonvit_to",
+          "lineNumber": 88
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "patch/worker/patch_mamba_utils.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 188,
+      "nonEmptyLines": 155,
+      "functions": [
+        {
+          "name": "_can_launch_triton_batch_memcpy",
+          "startLine": 20,
+          "endLine": 21,
+          "params": []
+        },
+        {
+          "name": "_batch_memcpy_triton",
+          "startLine": 24,
+          "endLine": 32,
+          "params": [
+            "src_ptrs",
+            "dst_ptrs",
+            "sizes"
+          ]
+        },
+        {
+          "name": "_tensor_view_from_data_ptr",
+          "startLine": 35,
+          "endLine": 45,
+          "params": [
+            "state",
+            "start_addr",
+            "num_elements"
+          ]
+        },
+        {
+          "name": "_get_tensor_copy_pairs",
+          "startLine": 48,
+          "endLine": 51,
+          "params": [
+            "copy_bufs"
+          ]
+        },
+        {
+          "name": "_collect_mamba_copy_meta_torch",
+          "startLine": 54,
+          "endLine": 87,
+          "params": [
+            "copy_bufs",
+            "kv_cache_config",
+            "mamba_state_copy_funcs",
+            "mamba_group_ids",
+            "src_block_idx",
+            "dest_block_idx",
+            "accept_token_bias",
+            "req_state",
+            "forward_context"
+          ]
+        },
+        {
+          "name": "_do_mamba_copy_block_torch",
+          "startLine": 90,
+          "endLine": 103,
+          "params": [
+            "copy_bufs"
+          ]
+        },
+        {
+          "name": "_batch_memcpy_unavailable",
+          "startLine": 106,
+          "endLine": 110,
+          "params": [
+            "src_ptrs",
+            "dst_ptrs",
+            "sizes"
+          ]
+        },
+        {
+          "name": "preprocess_mamba",
+          "startLine": 122,
+          "endLine": 185,
+          "params": [
+            "scheduler_output",
+            "kv_cache_config",
+            "cache_config",
+            "mamba_state_idx",
+            "input_batch",
+            "requests",
+            "forward_context",
+            "mamba_state_copy_funcs",
+            "copy_bufs"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_can_launch_triton_batch_memcpy",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "_batch_memcpy_triton",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "_tensor_view_from_data_ptr",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "_get_tensor_copy_pairs",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "_collect_mamba_copy_meta_torch",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "_do_mamba_copy_block_torch",
+          "line": 90,
+          "isDefault": false
+        },
+        {
+          "name": "_batch_memcpy_unavailable",
+          "line": 106,
+          "isDefault": false
+        },
+        {
+          "name": "preprocess_mamba",
+          "line": 122,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_can_launch_triton_batch_memcpy",
+          "callee": "is_310p",
+          "lineNumber": 21
+        },
+        {
+          "caller": "_tensor_view_from_data_ptr",
+          "callee": "state.data_ptr",
+          "lineNumber": 36
+        },
+        {
+          "caller": "_tensor_view_from_data_ptr",
+          "callee": "state.element_size",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_tensor_view_from_data_ptr",
+          "callee": "RuntimeError",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_tensor_view_from_data_ptr",
+          "callee": "state.view",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_tensor_view_from_data_ptr",
+          "callee": "flat_state.numel",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_tensor_view_from_data_ptr",
+          "callee": "RuntimeError",
+          "lineNumber": 44
+        },
+        {
+          "caller": "_tensor_view_from_data_ptr",
+          "callee": "flat_state.narrow",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_get_tensor_copy_pairs",
+          "callee": "hasattr",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "_get_tensor_copy_pairs",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "zip",
+          "lineNumber": 79
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "state_copy_func",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "_tensor_view_from_data_ptr",
+          "lineNumber": 81
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "_tensor_view_from_data_ptr",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "state[dest_block_id].data_ptr",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "tensor_copy_pairs.append",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_collect_mamba_copy_meta_torch",
+          "callee": "state.element_size",
+          "lineNumber": 84
+        },
+        {
+          "caller": "_do_mamba_copy_block_torch",
+          "callee": "hasattr",
+          "lineNumber": 93
+        },
+        {
+          "caller": "_do_mamba_copy_block_torch",
+          "callee": "getattr",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_do_mamba_copy_block_torch",
+          "callee": "len",
+          "lineNumber": 98
+        },
+        {
+          "caller": "_do_mamba_copy_block_torch",
+          "callee": "RuntimeError",
+          "lineNumber": 99
+        },
+        {
+          "caller": "_do_mamba_copy_block_torch",
+          "callee": "dst_state.copy_",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_do_mamba_copy_block_torch",
+          "callee": "src_state.clone",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_batch_memcpy_unavailable",
+          "callee": "RuntimeError",
+          "lineNumber": 107
+        },
+        {
+          "caller": "preprocess_mamba",
+          "callee": "mamba_utils.cleanup_mamba_state_idx",
+          "lineNumber": 143
+        },
+        {
+          "caller": "preprocess_mamba",
+          "callee": "enumerate",
+          "lineNumber": 146
+        },
+        {
+          "caller": "preprocess_mamba",
+          "callee": "mamba_state_idx.get",
+          "lineNumber": 148
+        },
+        {
+          "caller": "preprocess_mamba",
+          "callee": "cdiv",
+          "lineNumber": 156
+        },
+        {
+          "caller": "preprocess_mamba",
+          "callee": "mamba_utils.collect_mamba_copy_meta",
+          "lineNumber": 172
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 8,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,1160 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "_310p/ops/fla/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 9,
+      "nonEmptyLines": 8,
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "_310p/ops/fla/chunk_gated_delta_rule.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 255,
+      "nonEmptyLines": 215,
+      "functions": [
+        {
+          "name": "_expand_qk_to_v_heads",
+          "startLine": 26,
+          "endLine": 37,
+          "params": [
+            "x",
+            "num_v_heads"
+          ]
+        },
+        {
+          "name": "_iter_seq_ranges",
+          "startLine": 40,
+          "endLine": 43,
+          "params": [
+            "batch_size",
+            "seq_len",
+            "cu_seqlens"
+          ]
+        },
+        {
+          "name": "_normalize_chunk_inputs",
+          "startLine": 46,
+          "endLine": 81,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "g",
+            "beta",
+            "cu_seqlens"
+          ]
+        },
+        {
+          "name": "_torch_chunk_gated_delta_rule_chunked",
+          "startLine": 84,
+          "endLine": 180,
+          "params": [
+            "query",
+            "key",
+            "value",
+            "g",
+            "beta",
+            "chunk_size",
+            "initial_state",
+            "output_final_state",
+            "use_qk_l2norm_in_kernel"
+          ]
+        },
+        {
+          "name": "chunk_gated_delta_rule_pytorch",
+          "startLine": 183,
+          "endLine": 255,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "g",
+            "beta",
+            "initial_state",
+            "output_final_state",
+            "cu_seqlens",
+            "head_first",
+            "use_qk_l2norm_in_kernel"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_expand_qk_to_v_heads",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "_iter_seq_ranges",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "_normalize_chunk_inputs",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "_torch_chunk_gated_delta_rule_chunked",
+          "line": 84,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_gated_delta_rule_pytorch",
+          "line": 183,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_expand_qk_to_v_heads",
+          "callee": "ValueError",
+          "lineNumber": 35
+        },
+        {
+          "caller": "_expand_qk_to_v_heads",
+          "callee": "x.repeat_interleave",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_iter_seq_ranges",
+          "callee": "range",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_iter_seq_ranges",
+          "callee": "int",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_iter_seq_ranges",
+          "callee": "cu_seqlens[i].item",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_iter_seq_ranges",
+          "callee": "int",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_iter_seq_ranges",
+          "callee": "cu_seqlens[i + 1].item",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_iter_seq_ranges",
+          "callee": "range",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_iter_seq_ranges",
+          "callee": "len",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "ValueError",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "ValueError",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "ValueError",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "q.unsqueeze",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "k.unsqueeze",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "v.unsqueeze",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "g.unsqueeze",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "beta.unsqueeze",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "ValueError",
+          "lineNumber": 75
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "ValueError",
+          "lineNumber": 77
+        },
+        {
+          "caller": "_normalize_chunk_inputs",
+          "callee": "ValueError",
+          "lineNumber": 79
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.normalize(query, p=2, dim=-1, eps=1e-6).to",
+          "lineNumber": 107
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.normalize",
+          "lineNumber": 107
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.normalize(key, p=2, dim=-1, eps=1e-6).to",
+          "lineNumber": 108
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.normalize",
+          "lineNumber": 108
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "x.transpose(1, 2).contiguous().to",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "x.transpose(1, 2).contiguous",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "x.transpose",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.pad",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.pad",
+          "lineNumber": 119
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.pad",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.pad",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "F.pad",
+          "lineNumber": 122
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "beta.unsqueeze",
+          "lineNumber": 128
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "beta.unsqueeze",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "x.reshape",
+          "lineNumber": 133
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g.reshape",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "torch.triu",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "torch.ones",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g.cumsum",
+          "lineNumber": 140
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "((g.unsqueeze(-1) - g.unsqueeze(-2)).tril().exp().float()).tril",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "(g.unsqueeze(-1) - g.unsqueeze(-2)).tril().exp().float",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "(g.unsqueeze(-1) - g.unsqueeze(-2)).tril().exp",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "(g.unsqueeze(-1) - g.unsqueeze(-2)).tril",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g.unsqueeze",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g.unsqueeze",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "((k_beta @ key.transpose(-1, -2)) * decay_mask).masked_fill",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "key.transpose",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "range",
+          "lineNumber": 144
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "attn[..., i, :i].clone",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "attn[..., :i, :i].clone",
+          "lineNumber": 146
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "(row.unsqueeze(-1) * sub).sum",
+          "lineNumber": 147
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "row.unsqueeze",
+          "lineNumber": 147
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "torch.eye",
+          "lineNumber": 148
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g.exp().unsqueeze",
+          "lineNumber": 151
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g.exp",
+          "lineNumber": 151
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "torch.zeros",
+          "lineNumber": 154
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "initial_state.to",
+          "lineNumber": 156
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "torch.zeros_like",
+          "lineNumber": 158
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "torch.triu",
+          "lineNumber": 160
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "torch.ones",
+          "lineNumber": 160
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "range",
+          "lineNumber": 163
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "(q_i @ k_i.transpose(-1, -2) * decay_mask[:, :, i]).masked_fill_",
+          "lineNumber": 165
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "k_i.transpose",
+          "lineNumber": 165
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "last_recurrent_state.transpose",
+          "lineNumber": 166
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g[:, :, i, :, None].exp",
+          "lineNumber": 168
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "last_recurrent_state.transpose",
+          "lineNumber": 168
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "g[:, :, i, -1, None, None].exp",
+          "lineNumber": 170
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "v_new.transpose",
+          "lineNumber": 170
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "(g[:, :, i, -1, None] - g[:, :, i]).exp",
+          "lineNumber": 171
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "core_attn_out.reshape",
+          "lineNumber": 177
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "core_attn_out.transpose(1, 2).contiguous().to",
+          "lineNumber": 179
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "core_attn_out.transpose(1, 2).contiguous",
+          "lineNumber": 179
+        },
+        {
+          "caller": "_torch_chunk_gated_delta_rule_chunked",
+          "callee": "core_attn_out.transpose",
+          "lineNumber": 179
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "DeprecationWarning",
+          "lineNumber": 200
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "_normalize_chunk_inputs",
+          "lineNumber": 201
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "ValueError",
+          "lineNumber": 204
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "ValueError",
+          "lineNumber": 210
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "ValueError",
+          "lineNumber": 212
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "_iter_seq_ranges",
+          "lineNumber": 214
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "len",
+          "lineNumber": 215
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "initial_state.to(torch.float32).clone",
+          "lineNumber": 217
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "initial_state.to",
+          "lineNumber": 217
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "torch.zeros",
+          "lineNumber": 219
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "torch.zeros_like",
+          "lineNumber": 221
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "_expand_qk_to_v_heads(q[b_idx, start:end], h_v).unsqueeze",
+          "lineNumber": 229
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "_expand_qk_to_v_heads",
+          "lineNumber": 229
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "_expand_qk_to_v_heads(k[b_idx, start:end], h_v).unsqueeze",
+          "lineNumber": 230
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "_expand_qk_to_v_heads",
+          "lineNumber": 230
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "v[b_idx, start:end].unsqueeze",
+          "lineNumber": 231
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "g[b_idx, start:end].unsqueeze",
+          "lineNumber": 232
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "beta[b_idx, start:end].unsqueeze",
+          "lineNumber": 233
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "states[seq_idx].unsqueeze",
+          "lineNumber": 234
+        },
+        {
+          "caller": "chunk_gated_delta_rule_pytorch",
+          "callee": "_torch_chunk_gated_delta_rule_chunked",
+          "lineNumber": 236
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "_310p/ops/fla/fused_gdn_gating.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 51,
+      "functions": [
+        {
+          "name": "fused_gdn_gating_pytorch",
+          "startLine": 4,
+          "endLine": 62,
+          "params": [
+            "A_log",
+            "a",
+            "b",
+            "dt_bias",
+            "beta",
+            "threshold"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "fused_gdn_gating_pytorch",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "A_log.to",
+          "lineNumber": 32
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "a.to",
+          "lineNumber": 33
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "b.to",
+          "lineNumber": 34
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "dt_bias.to",
+          "lineNumber": 35
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "A_log_f.unsqueeze(0).expand",
+          "lineNumber": 38
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "A_log_f.unsqueeze",
+          "lineNumber": 38
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "dt_bias_f.unsqueeze(0).expand",
+          "lineNumber": 39
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "dt_bias_f.unsqueeze",
+          "lineNumber": 39
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "torch.where",
+          "lineNumber": 46
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "torch.log1p",
+          "lineNumber": 48
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "torch.exp",
+          "lineNumber": 48
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "torch.exp",
+          "lineNumber": 53
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "g.unsqueeze",
+          "lineNumber": 56
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "torch.sigmoid(b_f).to",
+          "lineNumber": 59
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "torch.sigmoid",
+          "lineNumber": 59
+        },
+        {
+          "caller": "fused_gdn_gating_pytorch",
+          "callee": "beta_output.unsqueeze",
+          "lineNumber": 60
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "_310p/ops/fla/fused_recurrent_gated_delta_rule.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 226,
+      "nonEmptyLines": 193,
+      "functions": [
+        {
+          "name": "_maybe_l2norm",
+          "startLine": 5,
+          "endLine": 8,
+          "params": [
+            "x",
+            "enabled"
+          ]
+        },
+        {
+          "name": "_expand_to_hv",
+          "startLine": 11,
+          "endLine": 18,
+          "params": [
+            "x",
+            "hv"
+          ]
+        },
+        {
+          "name": "_infer_num_states",
+          "startLine": 21,
+          "endLine": 33,
+          "params": [
+            "default_n",
+            "initial_state",
+            "ssm_state_indices"
+          ]
+        },
+        {
+          "name": "_state_index",
+          "startLine": 36,
+          "endLine": 45,
+          "params": [
+            "seq_idx",
+            "tok_idx",
+            "ssm_state_indices"
+          ]
+        },
+        {
+          "name": "_run_recurrent_gated_delta_rule",
+          "startLine": 48,
+          "endLine": 182,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "g",
+            "beta",
+            "states",
+            "scale",
+            "cu_seqlens",
+            "ssm_state_indices",
+            "num_accepted_tokens",
+            "use_initial_state",
+            "use_qk_l2norm_in_kernel"
+          ]
+        },
+        {
+          "name": "fused_recurrent_gated_delta_rule_pytorch",
+          "startLine": 185,
+          "endLine": 226,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "g",
+            "beta",
+            "initial_state",
+            "inplace_final_state",
+            "cu_seqlens",
+            "ssm_state_indices",
+            "num_accepted_tokens",
+            "use_qk_l2norm_in_kernel"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_maybe_l2norm",
+          "line": 5,
+          "isDefault": false
+        },
+        {
+          "name": "_expand_to_hv",
+          "line": 11,
+          "isDefault": false
+        },
+        {
+          "name": "_infer_num_states",
+          "line": 21,
+          "isDefault": false
+        },
+        {
+          "name": "_state_index",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "_run_recurrent_gated_delta_rule",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "fused_recurrent_gated_delta_rule_pytorch",
+          "line": 185,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_maybe_l2norm",
+          "callee": "F.normalize(x, p=2, dim=-1, eps=1e-6).to",
+          "lineNumber": 8
+        },
+        {
+          "caller": "_maybe_l2norm",
+          "callee": "F.normalize",
+          "lineNumber": 8
+        },
+        {
+          "caller": "_expand_to_hv",
+          "callee": "ValueError",
+          "lineNumber": 17
+        },
+        {
+          "caller": "_expand_to_hv",
+          "callee": "x.repeat_interleave",
+          "lineNumber": 18
+        },
+        {
+          "caller": "_infer_num_states",
+          "callee": "nonneg.numel",
+          "lineNumber": 31
+        },
+        {
+          "caller": "_infer_num_states",
+          "callee": "int",
+          "lineNumber": 33
+        },
+        {
+          "caller": "_infer_num_states",
+          "callee": "nonneg.max().item",
+          "lineNumber": 33
+        },
+        {
+          "caller": "_infer_num_states",
+          "callee": "nonneg.max",
+          "lineNumber": 33
+        },
+        {
+          "caller": "_state_index",
+          "callee": "int",
+          "lineNumber": 44
+        },
+        {
+          "caller": "_state_index",
+          "callee": "ssm_state_indices[seq_idx].item",
+          "lineNumber": 44
+        },
+        {
+          "caller": "_state_index",
+          "callee": "int",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_state_index",
+          "callee": "ssm_state_indices[seq_idx, tok_idx].item",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "ValueError",
+          "lineNumber": 76
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "torch.zeros_like",
+          "lineNumber": 78
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "range",
+          "lineNumber": 81
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "len",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "int",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "cu_seqlens[i].item",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "int",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "cu_seqlens[i + 1].item",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "range",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "int",
+          "lineNumber": 100
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "num_accepted_tokens[seq_idx].item",
+          "lineNumber": 100
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "min",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_state_index",
+          "lineNumber": 110
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "IndexError",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "states[init_state_idx].to",
+          "lineNumber": 116
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "torch.zeros",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "range",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "q_t.to",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "k_t.to",
+          "lineNumber": 138
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_maybe_l2norm",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_maybe_l2norm",
+          "lineNumber": 140
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "v_t.to",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_expand_to_hv",
+          "lineNumber": 144
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_expand_to_hv",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "g_t.to",
+          "lineNumber": 148
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "g_t.expand",
+          "lineNumber": 150
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_expand_to_hv(g_t.unsqueeze(-1), HV).squeeze",
+          "lineNumber": 152
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_expand_to_hv",
+          "lineNumber": 152
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "g_t.unsqueeze",
+          "lineNumber": 152
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "torch.exp(g_t).view",
+          "lineNumber": 153
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "torch.exp",
+          "lineNumber": 153
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "torch.sum",
+          "lineNumber": 155
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "k_hv.unsqueeze",
+          "lineNumber": 155
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "beta_t.to",
+          "lineNumber": 158
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_expand_to_hv(beta_t.unsqueeze(-1), HV).squeeze",
+          "lineNumber": 161
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_expand_to_hv",
+          "lineNumber": 161
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "beta_t.unsqueeze",
+          "lineNumber": 161
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "beta_t.view",
+          "lineNumber": 162
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_expand_to_hv",
+          "lineNumber": 165
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "v_t.unsqueeze",
+          "lineNumber": 168
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "k_hv.unsqueeze",
+          "lineNumber": 168
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "torch.sum",
+          "lineNumber": 169
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "q_hv.unsqueeze",
+          "lineNumber": 169
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "o_t.to",
+          "lineNumber": 172
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "o_t.to",
+          "lineNumber": 174
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "_state_index",
+          "lineNumber": 176
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "IndexError",
+          "lineNumber": 179
+        },
+        {
+          "caller": "_run_recurrent_gated_delta_rule",
+          "callee": "h_t.to",
+          "lineNumber": 180
+        },
+        {
+          "caller": "fused_recurrent_gated_delta_rule_pytorch",
+          "callee": "len",
+          "lineNumber": 202
+        },
+        {
+          "caller": "fused_recurrent_gated_delta_rule_pytorch",
+          "callee": "_infer_num_states",
+          "lineNumber": 204
+        },
+        {
+          "caller": "fused_recurrent_gated_delta_rule_pytorch",
+          "callee": "initial_state.clone",
+          "lineNumber": 206
+        },
+        {
+          "caller": "fused_recurrent_gated_delta_rule_pytorch",
+          "callee": "torch.zeros",
+          "lineNumber": 208
+        },
+        {
+          "caller": "fused_recurrent_gated_delta_rule_pytorch",
+          "callee": "_run_recurrent_gated_delta_rule",
+          "lineNumber": 211
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,656 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "_310p/quantization/methods/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 23,
+      "nonEmptyLines": 22,
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "_310p/quantization/methods/registry.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 33,
+      "functions": [
+        {
+          "name": "register_scheme",
+          "startLine": 24,
+          "endLine": 36,
+          "params": [
+            "quant_type",
+            "layer_type"
+          ]
+        },
+        {
+          "name": "get_scheme_class",
+          "startLine": 39,
+          "endLine": 41,
+          "params": [
+            "quant_type",
+            "layer_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register_scheme",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "get_scheme_class",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "decorator",
+          "callee": "ValueError",
+          "lineNumber": 30
+        },
+        {
+          "caller": "get_scheme_class",
+          "callee": "_SCHEME_REGISTRY.get",
+          "lineNumber": 41
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8_base.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 37,
+      "classes": [
+        {
+          "name": "AscendW8A8Linear310pScheme",
+          "startLine": 25,
+          "endLine": 44,
+          "methods": [
+            "get_weight",
+            "get_pertensor_param",
+            "get_perchannel_param"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8Linear310pScheme",
+          "line": 25,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 32
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 36
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 37
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 42
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 43
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8_dynamic.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 218,
+      "nonEmptyLines": 193,
+      "classes": [
+        {
+          "name": "AscendW8A8DynamicFusedMoEMethod310",
+          "startLine": 38,
+          "endLine": 163,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_dynamic_quant_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        },
+        {
+          "name": "AscendW8A8DynamicLinearMethod310",
+          "startLine": 167,
+          "endLine": 218,
+          "methods": [
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8DynamicFusedMoEMethod310",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW8A8DynamicLinearMethod310",
+          "line": 166,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "get_ep_group",
+          "lineNumber": 49
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 50
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 58
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 62
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 71
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 74
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 77
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 78
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 107
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 108
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 110
+        },
+        {
+          "caller": "apply",
+          "callee": "zero_experts_compute",
+          "lineNumber": 126
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 134
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 138
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 139
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 158
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 159
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.view",
+          "lineNumber": 160
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_offset.data.view",
+          "lineNumber": 161
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.view",
+          "lineNumber": 162
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_offset.data.view",
+          "lineNumber": 163
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 180
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 181
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_dynamic_quant",
+          "lineNumber": 193
+        },
+        {
+          "caller": "apply",
+          "callee": "pertoken_scale.dim",
+          "lineNumber": 195
+        },
+        {
+          "caller": "apply",
+          "callee": "quantized_x.squeeze",
+          "lineNumber": 197
+        },
+        {
+          "caller": "apply",
+          "callee": "pertoken_scale.squeeze",
+          "lineNumber": 198
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 202
+        },
+        {
+          "caller": "apply",
+          "callee": "output.unsqueeze",
+          "lineNumber": 211
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz(layer.weight.data).transpose",
+          "lineNumber": 216
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 216
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.flatten",
+          "lineNumber": 217
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data.flatten",
+          "lineNumber": 218
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8_static.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 98,
+      "nonEmptyLines": 83,
+      "classes": [
+        {
+          "name": "AscendW8A8LinearMethod310",
+          "startLine": 30,
+          "endLine": 98,
+          "methods": [
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8LinearMethod310",
+          "line": 29,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 39
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 40
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 41
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 42
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.ops.vllm.quantize",
+          "lineNumber": 53
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 68
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 80
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_scale.data.repeat",
+          "lineNumber": 81
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 84
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter(\n            layer.input_offset.data.repeat(expanding_factor),\n            requires_grad=False,\n        ).to",
+          "lineNumber": 88
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 88
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_offset.data.repeat",
+          "lineNumber": 89
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz(layer.weight.data).transpose",
+          "lineNumber": 94
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 94
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.flatten",
+          "lineNumber": 97
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.flatten",
+          "lineNumber": 98
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8s.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 55,
+      "classes": [
+        {
+          "name": "AscendW8A8SLinearMethod310",
+          "startLine": 29,
+          "endLine": 66,
+          "methods": [
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8SLinearMethod310",
+          "line": 28,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "apply",
+          "callee": "torch.ops.vllm.quantize",
+          "lineNumber": 44
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 53
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 55
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_scale.data.repeat",
+          "lineNumber": 63
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_offset.data.repeat(expanding_factor).to",
+          "lineNumber": 65
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_offset.data.repeat",
+          "lineNumber": 65
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 66
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8sc.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 104,
+      "nonEmptyLines": 91,
+      "classes": [
+        {
+          "name": "AscendW8A8SCLinearMethod310",
+          "startLine": 32,
+          "endLine": 104,
+          "methods": [
+            "get_weight",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8SCLinearMethod310",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_weight",
+          "callee": "math.ceil",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_weight",
+          "callee": "math.ceil",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 68
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 69
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.ops.vllm.quantize",
+          "lineNumber": 80
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_matmul_compress_dequant",
+          "lineNumber": 87
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_scale.data.repeat",
+          "lineNumber": 96
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_offset.data.repeat(self.input_size).to",
+          "lineNumber": 98
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_offset.data.repeat",
+          "lineNumber": 98
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.deq_scale.data.unsqueeze(0).to",
+          "lineNumber": 99
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.deq_scale.data.unsqueeze",
+          "lineNumber": 99
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.quant_bias.data.unsqueeze",
+          "lineNumber": 100
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "isinstance",
+          "lineNumber": 103
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "get_tensor_model_parallel_rank",
+          "lineNumber": 103
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.zeros_like",
+          "lineNumber": 104
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    }
+  ]
+}

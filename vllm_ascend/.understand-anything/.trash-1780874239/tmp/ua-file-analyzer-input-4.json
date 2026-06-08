@@ -1,0 +1,19 @@
+{
+  "projectRoot": "d:/57108/Desktop/code/vllm-ascend/vllm_ascend",
+  "batchFiles": [
+    {"path": "eplb/core/policy/policy_abstract.py", "language": "python", "sizeLines": 30, "fileCategory": "code"},
+    {"path": "eplb/core/policy/policy_default_eplb.py", "language": "python", "sizeLines": 350, "fileCategory": "code"},
+    {"path": "eplb/core/policy/policy_factory.py", "language": "python", "sizeLines": 30, "fileCategory": "code"},
+    {"path": "eplb/core/policy/policy_flashlb.py", "language": "python", "sizeLines": 1026, "fileCategory": "code"},
+    {"path": "eplb/core/policy/policy_random.py", "language": "python", "sizeLines": 26, "fileCategory": "code"},
+    {"path": "eplb/core/policy/policy_swift_balancer.py", "language": "python", "sizeLines": 751, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "eplb/core/policy/policy_abstract.py": [],
+    "eplb/core/policy/policy_default_eplb.py": ["eplb/core/policy/policy_abstract.py"],
+    "eplb/core/policy/policy_factory.py": ["eplb/core/policy/policy_abstract.py", "eplb/core/policy/policy_default_eplb.py", "eplb/core/policy/policy_flashlb.py", "eplb/core/policy/policy_random.py", "eplb/core/policy/policy_swift_balancer.py"],
+    "eplb/core/policy/policy_flashlb.py": ["eplb/core/policy/policy_abstract.py"],
+    "eplb/core/policy/policy_random.py": ["eplb/core/policy/policy_abstract.py"],
+    "eplb/core/policy/policy_swift_balancer.py": ["eplb/core/policy/policy_abstract.py"]
+  }
+}

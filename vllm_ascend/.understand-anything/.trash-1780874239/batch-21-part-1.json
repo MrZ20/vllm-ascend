@@ -1,0 +1,976 @@
+{
+  "nodes": [
+    {
+      "id": "file:worker/pcp_utils.py",
+      "type": "file",
+      "name": "pcp_utils.py",
+      "filePath": "worker/pcp_utils.py",
+      "summary": "实现 PCP（Prefill Context Parallel，前缀上下文并行）管理器，负责在 NPU 多卡间切分 prefill token、生成本地调度布局、构建 attention 元数据并在 all-gather 后恢复 hidden states，用于长序列上下文并行推理。",
+      "tags": [
+        "context-parallel",
+        "attention",
+        "service",
+        "scheduling",
+        "npu"
+      ],
+      "complexity": "complex",
+      "languageNotes": "围绕单个超大类 PCPManager 组织，大量使用 numpy 与 torch 在 CPU/NPU 间往返计算索引映射。"
+    },
+    {
+      "id": "class:worker/pcp_utils.py:PCPManager",
+      "type": "class",
+      "name": "PCPManager",
+      "filePath": "worker/pcp_utils.py",
+      "lineRange": [
+        36,
+        1358
+      ],
+      "summary": "前缀上下文并行的核心管理器，封装 token 切分、slot mapping 初始化、多模态 embedding 局部化、MTP 输入生成以及跨卡 hidden states 恢复等全部 PCP 逻辑。",
+      "tags": [
+        "context-parallel",
+        "attention",
+        "multimodal",
+        "scheduling"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:worker/v2/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "worker/v2/__init__.py",
+      "summary": "Model Runner V2 包的空初始化文件，将 worker/v2 目录标记为 Python 包。",
+      "tags": [
+        "entry-point",
+        "package",
+        "barrel"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/v2/aclgraph_utils.py",
+      "type": "file",
+      "name": "aclgraph_utils.py",
+      "filePath": "worker/v2/aclgraph_utils.py",
+      "summary": "为 Model Runner V2 提供 ACL graph（NPU 图模式）捕获工具，定义图管理器与带 forward context 的模型包装类，实现 full graph 捕获与回放。",
+      "tags": [
+        "aclgraph",
+        "graph-capture",
+        "npu",
+        "model-runner"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:worker/v2/aclgraph_utils.py:ModelAclGraphManager",
+      "type": "class",
+      "name": "ModelAclGraphManager",
+      "filePath": "worker/v2/aclgraph_utils.py",
+      "lineRange": [
+        40,
+        127
+      ],
+      "summary": "扩展 vLLM 的图管理器，在 NPU 上以 full graph 模式运行并捕获模型前向，捕获时结合 model_runner 的 input_buffers 更新图参数。",
+      "tags": [
+        "aclgraph",
+        "graph-capture",
+        "npu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:worker/v2/aclgraph_utils.py:ModelWithContext",
+      "type": "class",
+      "name": "ModelWithContext",
+      "filePath": "worker/v2/aclgraph_utils.py",
+      "lineRange": [
+        130,
+        158
+      ],
+      "summary": "模型包装类，在 forward 时根据是否处于 stream 捕获状态注入正确的 forward context，并透传 compute_logits 调用。",
+      "tags": [
+        "wrapper",
+        "graph-capture",
+        "model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/v2/attn_utils.py",
+      "type": "file",
+      "name": "attn_utils.py",
+      "filePath": "worker/v2/attn_utils.py",
+      "summary": "Model Runner V2 的 attention 与 KV cache 工具集，负责构建 attention 元数据/状态、分配 2M 对齐的连续 KV cache 并按后端要求 reshape。",
+      "tags": [
+        "attention",
+        "kv-cache",
+        "memory-management",
+        "utility",
+        "npu"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:worker/v2/attn_utils.py:build_attn_metadata",
+      "type": "function",
+      "name": "build_attn_metadata",
+      "filePath": "worker/v2/attn_utils.py",
+      "lineRange": [
+        57,
+        143
+      ],
+      "summary": "根据请求布局、block tables、slot mappings 与上下文并行元数据为各 attention group 构建 attention metadata，供模型前向使用。",
+      "tags": [
+        "attention",
+        "metadata",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/attn_utils.py:build_attn_state",
+      "type": "function",
+      "name": "build_attn_state",
+      "filePath": "worker/v2/attn_utils.py",
+      "lineRange": [
+        146,
+        184
+      ],
+      "summary": "依据序列长度与调度 token 数推断当前 batch 的 attention 状态（如 prefill、decode、chunked）。",
+      "tags": [
+        "attention",
+        "state",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:worker/v2/attn_utils.py:_allocate_kv_cache",
+      "type": "function",
+      "name": "_allocate_kv_cache",
+      "filePath": "worker/v2/attn_utils.py",
+      "lineRange": [
+        218,
+        289
+      ],
+      "summary": "为 KV cache 分配连续且 2M 对齐的原始 tensor 空间，满足 PD 分离对内存对齐的要求。",
+      "tags": [
+        "kv-cache",
+        "memory-management",
+        "allocation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/attn_utils.py:_reshape_kv_cache",
+      "type": "function",
+      "name": "_reshape_kv_cache",
+      "filePath": "worker/v2/attn_utils.py",
+      "lineRange": [
+        292,
+        389
+      ],
+      "summary": "将原始 KV cache tensor 按各 attention 后端与 kernel block 大小 reshape 成可用的 K/V 缓存视图。",
+      "tags": [
+        "kv-cache",
+        "reshape",
+        "memory-management"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/attn_utils.py:_reshape_kv_cache_v2",
+      "type": "function",
+      "name": "_reshape_kv_cache_v2",
+      "filePath": "worker/v2/attn_utils.py",
+      "lineRange": [
+        392,
+        464
+      ],
+      "summary": "基于 attention group 的新版 KV cache reshape 实现，按 group 与共享层关系组织缓存视图。",
+      "tags": [
+        "kv-cache",
+        "reshape",
+        "memory-management"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:worker/v2/block_table.py",
+      "type": "file",
+      "name": "block_table.py",
+      "filePath": "worker/v2/block_table.py",
+      "summary": "定义 Ascend block table 容器与 slot mapping 计算 kernel，将逻辑 token 位置映射到 KV cache 的物理 block 槽位。",
+      "tags": [
+        "block-table",
+        "kv-cache",
+        "slot-mapping",
+        "kernel"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:worker/v2/block_table.py:AscendBlockTables",
+      "type": "class",
+      "name": "AscendBlockTables",
+      "filePath": "worker/v2/block_table.py",
+      "lineRange": [
+        27,
+        105
+      ],
+      "summary": "管理多层 block table，对外提供 compute_slot_mappings 接口将请求 token 转换为物理槽位映射。",
+      "tags": [
+        "block-table",
+        "kv-cache",
+        "slot-mapping"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/block_table.py:_compute_slot_mappings_kernel",
+      "type": "function",
+      "name": "_compute_slot_mappings_kernel",
+      "filePath": "worker/v2/block_table.py",
+      "lineRange": [
+        109,
+        178
+      ],
+      "summary": "计算 slot mapping 的核心 kernel，将 block 索引与块内偏移组合成 KV cache 的全局槽位下标。",
+      "tags": [
+        "kernel",
+        "slot-mapping",
+        "kv-cache"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:worker/v2/input_batch.py",
+      "type": "file",
+      "name": "input_batch.py",
+      "filePath": "worker/v2/input_batch.py",
+      "summary": "定义 Ascend 输入缓冲区与输入 batch 结构，并提供 post_update kernel 在采样后更新 token id 等输入状态。",
+      "tags": [
+        "input-batch",
+        "data-model",
+        "kernel",
+        "model-runner"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:worker/v2/input_batch.py:AscendInputBatch",
+      "type": "class",
+      "name": "AscendInputBatch",
+      "filePath": "worker/v2/input_batch.py",
+      "lineRange": [
+        68,
+        106
+      ],
+      "summary": "Ascend 输入 batch 数据结构，提供 make_dummy 构造用于 profiling/warmup 的占位输入。",
+      "tags": [
+        "input-batch",
+        "data-model",
+        "profiling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:worker/v2/input_batch.py:AscendInputBuffers",
+      "type": "class",
+      "name": "AscendInputBuffers",
+      "filePath": "worker/v2/input_batch.py",
+      "lineRange": [
+        31,
+        64
+      ],
+      "summary": "持有 positions、input_ids 等输入张量的 CPU/NPU 双端缓冲区集合。",
+      "tags": [
+        "input-batch",
+        "buffer",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:worker/v2/input_batch.py:_post_update_kernel",
+      "type": "function",
+      "name": "_post_update_kernel",
+      "filePath": "worker/v2/input_batch.py",
+      "lineRange": [
+        110,
+        164
+      ],
+      "summary": "采样后更新输入状态的 kernel，将新采样的 token 写回输入缓冲区。",
+      "tags": [
+        "kernel",
+        "input-batch",
+        "update"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/input_batch.py:post_update",
+      "type": "function",
+      "name": "post_update",
+      "filePath": "worker/v2/input_batch.py",
+      "lineRange": [
+        167,
+        210
+      ],
+      "summary": "post_update kernel 的对外封装，负责组织参数并触发输入状态的批量更新。",
+      "tags": [
+        "input-batch",
+        "update",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/v2/model_runner.py",
+      "type": "file",
+      "name": "model_runner.py",
+      "filePath": "worker/v2/model_runner.py",
+      "summary": "Model Runner V2 的核心 NPUModelRunner，继承 vLLM 的 GPUModelRunner 并适配 NPU，负责 KV cache 初始化、输入准备、profile run 与 speculative decoding 接入。",
+      "tags": [
+        "model-runner",
+        "entry-point",
+        "npu",
+        "inference"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:worker/v2/model_runner.py:NPUModelRunner",
+      "type": "class",
+      "name": "NPUModelRunner",
+      "filePath": "worker/v2/model_runner.py",
+      "lineRange": [
+        58,
+        449
+      ],
+      "summary": "继承 GPUModelRunner 的 NPU 模型运行器，覆盖 KV cache 初始化、输入准备、后处理与 EPLB warmup 等流程以适配 Ascend 硬件。",
+      "tags": [
+        "model-runner",
+        "npu",
+        "inference"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:worker/v2/model_runner.py:graph_manager_wrapper",
+      "type": "function",
+      "name": "graph_manager_wrapper",
+      "filePath": "worker/v2/model_runner.py",
+      "lineRange": [
+        453,
+        464
+      ],
+      "summary": "上下文管理器，临时将 vLLM 的 ModelCudaGraphManager 替换为 ModelAclGraphManager 工厂，使 model_runner 能注入到图管理器。",
+      "tags": [
+        "aclgraph",
+        "monkeypatch",
+        "wrapper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/v2/model_states/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "worker/v2/model_states/__init__.py",
+      "summary": "model_states 包入口，提供 init_asecnd_model_state 工厂函数延迟导入并构造默认的 AscendModelState。",
+      "tags": [
+        "entry-point",
+        "factory",
+        "model-state"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:worker/v2/model_states/__init__.py:init_asecnd_model_state",
+      "type": "function",
+      "name": "init_asecnd_model_state",
+      "filePath": "worker/v2/model_states/__init__.py",
+      "lineRange": [
+        26,
+        34
+      ],
+      "summary": "工厂函数，延迟导入并实例化默认的 AscendModelState 模型状态对象。",
+      "tags": [
+        "factory",
+        "model-state",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/v2/model_states/default.py",
+      "type": "file",
+      "name": "default.py",
+      "filePath": "worker/v2/model_states/default.py",
+      "summary": "定义默认的 AscendModelState，封装每步前向所需的 attention 元数据准备逻辑。",
+      "tags": [
+        "model-state",
+        "attention",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:worker/v2/model_states/default.py:AscendModelState",
+      "type": "class",
+      "name": "AscendModelState",
+      "filePath": "worker/v2/model_states/default.py",
+      "lineRange": [
+        32,
+        77
+      ],
+      "summary": "默认模型状态类，通过 prepare_attn 调用 build_attn_metadata 为当前 batch 准备 attention 元数据。",
+      "tags": [
+        "model-state",
+        "attention"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:worker/v2/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "worker/v2/README.md",
+      "summary": "实验性 Model Runner V2 子系统的说明文档，记录其开发状态以及与上游 vLLM 之间待解决的差异（cos/sin、KV cache 分配、aclgraph 包装等）。",
+      "tags": [
+        "documentation",
+        "model-runner",
+        "overview"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/v2/sample/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "worker/v2/sample/__init__.py",
+      "summary": "sample 采样子包的空初始化文件，将目录标记为 Python 包。",
+      "tags": [
+        "entry-point",
+        "package",
+        "barrel"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/v2/sample/bad_words.py",
+      "type": "file",
+      "name": "bad_words.py",
+      "filePath": "worker/v2/sample/bad_words.py",
+      "summary": "实现 bad words 约束的 NPU kernel，在采样前将命中禁用词序列的 token logits 屏蔽为负无穷。",
+      "tags": [
+        "sampling",
+        "kernel",
+        "logits-processor",
+        "npu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/sample/bad_words.py:_bad_words_kernel",
+      "type": "function",
+      "name": "_bad_words_kernel",
+      "filePath": "worker/v2/sample/bad_words.py",
+      "lineRange": [
+        31,
+        127
+      ],
+      "summary": "bad words 屏蔽核心 kernel，检测已生成序列是否匹配禁用词前缀并屏蔽对应的下一个 token。",
+      "tags": [
+        "kernel",
+        "sampling",
+        "logits-processor"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/sample/bad_words.py:apply_bad_words",
+      "type": "function",
+      "name": "apply_bad_words",
+      "filePath": "worker/v2/sample/bad_words.py",
+      "lineRange": [
+        130,
+        183
+      ],
+      "summary": "bad words kernel 的对外入口，组织参数并对 logits 批量应用禁用词屏蔽。",
+      "tags": [
+        "sampling",
+        "logits-processor",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:worker/v2/sample/gumbel.py",
+      "type": "file",
+      "name": "gumbel.py",
+      "filePath": "worker/v2/sample/gumbel.py",
+      "summary": "实现温度缩放与 Gumbel-max 采样的 NPU kernel，提供在 logits 上完成随机采样的核心算子。",
+      "tags": [
+        "sampling",
+        "kernel",
+        "gumbel",
+        "npu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/sample/gumbel.py:apply_temperature",
+      "type": "function",
+      "name": "apply_temperature",
+      "filePath": "worker/v2/sample/gumbel.py",
+      "lineRange": [
+        51,
+        74
+      ],
+      "summary": "对 logits 按每请求的温度进行缩放的对外封装。",
+      "tags": [
+        "sampling",
+        "temperature",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:worker/v2/sample/gumbel.py:_gumbel_sample_kernel",
+      "type": "function",
+      "name": "_gumbel_sample_kernel",
+      "filePath": "worker/v2/sample/gumbel.py",
+      "lineRange": [
+        78,
+        148
+      ],
+      "summary": "Gumbel-max 采样核心 kernel，向 logits 注入 Gumbel 噪声后取 argmax 得到采样 token。",
+      "tags": [
+        "kernel",
+        "sampling",
+        "gumbel"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/v2/sample/gumbel.py:gumbel_sample",
+      "type": "function",
+      "name": "gumbel_sample",
+      "filePath": "worker/v2/sample/gumbel.py",
+      "lineRange": [
+        151,
+        202
+      ],
+      "summary": "Gumbel 采样对外入口，封装噪声生成与 argmax 完成一次批量采样。",
+      "tags": [
+        "sampling",
+        "gumbel",
+        "utility"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:worker/pcp_utils.py",
+      "target": "class:worker/pcp_utils.py:PCPManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/pcp_utils.py",
+      "target": "class:worker/pcp_utils.py:PCPManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/aclgraph_utils.py",
+      "target": "class:worker/v2/aclgraph_utils.py:ModelAclGraphManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/aclgraph_utils.py",
+      "target": "class:worker/v2/aclgraph_utils.py:ModelWithContext",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/aclgraph_utils.py",
+      "target": "class:worker/v2/aclgraph_utils.py:ModelAclGraphManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/aclgraph_utils.py",
+      "target": "class:worker/v2/aclgraph_utils.py:ModelWithContext",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/aclgraph_utils.py",
+      "target": "file:worker/v2/utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/aclgraph_utils.py",
+      "target": "function:worker/v2/utils.py:communicator_switch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/attn_utils.py",
+      "target": "function:worker/v2/attn_utils.py:build_attn_metadata",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/attn_utils.py",
+      "target": "function:worker/v2/attn_utils.py:build_attn_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/attn_utils.py",
+      "target": "function:worker/v2/attn_utils.py:_allocate_kv_cache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/attn_utils.py",
+      "target": "function:worker/v2/attn_utils.py:_reshape_kv_cache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/attn_utils.py",
+      "target": "function:worker/v2/attn_utils.py:_reshape_kv_cache_v2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/attn_utils.py",
+      "target": "function:worker/v2/attn_utils.py:build_attn_metadata",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/attn_utils.py",
+      "target": "function:worker/v2/attn_utils.py:build_attn_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/block_table.py",
+      "target": "class:worker/v2/block_table.py:AscendBlockTables",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/block_table.py",
+      "target": "function:worker/v2/block_table.py:_compute_slot_mappings_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/block_table.py",
+      "target": "class:worker/v2/block_table.py:AscendBlockTables",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/input_batch.py",
+      "target": "class:worker/v2/input_batch.py:AscendInputBatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/input_batch.py",
+      "target": "class:worker/v2/input_batch.py:AscendInputBuffers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/input_batch.py",
+      "target": "function:worker/v2/input_batch.py:_post_update_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/input_batch.py",
+      "target": "function:worker/v2/input_batch.py:post_update",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/input_batch.py",
+      "target": "class:worker/v2/input_batch.py:AscendInputBatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/input_batch.py",
+      "target": "class:worker/v2/input_batch.py:AscendInputBuffers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "class:worker/v2/model_runner.py:NPUModelRunner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "function:worker/v2/model_runner.py:graph_manager_wrapper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "class:worker/v2/model_runner.py:NPUModelRunner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "file:worker/v2/aclgraph_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "file:worker/v2/attn_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "file:worker/v2/input_batch.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "file:worker/v2/spec_decode/eagle/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "file:worker/v2/spec_decode/eagle/speculator.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "file:worker/v2/states.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "file:worker/v2/utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "class:worker/v2/aclgraph_utils.py:ModelAclGraphManager",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "function:worker/v2/spec_decode/eagle/__init__.py:init_speculator",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_runner.py",
+      "target": "function:worker/v2/attn_utils.py:build_attn_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_states/__init__.py",
+      "target": "function:worker/v2/model_states/__init__.py:init_asecnd_model_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/model_states/__init__.py",
+      "target": "function:worker/v2/model_states/__init__.py:init_asecnd_model_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_states/__init__.py",
+      "target": "file:worker/v2/model_states/default.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_states/__init__.py",
+      "target": "class:worker/v2/model_states/default.py:AscendModelState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_states/default.py",
+      "target": "class:worker/v2/model_states/default.py:AscendModelState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/model_states/default.py",
+      "target": "class:worker/v2/model_states/default.py:AscendModelState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/model_states/default.py",
+      "target": "file:worker/v2/attn_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_states/default.py",
+      "target": "file:worker/v2/input_batch.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:worker/v2/model_states/default.py",
+      "target": "function:worker/v2/attn_utils.py:build_attn_metadata",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:worker/v2/README.md",
+      "target": "file:worker/v2/model_runner.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:worker/v2/README.md",
+      "target": "file:worker/v2/attn_utils.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:worker/v2/README.md",
+      "target": "file:worker/v2/utils.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:worker/v2/README.md",
+      "target": "file:worker/v2/spec_decode/eagle/speculator.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:worker/v2/sample/bad_words.py",
+      "target": "function:worker/v2/sample/bad_words.py:_bad_words_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/sample/bad_words.py",
+      "target": "function:worker/v2/sample/bad_words.py:apply_bad_words",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/sample/bad_words.py",
+      "target": "function:worker/v2/sample/bad_words.py:apply_bad_words",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:worker/v2/sample/gumbel.py",
+      "target": "function:worker/v2/sample/gumbel.py:apply_temperature",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/sample/gumbel.py",
+      "target": "function:worker/v2/sample/gumbel.py:_gumbel_sample_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/sample/gumbel.py",
+      "target": "function:worker/v2/sample/gumbel.py:gumbel_sample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/v2/sample/gumbel.py",
+      "target": "function:worker/v2/sample/gumbel.py:gumbel_sample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

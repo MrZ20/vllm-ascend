@@ -1,0 +1,2392 @@
+{
+  "scriptCompleted": true,
+  "files": [
+    {
+      "path": "__init__.py",
+      "language": "python",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/attention/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/attention/attention_mask.py",
+      "language": "python",
+      "sizeLines": 157,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/attention/attention_v1.py",
+      "language": "python",
+      "sizeLines": 281,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/attention/metadata_builder.py",
+      "language": "python",
+      "sizeLines": 58,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/block_table.py",
+      "language": "python",
+      "sizeLines": 202,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/fused_moe/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/fused_moe/experts_selector.py",
+      "language": "python",
+      "sizeLines": 81,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/fused_moe/fused_moe.py",
+      "language": "python",
+      "sizeLines": 296,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/fused_moe/moe_comm_method.py",
+      "language": "python",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/fused_moe/moe_mlp.py",
+      "language": "python",
+      "sizeLines": 102,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/fused_moe/token_dispatcher.py",
+      "language": "python",
+      "sizeLines": 88,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/model_runner_310p.py",
+      "language": "python",
+      "sizeLines": 899,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/npu_input_batch.py",
+      "language": "python",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/activation.py",
+      "language": "python",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/causal_conv1d.py",
+      "language": "python",
+      "sizeLines": 297,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/conv.py",
+      "language": "python",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/fla/__init__.py",
+      "language": "python",
+      "sizeLines": 9,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/fla/chunk_gated_delta_rule.py",
+      "language": "python",
+      "sizeLines": 255,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/fla/fused_gdn_gating.py",
+      "language": "python",
+      "sizeLines": 62,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/fla/fused_recurrent_gated_delta_rule.py",
+      "language": "python",
+      "sizeLines": 226,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/fla/gdn_310.py",
+      "language": "python",
+      "sizeLines": 333,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/fla/idex.py",
+      "language": "python",
+      "sizeLines": 42,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/layernorm.py",
+      "language": "python",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/mm_encoder_attention.py",
+      "language": "python",
+      "sizeLines": 142,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/rotary_embedding.py",
+      "language": "python",
+      "sizeLines": 262,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/ops/vocab_parallel_embedding.py",
+      "language": "python",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/__init__.py",
+      "language": "python",
+      "sizeLines": 22,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/methods/__init__.py",
+      "language": "python",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/methods/registry.py",
+      "language": "python",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8_base.py",
+      "language": "python",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8_dynamic.py",
+      "language": "python",
+      "sizeLines": 218,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8_static.py",
+      "language": "python",
+      "sizeLines": 98,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8s.py",
+      "language": "python",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/methods/w8a8sc.py",
+      "language": "python",
+      "sizeLines": 104,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/quantization/modelslim_config.py",
+      "language": "python",
+      "sizeLines": 140,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/sample/__init__.py",
+      "language": "python",
+      "sizeLines": 3,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/sample/sampler.py",
+      "language": "python",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/sharded_state_loader_310p.py",
+      "language": "python",
+      "sizeLines": 80,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_310p/worker_310p.py",
+      "language": "python",
+      "sizeLines": 191,
+      "fileCategory": "code"
+    },
+    {
+      "path": "_cann_ops_custom/.gitkeep",
+      "language": "unknown",
+      "sizeLines": 3,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".understand-anything/.understandignore",
+      "language": "unknown",
+      "sizeLines": 8,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".understand-anything/config.json",
+      "language": "json",
+      "sizeLines": 1,
+      "fileCategory": "config"
+    },
+    {
+      "path": "ascend_config.py",
+      "language": "python",
+      "sizeLines": 722,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ascend_forward_context.py",
+      "language": "python",
+      "sizeLines": 381,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/abstract.py",
+      "language": "python",
+      "sizeLines": 51,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/attention_mask.py",
+      "language": "python",
+      "sizeLines": 85,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/attention_v1.py",
+      "language": "python",
+      "sizeLines": 1784,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/context_parallel/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/context_parallel/attention_cp.py",
+      "language": "python",
+      "sizeLines": 1018,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/context_parallel/common_cp.py",
+      "language": "python",
+      "sizeLines": 193,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/context_parallel/dsa_cp.py",
+      "language": "python",
+      "sizeLines": 1349,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/context_parallel/mla_cp.py",
+      "language": "python",
+      "sizeLines": 842,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/context_parallel/sfa_cp.py",
+      "language": "python",
+      "sizeLines": 578,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/dsa_v1.py",
+      "language": "python",
+      "sizeLines": 2825,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/fa3_v1.py",
+      "language": "python",
+      "sizeLines": 145,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/kvcomp_attn/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/kvcomp_attn/attention_utils.py",
+      "language": "python",
+      "sizeLines": 152,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/mla_v1.py",
+      "language": "python",
+      "sizeLines": 1803,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/sfa_v1.py",
+      "language": "python",
+      "sizeLines": 1335,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attention/utils.py",
+      "language": "python",
+      "sizeLines": 386,
+      "fileCategory": "code"
+    },
+    {
+      "path": "batch_invariant.py",
+      "language": "python",
+      "sizeLines": 149,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/acl_graph.py",
+      "language": "python",
+      "sizeLines": 353,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/compiler_interface.py",
+      "language": "python",
+      "sizeLines": 216,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/graph_fusion_pass_manager.py",
+      "language": "python",
+      "sizeLines": 79,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/allgather_chunk_noop_pass.py",
+      "language": "python",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/allreduce_rmsnorm_fusion_pass.py",
+      "language": "python",
+      "sizeLines": 159,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/base_pattern.py",
+      "language": "python",
+      "sizeLines": 63,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/muls_add_pass.py",
+      "language": "python",
+      "sizeLines": 110,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/noop_elimination.py",
+      "language": "python",
+      "sizeLines": 62,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/norm_quant_fusion_pass.py",
+      "language": "python",
+      "sizeLines": 513,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/qknorm_rope_fusion_pass.py",
+      "language": "python",
+      "sizeLines": 244,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/sequence_parallelism_moe.py",
+      "language": "python",
+      "sizeLines": 204,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/sequence_parallelism.py",
+      "language": "python",
+      "sizeLines": 234,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/utils/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "compilation/passes/utils/npugraph_ex_utils_check.py",
+      "language": "python",
+      "sizeLines": 75,
+      "fileCategory": "code"
+    },
+    {
+      "path": "core/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "core/profiling_chunk_predictor.py",
+      "language": "python",
+      "sizeLines": 385,
+      "fileCategory": "code"
+    },
+    {
+      "path": "core/recompute_scheduler.py",
+      "language": "python",
+      "sizeLines": 1042,
+      "fileCategory": "code"
+    },
+    {
+      "path": "core/scheduler_dynamic_batch.py",
+      "language": "python",
+      "sizeLines": 574,
+      "fileCategory": "code"
+    },
+    {
+      "path": "core/scheduler_profiling_chunk.py",
+      "language": "python",
+      "sizeLines": 746,
+      "fileCategory": "code"
+    },
+    {
+      "path": "core/single_type_kv_cache_manager.py",
+      "language": "python",
+      "sizeLines": 275,
+      "fileCategory": "code"
+    },
+    {
+      "path": "cpu_binding.py",
+      "language": "python",
+      "sizeLines": 537,
+      "fileCategory": "code"
+    },
+    {
+      "path": "device_allocator/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "device_allocator/camem.py",
+      "language": "python",
+      "sizeLines": 273,
+      "fileCategory": "code"
+    },
+    {
+      "path": "device/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "device/device_op.py",
+      "language": "python",
+      "sizeLines": 1635,
+      "fileCategory": "code"
+    },
+    {
+      "path": "device/mxfp_compat.py",
+      "language": "python",
+      "sizeLines": 69,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/device_communicators/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/device_communicators/npu_communicator.py",
+      "language": "python",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/device_communicators/pyhccl_wrapper.py",
+      "language": "python",
+      "sizeLines": 263,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/device_communicators/pyhccl.py",
+      "language": "python",
+      "sizeLines": 171,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/__init__.py",
+      "language": "python",
+      "sizeLines": 81,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/ascend_multi_connector.py",
+      "language": "python",
+      "sizeLines": 67,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_p2p/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_p2p/mooncake_connector.py",
+      "language": "python",
+      "sizeLines": 2563,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py",
+      "language": "python",
+      "sizeLines": 1888,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_p2p/mooncake_layerwise_connector.py",
+      "language": "python",
+      "sizeLines": 1990,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/ascend_store_connector.py",
+      "language": "python",
+      "sizeLines": 321,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+      "language": "python",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+      "language": "python",
+      "sizeLines": 134,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+      "language": "python",
+      "sizeLines": 351,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+      "language": "python",
+      "sizeLines": 191,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+      "language": "python",
+      "sizeLines": 795,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+      "language": "python",
+      "sizeLines": 746,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+      "language": "python",
+      "sizeLines": 679,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py",
+      "language": "python",
+      "sizeLines": 1108,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/cpu_offload/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+      "language": "python",
+      "sizeLines": 179,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+      "language": "python",
+      "sizeLines": 448,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+      "language": "python",
+      "sizeLines": 257,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/lmcache_ascend_connector.py",
+      "language": "python",
+      "sizeLines": 5,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/simple_cpu_offload/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+      "language": "python",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ucm_connector.py",
+      "language": "python",
+      "sizeLines": 324,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/utils/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+      "language": "python",
+      "sizeLines": 43,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/kv_transfer/utils/utils.py",
+      "language": "python",
+      "sizeLines": 302,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/parallel_state.py",
+      "language": "python",
+      "sizeLines": 341,
+      "fileCategory": "code"
+    },
+    {
+      "path": "distributed/utils.py",
+      "language": "python",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "envs.py",
+      "language": "python",
+      "sizeLines": 128,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/adaptor/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/adaptor/vllm_adaptor.py",
+      "language": "python",
+      "sizeLines": 169,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/eplb_device_transfer_loader.py",
+      "language": "python",
+      "sizeLines": 122,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/eplb_utils.py",
+      "language": "python",
+      "sizeLines": 128,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/eplb_worker.py",
+      "language": "python",
+      "sizeLines": 385,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/policy/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/policy/policy_abstract.py",
+      "language": "python",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/policy/policy_default_eplb.py",
+      "language": "python",
+      "sizeLines": 350,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/policy/policy_factory.py",
+      "language": "python",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/policy/policy_flashlb.py",
+      "language": "python",
+      "sizeLines": 1026,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/policy/policy_random.py",
+      "language": "python",
+      "sizeLines": 26,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/core/policy/policy_swift_balancer.py",
+      "language": "python",
+      "sizeLines": 751,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/eplb_updator.py",
+      "language": "python",
+      "sizeLines": 178,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eplb/utils.py",
+      "language": "python",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "flash_common3_context.py",
+      "language": "python",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "kv_offload/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "kv_offload/cpu_npu.py",
+      "language": "python",
+      "sizeLines": 261,
+      "fileCategory": "code"
+    },
+    {
+      "path": "kv_offload/npu.py",
+      "language": "python",
+      "sizeLines": 63,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lora/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lora/lora_ops.py",
+      "language": "python",
+      "sizeLines": 122,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lora/punica_npu.py",
+      "language": "python",
+      "sizeLines": 352,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lora/utils.py",
+      "language": "python",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "meta_registration.py",
+      "language": "python",
+      "sizeLines": 94,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/__init__.py",
+      "language": "python",
+      "sizeLines": 20,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/executor/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/executor/elastic_load.py",
+      "language": "python",
+      "sizeLines": 161,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/executor/netloader_pg.py",
+      "language": "python",
+      "sizeLines": 180,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/interaction/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/interaction/elastic.py",
+      "language": "python",
+      "sizeLines": 422,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/load.py",
+      "language": "python",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/netloader.py",
+      "language": "python",
+      "sizeLines": 367,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/netloader/utils.py",
+      "language": "python",
+      "sizeLines": 63,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/rfork/__init__.py",
+      "language": "python",
+      "sizeLines": 20,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/rfork/rfork_loader.py",
+      "language": "python",
+      "sizeLines": 190,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/rfork/rfork_worker.py",
+      "language": "python",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/rfork/seed_protocol.py",
+      "language": "python",
+      "sizeLines": 212,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/rfork/seed_server.py",
+      "language": "python",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "model_loader/rfork/transfer_backend.py",
+      "language": "python",
+      "sizeLines": 231,
+      "fileCategory": "code"
+    },
+    {
+      "path": "models/__init__.py",
+      "language": "python",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "models/deepseek_v4_mtp.py",
+      "language": "python",
+      "sizeLines": 523,
+      "fileCategory": "code"
+    },
+    {
+      "path": "models/deepseek_v4.py",
+      "language": "python",
+      "sizeLines": 1384,
+      "fileCategory": "code"
+    },
+    {
+      "path": "models/layer/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "models/layer/attention/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "models/layer/attention/layer.py",
+      "language": "python",
+      "sizeLines": 172,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/__init__.py",
+      "language": "python",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/activation.py",
+      "language": "python",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/bailing_moe_linear_attn.py",
+      "language": "python",
+      "sizeLines": 169,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/conv.py",
+      "language": "python",
+      "sizeLines": 26,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/cv_linear.py",
+      "language": "python",
+      "sizeLines": 145,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/dsa.py",
+      "language": "python",
+      "sizeLines": 300,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/flashcomm2_oshard_manager.py",
+      "language": "python",
+      "sizeLines": 101,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/comm_utils.py",
+      "language": "python",
+      "sizeLines": 104,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/experts_selector.py",
+      "language": "python",
+      "sizeLines": 420,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/fused_moe.py",
+      "language": "python",
+      "sizeLines": 898,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/gate_linear.py",
+      "language": "python",
+      "sizeLines": 63,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/moe_comm_method.py",
+      "language": "python",
+      "sizeLines": 348,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/moe_mlp.py",
+      "language": "python",
+      "sizeLines": 486,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/moe_runtime_args.py",
+      "language": "python",
+      "sizeLines": 251,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/moe_stage_contracts.py",
+      "language": "python",
+      "sizeLines": 157,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/moe_stage_params.py",
+      "language": "python",
+      "sizeLines": 91,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/prepare_finalize.py",
+      "language": "python",
+      "sizeLines": 518,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/fused_moe/token_dispatcher.py",
+      "language": "python",
+      "sizeLines": 666,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/gdn.py",
+      "language": "python",
+      "sizeLines": 718,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/layer_shard_linear.py",
+      "language": "python",
+      "sizeLines": 290,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/layernorm.py",
+      "language": "python",
+      "sizeLines": 201,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/linear_op.py",
+      "language": "python",
+      "sizeLines": 753,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/linear.py",
+      "language": "python",
+      "sizeLines": 572,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/mhc.py",
+      "language": "python",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/mla.py",
+      "language": "python",
+      "sizeLines": 213,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/mm_encoder_attention.py",
+      "language": "python",
+      "sizeLines": 177,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/qwen2_decoder.py",
+      "language": "python",
+      "sizeLines": 356,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/register_custom_ops.py",
+      "language": "python",
+      "sizeLines": 298,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/rel_pos_attention.py",
+      "language": "python",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/rope_dsv4.py",
+      "language": "python",
+      "sizeLines": 230,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/rotary_embedding.py",
+      "language": "python",
+      "sizeLines": 590,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/activation/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/activation/swiglu_quant.py",
+      "language": "python",
+      "sizeLines": 100,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/batch_invariant/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/batch_invariant/matmul.py",
+      "language": "python",
+      "sizeLines": 441,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/batch_invariant/mean.py",
+      "language": "python",
+      "sizeLines": 173,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/batch_invariant/rmsnorm.py",
+      "language": "python",
+      "sizeLines": 153,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/batch_invariant/softmax.py",
+      "language": "python",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/batch_memcpy.py",
+      "language": "python",
+      "sizeLines": 31,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/bincount.py",
+      "language": "python",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/chunk_delta_h.py",
+      "language": "python",
+      "sizeLines": 244,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/chunk_delta_hupdate.py",
+      "language": "python",
+      "sizeLines": 219,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/chunk_o_update.py",
+      "language": "python",
+      "sizeLines": 121,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/chunk_o.py",
+      "language": "python",
+      "sizeLines": 163,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/chunk_scaled_dot_kkt.py",
+      "language": "python",
+      "sizeLines": 142,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/chunk.py",
+      "language": "python",
+      "sizeLines": 353,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/cumsum.py",
+      "language": "python",
+      "sizeLines": 144,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "language": "python",
+      "sizeLines": 225,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/l2norm.py",
+      "language": "python",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/layernorm_guard.py",
+      "language": "python",
+      "sizeLines": 198,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/sigmoid_gating.py",
+      "language": "python",
+      "sizeLines": 393,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/solve_tril.py",
+      "language": "python",
+      "sizeLines": 404,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/utils.py",
+      "language": "python",
+      "sizeLines": 132,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fla/wy_fast.py",
+      "language": "python",
+      "sizeLines": 143,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/fused_gdn_gating.py",
+      "language": "python",
+      "sizeLines": 99,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/gdn_chunk_meta.py",
+      "language": "python",
+      "sizeLines": 295,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/layernorm_gated.py",
+      "language": "python",
+      "sizeLines": 168,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/linearnorm/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "language": "python",
+      "sizeLines": 427,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "language": "python",
+      "sizeLines": 403,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "language": "python",
+      "sizeLines": 390,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "language": "python",
+      "sizeLines": 344,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/mamba/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/mamba/causal_conv1d.py",
+      "language": "python",
+      "sizeLines": 724,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/mamba/lightning_attn.py",
+      "language": "python",
+      "sizeLines": 615,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/mul_add.py",
+      "language": "python",
+      "sizeLines": 57,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/muls_add.py",
+      "language": "python",
+      "sizeLines": 57,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/penalty.py",
+      "language": "python",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/reject_sample.py",
+      "language": "python",
+      "sizeLines": 652,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/rms_norm.py",
+      "language": "python",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/rope.py",
+      "language": "python",
+      "sizeLines": 426,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/spec_decode/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/spec_decode/utils.py",
+      "language": "python",
+      "sizeLines": 136,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/triton/triton_utils.py",
+      "language": "python",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/vocab_parallel_embedding.py",
+      "language": "python",
+      "sizeLines": 298,
+      "fileCategory": "code"
+    },
+    {
+      "path": "ops/weight_prefetch.py",
+      "language": "python",
+      "sizeLines": 214,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/__init__.py",
+      "language": "python",
+      "sizeLines": 892,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/__init__.py",
+      "language": "python",
+      "sizeLines": 52,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_balance_schedule.py",
+      "language": "python",
+      "sizeLines": 725,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_camem_allocator.py",
+      "language": "python",
+      "sizeLines": 28,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_deepseek_v4_thinking.py",
+      "language": "python",
+      "sizeLines": 153,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "language": "python",
+      "sizeLines": 802,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_distributed.py",
+      "language": "python",
+      "sizeLines": 89,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_glm_tool_call_streaming.py",
+      "language": "python",
+      "sizeLines": 127,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_glm47_tool_call_parser.py",
+      "language": "python",
+      "sizeLines": 47,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_kv_cache_coordinator.py",
+      "language": "python",
+      "sizeLines": 335,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_kv_cache_interface.py",
+      "language": "python",
+      "sizeLines": 266,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_kv_cache_utils.py",
+      "language": "python",
+      "sizeLines": 258,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_mamba_config_310.py",
+      "language": "python",
+      "sizeLines": 103,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_mamba_config.py",
+      "language": "python",
+      "sizeLines": 119,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_mamba_manager.py",
+      "language": "python",
+      "sizeLines": 53,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_minimax_m2_config.py",
+      "language": "python",
+      "sizeLines": 282,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "language": "python",
+      "sizeLines": 520,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_minimax_usage_accounting.py",
+      "language": "python",
+      "sizeLines": 395,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_mla_prefill_backend.py",
+      "language": "python",
+      "sizeLines": 52,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_multiproc_executor.py",
+      "language": "python",
+      "sizeLines": 211,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_profiling_chunk.py",
+      "language": "python",
+      "sizeLines": 229,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_scheduler.py",
+      "language": "python",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_speculative_config.py",
+      "language": "python",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_tool_choice_none_content.py",
+      "language": "python",
+      "sizeLines": 161,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/platform/patch_torch_accelerator.py",
+      "language": "python",
+      "sizeLines": 16,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/__init__.py",
+      "language": "python",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/_hccl_pg_registry.py",
+      "language": "python",
+      "sizeLines": 295,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_cudagraph.py",
+      "language": "python",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_deepseek_compressor.py",
+      "language": "python",
+      "sizeLines": 156,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_deepseek_mtp.py",
+      "language": "python",
+      "sizeLines": 87,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_distributed.py",
+      "language": "python",
+      "sizeLines": 233,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_draft_quarot.py",
+      "language": "python",
+      "sizeLines": 145,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_gdn_attn.py",
+      "language": "python",
+      "sizeLines": 869,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_gqa_c8.py",
+      "language": "python",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_idex_310.py",
+      "language": "python",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_kimi_k25.py",
+      "language": "python",
+      "sizeLines": 90,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_mamba_utils.py",
+      "language": "python",
+      "sizeLines": 188,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_minimax_m2_linear_attn.py",
+      "language": "python",
+      "sizeLines": 152,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_minimax_m2.py",
+      "language": "python",
+      "sizeLines": 289,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_npugraph_ex_triton.py",
+      "language": "python",
+      "sizeLines": 129,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_qwen3_5.py",
+      "language": "python",
+      "sizeLines": 165,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_qwen3_dflash.py",
+      "language": "python",
+      "sizeLines": 62,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_qwen3_next_mtp.py",
+      "language": "python",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_qwen3vl.py",
+      "language": "python",
+      "sizeLines": 110,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_rejection_sampler.py",
+      "language": "python",
+      "sizeLines": 9,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_routed_experts_capture.py",
+      "language": "python",
+      "sizeLines": 188,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_triton.py",
+      "language": "python",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_v2/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_v2/patch_attn_utils.py",
+      "language": "python",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_v2/patch_block_table.py",
+      "language": "python",
+      "sizeLines": 25,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_v2/patch_input_batch.py",
+      "language": "python",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_v2/patch_model_state.py",
+      "language": "python",
+      "sizeLines": 26,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_v2/patch_triton.py",
+      "language": "python",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_v2/patch_uva.py",
+      "language": "python",
+      "sizeLines": 125,
+      "fileCategory": "code"
+    },
+    {
+      "path": "patch/worker/patch_weight_utils.py",
+      "language": "python",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "platform.py",
+      "language": "python",
+      "sizeLines": 1138,
+      "fileCategory": "code"
+    },
+    {
+      "path": "profiler/__init__.py",
+      "language": "python",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "profiler/torch_npu_profiler.py",
+      "language": "python",
+      "sizeLines": 85,
+      "fileCategory": "code"
+    },
+    {
+      "path": "profiling_config.py",
+      "language": "python",
+      "sizeLines": 217,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/__init__.py",
+      "language": "python",
+      "sizeLines": 47,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/compressed_tensors_config.py",
+      "language": "python",
+      "sizeLines": 429,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/fp8_config.py",
+      "language": "python",
+      "sizeLines": 125,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/method_adapters.py",
+      "language": "python",
+      "sizeLines": 324,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/__init__.py",
+      "language": "python",
+      "sizeLines": 98,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/base.py",
+      "language": "python",
+      "sizeLines": 298,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/fp8.py",
+      "language": "python",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/kv_c8.py",
+      "language": "python",
+      "sizeLines": 164,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/registry.py",
+      "language": "python",
+      "sizeLines": 62,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w4a16.py",
+      "language": "python",
+      "sizeLines": 364,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w4a4_flatquant.py",
+      "language": "python",
+      "sizeLines": 171,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w4a4_laos_dynamic.py",
+      "language": "python",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w4a4_mxfp4_flatquant.py",
+      "language": "python",
+      "sizeLines": 180,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w4a4_mxfp4.py",
+      "language": "python",
+      "sizeLines": 260,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w4a8_mxfp4.py",
+      "language": "python",
+      "sizeLines": 241,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w4a8.py",
+      "language": "python",
+      "sizeLines": 778,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w8a16.py",
+      "language": "python",
+      "sizeLines": 78,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w8a8_dynamic.py",
+      "language": "python",
+      "sizeLines": 394,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w8a8_mxfp8.py",
+      "language": "python",
+      "sizeLines": 428,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w8a8_pdmix.py",
+      "language": "python",
+      "sizeLines": 101,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/methods/w8a8_static.py",
+      "language": "python",
+      "sizeLines": 161,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/modelslim_config.py",
+      "language": "python",
+      "sizeLines": 839,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/quant_parser.py",
+      "language": "python",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/quant_type.py",
+      "language": "python",
+      "sizeLines": 35,
+      "fileCategory": "code"
+    },
+    {
+      "path": "quantization/utils.py",
+      "language": "python",
+      "sizeLines": 226,
+      "fileCategory": "code"
+    },
+    {
+      "path": "sample/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "sample/penalties.py",
+      "language": "python",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "sample/rejection_sampler.py",
+      "language": "python",
+      "sizeLines": 1348,
+      "fileCategory": "code"
+    },
+    {
+      "path": "sample/sampler.py",
+      "language": "python",
+      "sizeLines": 274,
+      "fileCategory": "code"
+    },
+    {
+      "path": "simple_kv_offload/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "simple_kv_offload/copy_backend.py",
+      "language": "python",
+      "sizeLines": 124,
+      "fileCategory": "code"
+    },
+    {
+      "path": "simple_kv_offload/npu_mem_ops.py",
+      "language": "python",
+      "sizeLines": 99,
+      "fileCategory": "code"
+    },
+    {
+      "path": "simple_kv_offload/worker.py",
+      "language": "python",
+      "sizeLines": 224,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/__init__.py",
+      "language": "python",
+      "sizeLines": 51,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/dflash_proposer.py",
+      "language": "python",
+      "sizeLines": 267,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/draft_proposer.py",
+      "language": "python",
+      "sizeLines": 17,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/eagle_proposer.py",
+      "language": "python",
+      "sizeLines": 19,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/extract_hidden_states_proposer.py",
+      "language": "python",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/llm_base_proposer.py",
+      "language": "python",
+      "sizeLines": 2009,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/medusa_proposer.py",
+      "language": "python",
+      "sizeLines": 70,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/ngram_proposer_npu.py",
+      "language": "python",
+      "sizeLines": 35,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/ngram_proposer.py",
+      "language": "python",
+      "sizeLines": 64,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/suffix_proposer.py",
+      "language": "python",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "spec_decode/utils.py",
+      "language": "python",
+      "sizeLines": 31,
+      "fileCategory": "code"
+    },
+    {
+      "path": "utils.py",
+      "language": "python",
+      "sizeLines": 1673,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/block_table.py",
+      "language": "python",
+      "sizeLines": 406,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/kvcomp_utils.py",
+      "language": "python",
+      "sizeLines": 666,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/model_runner_v1.py",
+      "language": "python",
+      "sizeLines": 4609,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/npu_input_batch.py",
+      "language": "python",
+      "sizeLines": 239,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/pcp_utils.py",
+      "language": "python",
+      "sizeLines": 1358,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/aclgraph_utils.py",
+      "language": "python",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/attn_utils.py",
+      "language": "python",
+      "sizeLines": 464,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/block_table.py",
+      "language": "python",
+      "sizeLines": 178,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/input_batch.py",
+      "language": "python",
+      "sizeLines": 210,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/model_runner.py",
+      "language": "python",
+      "sizeLines": 464,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/model_states/__init__.py",
+      "language": "python",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/model_states/default.py",
+      "language": "python",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/README.md",
+      "language": "markdown",
+      "sizeLines": 39,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "worker/v2/sample/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/bad_words.py",
+      "language": "python",
+      "sizeLines": 183,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/gumbel.py",
+      "language": "python",
+      "sizeLines": 202,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/logprob.py",
+      "language": "python",
+      "sizeLines": 164,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/min_p.py",
+      "language": "python",
+      "sizeLines": 91,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/penalties.py",
+      "language": "python",
+      "sizeLines": 236,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/eagle/__init__.py",
+      "language": "python",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/eagle/aclgraph.py",
+      "language": "python",
+      "sizeLines": 227,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/eagle/speculator.py",
+      "language": "python",
+      "sizeLines": 393,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/rejection_sampler_utils.py",
+      "language": "python",
+      "sizeLines": 482,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/states.py",
+      "language": "python",
+      "sizeLines": 69,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/structured_outputs.py",
+      "language": "python",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/utils.py",
+      "language": "python",
+      "sizeLines": 55,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/worker.py",
+      "language": "python",
+      "sizeLines": 812,
+      "fileCategory": "code"
+    },
+    {
+      "path": "xlite/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "xlite/utils.py",
+      "language": "python",
+      "sizeLines": 51,
+      "fileCategory": "code"
+    },
+    {
+      "path": "xlite/xlite_model_runner.py",
+      "language": "python",
+      "sizeLines": 52,
+      "fileCategory": "code"
+    },
+    {
+      "path": "xlite/xlite_worker.py",
+      "language": "python",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "xlite/xlite.py",
+      "language": "python",
+      "sizeLines": 803,
+      "fileCategory": "code"
+    }
+  ],
+  "totalFiles": 395,
+  "filteredByIgnore": 0,
+  "estimatedComplexity": "large",
+  "stats": {
+    "filesScanned": 395,
+    "byCategory": {
+      "code": 393,
+      "config": 1,
+      "docs": 1
+    },
+    "byLanguage": {
+      "python": 391,
+      "unknown": 2,
+      "json": 1,
+      "markdown": 1
+    }
+  }
+}

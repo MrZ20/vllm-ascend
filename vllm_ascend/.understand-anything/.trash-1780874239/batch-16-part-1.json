@@ -1,0 +1,1028 @@
+{
+  "nodes": [
+    {
+      "id": "file:ops/rope_dsv4.py",
+      "type": "file",
+      "name": "rope_dsv4.py",
+      "filePath": "ops/rope_dsv4.py",
+      "summary": "为 DeepSeek V4 (DSA) 提供复指数旋转位置编码 (RoPE) 实现，包含全局状态注册表与按层缓存 cos/sin 的代理结构。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention",
+        "data-model"
+      ],
+      "complexity": "complex",
+      "languageNotes": "使用全局单例 RopeGlobalState 维护跨层注册表与运行时缓冲区，forward 调用 torch_npu.npu_rotary_mul。"
+    },
+    {
+      "id": "function:ops/rope_dsv4.py:get_cos_and_sin_dsa",
+      "type": "function",
+      "name": "get_cos_and_sin_dsa",
+      "filePath": "ops/rope_dsv4.py",
+      "lineRange": [
+        61,
+        99
+      ],
+      "summary": "根据 positions 从全局运行时缓冲区查找并填充 cos/sin 张量，返回封装好的 RopeDataProxy。",
+      "tags": [
+        "rotary-embedding",
+        "cache",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:ops/rope_dsv4.py:RopeDataProxy",
+      "type": "class",
+      "name": "RopeDataProxy",
+      "filePath": "ops/rope_dsv4.py",
+      "lineRange": [
+        22,
+        58
+      ],
+      "summary": "对按层分组的 cos/sin 缓存数据进行惰性索引访问的代理类，按 layer 配置键路由到对应缓冲区。",
+      "tags": [
+        "data-model",
+        "proxy",
+        "cache"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:ops/rope_dsv4.py:ComplexExpRotaryEmbedding",
+      "type": "class",
+      "name": "ComplexExpRotaryEmbedding",
+      "filePath": "ops/rope_dsv4.py",
+      "lineRange": [
+        102,
+        230
+      ],
+      "summary": "基于复指数形式的旋转位置编码模块，支持 YaRN 频率校正并通过 NPU kernel 完成 query 旋转。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/rotary_embedding.py",
+      "type": "file",
+      "name": "rotary_embedding.py",
+      "filePath": "ops/rotary_embedding.py",
+      "summary": "Ascend NPU 旋转位置编码的核心模块，提供标准/YaRN/DeepSeek 缩放/M-RoPE 等多种 RoPE 实现以及 cos/sin 缓存管理工具函数。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention",
+        "data-model"
+      ],
+      "complexity": "complex",
+      "languageNotes": "通过 torch.ops.vllm 自定义算子与 torch_npu.npu_mrope/npu_rotary_mul 调度 NPU kernel，含多个 out-of-tree forward_oot 覆写。"
+    },
+    {
+      "id": "function:ops/rotary_embedding.py:set_cos_and_sin",
+      "type": "function",
+      "name": "set_cos_and_sin",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        62,
+        86
+      ],
+      "summary": "根据 vllm 配置预分配并初始化全局 cos/sin 缓存张量，区分是否为视觉语言模型。",
+      "tags": [
+        "rotary-embedding",
+        "cache",
+        "initialization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/rotary_embedding.py:update_cos_sin",
+      "type": "function",
+      "name": "update_cos_sin",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        129,
+        146
+      ],
+      "summary": "依据 positions 从合并的 cos_sin 缓存中索引切片并重排，更新当前批次的 cos/sin 张量。",
+      "tags": [
+        "rotary-embedding",
+        "cache",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:ops/rotary_embedding.py:rope_forward_oot",
+      "type": "function",
+      "name": "rope_forward_oot",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        153,
+        213
+      ],
+      "summary": "out-of-tree 的 RoPE 前向实现，支持 neox/非 neox 风格与部分旋转，调用 torch_npu._npu_rotary_embedding。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ops/rotary_embedding.py:AscendRotaryEmbedding",
+      "type": "class",
+      "name": "AscendRotaryEmbedding",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        216,
+        250
+      ],
+      "summary": "标准 Ascend 旋转位置编码模块，记录 cos/sin 缓存并通过 NPU 自定义算子完成前向。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:ops/rotary_embedding.py:AscendYaRNRotaryEmbedding",
+      "type": "class",
+      "name": "AscendYaRNRotaryEmbedding",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        253,
+        295
+      ],
+      "summary": "YaRN 缩放变体的 Ascend 旋转位置编码，复用父类 forward_oot 并记录缩放后的缓存。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:ops/rotary_embedding.py:AscendDeepseekScalingRotaryEmbedding",
+      "type": "class",
+      "name": "AscendDeepseekScalingRotaryEmbedding",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        298,
+        469
+      ],
+      "summary": "DeepSeek YaRN 缩放旋转位置编码，含 mscale 计算、频率校正范围与 cos/sin 缓存构建逻辑。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ops/rotary_embedding.py:AscendMRotaryEmbedding",
+      "type": "class",
+      "name": "AscendMRotaryEmbedding",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        472,
+        554
+      ],
+      "summary": "多模态 M-RoPE 旋转位置编码，支持 triton 路径与 torch_npu.npu_mrope 两种后端。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "multimodal",
+        "attention"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ops/rotary_embedding.py:AscendApplyRotaryEmb",
+      "type": "class",
+      "name": "AscendApplyRotaryEmb",
+      "filePath": "ops/rotary_embedding.py",
+      "lineRange": [
+        557,
+        590
+      ],
+      "summary": "对外暴露的 apply rotary embedding 模块，拼接 cos/sin 后调用 npu_rotary_mul 完成旋转。",
+      "tags": [
+        "rotary-embedding",
+        "npu",
+        "attention"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "ops/triton/__init__.py",
+      "summary": "ops/triton Triton kernel 包的初始化文件，标识该目录为 Python 包。",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/activation/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "ops/triton/activation/__init__.py",
+      "summary": "ops/triton/activation 激活函数 kernel 子包的初始化文件。",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/batch_invariant/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "ops/triton/batch_invariant/__init__.py",
+      "summary": "ops/triton/batch_invariant 批不变算子子包的初始化文件。",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/fla/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "ops/triton/fla/__init__.py",
+      "summary": "ops/triton/fla (fused linear attention) kernel 子包的初始化文件。",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/activation/swiglu_quant.py",
+      "type": "file",
+      "name": "swiglu_quant.py",
+      "filePath": "ops/triton/activation/swiglu_quant.py",
+      "summary": "提供 MoE 分组 SwiGLU 激活并融合 FP8 量化的 Triton kernel 及其 Python 封装。",
+      "tags": [
+        "triton",
+        "kernel",
+        "activation",
+        "quantization",
+        "moe"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Triton kernel 按 expert 分组处理，融合 sigmoid 门控与逐组动态量化 scale。"
+    },
+    {
+      "id": "function:ops/triton/activation/swiglu_quant.py:_swiglu_quant_kernel",
+      "type": "function",
+      "name": "_swiglu_quant_kernel",
+      "filePath": "ops/triton/activation/swiglu_quant.py",
+      "lineRange": [
+        8,
+        63
+      ],
+      "summary": "Triton kernel：对 MoE 各 expert 分组执行 SwiGLU 激活并计算量化 scale 后写出 FP8 输出。",
+      "tags": [
+        "triton",
+        "kernel",
+        "activation",
+        "quantization"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/activation/swiglu_quant.py:swiglu_quant",
+      "type": "function",
+      "name": "swiglu_quant",
+      "filePath": "ops/triton/activation/swiglu_quant.py",
+      "lineRange": [
+        66,
+        100
+      ],
+      "summary": "swiglu_quant 的 Python 入口，校验输入并配置网格调度 Triton kernel。",
+      "tags": [
+        "triton",
+        "activation",
+        "quantization",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/batch_invariant/matmul.py",
+      "type": "file",
+      "name": "matmul.py",
+      "filePath": "ops/triton/batch_invariant/matmul.py",
+      "summary": "批不变 (batch-invariant) 矩阵乘法实现，提供 persistent Triton kernel 及 mm/bmm/addmm/linear 的确定性替代算子。",
+      "tags": [
+        "triton",
+        "kernel",
+        "matmul",
+        "batch-invariant"
+      ],
+      "complexity": "complex",
+      "languageNotes": "persistent kernel 固定 tile 调度顺序以保证 batch 间数值一致性，供确定性推理使用。"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/matmul.py:matmul_bias_persistent_kernel",
+      "type": "function",
+      "name": "matmul_bias_persistent_kernel",
+      "filePath": "ops/triton/batch_invariant/matmul.py",
+      "lineRange": [
+        25,
+        98
+      ],
+      "summary": "带偏置的 persistent matmul Triton kernel，使用固定网格遍历 tile 累加点积。",
+      "tags": [
+        "triton",
+        "kernel",
+        "matmul"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/matmul.py:matmul_persistent",
+      "type": "function",
+      "name": "matmul_persistent",
+      "filePath": "ops/triton/batch_invariant/matmul.py",
+      "lineRange": [
+        101,
+        175
+      ],
+      "summary": "matmul persistent kernel 的 Python 封装，处理维度校验、连续化与网格调度。",
+      "tags": [
+        "triton",
+        "matmul",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/matmul.py:linear_persistent_kernel",
+      "type": "function",
+      "name": "linear_persistent_kernel",
+      "filePath": "ops/triton/batch_invariant/matmul.py",
+      "lineRange": [
+        179,
+        245
+      ],
+      "summary": "线性层的 persistent Triton kernel，按固定块划分计算 x·yᵀ。",
+      "tags": [
+        "triton",
+        "kernel",
+        "matmul"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/matmul.py:linear_persistent",
+      "type": "function",
+      "name": "linear_persistent",
+      "filePath": "ops/triton/batch_invariant/matmul.py",
+      "lineRange": [
+        248,
+        350
+      ],
+      "summary": "linear persistent kernel 的 Python 封装，准备张量并以确定性网格调度。",
+      "tags": [
+        "triton",
+        "matmul",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/matmul.py:bmm_batch_invariant",
+      "type": "function",
+      "name": "bmm_batch_invariant",
+      "filePath": "ops/triton/batch_invariant/matmul.py",
+      "lineRange": [
+        357,
+        371
+      ],
+      "summary": "批不变的批量矩阵乘 (bmm) 实现，逐 batch 调用 persistent matmul。",
+      "tags": [
+        "triton",
+        "matmul",
+        "batch-invariant"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/matmul.py:matmul_batch_invariant",
+      "type": "function",
+      "name": "matmul_batch_invariant",
+      "filePath": "ops/triton/batch_invariant/matmul.py",
+      "lineRange": [
+        378,
+        433
+      ],
+      "summary": "批不变 matmul 调度入口，按输入形状分派到 persistent kernel。",
+      "tags": [
+        "triton",
+        "matmul",
+        "batch-invariant"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/triton/batch_invariant/mean.py",
+      "type": "file",
+      "name": "mean.py",
+      "filePath": "ops/triton/batch_invariant/mean.py",
+      "summary": "批不变的均值归约算子，提供按维度求均值的 Triton kernel 及确定性替代实现。",
+      "tags": [
+        "triton",
+        "kernel",
+        "reduction",
+        "batch-invariant"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/mean.py:mean_kernel",
+      "type": "function",
+      "name": "mean_kernel",
+      "filePath": "ops/triton/batch_invariant/mean.py",
+      "lineRange": [
+        25,
+        67
+      ],
+      "summary": "Triton kernel：以固定块大小对指定维度执行确定性均值归约。",
+      "tags": [
+        "triton",
+        "kernel",
+        "reduction"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/mean.py:mean_dim",
+      "type": "function",
+      "name": "mean_dim",
+      "filePath": "ops/triton/batch_invariant/mean.py",
+      "lineRange": [
+        70,
+        154
+      ],
+      "summary": "按指定维度求均值的 Python 封装，重排张量并调度 mean_kernel。",
+      "tags": [
+        "triton",
+        "reduction",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/mean.py:mean_batch_invariant",
+      "type": "function",
+      "name": "mean_batch_invariant",
+      "filePath": "ops/triton/batch_invariant/mean.py",
+      "lineRange": [
+        157,
+        173
+      ],
+      "summary": "批不变 mean 算子入口，规范化维度参数后调用 mean_dim。",
+      "tags": [
+        "triton",
+        "reduction",
+        "batch-invariant"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/batch_invariant/rmsnorm.py",
+      "type": "file",
+      "name": "rmsnorm.py",
+      "filePath": "ops/triton/batch_invariant/rmsnorm.py",
+      "summary": "批不变的 RMSNorm 算子，提供确定性的 Triton kernel 及其封装。",
+      "tags": [
+        "triton",
+        "kernel",
+        "layernorm",
+        "batch-invariant"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/rmsnorm.py:_rms_norm_kernel",
+      "type": "function",
+      "name": "_rms_norm_kernel",
+      "filePath": "ops/triton/batch_invariant/rmsnorm.py",
+      "lineRange": [
+        25,
+        78
+      ],
+      "summary": "Triton kernel：逐行计算 RMSNorm，确定性归约平方和后乘权重。",
+      "tags": [
+        "triton",
+        "kernel",
+        "layernorm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/rmsnorm.py:rms_norm",
+      "type": "function",
+      "name": "rms_norm",
+      "filePath": "ops/triton/batch_invariant/rmsnorm.py",
+      "lineRange": [
+        81,
+        132
+      ],
+      "summary": "RMSNorm 的 Python 封装，校验形状并调度 kernel。",
+      "tags": [
+        "triton",
+        "layernorm",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/batch_invariant/rmsnorm.py:rms_norm_batch_invariant",
+      "type": "function",
+      "name": "rms_norm_batch_invariant",
+      "filePath": "ops/triton/batch_invariant/rmsnorm.py",
+      "lineRange": [
+        135,
+        153
+      ],
+      "summary": "批不变 RMSNorm 算子入口，规范输入后调用 rms_norm。",
+      "tags": [
+        "triton",
+        "layernorm",
+        "batch-invariant"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/batch_invariant/softmax.py",
+      "type": "file",
+      "name": "softmax.py",
+      "filePath": "ops/triton/batch_invariant/softmax.py",
+      "summary": "提供批不变的 softmax 算子入口，封装底层确定性实现。",
+      "tags": [
+        "triton",
+        "softmax",
+        "batch-invariant"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/batch_memcpy.py",
+      "type": "file",
+      "name": "batch_memcpy.py",
+      "filePath": "ops/triton/batch_memcpy.py",
+      "summary": "提供批量内存拷贝的 Triton kernel，按指针数组并行搬运多段数据。",
+      "tags": [
+        "triton",
+        "kernel",
+        "memory",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/bincount.py",
+      "type": "file",
+      "name": "bincount.py",
+      "filePath": "ops/triton/bincount.py",
+      "summary": "提供 token 词表分桶计数及掩码生成的 Triton kernel 及封装，用于张量并行下的频率统计。",
+      "tags": [
+        "triton",
+        "kernel",
+        "utility",
+        "tensor-parallel"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/bincount.py:token_bin_counts_and_mask_kernel",
+      "type": "function",
+      "name": "token_bin_counts_and_mask_kernel",
+      "filePath": "ops/triton/bincount.py",
+      "lineRange": [
+        32,
+        88
+      ],
+      "summary": "Triton kernel：按序列分块统计 token 在词表区间内的出现计数。",
+      "tags": [
+        "triton",
+        "kernel",
+        "reduction"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/bincount.py:get_token_bin_counts_and_mask_triton",
+      "type": "function",
+      "name": "get_token_bin_counts_and_mask_triton",
+      "filePath": "ops/triton/bincount.py",
+      "lineRange": [
+        91,
+        151
+      ],
+      "summary": "token 分桶计数的 Python 封装，分配输出并调度 kernel。",
+      "tags": [
+        "triton",
+        "api-handler",
+        "utility"
+      ],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:ops/rope_dsv4.py",
+      "target": "function:ops/rope_dsv4.py:get_cos_and_sin_dsa",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rope_dsv4.py",
+      "target": "function:ops/rope_dsv4.py:get_cos_and_sin_dsa",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rope_dsv4.py",
+      "target": "class:ops/rope_dsv4.py:RopeDataProxy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rope_dsv4.py",
+      "target": "class:ops/rope_dsv4.py:RopeDataProxy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rope_dsv4.py",
+      "target": "class:ops/rope_dsv4.py:ComplexExpRotaryEmbedding",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rope_dsv4.py",
+      "target": "class:ops/rope_dsv4.py:ComplexExpRotaryEmbedding",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "function:ops/rotary_embedding.py:set_cos_and_sin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "function:ops/rotary_embedding.py:set_cos_and_sin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "function:ops/rotary_embedding.py:update_cos_sin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "function:ops/rotary_embedding.py:update_cos_sin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "function:ops/rotary_embedding.py:rope_forward_oot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "function:ops/rotary_embedding.py:rope_forward_oot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendRotaryEmbedding",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendRotaryEmbedding",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendYaRNRotaryEmbedding",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendYaRNRotaryEmbedding",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendDeepseekScalingRotaryEmbedding",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendDeepseekScalingRotaryEmbedding",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendMRotaryEmbedding",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendMRotaryEmbedding",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendApplyRotaryEmb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/rotary_embedding.py",
+      "target": "class:ops/rotary_embedding.py:AscendApplyRotaryEmb",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/activation/swiglu_quant.py",
+      "target": "function:ops/triton/activation/swiglu_quant.py:_swiglu_quant_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/activation/swiglu_quant.py",
+      "target": "function:ops/triton/activation/swiglu_quant.py:_swiglu_quant_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/activation/swiglu_quant.py",
+      "target": "function:ops/triton/activation/swiglu_quant.py:swiglu_quant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/activation/swiglu_quant.py",
+      "target": "function:ops/triton/activation/swiglu_quant.py:swiglu_quant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:matmul_bias_persistent_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:matmul_bias_persistent_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:matmul_persistent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:matmul_persistent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:linear_persistent_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:linear_persistent_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:linear_persistent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:linear_persistent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:bmm_batch_invariant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:bmm_batch_invariant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:matmul_batch_invariant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/matmul.py",
+      "target": "function:ops/triton/batch_invariant/matmul.py:matmul_batch_invariant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/mean.py",
+      "target": "function:ops/triton/batch_invariant/mean.py:mean_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/mean.py",
+      "target": "function:ops/triton/batch_invariant/mean.py:mean_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/mean.py",
+      "target": "function:ops/triton/batch_invariant/mean.py:mean_dim",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/mean.py",
+      "target": "function:ops/triton/batch_invariant/mean.py:mean_dim",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/mean.py",
+      "target": "function:ops/triton/batch_invariant/mean.py:mean_batch_invariant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/mean.py",
+      "target": "function:ops/triton/batch_invariant/mean.py:mean_batch_invariant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/rmsnorm.py",
+      "target": "function:ops/triton/batch_invariant/rmsnorm.py:_rms_norm_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/rmsnorm.py",
+      "target": "function:ops/triton/batch_invariant/rmsnorm.py:_rms_norm_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/rmsnorm.py",
+      "target": "function:ops/triton/batch_invariant/rmsnorm.py:rms_norm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/rmsnorm.py",
+      "target": "function:ops/triton/batch_invariant/rmsnorm.py:rms_norm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/rmsnorm.py",
+      "target": "function:ops/triton/batch_invariant/rmsnorm.py:rms_norm_batch_invariant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/batch_invariant/rmsnorm.py",
+      "target": "function:ops/triton/batch_invariant/rmsnorm.py:rms_norm_batch_invariant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/bincount.py",
+      "target": "function:ops/triton/bincount.py:token_bin_counts_and_mask_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/bincount.py",
+      "target": "function:ops/triton/bincount.py:token_bin_counts_and_mask_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/bincount.py",
+      "target": "function:ops/triton/bincount.py:get_token_bin_counts_and_mask_triton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/bincount.py",
+      "target": "function:ops/triton/bincount.py:get_token_bin_counts_and_mask_triton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -1,0 +1,588 @@
+{
+  "nodes": [
+    {
+      "id": "file:eplb/core/policy/policy_abstract.py",
+      "type": "file",
+      "name": "policy_abstract.py",
+      "filePath": "eplb/core/policy/policy_abstract.py",
+      "summary": "定义 EPLB（专家并行负载均衡）策略的抽象基类 EplbPolicy，统一所有具体均衡策略的 rebalance_experts 接口。",
+      "tags": ["data-model", "type-definition", "eplb", "abstract-base", "moe"],
+      "complexity": "simple",
+      "languageNotes": "使用 ABC/抽象基类约定来规范专家重平衡策略的统一接口。"
+    },
+    {
+      "id": "class:eplb/core/policy/policy_abstract.py:EplbPolicy",
+      "type": "class",
+      "name": "EplbPolicy",
+      "filePath": "eplb/core/policy/policy_abstract.py",
+      "lineRange": [6, 30],
+      "summary": "所有 EPLB 专家重平衡策略的抽象基类，声明 rebalance_experts 接口供子类实现。",
+      "tags": ["abstract-base", "eplb", "interface", "moe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:eplb/core/policy/policy_default_eplb.py",
+      "type": "file",
+      "name": "policy_default_eplb.py",
+      "filePath": "eplb/core/policy/policy_default_eplb.py",
+      "summary": "默认 EPLB 策略实现，通过冗余专家分配与均衡装箱（balanced pack）算法对各层 MoE 专家在 NPU 设备间进行负载重平衡。",
+      "tags": ["eplb", "moe", "load-balancing", "service", "numpy"],
+      "complexity": "complex",
+      "languageNotes": "基于 numpy 实现贪心装箱与冗余专家放置算法，按各层专家热度（workload）做均衡。"
+    },
+    {
+      "id": "class:eplb/core/policy/policy_default_eplb.py:DefaultEplb",
+      "type": "class",
+      "name": "DefaultEplb",
+      "filePath": "eplb/core/policy/policy_default_eplb.py",
+      "lineRange": [27, 350],
+      "summary": "默认专家重平衡策略，包含冗余专家添加、均衡装箱、热度计算与本地交换约束等核心逻辑，输出新的全局专家部署方案。",
+      "tags": ["eplb", "moe", "load-balancing", "bin-packing", "numpy"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:eplb/core/policy/policy_factory.py",
+      "type": "file",
+      "name": "policy_factory.py",
+      "filePath": "eplb/core/policy/policy_factory.py",
+      "summary": "EPLB 策略工厂，根据策略类型 ID 选择并实例化对应的负载均衡策略（默认/随机/FlashLB/SwiftBalancer），并触发预热。",
+      "tags": ["factory", "eplb", "moe", "dispatch"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:eplb/core/policy/policy_factory.py:PolicyFactory",
+      "type": "class",
+      "name": "PolicyFactory",
+      "filePath": "eplb/core/policy/policy_factory.py",
+      "lineRange": [10, 30],
+      "summary": "策略工厂类，通过 generate_policy 按策略类型映射返回相应的 EplbPolicy 子类实例。",
+      "tags": ["factory", "eplb", "dispatch", "moe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:eplb/core/policy/policy_flashlb.py",
+      "type": "file",
+      "name": "policy_flashlb.py",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "summary": "FlashLB 专家负载均衡策略实现，基于统计量（均值/方差/协方差）与树形搜索优化专家副本数和 LPT 部署，最小化重部署开销并提升均衡度。",
+      "tags": ["eplb", "moe", "load-balancing", "statistics", "optimization"],
+      "complexity": "complex",
+      "languageNotes": "综合使用 numpy、scipy 的 linear_sum_assignment 以及 torch，实现增量统计、副本生成与 LPT 装箱优化。"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:min_max_replica",
+      "type": "function",
+      "name": "min_max_replica",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [25, 62],
+      "summary": "在给定均值与方差下，使用最小化最大负载策略迭代地为各专家分配可用副本数。",
+      "tags": ["eplb", "replica", "load-balancing", "numpy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:max_delta_replica",
+      "type": "function",
+      "name": "max_delta_replica",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [66, 103],
+      "summary": "按最大负载下降增量（delta）贪心地为专家追加副本，以最快降低峰值负载。",
+      "tags": ["eplb", "replica", "load-balancing", "numpy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:percentage_replica",
+      "type": "function",
+      "name": "percentage_replica",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [107, 156],
+      "summary": "按各专家负载占比配额计算副本数量，并对取整余量按排序进行补偿分配。",
+      "tags": ["eplb", "replica", "load-balancing", "numpy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:make_replica",
+      "type": "function",
+      "name": "make_replica",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [159, 172],
+      "summary": "副本生成方法的分发入口，按 method 参数选择 percentage/max_delta/min_max 三种副本分配策略。",
+      "tags": ["eplb", "replica", "dispatch", "moe"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:compute_updated_device_variance",
+      "type": "function",
+      "name": "compute_updated_device_variance",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [176, 208],
+      "summary": "在向某设备加入新专家副本时，基于专家方差与协方差增量计算更新后的设备负载方差。",
+      "tags": ["eplb", "statistics", "variance", "numpy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:lpt_deployment",
+      "type": "function",
+      "name": "lpt_deployment",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [212, 290],
+      "summary": "基于 LPT（最长处理时间优先）思想，结合方差/协方差将专家副本贪心放置到各设备以最小化负载方差。",
+      "tags": ["eplb", "lpt", "deployment", "optimization", "numpy"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:compute_score",
+      "type": "function",
+      "name": "compute_score",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [294, 323],
+      "summary": "根据验证数据、模拟副本数与部署方案计算均衡度评分（平均峰值比），用于比较候选部署方案优劣。",
+      "tags": ["eplb", "scoring", "statistics", "numpy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:generate_layered_experts",
+      "type": "function",
+      "name": "generate_layered_experts",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [966, 1014],
+      "summary": "为预热/测试生成分层的随机专家热度张量，按层构造打乱的专家 ID 分布数据。",
+      "tags": ["eplb", "test-data", "warmup", "torch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/policy/policy_flashlb.py:warm_up",
+      "type": "function",
+      "name": "warm_up",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [1017, 1026],
+      "summary": "FlashLB 预热入口，构造算法实例与随机专家数据并执行一次 rebalance_experts 以提前编译/预热路径。",
+      "tags": ["eplb", "warmup", "moe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:eplb/core/policy/policy_flashlb.py:FlashTree",
+      "type": "class",
+      "name": "FlashTree",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [326, 504],
+      "summary": "FlashLB 的树形搜索结构，通过邻域搜索与统计量计算迭代优化专家副本分配的均衡度。",
+      "tags": ["eplb", "tree-search", "optimization", "load-balancing"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:eplb/core/policy/policy_flashlb.py:FlashLB",
+      "type": "class",
+      "name": "FlashLB",
+      "filePath": "eplb/core/policy/policy_flashlb.py",
+      "lineRange": [515, 963],
+      "summary": "FlashLB 主策略类，维护滑动/增量统计量、热度注册、匹配重排与重平衡判定，产出最小化重部署的专家部署方案。",
+      "tags": ["eplb", "moe", "load-balancing", "statistics", "optimization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:eplb/core/policy/policy_random.py",
+      "type": "file",
+      "name": "policy_random.py",
+      "filePath": "eplb/core/policy/policy_random.py",
+      "summary": "随机负载均衡策略实现，主要用于测试/基线对照，按简单规则复制专家表而不做真正的热度优化。",
+      "tags": ["eplb", "moe", "load-balancing", "baseline", "test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:eplb/core/policy/policy_random.py:RandomLoadBalance",
+      "type": "class",
+      "name": "RandomLoadBalance",
+      "filePath": "eplb/core/policy/policy_random.py",
+      "lineRange": [11, 26],
+      "summary": "随机/基线专家重平衡策略，深拷贝当前专家表并按固定规则填充冗余专家位，作为均衡算法的对照基线。",
+      "tags": ["eplb", "baseline", "load-balancing", "moe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:eplb/core/policy/policy_swift_balancer.py",
+      "type": "file",
+      "name": "policy_swift_balancer.py",
+      "filePath": "eplb/core/policy/policy_swift_balancer.py",
+      "summary": "SwiftBalancer EPLB 策略实现，通过冗余专家部署、跨 rank 专家交换与本地交换约束，在保证通信约束下重平衡各层 MoE 专家负载。",
+      "tags": ["eplb", "moe", "load-balancing", "service", "numpy"],
+      "complexity": "complex",
+      "languageNotes": "结合 numpy 与 torch.npu 设备信息，实现冗余分配、rank 间专家交换与不均衡度统计。"
+    },
+    {
+      "id": "class:eplb/core/policy/policy_swift_balancer.py:SwiftBalanceEplb",
+      "type": "class",
+      "name": "SwiftBalanceEplb",
+      "filePath": "eplb/core/policy/policy_swift_balancer.py",
+      "lineRange": [29, 751],
+      "summary": "SwiftBalancer 专家重平衡策略，涵盖冗余专家分配、跨 rank 交换、不均衡度计算与本地交换约束等完整重平衡流程。",
+      "tags": ["eplb", "moe", "load-balancing", "expert-exchange", "numpy"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:eplb/core/policy/policy_abstract.py",
+      "target": "class:eplb/core/policy/policy_abstract.py:EplbPolicy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_abstract.py",
+      "target": "class:eplb/core/policy/policy_abstract.py:EplbPolicy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_default_eplb.py",
+      "target": "file:eplb/core/policy/policy_abstract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_default_eplb.py",
+      "target": "class:eplb/core/policy/policy_default_eplb.py:DefaultEplb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_default_eplb.py",
+      "target": "class:eplb/core/policy/policy_default_eplb.py:DefaultEplb",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/core/policy/policy_default_eplb.py:DefaultEplb",
+      "target": "class:eplb/core/policy/policy_abstract.py:EplbPolicy",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:eplb/core/policy/policy_factory.py",
+      "target": "file:eplb/core/policy/policy_abstract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_factory.py",
+      "target": "file:eplb/core/policy/policy_default_eplb.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_factory.py",
+      "target": "file:eplb/core/policy/policy_flashlb.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_factory.py",
+      "target": "file:eplb/core/policy/policy_random.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_factory.py",
+      "target": "file:eplb/core/policy/policy_swift_balancer.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_factory.py",
+      "target": "class:eplb/core/policy/policy_factory.py:PolicyFactory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_factory.py",
+      "target": "class:eplb/core/policy/policy_factory.py:PolicyFactory",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/core/policy/policy_factory.py:PolicyFactory",
+      "target": "function:eplb/core/policy/policy_flashlb.py:warm_up",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "file:eplb/core/policy/policy_abstract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:min_max_replica",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:max_delta_replica",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:percentage_replica",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:make_replica",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:compute_updated_device_variance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:lpt_deployment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:compute_score",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:generate_layered_experts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:warm_up",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "class:eplb/core/policy/policy_flashlb.py:FlashTree",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "class:eplb/core/policy/policy_flashlb.py:FlashLB",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:min_max_replica",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:max_delta_replica",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:percentage_replica",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:make_replica",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:compute_updated_device_variance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:lpt_deployment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:compute_score",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:generate_layered_experts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "function:eplb/core/policy/policy_flashlb.py:warm_up",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "class:eplb/core/policy/policy_flashlb.py:FlashTree",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_flashlb.py",
+      "target": "class:eplb/core/policy/policy_flashlb.py:FlashLB",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/core/policy/policy_flashlb.py:FlashLB",
+      "target": "class:eplb/core/policy/policy_abstract.py:EplbPolicy",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:eplb/core/policy/policy_flashlb.py:make_replica",
+      "target": "function:eplb/core/policy/policy_flashlb.py:percentage_replica",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/policy/policy_flashlb.py:make_replica",
+      "target": "function:eplb/core/policy/policy_flashlb.py:max_delta_replica",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/policy/policy_flashlb.py:make_replica",
+      "target": "function:eplb/core/policy/policy_flashlb.py:min_max_replica",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/policy/policy_flashlb.py:lpt_deployment",
+      "target": "function:eplb/core/policy/policy_flashlb.py:compute_updated_device_variance",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/policy/policy_flashlb.py:warm_up",
+      "target": "class:eplb/core/policy/policy_flashlb.py:FlashLB",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/policy/policy_flashlb.py:warm_up",
+      "target": "function:eplb/core/policy/policy_flashlb.py:generate_layered_experts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/policy/policy_random.py",
+      "target": "file:eplb/core/policy/policy_abstract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_random.py",
+      "target": "class:eplb/core/policy/policy_random.py:RandomLoadBalance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_random.py",
+      "target": "class:eplb/core/policy/policy_random.py:RandomLoadBalance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/core/policy/policy_random.py:RandomLoadBalance",
+      "target": "class:eplb/core/policy/policy_abstract.py:EplbPolicy",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:eplb/core/policy/policy_swift_balancer.py",
+      "target": "file:eplb/core/policy/policy_abstract.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:eplb/core/policy/policy_swift_balancer.py",
+      "target": "class:eplb/core/policy/policy_swift_balancer.py:SwiftBalanceEplb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/policy/policy_swift_balancer.py",
+      "target": "class:eplb/core/policy/policy_swift_balancer.py:SwiftBalanceEplb",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/core/policy/policy_swift_balancer.py:SwiftBalanceEplb",
+      "target": "class:eplb/core/policy/policy_abstract.py:EplbPolicy",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    }
+  ]
+}

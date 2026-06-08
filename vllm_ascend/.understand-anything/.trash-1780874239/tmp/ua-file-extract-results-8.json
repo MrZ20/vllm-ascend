@@ -1,0 +1,2335 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "cpu_binding.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 537,
+      "nonEmptyLines": 473,
+      "functions": [
+        {
+          "name": "is_arm_cpu",
+          "startLine": 29,
+          "endLine": 36,
+          "params": []
+        },
+        {
+          "name": "execute_command",
+          "startLine": 39,
+          "endLine": 51,
+          "params": [
+            "cmd"
+          ]
+        },
+        {
+          "name": "bind_cpus",
+          "startLine": 532,
+          "endLine": 537,
+          "params": [
+            "rank_id"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "DeviceInfo",
+          "startLine": 54,
+          "endLine": 153,
+          "methods": [
+            "__init__",
+            "expand_cpu_list",
+            "get_all_logic_npus",
+            "get_npu_map_info",
+            "get_running_npus",
+            "parse_allowed_cpus",
+            "parse_topo_affinity"
+          ],
+          "properties": []
+        },
+        {
+          "name": "CpuAlloc",
+          "startLine": 156,
+          "endLine": 529,
+          "methods": [
+            "__init__",
+            "cpu_to_mask",
+            "get_threads_map",
+            "bind",
+            "average_distribute",
+            "extend_numa",
+            "build_cpu_node_map",
+            "build_global_slice_cpu_pool",
+            "_binding_mode",
+            "build_cpu_pools",
+            "allocate",
+            "print_plan",
+            "bind_memory",
+            "bind_threads",
+            "bind_npu_irq",
+            "run_all"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "is_arm_cpu",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "execute_command",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "DeviceInfo",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "CpuAlloc",
+          "line": 156,
+          "isDefault": false
+        },
+        {
+          "name": "bind_cpus",
+          "line": 532,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "is_arm_cpu",
+          "callee": "platform.machine().lower",
+          "lineNumber": 30
+        },
+        {
+          "caller": "is_arm_cpu",
+          "callee": "platform.machine",
+          "lineNumber": 30
+        },
+        {
+          "caller": "is_arm_cpu",
+          "callee": "arch.startswith",
+          "lineNumber": 33
+        },
+        {
+          "caller": "is_arm_cpu",
+          "callee": "logger.warning",
+          "lineNumber": 35
+        },
+        {
+          "caller": "execute_command",
+          "callee": "os.environ.copy",
+          "lineNumber": 41
+        },
+        {
+          "caller": "execute_command",
+          "callee": "subprocess.Popen",
+          "lineNumber": 45
+        },
+        {
+          "caller": "execute_command",
+          "callee": "p.communicate",
+          "lineNumber": 47
+        },
+        {
+          "caller": "execute_command",
+          "callee": "p.kill",
+          "lineNumber": 49
+        },
+        {
+          "caller": "execute_command",
+          "callee": "p.communicate",
+          "lineNumber": 50
+        },
+        {
+          "caller": "execute_command",
+          "callee": "out.decode",
+          "lineNumber": 51
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.get_npu_map_info",
+          "lineNumber": 56
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.parse_allowed_cpus",
+          "lineNumber": 57
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.get_running_npus",
+          "lineNumber": 58
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.parse_topo_affinity",
+          "lineNumber": 59
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.get_all_logic_npus",
+          "lineNumber": 60
+        },
+        {
+          "caller": "__init__",
+          "callee": "len",
+          "lineNumber": 61
+        },
+        {
+          "caller": "expand_cpu_list",
+          "callee": "allowed_list_str.split",
+          "lineNumber": 66
+        },
+        {
+          "caller": "expand_cpu_list",
+          "callee": "map",
+          "lineNumber": 68
+        },
+        {
+          "caller": "expand_cpu_list",
+          "callee": "per_range.split",
+          "lineNumber": 68
+        },
+        {
+          "caller": "expand_cpu_list",
+          "callee": "allowed_cpus_list.extend",
+          "lineNumber": 69
+        },
+        {
+          "caller": "expand_cpu_list",
+          "callee": "range",
+          "lineNumber": 69
+        },
+        {
+          "caller": "expand_cpu_list",
+          "callee": "allowed_cpus_list.append",
+          "lineNumber": 71
+        },
+        {
+          "caller": "expand_cpu_list",
+          "callee": "int",
+          "lineNumber": 71
+        },
+        {
+          "caller": "get_all_logic_npus",
+          "callee": "set",
+          "lineNumber": 81
+        },
+        {
+          "caller": "get_all_logic_npus",
+          "callee": "self.npu_map_info.items",
+          "lineNumber": 82
+        },
+        {
+          "caller": "get_all_logic_npus",
+          "callee": "chip_map.items",
+          "lineNumber": 83
+        },
+        {
+          "caller": "get_all_logic_npus",
+          "callee": "logic_str.isdigit",
+          "lineNumber": 84
+        },
+        {
+          "caller": "get_all_logic_npus",
+          "callee": "logic_ids.add",
+          "lineNumber": 85
+        },
+        {
+          "caller": "get_all_logic_npus",
+          "callee": "int",
+          "lineNumber": 85
+        },
+        {
+          "caller": "get_all_logic_npus",
+          "callee": "sorted",
+          "lineNumber": 86
+        },
+        {
+          "caller": "get_npu_map_info",
+          "callee": "execute_command",
+          "lineNumber": 91
+        },
+        {
+          "caller": "get_npu_map_info",
+          "callee": "npu_info.strip().split",
+          "lineNumber": 92
+        },
+        {
+          "caller": "get_npu_map_info",
+          "callee": "npu_info.strip",
+          "lineNumber": 92
+        },
+        {
+          "caller": "get_npu_map_info",
+          "callee": "line.strip().split",
+          "lineNumber": 94
+        },
+        {
+          "caller": "get_npu_map_info",
+          "callee": "line.strip",
+          "lineNumber": 94
+        },
+        {
+          "caller": "get_npu_map_info",
+          "callee": "chip_logic_id.isdigit",
+          "lineNumber": 95
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "execute_command",
+          "lineNumber": 103
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "set",
+          "lineNumber": 105
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "npu_message.splitlines",
+          "lineNumber": 106
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "line.strip",
+          "lineNumber": 107
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "line.startswith",
+          "lineNumber": 108
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "line.startswith",
+          "lineNumber": 113
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "p.strip",
+          "lineNumber": 114
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "line.strip(\"|\").split",
+          "lineNumber": 114
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "line.strip",
+          "lineNumber": 114
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "len",
+          "lineNumber": 115
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "parts[0].split",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "parts[0].split",
+          "lineNumber": 118
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "npu_id.isdigit",
+          "lineNumber": 119
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "chip_id.isdigit",
+          "lineNumber": 119
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "self.npu_map_info.get(npu_id, {}).get",
+          "lineNumber": 121
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "self.npu_map_info.get",
+          "lineNumber": 121
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "chip_logic_id.isdigit",
+          "lineNumber": 122
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "RuntimeError",
+          "lineNumber": 123
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "running_npu_set.add",
+          "lineNumber": 124
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "int",
+          "lineNumber": 124
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "int",
+          "lineNumber": 127
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "devices_str.split",
+          "lineNumber": 127
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "set",
+          "lineNumber": 128
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "RuntimeError",
+          "lineNumber": 130
+        },
+        {
+          "caller": "get_running_npus",
+          "callee": "sorted",
+          "lineNumber": 131
+        },
+        {
+          "caller": "parse_allowed_cpus",
+          "callee": "os.path.exists",
+          "lineNumber": 134
+        },
+        {
+          "caller": "parse_allowed_cpus",
+          "callee": "open",
+          "lineNumber": 136
+        },
+        {
+          "caller": "parse_allowed_cpus",
+          "callee": "line.startswith",
+          "lineNumber": 138
+        },
+        {
+          "caller": "parse_allowed_cpus",
+          "callee": "self.expand_cpu_list",
+          "lineNumber": 139
+        },
+        {
+          "caller": "parse_allowed_cpus",
+          "callee": "line.split",
+          "lineNumber": 139
+        },
+        {
+          "caller": "parse_allowed_cpus",
+          "callee": "RuntimeError",
+          "lineNumber": 140
+        },
+        {
+          "caller": "parse_topo_affinity",
+          "callee": "execute_command",
+          "lineNumber": 145
+        },
+        {
+          "caller": "parse_topo_affinity",
+          "callee": "affinity_message.splitlines",
+          "lineNumber": 146
+        },
+        {
+          "caller": "parse_topo_affinity",
+          "callee": "line.startswith",
+          "lineNumber": 147
+        },
+        {
+          "caller": "parse_topo_affinity",
+          "callee": "line.split",
+          "lineNumber": 148
+        },
+        {
+          "caller": "parse_topo_affinity",
+          "callee": "self.expand_cpu_list",
+          "lineNumber": 151
+        },
+        {
+          "caller": "__init__",
+          "callee": "DeviceInfo",
+          "lineNumber": 159
+        },
+        {
+          "caller": "__init__",
+          "callee": "defaultdict",
+          "lineNumber": 161
+        },
+        {
+          "caller": "cpu_to_mask",
+          "callee": "range",
+          "lineNumber": 173
+        },
+        {
+          "caller": "get_threads_map",
+          "callee": "thread_message.splitlines",
+          "lineNumber": 180
+        },
+        {
+          "caller": "get_threads_map",
+          "callee": "line.split",
+          "lineNumber": 181
+        },
+        {
+          "caller": "get_threads_map",
+          "callee": "len",
+          "lineNumber": 182
+        },
+        {
+          "caller": "get_threads_map",
+          "callee": "threads_map[main_pid][key].append",
+          "lineNumber": 193
+        },
+        {
+          "caller": "bind",
+          "callee": "\",\".join",
+          "lineNumber": 199
+        },
+        {
+          "caller": "bind",
+          "callee": "map",
+          "lineNumber": 199
+        },
+        {
+          "caller": "bind",
+          "callee": "execute_command",
+          "lineNumber": 201
+        },
+        {
+          "caller": "bind",
+          "callee": "execute_command",
+          "lineNumber": 203
+        },
+        {
+          "caller": "bind",
+          "callee": "RuntimeError",
+          "lineNumber": 205
+        },
+        {
+          "caller": "average_distribute",
+          "callee": "groups.items",
+          "lineNumber": 209
+        },
+        {
+          "caller": "average_distribute",
+          "callee": "sorted",
+          "lineNumber": 210
+        },
+        {
+          "caller": "average_distribute",
+          "callee": "len",
+          "lineNumber": 211
+        },
+        {
+          "caller": "average_distribute",
+          "callee": "len",
+          "lineNumber": 211
+        },
+        {
+          "caller": "average_distribute",
+          "callee": "enumerate",
+          "lineNumber": 212
+        },
+        {
+          "caller": "average_distribute",
+          "callee": "len",
+          "lineNumber": 214
+        },
+        {
+          "caller": "average_distribute",
+          "callee": "len",
+          "lineNumber": 214
+        },
+        {
+          "caller": "extend_numa",
+          "callee": "len",
+          "lineNumber": 222
+        },
+        {
+          "caller": "extend_numa",
+          "callee": "list",
+          "lineNumber": 224
+        },
+        {
+          "caller": "extend_numa",
+          "callee": "len",
+          "lineNumber": 225
+        },
+        {
+          "caller": "extend_numa",
+          "callee": "extended.append",
+          "lineNumber": 229
+        },
+        {
+          "caller": "extend_numa",
+          "callee": "sorted",
+          "lineNumber": 230
+        },
+        {
+          "caller": "extend_numa",
+          "callee": "set",
+          "lineNumber": 230
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "execute_command",
+          "lineNumber": 233
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "cpu_numa_map.splitlines",
+          "lineNumber": 234
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "line.strip",
+          "lineNumber": 235
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "line[0].isdigit",
+          "lineNumber": 236
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "line.split",
+          "lineNumber": 238
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "int",
+          "lineNumber": 239
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "int",
+          "lineNumber": 240
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "self.numa_to_cpu_map[node].append",
+          "lineNumber": 242
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "len",
+          "lineNumber": 243
+        },
+        {
+          "caller": "build_cpu_node_map",
+          "callee": "RuntimeError",
+          "lineNumber": 244
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "list",
+          "lineNumber": 260
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "sorted",
+          "lineNumber": 264
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "set",
+          "lineNumber": 264
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "len",
+          "lineNumber": 265
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "len",
+          "lineNumber": 273
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "len",
+          "lineNumber": 275
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "logger.debug",
+          "lineNumber": 281
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "RuntimeError",
+          "lineNumber": 299
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "RuntimeError",
+          "lineNumber": 315
+        },
+        {
+          "caller": "build_global_slice_cpu_pool",
+          "callee": "_slice_for_npu",
+          "lineNumber": 316
+        },
+        {
+          "caller": "_binding_mode",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 321
+        },
+        {
+          "caller": "_binding_mode",
+          "callee": "DEVICE_BINDING_MODE.get",
+          "lineNumber": 322
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.build_cpu_node_map",
+          "lineNumber": 325
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self._binding_mode",
+          "lineNumber": 327
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "logger.info",
+          "lineNumber": 328
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.build_global_slice_cpu_pool",
+          "lineNumber": 332
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "logger.warning",
+          "lineNumber": 337
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.build_global_slice_cpu_pool",
+          "lineNumber": 338
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "set",
+          "lineNumber": 341
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "any",
+          "lineNumber": 349
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.device_info.npu_affinity.get",
+          "lineNumber": 349
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.device_info.npu_affinity.get",
+          "lineNumber": 353
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "RuntimeError",
+          "lineNumber": 356
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.extend_numa",
+          "lineNumber": 357
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "defaultdict",
+          "lineNumber": 360
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.npu_cpu_pool.items",
+          "lineNumber": 361
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "groups[str(cpus)].append",
+          "lineNumber": 362
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "str",
+          "lineNumber": 362
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "groups.items",
+          "lineNumber": 365
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "len",
+          "lineNumber": 366
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "final.update",
+          "lineNumber": 369
+        },
+        {
+          "caller": "build_cpu_pools",
+          "callee": "self.average_distribute",
+          "lineNumber": 369
+        },
+        {
+          "caller": "allocate",
+          "callee": "self.npu_cpu_pool.items",
+          "lineNumber": 374
+        },
+        {
+          "caller": "allocate",
+          "callee": "len",
+          "lineNumber": 375
+        },
+        {
+          "caller": "allocate",
+          "callee": "RuntimeError",
+          "lineNumber": 380
+        },
+        {
+          "caller": "print_plan",
+          "callee": "logger.info",
+          "lineNumber": 388
+        },
+        {
+          "caller": "print_plan",
+          "callee": "\" \".join",
+          "lineNumber": 390
+        },
+        {
+          "caller": "print_plan",
+          "callee": "map",
+          "lineNumber": 390
+        },
+        {
+          "caller": "print_plan",
+          "callee": "\" \".join",
+          "lineNumber": 391
+        },
+        {
+          "caller": "print_plan",
+          "callee": "map",
+          "lineNumber": 391
+        },
+        {
+          "caller": "print_plan",
+          "callee": "str",
+          "lineNumber": 392
+        },
+        {
+          "caller": "print_plan",
+          "callee": "logger.info",
+          "lineNumber": 393
+        },
+        {
+          "caller": "_get_npu_numa_node",
+          "callee": "self.npu_cpu_pool.get",
+          "lineNumber": 397
+        },
+        {
+          "caller": "_get_npu_numa_node",
+          "callee": "self.cpu_node.get",
+          "lineNumber": 401
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "shutil.which",
+          "lineNumber": 403
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "logger.info",
+          "lineNumber": 404
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "_get_npu_numa_node",
+          "lineNumber": 406
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "logger.warning",
+          "lineNumber": 408
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "sorted",
+          "lineNumber": 410
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "self.numa_to_cpu_map.keys",
+          "lineNumber": 410
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "logger.warning",
+          "lineNumber": 412
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "logger.info",
+          "lineNumber": 415
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "execute_command",
+          "lineNumber": 416
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "\",\".join",
+          "lineNumber": 420
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "map",
+          "lineNumber": 420
+        },
+        {
+          "caller": "bind_memory",
+          "callee": "str",
+          "lineNumber": 421
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "execute_command",
+          "lineNumber": 426
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "self.get_threads_map",
+          "lineNumber": 427
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "str",
+          "lineNumber": 428
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "psutil.Process",
+          "lineNumber": 428
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "self.bind",
+          "lineNumber": 430
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "threads_map.get(main_pid, {}).get",
+          "lineNumber": 431
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "threads_map.get",
+          "lineNumber": 431
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "self.bind",
+          "lineNumber": 432
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "threads_map.get(main_pid, {}).get",
+          "lineNumber": 433
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "threads_map.get",
+          "lineNumber": 433
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "self.bind",
+          "lineNumber": 434
+        },
+        {
+          "caller": "bind_threads",
+          "callee": "self.bind_memory",
+          "lineNumber": 436
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "os.access",
+          "lineNumber": 439
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "logger.warning",
+          "lineNumber": 445
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "shutil.which",
+          "lineNumber": 448
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "execute_command",
+          "lineNumber": 449
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "execute_command",
+          "lineNumber": 451
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "logger.warning",
+          "lineNumber": 453
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "execute_command",
+          "lineNumber": 457
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "open",
+          "lineNumber": 460
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "line.split(\":\")[0].strip",
+          "lineNumber": 463
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "line.split",
+          "lineNumber": 463
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "sq_irqs.append",
+          "lineNumber": 464
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "len",
+          "lineNumber": 468
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "logger.warning",
+          "lineNumber": 469
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 475
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "execute_command",
+          "lineNumber": 480
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "str",
+          "lineNumber": 480
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "str",
+          "lineNumber": 480
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "execute_command",
+          "lineNumber": 483
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "str",
+          "lineNumber": 483
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "info.splitlines",
+          "lineNumber": 485
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "line.split()[-1].lower",
+          "lineNumber": 487
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "line.split",
+          "lineNumber": 487
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "logger.warning",
+          "lineNumber": 491
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "sorted",
+          "lineNumber": 495
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "os.listdir",
+          "lineNumber": 495
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "int",
+          "lineNumber": 495
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "logger.warning",
+          "lineNumber": 497
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "str",
+          "lineNumber": 504
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "int",
+          "lineNumber": 504
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "logger.warning",
+          "lineNumber": 507
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "logger.info",
+          "lineNumber": 510
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "open",
+          "lineNumber": 519
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "f.write",
+          "lineNumber": 520
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "self.cpu_to_mask",
+          "lineNumber": 520
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "open",
+          "lineNumber": 521
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "f.write",
+          "lineNumber": 522
+        },
+        {
+          "caller": "bind_npu_irq",
+          "callee": "self.cpu_to_mask",
+          "lineNumber": 522
+        },
+        {
+          "caller": "run_all",
+          "callee": "self.build_cpu_pools",
+          "lineNumber": 525
+        },
+        {
+          "caller": "run_all",
+          "callee": "self.allocate",
+          "lineNumber": 526
+        },
+        {
+          "caller": "run_all",
+          "callee": "self.print_plan",
+          "lineNumber": 527
+        },
+        {
+          "caller": "run_all",
+          "callee": "self.bind_threads",
+          "lineNumber": 528
+        },
+        {
+          "caller": "run_all",
+          "callee": "self.bind_npu_irq",
+          "lineNumber": 529
+        },
+        {
+          "caller": "bind_cpus",
+          "callee": "is_arm_cpu",
+          "lineNumber": 533
+        },
+        {
+          "caller": "bind_cpus",
+          "callee": "logger.info",
+          "lineNumber": 534
+        },
+        {
+          "caller": "bind_cpus",
+          "callee": "CpuAlloc",
+          "lineNumber": 536
+        },
+        {
+          "caller": "bind_cpus",
+          "callee": "binder.run_all",
+          "lineNumber": 537
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 3,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "distributed/device_communicators/pyhccl_wrapper.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 263,
+      "nonEmptyLines": 227,
+      "classes": [
+        {
+          "name": "hcclUniqueId",
+          "startLine": 38,
+          "endLine": 39,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "hcclDataTypeEnum",
+          "startLine": 48,
+          "endLine": 81,
+          "methods": [
+            "from_torch"
+          ],
+          "properties": []
+        },
+        {
+          "name": "hcclRedOpTypeEnum",
+          "startLine": 87,
+          "endLine": 103,
+          "methods": [
+            "from_torch"
+          ],
+          "properties": []
+        },
+        {
+          "name": "Function",
+          "startLine": 107,
+          "endLine": 110,
+          "methods": [],
+          "properties": [
+            "name",
+            "restype",
+            "argtypes"
+          ]
+        },
+        {
+          "name": "HCCLLibrary",
+          "startLine": 113,
+          "endLine": 252,
+          "methods": [
+            "__init__",
+            "hcclGetErrorString",
+            "HCCL_CHECK",
+            "hcclGetUniqueId",
+            "hcclCommInitRank",
+            "hcclAllReduce",
+            "hcclBroadcast",
+            "hcclCommDestroy"
+          ],
+          "properties": [
+            "path_to_library_cache",
+            "path_to_dict_mapping"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "hcclUniqueId",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "hcclDataTypeEnum",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "hcclRedOpTypeEnum",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "Function",
+          "line": 106,
+          "isDefault": false
+        },
+        {
+          "name": "HCCLLibrary",
+          "line": 113,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "from_torch",
+          "callee": "ValueError",
+          "lineNumber": 81
+        },
+        {
+          "caller": "from_torch",
+          "callee": "ValueError",
+          "lineNumber": 103
+        },
+        {
+          "caller": "__init__",
+          "callee": "find_hccl_library",
+          "lineNumber": 178
+        },
+        {
+          "caller": "__init__",
+          "callee": "ctypes.CDLL",
+          "lineNumber": 182
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.error",
+          "lineNumber": 186
+        },
+        {
+          "caller": "__init__",
+          "callee": "platform.platform",
+          "lineNumber": 195
+        },
+        {
+          "caller": "__init__",
+          "callee": "getattr",
+          "lineNumber": 202
+        },
+        {
+          "caller": "hcclGetErrorString",
+          "callee": "self._funcs[\"HcclGetErrorString\"](result).decode",
+          "lineNumber": 210
+        },
+        {
+          "caller": "HCCL_CHECK",
+          "callee": "self.hcclGetErrorString",
+          "lineNumber": 214
+        },
+        {
+          "caller": "HCCL_CHECK",
+          "callee": "RuntimeError",
+          "lineNumber": 215
+        },
+        {
+          "caller": "hcclGetUniqueId",
+          "callee": "hcclUniqueId",
+          "lineNumber": 218
+        },
+        {
+          "caller": "hcclGetUniqueId",
+          "callee": "self.HCCL_CHECK",
+          "lineNumber": 219
+        },
+        {
+          "caller": "hcclGetUniqueId",
+          "callee": "ctypes.byref",
+          "lineNumber": 219
+        },
+        {
+          "caller": "hcclCommInitRank",
+          "callee": "hcclComm_t",
+          "lineNumber": 223
+        },
+        {
+          "caller": "hcclCommInitRank",
+          "callee": "self.HCCL_CHECK",
+          "lineNumber": 224
+        },
+        {
+          "caller": "hcclCommInitRank",
+          "callee": "ctypes.byref",
+          "lineNumber": 225
+        },
+        {
+          "caller": "hcclCommInitRank",
+          "callee": "ctypes.byref",
+          "lineNumber": 225
+        },
+        {
+          "caller": "hcclAllReduce",
+          "callee": "self.HCCL_CHECK",
+          "lineNumber": 244
+        },
+        {
+          "caller": "hcclBroadcast",
+          "callee": "self.HCCL_CHECK",
+          "lineNumber": 249
+        },
+        {
+          "caller": "hcclCommDestroy",
+          "callee": "self.HCCL_CHECK",
+          "lineNumber": 252
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 0,
+        "classCount": 5
+      }
+    },
+    {
+      "path": "platform.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1138,
+      "nonEmptyLines": 993,
+      "functions": [
+        {
+          "name": "config_deprecated_logging",
+          "startLine": 76,
+          "endLine": 103,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "NPUPlatform",
+          "startLine": 106,
+          "endLine": 1138,
+          "methods": [
+            "is_sleep_mode_available",
+            "pass_key",
+            "get_pass_manager_cls",
+            "get_compile_backend",
+            "pre_register_and_update",
+            "_get_default_max_cudagraph_capture_size",
+            "get_device_capability",
+            "apply_config_platform_defaults",
+            "get_device_name",
+            "get_device_uuid",
+            "num_compute_units",
+            "inference_mode",
+            "update_block_size_for_backend",
+            "set_device",
+            "_validate_layer_sharding_config",
+            "_validate_draft_decode_context_parallel_config",
+            "check_and_update_config",
+            "import_kernels",
+            "get_attn_backend_cls",
+            "_validate_fa3_backend",
+            "get_punica_wrapper",
+            "get_current_memory_usage",
+            "get_device_communicator_cls",
+            "is_pin_memory_available",
+            "opaque_attention_op",
+            "get_static_graph_wrapper_cls",
+            "support_hybrid_kv_cache",
+            "_validate_kv_load_failure_policy",
+            "support_static_graph_mode",
+            "set_additional_forward_context",
+            "_fix_incompatible_config",
+            "use_custom_op_collectives",
+            "manual_seed_all"
+          ],
+          "properties": [
+            "device_name",
+            "device_type",
+            "simple_compile_backend",
+            "ray_device_key",
+            "device_control_env_var",
+            "ray_noset_device_env_vars",
+            "dispatch_key",
+            "supported_quantization"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "config_deprecated_logging",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "NPUPlatform",
+          "line": 106,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "config_deprecated_logging",
+          "callee": "logging.captureWarnings",
+          "lineNumber": 89
+        },
+        {
+          "caller": "config_deprecated_logging",
+          "callee": "warnings.simplefilter",
+          "lineNumber": 90
+        },
+        {
+          "caller": "config_deprecated_logging",
+          "callee": "logging.getLogger",
+          "lineNumber": 92
+        },
+        {
+          "caller": "config_deprecated_logging",
+          "callee": "logging.getLogger",
+          "lineNumber": 93
+        },
+        {
+          "caller": "config_deprecated_logging",
+          "callee": "warnings_logger.addHandler",
+          "lineNumber": 101
+        },
+        {
+          "caller": "pre_register_and_update",
+          "callee": "adapt_patch",
+          "lineNumber": 158
+        },
+        {
+          "caller": "pre_register_and_update",
+          "callee": "parser._option_string_actions.get",
+          "lineNumber": 164
+        },
+        {
+          "caller": "pre_register_and_update",
+          "callee": "hasattr",
+          "lineNumber": 165
+        },
+        {
+          "caller": "pre_register_and_update",
+          "callee": "quant_action.choices.append",
+          "lineNumber": 167
+        },
+        {
+          "caller": "pre_register_and_update",
+          "callee": "is_310p",
+          "lineNumber": 169
+        },
+        {
+          "caller": "pre_register_and_update",
+          "callee": "config_deprecated_logging",
+          "lineNumber": 174
+        },
+        {
+          "caller": "_get_default_max_cudagraph_capture_size",
+          "callee": "getattr",
+          "lineNumber": 201
+        },
+        {
+          "caller": "_get_default_max_cudagraph_capture_size",
+          "callee": "getattr",
+          "lineNumber": 202
+        },
+        {
+          "caller": "_get_default_max_cudagraph_capture_size",
+          "callee": "getattr",
+          "lineNumber": 207
+        },
+        {
+          "caller": "_get_default_max_cudagraph_capture_size",
+          "callee": "min",
+          "lineNumber": 211
+        },
+        {
+          "caller": "apply_config_platform_defaults",
+          "callee": "get_sp_min_token_num",
+          "lineNumber": 226
+        },
+        {
+          "caller": "apply_config_platform_defaults",
+          "callee": "logger.info",
+          "lineNumber": 227
+        },
+        {
+          "caller": "apply_config_platform_defaults",
+          "callee": "cls._get_default_max_cudagraph_capture_size",
+          "lineNumber": 229
+        },
+        {
+          "caller": "get_device_name",
+          "callee": "torch.npu.get_device_name",
+          "lineNumber": 235
+        },
+        {
+          "caller": "get_device_uuid",
+          "callee": "torch.npu.get_device_properties",
+          "lineNumber": 239
+        },
+        {
+          "caller": "get_device_uuid",
+          "callee": "hasattr",
+          "lineNumber": 240
+        },
+        {
+          "caller": "get_device_uuid",
+          "callee": "RuntimeError",
+          "lineNumber": 241
+        },
+        {
+          "caller": "num_compute_units",
+          "callee": "torch.npu.get_device_properties",
+          "lineNumber": 257
+        },
+        {
+          "caller": "num_compute_units",
+          "callee": "getattr",
+          "lineNumber": 260
+        },
+        {
+          "caller": "num_compute_units",
+          "callee": "int",
+          "lineNumber": 262
+        },
+        {
+          "caller": "num_compute_units",
+          "callee": "getattr",
+          "lineNumber": 264
+        },
+        {
+          "caller": "num_compute_units",
+          "callee": "int",
+          "lineNumber": 266
+        },
+        {
+          "caller": "inference_mode",
+          "callee": "torch.inference_mode",
+          "lineNumber": 271
+        },
+        {
+          "caller": "set_device",
+          "callee": "torch.npu.set_device",
+          "lineNumber": 297
+        },
+        {
+          "caller": "_validate_layer_sharding_config",
+          "callee": "additional_config.get",
+          "lineNumber": 302
+        },
+        {
+          "caller": "_validate_layer_sharding_config",
+          "callee": "ValueError",
+          "lineNumber": 308
+        },
+        {
+          "caller": "_validate_draft_decode_context_parallel_config",
+          "callee": "draft_model_config.get_total_num_kv_heads",
+          "lineNumber": 341
+        },
+        {
+          "caller": "_validate_draft_decode_context_parallel_config",
+          "callee": "ValueError",
+          "lineNumber": 344
+        },
+        {
+          "caller": "_validate_draft_decode_context_parallel_config",
+          "callee": "ValueError",
+          "lineNumber": 353
+        },
+        {
+          "caller": "_validate_draft_decode_context_parallel_config",
+          "callee": "ValueError",
+          "lineNumber": 363
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "maybe_auto_detect_quantization",
+          "lineNumber": 376
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "cls._validate_layer_sharding_config",
+          "lineNumber": 378
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "cls._validate_draft_decode_context_parallel_config",
+          "lineNumber": 379
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "cls._fix_incompatible_config",
+          "lineNumber": 382
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "init_ascend_config",
+          "lineNumber": 384
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "check_kv_extra_config",
+          "lineNumber": 387
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "getattr",
+          "lineNumber": 388
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "uuid4",
+          "lineNumber": 389
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vllm_config.additional_config.setdefault(\"ascend_compilation_config\", {}).update",
+          "lineNumber": 399
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vllm_config.additional_config.setdefault",
+          "lineNumber": 399
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vars",
+          "lineNumber": 400
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "isinstance",
+          "lineNumber": 401
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "ascend_config.update_compile_ranges_split_points",
+          "lineNumber": 405
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "hasattr",
+          "lineNumber": 407
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "str(model_config.dtype).replace",
+          "lineNumber": 408
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "str",
+          "lineNumber": 408
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vllm_config.additional_config.setdefault(\"ascend_fusion_config\", {}).update",
+          "lineNumber": 412
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vllm_config.additional_config.setdefault",
+          "lineNumber": 412
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vars",
+          "lineNumber": 413
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "isinstance",
+          "lineNumber": 413
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.warning",
+          "lineNumber": 417
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "getattr",
+          "lineNumber": 420
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 426
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 431
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 435
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.warning",
+          "lineNumber": 443
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vllm_config._set_cudagraph_sizes",
+          "lineNumber": 452
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "enable_sp",
+          "lineNumber": 458
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "vllm_config.update_sizes_for_sequence_parallelism",
+          "lineNumber": 461
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "len",
+          "lineNumber": 467
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "len",
+          "lineNumber": 467
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "update_cudagraph_capture_sizes",
+          "lineNumber": 473
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.info_once",
+          "lineNumber": 487
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "cls.get_compile_backend",
+          "lineNumber": 495
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "compilation_config.cudagraph_mode.requires_piecewise_compilation",
+          "lineNumber": 501
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "compilation_config.set_splitting_ops_for_v1",
+          "lineNumber": 509
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "compilation_config.splitting_ops.extend",
+          "lineNumber": 519
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "update_aclgraph_sizes",
+          "lineNumber": 525
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "compilation_config.cudagraph_mode.has_full_cudagraphs",
+          "lineNumber": 527
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 532
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "os.environ.get",
+          "lineNumber": 543
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "ValueError",
+          "lineNumber": 545
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "is_310p",
+          "lineNumber": 557
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 560
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "refresh_block_size",
+          "lineNumber": 565
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 568
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "getattr",
+          "lineNumber": 573
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "ValueError",
+          "lineNumber": 575
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "cls._validate_kv_load_failure_policy",
+          "lineNumber": 581
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "getattr",
+          "lineNumber": 585
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "ValueError",
+          "lineNumber": 587
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "RecomputeSchedulerConfig.initialize_from_config",
+          "lineNumber": 594
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "AssertionError",
+          "lineNumber": 618
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "hasattr",
+          "lineNumber": 627
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.warning_once",
+          "lineNumber": 630
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "enable_sp",
+          "lineNumber": 638
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "is_moe_model",
+          "lineNumber": 643
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "os.getenv",
+          "lineNumber": 652
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "logger.info",
+          "lineNumber": 665
+        },
+        {
+          "caller": "check_and_update_config",
+          "callee": "ValueError",
+          "lineNumber": 668
+        },
+        {
+          "caller": "import_kernels",
+          "callee": "bootstrap_custom_op_env",
+          "lineNumber": 686
+        },
+        {
+          "caller": "get_attn_backend_cls",
+          "callee": "getattr",
+          "lineNumber": 691
+        },
+        {
+          "caller": "get_attn_backend_cls",
+          "callee": "cls._validate_fa3_backend",
+          "lineNumber": 694
+        },
+        {
+          "caller": "get_attn_backend_cls",
+          "callee": "is_310p",
+          "lineNumber": 713
+        },
+        {
+          "caller": "get_attn_backend_cls",
+          "callee": "backend_map_310.get",
+          "lineNumber": 714
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "logger.info",
+          "lineNumber": 721
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "ValueError",
+          "lineNumber": 727
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "util.find_spec",
+          "lineNumber": 728
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "ValueError",
+          "lineNumber": 729
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "import_module",
+          "lineNumber": 733
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "hasattr",
+          "lineNumber": 734
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "ValueError",
+          "lineNumber": 735
+        },
+        {
+          "caller": "_validate_fa3_backend",
+          "callee": "logger.info",
+          "lineNumber": 740
+        },
+        {
+          "caller": "get_current_memory_usage",
+          "callee": "torch.npu.reset_peak_memory_stats",
+          "lineNumber": 751
+        },
+        {
+          "caller": "get_current_memory_usage",
+          "callee": "torch.npu.max_memory_allocated",
+          "lineNumber": 752
+        },
+        {
+          "caller": "_validate_kv_load_failure_policy",
+          "callee": "getattr",
+          "lineNumber": 782
+        },
+        {
+          "caller": "_validate_kv_load_failure_policy",
+          "callee": "getattr",
+          "lineNumber": 783
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "get_mrv2_in_profile_run",
+          "lineNumber": 854
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "select_moe_comm_method",
+          "lineNumber": 855
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "get_moe_comm_method",
+          "lineNumber": 860
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "get_tensor_model_parallel_world_size",
+          "lineNumber": 862
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "is_moe_model",
+          "lineNumber": 877
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "enable_sp",
+          "lineNumber": 878
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "enable_sp",
+          "lineNumber": 881
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "flashcomm2_enable",
+          "lineNumber": 884
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "list",
+          "lineNumber": 891
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "attn_metadata.values",
+          "lineNumber": 891
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "get_dp_group",
+          "lineNumber": 892
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "dp_metadata.num_tokens_across_dp_cpu.max().item",
+          "lineNumber": 894
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "dp_metadata.num_tokens_across_dp_cpu.max",
+          "lineNumber": 894
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "math.ceil",
+          "lineNumber": 905
+        },
+        {
+          "caller": "set_additional_forward_context",
+          "callee": "get_mc2_mask",
+          "lineNumber": 906
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 941
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 942
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 950
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 951
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 957
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 960
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 961
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 970
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 971
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 980
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 981
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 989
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 990
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 999
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1001
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1009
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1010
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1030
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1031
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "setattr",
+          "lineNumber": 1036
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1039
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1049
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.info",
+          "lineNumber": 1052
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1060
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1061
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1071
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1072
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1084
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "vllm_config.additional_config.setdefault",
+          "lineNumber": 1088
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.info",
+          "lineNumber": 1089
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1097
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.info",
+          "lineNumber": 1098
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1105
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.info",
+          "lineNumber": 1106
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1113
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1114
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "getattr",
+          "lineNumber": 1123
+        },
+        {
+          "caller": "_fix_incompatible_config",
+          "callee": "logger.warning",
+          "lineNumber": 1125
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,907 @@
+{
+ "nodes": [
+  {
+   "id": "file:lora/lora_ops.py",
+   "type": "file",
+   "name": "lora_ops.py",
+   "filePath": "lora/lora_ops.py",
+   "summary": "封装 Ascend NPU 上 LoRA 的批量/分段矩阵乘 kernel（bgmv/sgmv 的 shrink、expand、expand_slice），全部转发到 torch.ops._C_ascend 自定义算子。",
+   "tags": [
+    "lora",
+    "npu-kernel",
+    "operator",
+    "utility"
+   ],
+   "complexity": "moderate",
+   "languageNotes": "薄封装层，每个函数将 LoRA 运算下沉到 C++ 自定义算子 torch.ops._C_ascend。"
+  },
+  {
+   "id": "function:lora/lora_ops.py:bgmv_shrink",
+   "type": "function",
+   "name": "bgmv_shrink",
+   "filePath": "lora/lora_ops.py",
+   "lineRange": [
+    19,
+    32
+   ],
+   "summary": "解码阶段 LoRA A 矩阵的批量收缩（shrink）算子封装，调用 npu bgmv_shrink kernel。",
+   "tags": [
+    "lora",
+    "npu-kernel",
+    "decode"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:lora/lora_ops.py:bgmv_expand",
+   "type": "function",
+   "name": "bgmv_expand",
+   "filePath": "lora/lora_ops.py",
+   "lineRange": [
+    35,
+    49
+   ],
+   "summary": "解码阶段 LoRA B 矩阵的批量扩展（expand）算子封装。",
+   "tags": [
+    "lora",
+    "npu-kernel",
+    "decode"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:lora/lora_ops.py:bgmv_expand_slice",
+   "type": "function",
+   "name": "bgmv_expand_slice",
+   "filePath": "lora/lora_ops.py",
+   "lineRange": [
+    52,
+    63
+   ],
+   "summary": "解码阶段按切片偏移做 LoRA B 扩展的算子封装，用于合并 QKV 等分片权重。",
+   "tags": [
+    "lora",
+    "npu-kernel",
+    "decode"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:lora/lora_ops.py:sgmv_shrink",
+   "type": "function",
+   "name": "sgmv_shrink",
+   "filePath": "lora/lora_ops.py",
+   "lineRange": [
+    66,
+    80
+   ],
+   "summary": "prefill 阶段 LoRA A 矩阵的分段收缩算子封装，按 batch 序列长度分段处理。",
+   "tags": [
+    "lora",
+    "npu-kernel",
+    "prefill"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:lora/lora_ops.py:sgmv_expand",
+   "type": "function",
+   "name": "sgmv_expand",
+   "filePath": "lora/lora_ops.py",
+   "lineRange": [
+    83,
+    103
+   ],
+   "summary": "prefill 阶段 LoRA B 矩阵的分段扩展算子封装。",
+   "tags": [
+    "lora",
+    "npu-kernel",
+    "prefill"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:lora/lora_ops.py:sgmv_expand_slice",
+   "type": "function",
+   "name": "sgmv_expand_slice",
+   "filePath": "lora/lora_ops.py",
+   "lineRange": [
+    106,
+    122
+   ],
+   "summary": "prefill 阶段按切片偏移做 LoRA B 分段扩展的算子封装。",
+   "tags": [
+    "lora",
+    "npu-kernel",
+    "prefill"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:lora/punica_npu.py",
+   "type": "file",
+   "name": "punica_npu.py",
+   "filePath": "lora/punica_npu.py",
+   "summary": "PunicaWrapperNPU 类，封装 Ascend NPU 上多 LoRA 适配器的批量推理逻辑，按 prefill/decode 分派 shrink/expand kernel 并实现 embedding、linear、logits 的 LoRA 应用。",
+   "tags": [
+    "lora",
+    "service",
+    "npu-kernel",
+    "wrapper"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:lora/punica_npu.py:PunicaWrapperNPU",
+   "type": "class",
+   "name": "PunicaWrapperNPU",
+   "filePath": "lora/punica_npu.py",
+   "lineRange": [
+    14,
+    352
+   ],
+   "summary": "继承 PunicaWrapperBase，为 NPU 提供多 LoRA 适配器的 shrink/expand 调度与 add_lora_linear/embedding/logits 应用接口。",
+   "tags": [
+    "lora",
+    "wrapper",
+    "npu-kernel",
+    "service"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:lora/utils.py",
+   "type": "file",
+   "name": "utils.py",
+   "filePath": "lora/utils.py",
+   "summary": "定义 Ascend 版本的 QKV 并行 LoRA 层替换类，并提供 refresh_all_lora_classes 将这些类注册进 vLLM 的 LoRA 层映射表。",
+   "tags": [
+    "lora",
+    "utility",
+    "registration",
+    "data-model"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:lora/utils.py:AscendQKVParallelLinearWithLoRA",
+   "type": "class",
+   "name": "AscendQKVParallelLinearWithLoRA",
+   "filePath": "lora/utils.py",
+   "lineRange": [
+    18,
+    28
+   ],
+   "summary": "Ascend QKV 并行 LoRA 线性层，重写 can_replace_layer 以匹配 NPU 后端。",
+   "tags": [
+    "lora",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:lora/utils.py:AscendMergedQKVParallelLinearWithLoRA",
+   "type": "class",
+   "name": "AscendMergedQKVParallelLinearWithLoRA",
+   "filePath": "lora/utils.py",
+   "lineRange": [
+    31,
+    41
+   ],
+   "summary": "Ascend 合并 QKV 并行 LoRA 线性层的替换类。",
+   "tags": [
+    "lora",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:lora/utils.py:AscendMergedQKVParallelLinearWithShardedLoRA",
+   "type": "class",
+   "name": "AscendMergedQKVParallelLinearWithShardedLoRA",
+   "filePath": "lora/utils.py",
+   "lineRange": [
+    44,
+    54
+   ],
+   "summary": "Ascend 分片合并 QKV 并行 LoRA 线性层的替换类。",
+   "tags": [
+    "lora",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:lora/utils.py:AscendQKVParallelLinearWithShardedLoRA",
+   "type": "class",
+   "name": "AscendQKVParallelLinearWithShardedLoRA",
+   "filePath": "lora/utils.py",
+   "lineRange": [
+    57,
+    67
+   ],
+   "summary": "Ascend 分片 QKV 并行 LoRA 线性层的替换类。",
+   "tags": [
+    "lora",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:lora/utils.py:refresh_all_lora_classes",
+   "type": "function",
+   "name": "refresh_all_lora_classes",
+   "filePath": "lora/utils.py",
+   "lineRange": [
+    70,
+    82
+   ],
+   "summary": "将 Ascend 版本的 QKV 并行 LoRA 层类刷新注册到 vLLM 的 LoRA 层映射表中。",
+   "tags": [
+    "lora",
+    "registration",
+    "utility"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:meta_registration.py",
+   "type": "file",
+   "name": "meta_registration.py",
+   "filePath": "meta_registration.py",
+   "summary": "为 NPU 自定义算子注册 meta 实现（fake tensor 推断），使 torch.compile/dispatch 能在无实际计算下推导输出形状与 dtype。",
+   "tags": [
+    "operator",
+    "registration",
+    "torch-compile",
+    "utility"
+   ],
+   "complexity": "moderate",
+   "languageNotes": "使用 torch._C._dispatch 与 lib.impl 注册 Meta dispatch key 的 fake 实现。"
+  },
+  {
+   "id": "function:meta_registration.py:register_meta_if_necessary",
+   "type": "function",
+   "name": "register_meta_if_necessary",
+   "filePath": "meta_registration.py",
+   "lineRange": [
+    47,
+    54
+   ],
+   "summary": "在算子尚未注册 Meta 实现时，为其补充注册 meta 函数。",
+   "tags": [
+    "operator",
+    "registration",
+    "torch-compile"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:meta_registration.py:get_masked_input_and_mask_meta",
+   "type": "function",
+   "name": "get_masked_input_and_mask_meta",
+   "filePath": "meta_registration.py",
+   "lineRange": [
+    57,
+    68
+   ],
+   "summary": "vocab 掩码算子的 meta 实现，返回空形状张量用于形状推断。",
+   "tags": [
+    "operator",
+    "meta",
+    "vocab"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:model_loader/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "model_loader/__init__.py",
+   "summary": "model_loader 包的空初始化文件。",
+   "tags": [
+    "entry-point",
+    "barrel",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:model_loader/netloader/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "model_loader/netloader/__init__.py",
+   "summary": "netloader 子包初始化文件，提供 register_netloader 注册函数将网络加载器接入 vLLM。",
+   "tags": [
+    "entry-point",
+    "registration",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:model_loader/netloader/__init__.py:register_netloader",
+   "type": "function",
+   "name": "register_netloader",
+   "filePath": "model_loader/netloader/__init__.py",
+   "lineRange": [
+    18,
+    20
+   ],
+   "summary": "注册 netloader 模型加载器到 vLLM 加载器注册表。",
+   "tags": [
+    "registration",
+    "model-loader"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:model_loader/netloader/executor/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "model_loader/netloader/executor/__init__.py",
+   "summary": "netloader executor 子包的空初始化文件。",
+   "tags": [
+    "entry-point",
+    "barrel",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:model_loader/netloader/interaction/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "model_loader/netloader/interaction/__init__.py",
+   "summary": "netloader interaction 子包的空初始化文件。",
+   "tags": [
+    "entry-point",
+    "barrel",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:model_loader/rfork/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "model_loader/rfork/__init__.py",
+   "summary": "rfork 子包初始化文件，提供 register_rforkloader 注册 RFork 模型加载器。",
+   "tags": [
+    "entry-point",
+    "registration",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:model_loader/rfork/__init__.py:register_rforkloader",
+   "type": "function",
+   "name": "register_rforkloader",
+   "filePath": "model_loader/rfork/__init__.py",
+   "lineRange": [
+    18,
+    20
+   ],
+   "summary": "注册 RFork 模型加载器到 vLLM 加载器注册表。",
+   "tags": [
+    "registration",
+    "model-loader"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:model_loader/rfork/rfork_loader.py",
+   "type": "file",
+   "name": "rfork_loader.py",
+   "filePath": "model_loader/rfork/rfork_loader.py",
+   "summary": "RForkModelLoader 实现基于 RFork（远程 fork / seed 传输）的模型加载流程，从 seed 实例经传输引擎拉取权重而非从磁盘加载。",
+   "tags": [
+    "model-loader",
+    "service",
+    "weight-transfer"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:model_loader/rfork/rfork_loader.py:RForkModelLoader",
+   "type": "class",
+   "name": "RForkModelLoader",
+   "filePath": "model_loader/rfork/rfork_loader.py",
+   "lineRange": [
+    39,
+    190
+   ],
+   "summary": "RFork 模型加载器，初始化 RForkWorker、协调 pre/transfer/post 阶段并完成权重远程传输与模型 eval。",
+   "tags": [
+    "model-loader",
+    "service",
+    "weight-transfer"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:model_loader/rfork/rfork_worker.py",
+   "type": "file",
+   "name": "rfork_worker.py",
+   "filePath": "model_loader/rfork/rfork_worker.py",
+   "summary": "RForkWorker 协调 seed 协议与传输后端，完成内存区注册、从源端接收权重以及启动 seed 健康检查服务。",
+   "tags": [
+    "model-loader",
+    "service",
+    "weight-transfer",
+    "worker"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:model_loader/rfork/rfork_worker.py:RForkWorker",
+   "type": "class",
+   "name": "RForkWorker",
+   "filePath": "model_loader/rfork/rfork_worker.py",
+   "lineRange": [
+    28,
+    130
+   ],
+   "summary": "封装 seed 协议与传输后端，提供 pre_transfer/transfer/post_transfer 与 seed 服务启动逻辑。",
+   "tags": [
+    "worker",
+    "weight-transfer",
+    "service"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:model_loader/rfork/seed_protocol.py",
+   "type": "file",
+   "name": "seed_protocol.py",
+   "filePath": "model_loader/rfork/seed_protocol.py",
+   "summary": "RForkSeedProtocol 通过 HTTP 与调度器交互，完成 seed 的获取、释放与上报，并生成本地 seed key 标识。",
+   "tags": [
+    "protocol",
+    "http-client",
+    "service",
+    "weight-transfer"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:model_loader/rfork/seed_protocol.py:get_local_seed_key",
+   "type": "function",
+   "name": "get_local_seed_key",
+   "filePath": "model_loader/rfork/seed_protocol.py",
+   "lineRange": [
+    28,
+    51
+   ],
+   "summary": "根据分布式模式、节点/TP rank、模型 URL 等拼接生成本地 seed key。",
+   "tags": [
+    "protocol",
+    "identifier",
+    "weight-transfer"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:model_loader/rfork/seed_protocol.py:RForkSeedProtocol",
+   "type": "class",
+   "name": "RForkSeedProtocol",
+   "filePath": "model_loader/rfork/seed_protocol.py",
+   "lineRange": [
+    54,
+    212
+   ],
+   "summary": "与调度器交互的 seed 协议客户端，实现 get_seed/release_seed/report_seed 等 HTTP 请求逻辑。",
+   "tags": [
+    "protocol",
+    "http-client",
+    "weight-transfer"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:model_loader/rfork/seed_server.py",
+   "type": "file",
+   "name": "seed_server.py",
+   "filePath": "model_loader/rfork/seed_server.py",
+   "summary": "启动基于 FastAPI/uvicorn 的 seed 健康检查服务（独立进程），暴露 health 端点供其它实例探测 seed 可用性。",
+   "tags": [
+    "service",
+    "fastapi",
+    "health-check",
+    "weight-transfer"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:model_loader/rfork/seed_server.py:start_fastapi_server",
+   "type": "function",
+   "name": "start_fastapi_server",
+   "filePath": "model_loader/rfork/seed_server.py",
+   "lineRange": [
+    30,
+    72
+   ],
+   "summary": "绑定端口并启动 FastAPI 应用，注册 health 与带 key 的健康检查端点。",
+   "tags": [
+    "fastapi",
+    "service",
+    "health-check"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:model_loader/rfork/seed_server.py:start_rfork_server",
+   "type": "function",
+   "name": "start_rfork_server",
+   "filePath": "model_loader/rfork/seed_server.py",
+   "lineRange": [
+    75,
+    130
+   ],
+   "summary": "在子进程中启动 seed FastAPI 服务并轮询等待其就绪，返回服务端口信息。",
+   "tags": [
+    "service",
+    "process",
+    "health-check"
+   ],
+   "complexity": "moderate"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:bgmv_shrink",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:bgmv_expand",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:bgmv_expand_slice",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:sgmv_shrink",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:sgmv_expand",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:sgmv_expand_slice",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:bgmv_shrink",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:bgmv_expand",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:bgmv_expand_slice",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:sgmv_shrink",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:sgmv_expand",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/lora_ops.py",
+   "target": "function:lora/lora_ops.py:sgmv_expand_slice",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/punica_npu.py",
+   "target": "class:lora/punica_npu.py:PunicaWrapperNPU",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/punica_npu.py",
+   "target": "class:lora/punica_npu.py:PunicaWrapperNPU",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:lora/punica_npu.py:PunicaWrapperNPU",
+   "target": "function:lora/utils.py:refresh_all_lora_classes",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendQKVParallelLinearWithLoRA",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendMergedQKVParallelLinearWithLoRA",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendMergedQKVParallelLinearWithShardedLoRA",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendQKVParallelLinearWithShardedLoRA",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "function:lora/utils.py:refresh_all_lora_classes",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendQKVParallelLinearWithLoRA",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendMergedQKVParallelLinearWithLoRA",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendMergedQKVParallelLinearWithShardedLoRA",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "class:lora/utils.py:AscendQKVParallelLinearWithShardedLoRA",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:lora/utils.py",
+   "target": "function:lora/utils.py:refresh_all_lora_classes",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:meta_registration.py",
+   "target": "function:meta_registration.py:register_meta_if_necessary",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:meta_registration.py",
+   "target": "function:meta_registration.py:get_masked_input_and_mask_meta",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:meta_registration.py",
+   "target": "function:meta_registration.py:register_meta_if_necessary",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:meta_registration.py",
+   "target": "function:meta_registration.py:get_masked_input_and_mask_meta",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/netloader/__init__.py",
+   "target": "function:model_loader/netloader/__init__.py:register_netloader",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/netloader/__init__.py",
+   "target": "function:model_loader/netloader/__init__.py:register_netloader",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/rfork/__init__.py",
+   "target": "function:model_loader/rfork/__init__.py:register_rforkloader",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/__init__.py",
+   "target": "function:model_loader/rfork/__init__.py:register_rforkloader",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/rfork/rfork_loader.py",
+   "target": "class:model_loader/rfork/rfork_loader.py:RForkModelLoader",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/rfork_loader.py",
+   "target": "class:model_loader/rfork/rfork_loader.py:RForkModelLoader",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:model_loader/rfork/rfork_loader.py:RForkModelLoader",
+   "target": "class:model_loader/rfork/rfork_worker.py:RForkWorker",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "file:model_loader/rfork/rfork_worker.py",
+   "target": "class:model_loader/rfork/rfork_worker.py:RForkWorker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/rfork_worker.py",
+   "target": "class:model_loader/rfork/rfork_worker.py:RForkWorker",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:model_loader/rfork/rfork_worker.py:RForkWorker",
+   "target": "class:model_loader/rfork/transfer_backend.py:RForkTransferBackend",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "class:model_loader/rfork/rfork_worker.py:RForkWorker",
+   "target": "class:model_loader/rfork/seed_protocol.py:RForkSeedProtocol",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "class:model_loader/rfork/rfork_worker.py:RForkWorker",
+   "target": "function:model_loader/rfork/seed_server.py:start_rfork_server",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/rfork/seed_protocol.py",
+   "target": "function:model_loader/rfork/seed_protocol.py:get_local_seed_key",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/seed_protocol.py",
+   "target": "class:model_loader/rfork/seed_protocol.py:RForkSeedProtocol",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/seed_protocol.py",
+   "target": "function:model_loader/rfork/seed_protocol.py:get_local_seed_key",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/rfork/seed_protocol.py",
+   "target": "class:model_loader/rfork/seed_protocol.py:RForkSeedProtocol",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/rfork/seed_server.py",
+   "target": "function:model_loader/rfork/seed_server.py:start_fastapi_server",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/seed_server.py",
+   "target": "function:model_loader/rfork/seed_server.py:start_rfork_server",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/seed_server.py",
+   "target": "function:model_loader/rfork/seed_server.py:start_fastapi_server",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/rfork/seed_server.py",
+   "target": "function:model_loader/rfork/seed_server.py:start_rfork_server",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:model_loader/rfork/seed_server.py:start_rfork_server",
+   "target": "function:model_loader/rfork/seed_server.py:start_fastapi_server",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

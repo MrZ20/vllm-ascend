@@ -1,0 +1,7024 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 21,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "quantization/compressed_tensors_config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 429,
+      "nonEmptyLines": 350,
+      "functions": [
+        {
+          "name": "_remove_quantization_method",
+          "startLine": 42,
+          "endLine": 44,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendCompressedTensorsConfig",
+          "startLine": 53,
+          "endLine": 429,
+          "methods": [
+            "__init__",
+            "get_name",
+            "get_supported_act_dtypes",
+            "get_min_capability",
+            "get_config_filenames",
+            "_add_fused_moe_to_target_scheme_map",
+            "from_config",
+            "_quantization_scheme_map_from_config",
+            "get_quant_method",
+            "_get_linear_scheme",
+            "_get_moe_scheme",
+            "_get_quant_args",
+            "get_scheme_dict",
+            "_create_scheme_for_layer_type",
+            "_detect_quant_type",
+            "_is_static_tensor_w8a8",
+            "_is_dynamic_token_w8a8",
+            "_is_dynamic_token_w4a8",
+            "_is_w4a16",
+            "apply_vllm_mapper"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_remove_quantization_method",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "AscendCompressedTensorsConfig",
+          "line": 52,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_remove_quantization_method",
+          "callee": "QUANTIZATION_METHODS.remove",
+          "lineNumber": 44
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 67
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_min_capability",
+          "callee": "NotImplementedError",
+          "lineNumber": 83
+        },
+        {
+          "caller": "from_config",
+          "callee": "cast",
+          "lineNumber": 102
+        },
+        {
+          "caller": "from_config",
+          "callee": "config.get",
+          "lineNumber": 102
+        },
+        {
+          "caller": "from_config",
+          "callee": "cast",
+          "lineNumber": 103
+        },
+        {
+          "caller": "from_config",
+          "callee": "config.get",
+          "lineNumber": 103
+        },
+        {
+          "caller": "from_config",
+          "callee": "cls._quantization_scheme_map_from_config",
+          "lineNumber": 104
+        },
+        {
+          "caller": "from_config",
+          "callee": "cls",
+          "lineNumber": 106
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "dict",
+          "lineNumber": 122
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "cast",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "config.get",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "config.get",
+          "lineNumber": 125
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "dict",
+          "lineNumber": 125
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "config_groups.items",
+          "lineNumber": 126
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "quant_config.get",
+          "lineNumber": 127
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "QuantizationArgs.model_validate",
+          "lineNumber": 130
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "quant_config.get",
+          "lineNumber": 130
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "quant_config.get",
+          "lineNumber": 133
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "target_scheme_map[target].get",
+          "lineNumber": 134
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "is_activation_quantization_format",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "is_activation_quantization_format",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "quant_config.get",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "QuantizationArgs.model_validate",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_quantization_scheme_map_from_config",
+          "callee": "quant_config.get",
+          "lineNumber": 144
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 156
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self._get_linear_scheme",
+          "lineNumber": 159
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "UnquantizedLinearMethod",
+          "lineNumber": 163
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.info_once",
+          "lineNumber": 167
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendLinearMethod",
+          "lineNumber": 168
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 170
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self._get_moe_scheme",
+          "lineNumber": 177
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendUnquantizedFusedMoEMethod",
+          "lineNumber": 181
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.info_once",
+          "lineNumber": 185
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendFusedMoEMethod",
+          "lineNumber": 186
+        },
+        {
+          "caller": "_get_linear_scheme",
+          "callee": "self._get_quant_args",
+          "lineNumber": 197
+        },
+        {
+          "caller": "_get_linear_scheme",
+          "callee": "self._create_scheme_for_layer_type",
+          "lineNumber": 201
+        },
+        {
+          "caller": "_get_linear_scheme",
+          "callee": "cast",
+          "lineNumber": 207
+        },
+        {
+          "caller": "_get_moe_scheme",
+          "callee": "self._add_fused_moe_to_target_scheme_map",
+          "lineNumber": 217
+        },
+        {
+          "caller": "_get_moe_scheme",
+          "callee": "self._get_quant_args",
+          "lineNumber": 219
+        },
+        {
+          "caller": "_get_moe_scheme",
+          "callee": "self._create_scheme_for_layer_type",
+          "lineNumber": 223
+        },
+        {
+          "caller": "_get_moe_scheme",
+          "callee": "cast",
+          "lineNumber": 229
+        },
+        {
+          "caller": "_get_quant_args",
+          "callee": "self.get_scheme_dict",
+          "lineNumber": 250
+        },
+        {
+          "caller": "_get_quant_args",
+          "callee": "scheme_dict.get",
+          "lineNumber": 255
+        },
+        {
+          "caller": "_get_quant_args",
+          "callee": "scheme_dict.get",
+          "lineNumber": 256
+        },
+        {
+          "caller": "_get_quant_args",
+          "callee": "scheme_dict.get",
+          "lineNumber": 257
+        },
+        {
+          "caller": "_get_quant_args",
+          "callee": "logger.warning_once",
+          "lineNumber": 260
+        },
+        {
+          "caller": "get_scheme_dict",
+          "callee": "should_ignore_layer",
+          "lineNumber": 281
+        },
+        {
+          "caller": "get_scheme_dict",
+          "callee": "find_matched_target",
+          "lineNumber": 285
+        },
+        {
+          "caller": "get_scheme_dict",
+          "callee": "self.target_scheme_map.keys",
+          "lineNumber": 288
+        },
+        {
+          "caller": "get_scheme_dict",
+          "callee": "scheme_dict.get",
+          "lineNumber": 292
+        },
+        {
+          "caller": "_create_scheme_for_layer_type",
+          "callee": "self._detect_quant_type",
+          "lineNumber": 319
+        },
+        {
+          "caller": "_create_scheme_for_layer_type",
+          "callee": "get_scheme_class",
+          "lineNumber": 322
+        },
+        {
+          "caller": "_create_scheme_for_layer_type",
+          "callee": "NotImplementedError",
+          "lineNumber": 324
+        },
+        {
+          "caller": "_create_scheme_for_layer_type",
+          "callee": "scheme_cls",
+          "lineNumber": 329
+        },
+        {
+          "caller": "_detect_quant_type",
+          "callee": "is_activation_quantization_format",
+          "lineNumber": 349
+        },
+        {
+          "caller": "_detect_quant_type",
+          "callee": "self._is_static_tensor_w8a8",
+          "lineNumber": 352
+        },
+        {
+          "caller": "_detect_quant_type",
+          "callee": "self._is_dynamic_token_w8a8",
+          "lineNumber": 355
+        },
+        {
+          "caller": "_detect_quant_type",
+          "callee": "self._is_dynamic_token_w4a8",
+          "lineNumber": 358
+        },
+        {
+          "caller": "_detect_quant_type",
+          "callee": "self._is_w4a16",
+          "lineNumber": 361
+        },
+        {
+          "caller": "_detect_quant_type",
+          "callee": "NotImplementedError",
+          "lineNumber": 364
+        },
+        {
+          "caller": "_is_dynamic_token_w4a8",
+          "callee": "str",
+          "lineNumber": 405
+        },
+        {
+          "caller": "apply_vllm_mapper",
+          "callee": "hf_to_vllm_mapper.apply_dict",
+          "lineNumber": 428
+        },
+        {
+          "caller": "apply_vllm_mapper",
+          "callee": "hf_to_vllm_mapper.apply_list",
+          "lineNumber": 429
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/fp8_config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 125,
+      "nonEmptyLines": 97,
+      "functions": [
+        {
+          "name": "remove_quantization_method",
+          "startLine": 18,
+          "endLine": 22,
+          "params": []
+        },
+        {
+          "name": "create_scheme_for_layer",
+          "startLine": 28,
+          "endLine": 53,
+          "params": [
+            "quant_description",
+            "prefix",
+            "layer_type",
+            "packed_modules_mapping"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendFp8Config",
+          "startLine": 57,
+          "endLine": 121,
+          "methods": [
+            "__init__",
+            "__repr__",
+            "get_name",
+            "get_supported_act_dtypes",
+            "get_min_capability",
+            "get_config_filenames",
+            "from_config",
+            "get_quant_method"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "remove_quantization_method",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "create_scheme_for_layer",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "AscendFp8Config",
+          "line": 56,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "remove_quantization_method",
+          "callee": "QUANTIZATION_METHODS.remove",
+          "lineNumber": 20
+        },
+        {
+          "caller": "remove_quantization_method",
+          "callee": "QUANTIZATION_METHODS.remove",
+          "lineNumber": 22
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "logger.info_once",
+          "lineNumber": 45
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "get_scheme_class",
+          "lineNumber": 49
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "scheme_cls",
+          "lineNumber": 51
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "NotImplementedError",
+          "lineNumber": 53
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 64
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 64
+        },
+        {
+          "caller": "__repr__",
+          "callee": "super().__repr__",
+          "lineNumber": 70
+        },
+        {
+          "caller": "__repr__",
+          "callee": "super",
+          "lineNumber": 70
+        },
+        {
+          "caller": "get_min_capability",
+          "callee": "NotImplementedError",
+          "lineNumber": 82
+        },
+        {
+          "caller": "from_config",
+          "callee": "cast",
+          "lineNumber": 90
+        },
+        {
+          "caller": "from_config",
+          "callee": "config.get",
+          "lineNumber": 90
+        },
+        {
+          "caller": "from_config",
+          "callee": "cast",
+          "lineNumber": 91
+        },
+        {
+          "caller": "from_config",
+          "callee": "config.get",
+          "lineNumber": 91
+        },
+        {
+          "caller": "from_config",
+          "callee": "cls",
+          "lineNumber": 93
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 110
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "create_scheme_for_layer",
+          "lineNumber": 113
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendLinearMethod",
+          "lineNumber": 114
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 116
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "create_scheme_for_layer",
+          "lineNumber": 118
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendFusedMoEMethod",
+          "lineNumber": 119
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/method_adapters.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 324,
+      "nonEmptyLines": 276,
+      "classes": [
+        {
+          "name": "AscendLinearMethod",
+          "startLine": 37,
+          "endLine": 162,
+          "methods": [
+            "__init__",
+            "create_weights",
+            "process_weights_after_loading",
+            "get_computed_params",
+            "apply"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendKVCacheMethod",
+          "startLine": 165,
+          "endLine": 198,
+          "methods": [
+            "__init__",
+            "create_weights",
+            "process_weights_after_loading",
+            "apply"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendFusedMoEMethod",
+          "startLine": 201,
+          "endLine": 310,
+          "methods": [
+            "__init__",
+            "create_weights",
+            "apply",
+            "process_weights_after_loading",
+            "get_fused_moe_quant_config",
+            "supports_eplb"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendEmbeddingMethod",
+          "startLine": 313,
+          "endLine": 324,
+          "methods": [
+            "__init__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendLinearMethod",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "AscendKVCacheMethod",
+          "line": 165,
+          "isDefault": false
+        },
+        {
+          "name": "AscendFusedMoEMethod",
+          "line": 201,
+          "isDefault": false
+        },
+        {
+          "name": "AscendEmbeddingMethod",
+          "line": 313,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "enable_dsa_cp_with_layer_shard",
+          "lineNumber": 49
+        },
+        {
+          "caller": "create_weights",
+          "callee": "sum",
+          "lineNumber": 61
+        },
+        {
+          "caller": "create_weights",
+          "callee": "extra_weight_attrs.get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "create_weights",
+          "callee": "self.quant_method.get_weight",
+          "lineNumber": 64
+        },
+        {
+          "caller": "create_weights",
+          "callee": "weight_dict.pop",
+          "lineNumber": 67
+        },
+        {
+          "caller": "create_weights",
+          "callee": "weight_dict.pop",
+          "lineNumber": 68
+        },
+        {
+          "caller": "create_weights",
+          "callee": "weight_dict.items",
+          "lineNumber": 70
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 71
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 72
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 76
+        },
+        {
+          "caller": "create_weights",
+          "callee": "layer.register_parameter",
+          "lineNumber": 78
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 79
+        },
+        {
+          "caller": "create_weights",
+          "callee": "isinstance",
+          "lineNumber": 83
+        },
+        {
+          "caller": "create_weights",
+          "callee": "self.quant_method.get_pertensor_param",
+          "lineNumber": 85
+        },
+        {
+          "caller": "create_weights",
+          "callee": "pertensor_dict.items",
+          "lineNumber": 86
+        },
+        {
+          "caller": "create_weights",
+          "callee": "PerTensorScaleParameter",
+          "lineNumber": 87
+        },
+        {
+          "caller": "create_weights",
+          "callee": "layer.register_parameter",
+          "lineNumber": 90
+        },
+        {
+          "caller": "create_weights",
+          "callee": "extra_weight_attrs.get",
+          "lineNumber": 91
+        },
+        {
+          "caller": "create_weights",
+          "callee": "self.quant_method.get_perchannel_param",
+          "lineNumber": 93
+        },
+        {
+          "caller": "create_weights",
+          "callee": "perchannel_dict.items",
+          "lineNumber": 94
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 95
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 96
+        },
+        {
+          "caller": "create_weights",
+          "callee": "layer.register_parameter",
+          "lineNumber": 97
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 98
+        },
+        {
+          "caller": "create_weights",
+          "callee": "isinstance",
+          "lineNumber": 103
+        },
+        {
+          "caller": "create_weights",
+          "callee": "self.quant_method.get_pergroup_param",
+          "lineNumber": 105
+        },
+        {
+          "caller": "create_weights",
+          "callee": "pergroup_dict.pop",
+          "lineNumber": 108
+        },
+        {
+          "caller": "create_weights",
+          "callee": "pergroup_dict.pop",
+          "lineNumber": 109
+        },
+        {
+          "caller": "create_weights",
+          "callee": "pergroup_dict.items",
+          "lineNumber": 110
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 111
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 112
+        },
+        {
+          "caller": "create_weights",
+          "callee": "layer.register_parameter",
+          "lineNumber": 113
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 114
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 116
+        },
+        {
+          "caller": "create_weights",
+          "callee": "is_mx_quant_type",
+          "lineNumber": 120
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "hasattr",
+          "lineNumber": 125
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self.quant_method.process_weights_after_loading",
+          "lineNumber": 126
+        },
+        {
+          "caller": "apply",
+          "callee": "isinstance",
+          "lineNumber": 146
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.prefix.find",
+          "lineNumber": 147
+        },
+        {
+          "caller": "apply",
+          "callee": "oproj_tp_enable",
+          "lineNumber": 147
+        },
+        {
+          "caller": "apply",
+          "callee": "get_otp_group",
+          "lineNumber": 148
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.prefix.find",
+          "lineNumber": 149
+        },
+        {
+          "caller": "apply",
+          "callee": "mlp_tp_enable",
+          "lineNumber": 149
+        },
+        {
+          "caller": "apply",
+          "callee": "get_mlp_tp_group",
+          "lineNumber": 150
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.prefix.find",
+          "lineNumber": 151
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.prefix.find",
+          "lineNumber": 151
+        },
+        {
+          "caller": "apply",
+          "callee": "flashcomm2_enable",
+          "lineNumber": 151
+        },
+        {
+          "caller": "apply",
+          "callee": "get_ascend_config",
+          "lineNumber": 152
+        },
+        {
+          "caller": "apply",
+          "callee": "get_flashcomm2_otp_group",
+          "lineNumber": 155
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.prefix.find",
+          "lineNumber": 156
+        },
+        {
+          "caller": "apply",
+          "callee": "get_tensor_model_parallel_rank",
+          "lineNumber": 159
+        },
+        {
+          "caller": "apply",
+          "callee": "self.quant_method.apply",
+          "lineNumber": 162
+        },
+        {
+          "caller": "create_weights",
+          "callee": "self.quant_method.create_weights",
+          "lineNumber": 181
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self.quant_method.process_weights_after_loading",
+          "lineNumber": 184
+        },
+        {
+          "caller": "apply",
+          "callee": "self.quant_method.apply",
+          "lineNumber": 198
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 212
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 212
+        },
+        {
+          "caller": "create_weights",
+          "callee": "self.quant_method.get_weight",
+          "lineNumber": 225
+        },
+        {
+          "caller": "create_weights",
+          "callee": "weight_param.items",
+          "lineNumber": 228
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 229
+        },
+        {
+          "caller": "create_weights",
+          "callee": "layer.register_parameter",
+          "lineNumber": 230
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 231
+        },
+        {
+          "caller": "create_weights",
+          "callee": "extra_weight_attrs.update",
+          "lineNumber": 233
+        },
+        {
+          "caller": "create_weights",
+          "callee": "hasattr",
+          "lineNumber": 236
+        },
+        {
+          "caller": "create_weights",
+          "callee": "self.quant_method.get_dynamic_quant_param",
+          "lineNumber": 239
+        },
+        {
+          "caller": "create_weights",
+          "callee": "dynamic_quant_param.items",
+          "lineNumber": 242
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 243
+        },
+        {
+          "caller": "create_weights",
+          "callee": "layer.register_parameter",
+          "lineNumber": 244
+        },
+        {
+          "caller": "create_weights",
+          "callee": "set_weight_attrs",
+          "lineNumber": 245
+        },
+        {
+          "caller": "create_weights",
+          "callee": "any",
+          "lineNumber": 246
+        },
+        {
+          "caller": "apply",
+          "callee": "self.quant_method.apply",
+          "lineNumber": 274
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "hasattr",
+          "lineNumber": 301
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self.quant_method.process_weights_after_loading",
+          "lineNumber": 302
+        },
+        {
+          "caller": "supports_eplb",
+          "callee": "getattr",
+          "lineNumber": 309
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 4,
+        "functionCount": 0,
+        "classCount": 4
+      }
+    },
+    {
+      "path": "quantization/methods/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 98,
+      "nonEmptyLines": 87,
+      "functions": [
+        {
+          "name": "is_mx_quant_type",
+          "startLine": 55,
+          "endLine": 65,
+          "params": [
+            "instance"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "is_mx_quant_type",
+          "line": 55,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "is_mx_quant_type",
+          "callee": "isinstance",
+          "lineNumber": 65
+        }
+      ],
+      "metrics": {
+        "importCount": 16,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "quantization/methods/base.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 298,
+      "nonEmptyLines": 246,
+      "functions": [
+        {
+          "name": "get_moe_num_logical_experts",
+          "startLine": 28,
+          "endLine": 39,
+          "params": [
+            "layer",
+            "num_experts",
+            "global_redundant_expert_num",
+            "num_shared_experts"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendLinearScheme",
+          "startLine": 42,
+          "endLine": 128,
+          "methods": [
+            "get_weight",
+            "get_pertensor_param",
+            "get_perchannel_param",
+            "get_pergroup_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendAttentionScheme",
+          "startLine": 131,
+          "endLine": 183,
+          "methods": [
+            "create_weights",
+            "process_weights_after_loading",
+            "apply"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendMoEScheme",
+          "startLine": 186,
+          "endLine": 298,
+          "methods": [
+            "get_weight",
+            "get_dynamic_quant_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_moe_num_logical_experts",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "AscendLinearScheme",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "AscendAttentionScheme",
+          "line": 131,
+          "isDefault": false
+        },
+        {
+          "name": "AscendMoEScheme",
+          "line": 186,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_moe_num_logical_experts",
+          "callee": "getattr",
+          "lineNumber": 34
+        },
+        {
+          "caller": "get_moe_num_logical_experts",
+          "callee": "getattr",
+          "lineNumber": 35
+        },
+        {
+          "caller": "get_moe_num_logical_experts",
+          "callee": "int",
+          "lineNumber": 37
+        },
+        {
+          "caller": "get_moe_num_logical_experts",
+          "callee": "int",
+          "lineNumber": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 1,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "quantization/methods/fp8.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 130,
+      "nonEmptyLines": 112,
+      "classes": [
+        {
+          "name": "AscendW8A8MXFP8DSDynamicLinearMethod",
+          "startLine": 31,
+          "endLine": 78,
+          "methods": [
+            "__init__",
+            "get_pergroup_param",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendW4A8MXFPDSDynamicFusedMoEMethod",
+          "startLine": 82,
+          "endLine": 130,
+          "methods": [
+            "__init__",
+            "get_dynamic_quant_param",
+            "process_weights_after_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8MXFP8DSDynamicLinearMethod",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW4A8MXFPDSDynamicFusedMoEMethod",
+          "line": 81,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 40
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 40
+        },
+        {
+          "caller": "__init__",
+          "callee": "quant_config.get",
+          "lineNumber": 41
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 42
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 53
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.view",
+          "lineNumber": 61
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.to",
+          "lineNumber": 62
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.repeat_interleave(4, dim=1).repeat_interleave",
+          "lineNumber": 63
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.repeat_interleave",
+          "lineNumber": 63
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.reshape",
+          "lineNumber": 65
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 66
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose",
+          "lineNumber": 67
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.prefix.endswith",
+          "lineNumber": 69
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.T.reshape(self.n_local_groups, self.o_lora_rank, -1).transpose(1, 2).contiguous",
+          "lineNumber": 71
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.T.reshape(self.n_local_groups, self.o_lora_rank, -1).transpose",
+          "lineNumber": 71
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.T.reshape",
+          "lineNumber": 71
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose(0, 1)\n                .reshape(self.n_local_groups, self.o_lora_rank, -1, 2)\n                .transpose(1, 2)\n                .contiguous",
+          "lineNumber": 74
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose(0, 1)\n                .reshape(self.n_local_groups, self.o_lora_rank, -1, 2)\n                .transpose",
+          "lineNumber": 74
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose(0, 1)\n                .reshape",
+          "lineNumber": 74
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose",
+          "lineNumber": 74
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 89
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 89
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 96
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 103
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_format_cast",
+          "lineNumber": 109
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.view",
+          "lineNumber": 110
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_format_cast",
+          "lineNumber": 115
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.view",
+          "lineNumber": 116
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.transpose",
+          "lineNumber": 121
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.transpose",
+          "lineNumber": 122
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.reshape(g, n, k // 2, 2).view(torch.uint8).transpose",
+          "lineNumber": 125
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.reshape(g, n, k // 2, 2).view",
+          "lineNumber": 125
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.reshape",
+          "lineNumber": 125
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.reshape(g, n, k // 2, 2).view(torch.uint8).transpose",
+          "lineNumber": 129
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.reshape(g, n, k // 2, 2).view",
+          "lineNumber": 129
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.reshape",
+          "lineNumber": 129
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "quantization/methods/kv_c8.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 164,
+      "nonEmptyLines": 140,
+      "functions": [
+        {
+          "name": "_fa_quant_weight_loader",
+          "startLine": 12,
+          "endLine": 27,
+          "params": [
+            "param",
+            "loaded_weight"
+          ]
+        },
+        {
+          "name": "_c8_kv_scale_weight_loader",
+          "startLine": 99,
+          "endLine": 105,
+          "params": [
+            "param",
+            "loaded_weight"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendFAQuantAttentionMethod",
+          "startLine": 31,
+          "endLine": 72,
+          "methods": [
+            "__init__",
+            "create_weights",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendSFAQuantAttentionMethod",
+          "startLine": 76,
+          "endLine": 96,
+          "methods": [
+            "__init__",
+            "create_weights",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendC8KVCacheAttentionMethod",
+          "startLine": 108,
+          "endLine": 164,
+          "methods": [
+            "__init__",
+            "create_weights",
+            "process_weights_after_loading",
+            "apply"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_fa_quant_weight_loader",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "AscendFAQuantAttentionMethod",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "AscendSFAQuantAttentionMethod",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "_c8_kv_scale_weight_loader",
+          "line": 99,
+          "isDefault": false
+        },
+        {
+          "name": "AscendC8KVCacheAttentionMethod",
+          "line": 108,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "param.numel",
+          "lineNumber": 14
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "loaded_weight.numel",
+          "lineNumber": 14
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "param.data.fill_",
+          "lineNumber": 15
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "loaded_weight.item",
+          "lineNumber": 15
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "get_tensor_model_parallel_rank",
+          "lineNumber": 17
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "get_tensor_model_parallel_world_size",
+          "lineNumber": 18
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "loaded_weight.narrow",
+          "lineNumber": 20
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "param.size",
+          "lineNumber": 21
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "loaded_weight.size",
+          "lineNumber": 21
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "loaded_weight.size",
+          "lineNumber": 23
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "param.size",
+          "lineNumber": 23
+        },
+        {
+          "caller": "_fa_quant_weight_loader",
+          "callee": "param.data.copy_",
+          "lineNumber": 27
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 33
+        },
+        {
+          "caller": "__init__",
+          "callee": "getattr",
+          "lineNumber": 35
+        },
+        {
+          "caller": "__init__",
+          "callee": "getattr",
+          "lineNumber": 36
+        },
+        {
+          "caller": "create_weights",
+          "callee": "setattr",
+          "lineNumber": 41
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Module",
+          "lineNumber": 41
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.get_default_dtype",
+          "lineNumber": 43
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 44
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 45
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 46
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 47
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 48
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 49
+        },
+        {
+          "caller": "create_weights",
+          "callee": "params_dict.items",
+          "lineNumber": 51
+        },
+        {
+          "caller": "create_weights",
+          "callee": "name.rsplit",
+          "lineNumber": 52
+        },
+        {
+          "caller": "create_weights",
+          "callee": "getattr",
+          "lineNumber": 53
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 54
+        },
+        {
+          "caller": "create_weights",
+          "callee": "module.register_parameter",
+          "lineNumber": 55
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.squeeze(layer.fa_k.scale).unsqueeze",
+          "lineNumber": 60
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.squeeze",
+          "lineNumber": 60
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 61
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "fa_k_scale.to",
+          "lineNumber": 61
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 62
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 63
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 64
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "fa_k_scale.to",
+          "lineNumber": 64
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 66
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.squeeze(layer.fa_k.offset).unsqueeze",
+          "lineNumber": 67
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.squeeze",
+          "lineNumber": 67
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 68
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "fa_k_offset.to",
+          "lineNumber": 68
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "fa_k_scale.repeat",
+          "lineNumber": 70
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "repeated_quant_kscale.view",
+          "lineNumber": 71
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 72
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.quant_kscale.to",
+          "lineNumber": 72
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 78
+        },
+        {
+          "caller": "create_weights",
+          "callee": "setattr",
+          "lineNumber": 85
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Module",
+          "lineNumber": 85
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 87
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.empty",
+          "lineNumber": 88
+        },
+        {
+          "caller": "create_weights",
+          "callee": "params_dict.items",
+          "lineNumber": 89
+        },
+        {
+          "caller": "create_weights",
+          "callee": "name.split",
+          "lineNumber": 90
+        },
+        {
+          "caller": "create_weights",
+          "callee": "getattr",
+          "lineNumber": 91
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 92
+        },
+        {
+          "caller": "create_weights",
+          "callee": "module.register_parameter",
+          "lineNumber": 93
+        },
+        {
+          "caller": "_c8_kv_scale_weight_loader",
+          "callee": "loaded_weight.squeeze",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_c8_kv_scale_weight_loader",
+          "callee": "loaded_weight.to(param.dtype).clone",
+          "lineNumber": 103
+        },
+        {
+          "caller": "_c8_kv_scale_weight_loader",
+          "callee": "loaded_weight.to",
+          "lineNumber": 103
+        },
+        {
+          "caller": "_c8_kv_scale_weight_loader",
+          "callee": "param.data.copy_",
+          "lineNumber": 105
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 114
+        },
+        {
+          "caller": "create_weights",
+          "callee": "logger.info_once",
+          "lineNumber": 122
+        },
+        {
+          "caller": "create_weights",
+          "callee": "hasattr",
+          "lineNumber": 127
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.get_default_dtype",
+          "lineNumber": 131
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 132
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.ones",
+          "lineNumber": 132
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 134
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.zeros",
+          "lineNumber": 134
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 136
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.ones",
+          "lineNumber": 136
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 138
+        },
+        {
+          "caller": "create_weights",
+          "callee": "torch.zeros",
+          "lineNumber": 138
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.k_cache_scale.data.flatten",
+          "lineNumber": 142
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.k_cache_offset.data.flatten",
+          "lineNumber": 143
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.v_cache_scale.data.flatten",
+          "lineNumber": 144
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.v_cache_offset.data.flatten",
+          "lineNumber": 145
+        },
+        {
+          "caller": "apply",
+          "callee": "RuntimeError",
+          "lineNumber": 164
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 5,
+        "functionCount": 2,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "quantization/methods/registry.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 49,
+      "functions": [
+        {
+          "name": "register_scheme",
+          "startLine": 24,
+          "endLine": 49,
+          "params": [
+            "quant_type",
+            "layer_type"
+          ]
+        },
+        {
+          "name": "get_scheme_class",
+          "startLine": 52,
+          "endLine": 62,
+          "params": [
+            "quant_type",
+            "layer_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register_scheme",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "get_scheme_class",
+          "line": 52,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "decorator",
+          "callee": "ValueError",
+          "lineNumber": 43
+        },
+        {
+          "caller": "get_scheme_class",
+          "callee": "_SCHEME_REGISTRY.get",
+          "lineNumber": 62
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "quantization/methods/w4a16.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 364,
+      "nonEmptyLines": 322,
+      "functions": [
+        {
+          "name": "unpack_from_int32",
+          "startLine": 35,
+          "endLine": 82,
+          "params": [
+            "weight",
+            "shape",
+            "num_bits",
+            "packed_dim"
+          ]
+        },
+        {
+          "name": "pack_to_int32",
+          "startLine": 85,
+          "endLine": 108,
+          "params": [
+            "weight"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendW4A16FusedMoEMethod",
+          "startLine": 112,
+          "endLine": 364,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_dynamic_quant_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "unpack_from_int32",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "pack_to_int32",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW4A16FusedMoEMethod",
+          "line": 111,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "unpack_from_int32",
+          "callee": "torch.zeros",
+          "lineNumber": 59
+        },
+        {
+          "caller": "unpack_from_int32",
+          "callee": "range",
+          "lineNumber": 64
+        },
+        {
+          "caller": "unpack_from_int32",
+          "callee": "int",
+          "lineNumber": 66
+        },
+        {
+          "caller": "unpack_from_int32",
+          "callee": "torch.zeros",
+          "lineNumber": 69
+        },
+        {
+          "caller": "unpack_from_int32",
+          "callee": "range",
+          "lineNumber": 74
+        },
+        {
+          "caller": "unpack_from_int32",
+          "callee": "int",
+          "lineNumber": 76
+        },
+        {
+          "caller": "unpack_from_int32",
+          "callee": "pow",
+          "lineNumber": 79
+        },
+        {
+          "caller": "unpack_from_int32",
+          "callee": "(unpacked_weight - offset).to",
+          "lineNumber": 80
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.dim",
+          "lineNumber": 91
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.dim",
+          "lineNumber": 94
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "torch_npu.npu_convert_weight_to_int4pack",
+          "lineNumber": 102
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.flatten",
+          "lineNumber": 102
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "packed_weight.view",
+          "lineNumber": 103
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.view(torch.int32).contiguous",
+          "lineNumber": 106
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.view",
+          "lineNumber": 106
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 184
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 185
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ascend_config",
+          "lineNumber": 186
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 205
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 208
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 231
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 234
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 237
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.zeros",
+          "lineNumber": 239
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.zeros",
+          "lineNumber": 242
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 274
+        },
+        {
+          "caller": "apply",
+          "callee": "get_moe_num_logical_experts",
+          "lineNumber": 277
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 288
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.to",
+          "lineNumber": 304
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 305
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 308
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 309
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w13_weight_packed.data.flatten(0, 1),\n                torch.Size([w13_shape[0] * w13_shape[1], w13_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view(w13_shape[0], w13_shape[1], -1)\n            .transpose(1, 2)\n            .contiguous()\n            .int",
+          "lineNumber": 336
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w13_weight_packed.data.flatten(0, 1),\n                torch.Size([w13_shape[0] * w13_shape[1], w13_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view(w13_shape[0], w13_shape[1], -1)\n            .transpose(1, 2)\n            .contiguous",
+          "lineNumber": 336
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w13_weight_packed.data.flatten(0, 1),\n                torch.Size([w13_shape[0] * w13_shape[1], w13_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view(w13_shape[0], w13_shape[1], -1)\n            .transpose",
+          "lineNumber": 336
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w13_weight_packed.data.flatten(0, 1),\n                torch.Size([w13_shape[0] * w13_shape[1], w13_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view",
+          "lineNumber": 336
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32",
+          "lineNumber": 336
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_packed.data.flatten",
+          "lineNumber": 337
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.Size",
+          "lineNumber": 338
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w2_weight_packed.data.flatten(0, 1),\n                torch.Size([w2_shape[0] * w2_shape[1], w2_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view(w2_shape[0], w2_shape[1], -1)\n            .transpose(1, 2)\n            .contiguous()\n            .int",
+          "lineNumber": 347
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w2_weight_packed.data.flatten(0, 1),\n                torch.Size([w2_shape[0] * w2_shape[1], w2_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view(w2_shape[0], w2_shape[1], -1)\n            .transpose(1, 2)\n            .contiguous",
+          "lineNumber": 347
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w2_weight_packed.data.flatten(0, 1),\n                torch.Size([w2_shape[0] * w2_shape[1], w2_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view(w2_shape[0], w2_shape[1], -1)\n            .transpose",
+          "lineNumber": 347
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32(\n                layer.w2_weight_packed.data.flatten(0, 1),\n                torch.Size([w2_shape[0] * w2_shape[1], w2_shape[2] * self.pack_factor]),\n                self.num_bits,\n            )\n            .view",
+          "lineNumber": 347
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "unpack_from_int32",
+          "lineNumber": 347
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_packed.data.flatten",
+          "lineNumber": 348
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.Size",
+          "lineNumber": 349
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "pack_to_int32",
+          "lineNumber": 357
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "pack_to_int32",
+          "lineNumber": 358
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.transpose(1, 2).contiguous",
+          "lineNumber": 360
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.transpose",
+          "lineNumber": 360
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.transpose(1, 2).contiguous",
+          "lineNumber": 361
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.transpose",
+          "lineNumber": 361
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_offset.data.transpose(1, 2).contiguous",
+          "lineNumber": 363
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_offset.data.transpose",
+          "lineNumber": 363
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_offset.data.transpose(1, 2).contiguous",
+          "lineNumber": 364
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_offset.data.transpose",
+          "lineNumber": 364
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/methods/w4a4_flatquant.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 171,
+      "nonEmptyLines": 151,
+      "functions": [
+        {
+          "name": "pack_int4_weights",
+          "startLine": 31,
+          "endLine": 36,
+          "params": [
+            "weight_tensor"
+          ]
+        },
+        {
+          "name": "get_decompose_dim",
+          "startLine": 39,
+          "endLine": 50,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "batched_kronecker_quant",
+          "startLine": 56,
+          "endLine": 74,
+          "params": [
+            "x",
+            "left_trans",
+            "right_trans",
+            "clip_ratio"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendW4A4FlatQuantDynamicLinearMethod",
+          "startLine": 78,
+          "endLine": 171,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pertensor_param",
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "pack_int4_weights",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "get_decompose_dim",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "batched_kronecker_quant",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW4A4FlatQuantDynamicLinearMethod",
+          "line": 77,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "pack_int4_weights",
+          "callee": "weight_tensor.npu",
+          "lineNumber": 34
+        },
+        {
+          "caller": "pack_int4_weights",
+          "callee": "torch_npu.npu_convert_weight_to_int4pack",
+          "lineNumber": 35
+        },
+        {
+          "caller": "pack_int4_weights",
+          "callee": "weight_tensor_npu.to",
+          "lineNumber": 35
+        },
+        {
+          "caller": "pack_int4_weights",
+          "callee": "weight_int4_packed.to",
+          "lineNumber": 36
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "int",
+          "lineNumber": 41
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "math.sqrt",
+          "lineNumber": 41
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "int",
+          "lineNumber": 46
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "math.sqrt",
+          "lineNumber": 46
+        },
+        {
+          "caller": "batched_kronecker_quant",
+          "callee": "torch_npu.npu_kronecker_quant",
+          "lineNumber": 65
+        },
+        {
+          "caller": "batched_kronecker_quant",
+          "callee": "torch.split",
+          "lineNumber": 66
+        },
+        {
+          "caller": "batched_kronecker_quant",
+          "callee": "torch_npu.npu_kronecker_quant",
+          "lineNumber": 68
+        },
+        {
+          "caller": "batched_kronecker_quant",
+          "callee": "zip",
+          "lineNumber": 71
+        },
+        {
+          "caller": "batched_kronecker_quant",
+          "callee": "torch.cat",
+          "lineNumber": 72
+        },
+        {
+          "caller": "batched_kronecker_quant",
+          "callee": "torch.cat",
+          "lineNumber": 73
+        },
+        {
+          "caller": "get_weight",
+          "callee": "logger.error",
+          "lineNumber": 97
+        },
+        {
+          "caller": "get_weight",
+          "callee": "ValueError",
+          "lineNumber": 98
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 100
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "get_decompose_dim",
+          "lineNumber": 105
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 106
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 107
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 108
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 118
+        },
+        {
+          "caller": "apply",
+          "callee": "logger.error",
+          "lineNumber": 138
+        },
+        {
+          "caller": "apply",
+          "callee": "ValueError",
+          "lineNumber": 139
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.left_trans.to",
+          "lineNumber": 140
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.right_trans.to",
+          "lineNumber": 141
+        },
+        {
+          "caller": "apply",
+          "callee": "x.view",
+          "lineNumber": 142
+        },
+        {
+          "caller": "apply",
+          "callee": "batched_kronecker_quant",
+          "lineNumber": 143
+        },
+        {
+          "caller": "apply",
+          "callee": "x_quantized_int4.view",
+          "lineNumber": 146
+        },
+        {
+          "caller": "apply",
+          "callee": "activation_scale.view(-1).to",
+          "lineNumber": 147
+        },
+        {
+          "caller": "apply",
+          "callee": "activation_scale.view",
+          "lineNumber": 147
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 148
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.weight_packed.t",
+          "lineNumber": 150
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.weight_scale.view(-1).to",
+          "lineNumber": 151
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.weight_scale.view",
+          "lineNumber": 151
+        },
+        {
+          "caller": "apply",
+          "callee": "output.view",
+          "lineNumber": 156
+        },
+        {
+          "caller": "apply",
+          "callee": "bias.to",
+          "lineNumber": 158
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "pack_int4_weights",
+          "lineNumber": 163
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.register_parameter",
+          "lineNumber": 164
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 164
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.to",
+          "lineNumber": 166
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data.to",
+          "lineNumber": 167
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 168
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.left_trans.data.t().contiguous",
+          "lineNumber": 168
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.left_trans.data.t",
+          "lineNumber": 168
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 169
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 170
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.clip_ratio.data.to",
+          "lineNumber": 170
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.clip_ratio.item",
+          "lineNumber": 171
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/methods/w4a4_laos_dynamic.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 76,
+      "nonEmptyLines": 65,
+      "classes": [
+        {
+          "name": "AscendW4A4LaosDynamicLinearMethod",
+          "startLine": 28,
+          "endLine": 76,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW4A4LaosDynamicLinearMethod",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 40
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 45
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 46
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_dynamic_quant",
+          "lineNumber": 57
+        },
+        {
+          "caller": "apply",
+          "callee": "pertoken_scale.reshape",
+          "lineNumber": 58
+        },
+        {
+          "caller": "apply",
+          "callee": "pertoken_scale.squeeze",
+          "lineNumber": 59
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 60
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.weight_scale.data.view",
+          "lineNumber": 63
+        },
+        {
+          "caller": "apply",
+          "callee": "output.to",
+          "lineNumber": 68
+        },
+        {
+          "caller": "apply",
+          "callee": "bias.to",
+          "lineNumber": 70
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.to",
+          "lineNumber": 74
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_convert_weight_to_int4pack",
+          "lineNumber": 75
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.to",
+          "lineNumber": 75
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 76
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/methods/w4a4_mxfp4.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 260,
+      "nonEmptyLines": 230,
+      "classes": [
+        {
+          "name": "AscendW4A4MXFP4DynamicLinearMethod",
+          "startLine": 41,
+          "endLine": 116,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pergroup_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendW4A4MXFP4DynamicFusedMoEMethod",
+          "startLine": 120,
+          "endLine": 260,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_dynamic_quant_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW4A4MXFP4DynamicLinearMethod",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW4A4MXFP4DynamicFusedMoEMethod",
+          "line": 119,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "ensure_mxfp4_linear_available",
+          "lineNumber": 52
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 53
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 54
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 57
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 64
+        },
+        {
+          "caller": "apply",
+          "callee": "x.dim",
+          "lineNumber": 76
+        },
+        {
+          "caller": "apply",
+          "callee": "x.view",
+          "lineNumber": 77
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_dynamic_mx_quant",
+          "lineNumber": 78
+        },
+        {
+          "caller": "apply",
+          "callee": "bias.to",
+          "lineNumber": 84
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 86
+        },
+        {
+          "caller": "apply",
+          "callee": "len",
+          "lineNumber": 100
+        },
+        {
+          "caller": "apply",
+          "callee": "output.view",
+          "lineNumber": 101
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.reshape",
+          "lineNumber": 114
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 115
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose",
+          "lineNumber": 116
+        },
+        {
+          "caller": "__init__",
+          "callee": "ensure_mxfp4_moe_available",
+          "lineNumber": 127
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ep_group",
+          "lineNumber": 128
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 130
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 131
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ascend_config",
+          "lineNumber": 132
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 144
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 147
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 156
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 160
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 191
+        },
+        {
+          "caller": "apply",
+          "callee": "get_moe_num_logical_experts",
+          "lineNumber": 194
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 201
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.rand",
+          "lineNumber": 220
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 220
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort(random_matrix, dim=1)[:, : topk_ids.size(1)].to",
+          "lineNumber": 221
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort",
+          "lineNumber": 221
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 221
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 223
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 226
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 227
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.reshape",
+          "lineNumber": 254
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.reshape",
+          "lineNumber": 256
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.transpose",
+          "lineNumber": 257
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.transpose",
+          "lineNumber": 258
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.transpose",
+          "lineNumber": 259
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.transpose",
+          "lineNumber": 260
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "quantization/methods/w4a4_mxfp4_flatquant.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 180,
+      "nonEmptyLines": 155,
+      "functions": [
+        {
+          "name": "get_decompose_dim",
+          "startLine": 36,
+          "endLine": 65,
+          "params": [
+            "n",
+            "m"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendW4A4MXFP4FlatQuantDynamicLinearMethod",
+          "startLine": 69,
+          "endLine": 180,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pertensor_param",
+            "get_pergroup_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_decompose_dim",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW4A4MXFP4FlatQuantDynamicLinearMethod",
+          "line": 68,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_decompose_dim",
+          "callee": "int",
+          "lineNumber": 46
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "math.sqrt",
+          "lineNumber": 46
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "int",
+          "lineNumber": 52
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "math.sqrt",
+          "lineNumber": 52
+        },
+        {
+          "caller": "get_decompose_dim",
+          "callee": "ValueError",
+          "lineNumber": 58
+        },
+        {
+          "caller": "__init__",
+          "callee": "ensure_mxfp4_flatquant_linear_available",
+          "lineNumber": 73
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 74
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 75
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 76
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_tensor_model_parallel_world_size",
+          "lineNumber": 77
+        },
+        {
+          "caller": "__init__",
+          "callee": "ValueError",
+          "lineNumber": 79
+        },
+        {
+          "caller": "get_weight",
+          "callee": "ValueError",
+          "lineNumber": 87
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 89
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "kwargs.get",
+          "lineNumber": 95
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "get_decompose_dim",
+          "lineNumber": 98
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "get_decompose_dim",
+          "lineNumber": 101
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 103
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 104
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 105
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 112
+        },
+        {
+          "caller": "apply",
+          "callee": "ValueError",
+          "lineNumber": 129
+        },
+        {
+          "caller": "apply",
+          "callee": "x.view",
+          "lineNumber": 133
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_kronecker_quant",
+          "lineNumber": 134
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 142
+        },
+        {
+          "caller": "apply",
+          "callee": "output.view",
+          "lineNumber": 155
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "isinstance",
+          "lineNumber": 159
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.view",
+          "lineNumber": 173
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 174
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose",
+          "lineNumber": 175
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 177
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.left_trans.data.t().contiguous",
+          "lineNumber": 177
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.left_trans.data.t",
+          "lineNumber": 177
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 178
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 179
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.clip_ratio.data.to",
+          "lineNumber": 179
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.clip_ratio.item",
+          "lineNumber": 180
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/methods/w4a8.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 778,
+      "nonEmptyLines": 677,
+      "classes": [
+        {
+          "name": "AscendW4A8DynamicLinearMethod",
+          "startLine": 39,
+          "endLine": 230,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pergroup_param",
+            "process_scale_second",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendW4A8DynamicFusedMoEMethod",
+          "startLine": 234,
+          "endLine": 778,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_weight_compressed_tensors",
+            "get_weight_modelslim",
+            "get_dynamic_quant_param",
+            "get_dynamic_quant_param_compressed_tensors",
+            "get_dynamic_quant_param_modelslim",
+            "apply",
+            "process_scale",
+            "update_bias",
+            "pack_to_int32",
+            "pack_int4_to_int8",
+            "maybe_squeeze_per_channel_weight_scale",
+            "process_weights_after_loading",
+            "process_weights_after_loading_compressed_tensors",
+            "process_weights_after_loading_modelslim"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW4A8DynamicLinearMethod",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW4A8DynamicFusedMoEMethod",
+          "line": 233,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 94
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 95
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 96
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_tensor_model_parallel_world_size",
+          "lineNumber": 101
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 116
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 121
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 130
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 131
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 132
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 133
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 143
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "weight.to(torch.float32).reshape",
+          "lineNumber": 170
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "weight.to",
+          "lineNumber": 170
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "per_group_scale.reshape",
+          "lineNumber": 170
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "weight_high.reshape",
+          "lineNumber": 171
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "(weight_high.to(torch.float32) * scale).sum",
+          "lineNumber": 172
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "weight_high.to",
+          "lineNumber": 172
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "(scale * per_group_scale).reshape",
+          "lineNumber": 177
+        },
+        {
+          "caller": "process_scale_second",
+          "callee": "antiquant_scale.npu",
+          "lineNumber": 178
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_weight_quant_batchmatmul",
+          "lineNumber": 188
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.weight_scale_second.to",
+          "lineNumber": 191
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose(0, 1).contiguous",
+          "lineNumber": 196
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 196
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 197
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.flatten().to",
+          "lineNumber": 198
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.flatten",
+          "lineNumber": 198
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data.flatten",
+          "lineNumber": 199
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self.process_scale_second",
+          "lineNumber": 200
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale_second.data.transpose(0, 1).contiguous",
+          "lineNumber": 203
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale_second.data.transpose",
+          "lineNumber": 203
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "hasattr",
+          "lineNumber": 209
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.scale_bias.data.flatten",
+          "lineNumber": 211
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.scale_bias.data.contiguous",
+          "lineNumber": 213
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 216
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.register_parameter",
+          "lineNumber": 217
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.view(torch.int32).contiguous",
+          "lineNumber": 226
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.view",
+          "lineNumber": 226
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_convert_weight_to_int4pack",
+          "lineNumber": 230
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.to",
+          "lineNumber": 230
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ep_group",
+          "lineNumber": 350
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 353
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 354
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 357
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 361
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 363
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ascend_config",
+          "lineNumber": 366
+        },
+        {
+          "caller": "__init__",
+          "callee": "ValueError",
+          "lineNumber": 368
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_mc2_group",
+          "lineNumber": 371
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.distributed.get_rank",
+          "lineNumber": 373
+        },
+        {
+          "caller": "__init__",
+          "callee": "device_group._get_backend",
+          "lineNumber": 374
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.device",
+          "lineNumber": 374
+        },
+        {
+          "caller": "__init__",
+          "callee": "backend.get_hccl_comm_name",
+          "lineNumber": 375
+        },
+        {
+          "caller": "get_weight",
+          "callee": "self.get_weight_compressed_tensors",
+          "lineNumber": 383
+        },
+        {
+          "caller": "get_weight",
+          "callee": "self.get_weight_modelslim",
+          "lineNumber": 387
+        },
+        {
+          "caller": "get_weight_compressed_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 397
+        },
+        {
+          "caller": "get_weight_compressed_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 398
+        },
+        {
+          "caller": "get_weight_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 412
+        },
+        {
+          "caller": "get_weight_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 413
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "self.get_dynamic_quant_param_compressed_tensors",
+          "lineNumber": 422
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "self.get_dynamic_quant_param_modelslim",
+          "lineNumber": 426
+        },
+        {
+          "caller": "get_dynamic_quant_param_compressed_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 444
+        },
+        {
+          "caller": "get_dynamic_quant_param_compressed_tensors",
+          "callee": "_n_scale_cols",
+          "lineNumber": 444
+        },
+        {
+          "caller": "get_dynamic_quant_param_compressed_tensors",
+          "callee": "torch.empty",
+          "lineNumber": 446
+        },
+        {
+          "caller": "get_dynamic_quant_param_compressed_tensors",
+          "callee": "_n_scale_cols",
+          "lineNumber": 446
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 454
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 458
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 462
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 463
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 465
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 468
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 472
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 475
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 480
+        },
+        {
+          "caller": "get_dynamic_quant_param_modelslim",
+          "callee": "torch.empty",
+          "lineNumber": 483
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 515
+        },
+        {
+          "caller": "apply",
+          "callee": "get_moe_num_logical_experts",
+          "lineNumber": 518
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 530
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.rand",
+          "lineNumber": 550
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 550
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort(random_matrix, dim=1)[:, : topk_ids.size(1)].to",
+          "lineNumber": 551
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort",
+          "lineNumber": 551
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 551
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 553
+        },
+        {
+          "caller": "apply",
+          "callee": "i.view",
+          "lineNumber": 556
+        },
+        {
+          "caller": "apply",
+          "callee": "i.view",
+          "lineNumber": 558
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.w13_scale_bias.detach",
+          "lineNumber": 567
+        },
+        {
+          "caller": "apply",
+          "callee": "hasattr",
+          "lineNumber": 567
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.w2_scale_bias.detach",
+          "lineNumber": 568
+        },
+        {
+          "caller": "apply",
+          "callee": "hasattr",
+          "lineNumber": 568
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 571
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 572
+        },
+        {
+          "caller": "process_scale",
+          "callee": "scale.transpose(1, 2).contiguous",
+          "lineNumber": 597
+        },
+        {
+          "caller": "process_scale",
+          "callee": "scale.transpose",
+          "lineNumber": 597
+        },
+        {
+          "caller": "process_scale",
+          "callee": "scale.cpu().numpy",
+          "lineNumber": 599
+        },
+        {
+          "caller": "process_scale",
+          "callee": "scale.cpu",
+          "lineNumber": 599
+        },
+        {
+          "caller": "process_scale",
+          "callee": "torch.from_numpy(scale_np.astype(np.int64)).npu",
+          "lineNumber": 601
+        },
+        {
+          "caller": "process_scale",
+          "callee": "torch.from_numpy",
+          "lineNumber": 601
+        },
+        {
+          "caller": "process_scale",
+          "callee": "scale_np.astype",
+          "lineNumber": 601
+        },
+        {
+          "caller": "process_scale",
+          "callee": "per_group_scale.transpose(1, 2).contiguous",
+          "lineNumber": 603
+        },
+        {
+          "caller": "process_scale",
+          "callee": "per_group_scale.transpose",
+          "lineNumber": 603
+        },
+        {
+          "caller": "process_scale",
+          "callee": "per_group_scale.reshape",
+          "lineNumber": 608
+        },
+        {
+          "caller": "process_scale",
+          "callee": "weight.to(torch.float32).reshape",
+          "lineNumber": 612
+        },
+        {
+          "caller": "process_scale",
+          "callee": "weight.to",
+          "lineNumber": 612
+        },
+        {
+          "caller": "process_scale",
+          "callee": "per_group_scale.reshape",
+          "lineNumber": 614
+        },
+        {
+          "caller": "process_scale",
+          "callee": "weight_high.reshape",
+          "lineNumber": 615
+        },
+        {
+          "caller": "process_scale",
+          "callee": "(weight_high.to(torch.float32) * scale).sum",
+          "lineNumber": 616
+        },
+        {
+          "caller": "process_scale",
+          "callee": "weight_high.to",
+          "lineNumber": 616
+        },
+        {
+          "caller": "process_scale",
+          "callee": "(scale * per_group_scale).to(torch.float16).to",
+          "lineNumber": 617
+        },
+        {
+          "caller": "process_scale",
+          "callee": "(scale * per_group_scale).to",
+          "lineNumber": 617
+        },
+        {
+          "caller": "process_scale",
+          "callee": "scale_fp32.cpu().numpy",
+          "lineNumber": 618
+        },
+        {
+          "caller": "process_scale",
+          "callee": "scale_fp32.cpu",
+          "lineNumber": 618
+        },
+        {
+          "caller": "process_scale",
+          "callee": "np.zeros",
+          "lineNumber": 620
+        },
+        {
+          "caller": "process_scale",
+          "callee": "np.frombuffer(sscale_uint64.tobytes(), dtype=np.int64).copy",
+          "lineNumber": 624
+        },
+        {
+          "caller": "process_scale",
+          "callee": "np.frombuffer",
+          "lineNumber": 624
+        },
+        {
+          "caller": "process_scale",
+          "callee": "sscale_uint64.tobytes",
+          "lineNumber": 624
+        },
+        {
+          "caller": "process_scale",
+          "callee": "torch.from_numpy(sscale_uint64_buffer).reshape",
+          "lineNumber": 625
+        },
+        {
+          "caller": "process_scale",
+          "callee": "torch.from_numpy",
+          "lineNumber": 625
+        },
+        {
+          "caller": "process_scale",
+          "callee": "sscale_uint64_tensor.npu",
+          "lineNumber": 626
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.w13_scale_bias.data.transpose(1, 2).contiguous().sum",
+          "lineNumber": 631
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.w13_scale_bias.data.transpose(1, 2).contiguous",
+          "lineNumber": 631
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.w13_scale_bias.data.transpose",
+          "lineNumber": 631
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.w2_scale_bias.data.transpose(1, 2).contiguous().sum",
+          "lineNumber": 632
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.w2_scale_bias.data.transpose(1, 2).contiguous",
+          "lineNumber": 632
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.w2_scale_bias.data.transpose",
+          "lineNumber": 632
+        },
+        {
+          "caller": "update_bias",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 634
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.register_parameter",
+          "lineNumber": 635
+        },
+        {
+          "caller": "update_bias",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 636
+        },
+        {
+          "caller": "update_bias",
+          "callee": "layer.register_parameter",
+          "lineNumber": 637
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.view(torch.int32).contiguous",
+          "lineNumber": 645
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.view",
+          "lineNumber": 645
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "torch_npu.npu_quantize",
+          "lineNumber": 647
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "weight.to",
+          "lineNumber": 648
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "torch.tensor([1.0]).npu",
+          "lineNumber": 648
+        },
+        {
+          "caller": "pack_to_int32",
+          "callee": "torch.tensor",
+          "lineNumber": 648
+        },
+        {
+          "caller": "pack_int4_to_int8",
+          "callee": "weight.reshape",
+          "lineNumber": 653
+        },
+        {
+          "caller": "pack_int4_to_int8",
+          "callee": "torch.bitwise_left_shift",
+          "lineNumber": 656
+        },
+        {
+          "caller": "pack_int4_to_int8",
+          "callee": "torch.bitwise_or",
+          "lineNumber": 658
+        },
+        {
+          "caller": "pack_int4_to_int8",
+          "callee": "weight_add.reshape(shape[:-1] + (shape[-1] // 2,)).clone",
+          "lineNumber": 660
+        },
+        {
+          "caller": "pack_int4_to_int8",
+          "callee": "weight_add.reshape",
+          "lineNumber": 660
+        },
+        {
+          "caller": "maybe_squeeze_per_channel_weight_scale",
+          "callee": "scale.dim",
+          "lineNumber": 664
+        },
+        {
+          "caller": "maybe_squeeze_per_channel_weight_scale",
+          "callee": "scale.squeeze",
+          "lineNumber": 665
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self.process_weights_after_loading_compressed_tensors",
+          "lineNumber": 670
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self.process_weights_after_loading_modelslim",
+          "lineNumber": 672
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "layer.w13_weight.data.transpose(1, 2).contiguous",
+          "lineNumber": 675
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "layer.w13_weight.data.transpose",
+          "lineNumber": 675
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "layer.w2_weight.data.transpose(1, 2).contiguous",
+          "lineNumber": 676
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "layer.w2_weight.data.transpose",
+          "lineNumber": 676
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "scale.transpose(1, 2).to(torch.float32).contiguous",
+          "lineNumber": 679
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "scale.transpose(1, 2).to",
+          "lineNumber": 679
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "scale.transpose",
+          "lineNumber": 679
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "scale.cpu().numpy",
+          "lineNumber": 680
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "scale.cpu",
+          "lineNumber": 680
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "torch.from_numpy(scale_np.astype(np.int64)).npu",
+          "lineNumber": 682
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "torch.from_numpy",
+          "lineNumber": 682
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "scale_np.astype",
+          "lineNumber": 682
+        },
+        {
+          "caller": "process_scale_compressed_tensors",
+          "callee": "self.maybe_squeeze_per_channel_weight_scale",
+          "lineNumber": 684
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "scale.transpose(1, 2).contiguous",
+          "lineNumber": 689
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "scale.transpose",
+          "lineNumber": 689
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "scale.reshape",
+          "lineNumber": 690
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "weight.to(torch.float32).reshape",
+          "lineNumber": 695
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "weight.to",
+          "lineNumber": 695
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "scale.reshape",
+          "lineNumber": 695
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "tmp.reshape",
+          "lineNumber": 698
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "tmp.sum",
+          "lineNumber": 699
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "(weight.to(torch.float32) * scale).sum",
+          "lineNumber": 701
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "weight.to",
+          "lineNumber": 701
+        },
+        {
+          "caller": "update_bias_compressed_tensors",
+          "callee": "ValueError",
+          "lineNumber": 703
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "update_bias_compressed_tensors",
+          "lineNumber": 706
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "update_bias_compressed_tensors",
+          "lineNumber": 709
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "process_scale_compressed_tensors",
+          "lineNumber": 711
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "process_scale_compressed_tensors",
+          "lineNumber": 712
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 714
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "layer.register_parameter",
+          "lineNumber": 715
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 716
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "layer.register_parameter",
+          "lineNumber": 717
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "self.pack_int4_to_int8",
+          "lineNumber": 720
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "self.pack_int4_to_int8",
+          "lineNumber": 721
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 722
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 723
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "self.pack_to_int32",
+          "lineNumber": 724
+        },
+        {
+          "caller": "process_weights_after_loading_compressed_tensors",
+          "callee": "self.pack_to_int32",
+          "lineNumber": 725
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w13_weight.data.transpose(1, 2).contiguous",
+          "lineNumber": 728
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w13_weight.data.transpose",
+          "lineNumber": 728
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w2_weight.data.transpose(1, 2).contiguous",
+          "lineNumber": 729
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w2_weight.data.transpose",
+          "lineNumber": 729
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "hasattr",
+          "lineNumber": 732
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "hasattr",
+          "lineNumber": 734
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "self.process_scale",
+          "lineNumber": 735
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "self.process_scale",
+          "lineNumber": 738
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "hasattr",
+          "lineNumber": 741
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "self.update_bias",
+          "lineNumber": 748
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "self.maybe_squeeze_per_channel_weight_scale",
+          "lineNumber": 751
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 752
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 753
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "weight.clone",
+          "lineNumber": 756
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w13_weight.data.unbind",
+          "lineNumber": 756
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "weight.clone",
+          "lineNumber": 757
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w2_weight.data.unbind",
+          "lineNumber": 757
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "weight.clone",
+          "lineNumber": 758
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w13_weight_scale.data.unbind",
+          "lineNumber": 758
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "weight.clone",
+          "lineNumber": 759
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w2_weight_scale.data.unbind",
+          "lineNumber": 759
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "weight.clone",
+          "lineNumber": 761
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w13_scale_bias.data.unbind",
+          "lineNumber": 761
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "hasattr",
+          "lineNumber": 762
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "weight.clone",
+          "lineNumber": 766
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "layer.w2_scale_bias.data.unbind",
+          "lineNumber": 766
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "hasattr",
+          "lineNumber": 767
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "self.pack_to_int32",
+          "lineNumber": 777
+        },
+        {
+          "caller": "process_weights_after_loading_modelslim",
+          "callee": "self.pack_to_int32",
+          "lineNumber": 778
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "quantization/methods/w4a8_mxfp4.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 241,
+      "nonEmptyLines": 213,
+      "classes": [
+        {
+          "name": "AscendW4A8MXFPDynamicLinearMethod",
+          "startLine": 41,
+          "endLine": 93,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pergroup_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendW4A8MXFPDynamicFusedMoEMethod",
+          "startLine": 97,
+          "endLine": 241,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_dynamic_quant_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW4A8MXFPDynamicLinearMethod",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW4A8MXFPDynamicFusedMoEMethod",
+          "line": 96,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "ensure_mxfp4_linear_available",
+          "lineNumber": 45
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 46
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 47
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 51
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 58
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_dynamic_mx_quant",
+          "lineNumber": 68
+        },
+        {
+          "caller": "apply",
+          "callee": "isinstance",
+          "lineNumber": 70
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 72
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_format_cast",
+          "lineNumber": 88
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 91
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.reshape(n, k // 2, 2).transpose",
+          "lineNumber": 93
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.reshape",
+          "lineNumber": 93
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ep_group",
+          "lineNumber": 103
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 105
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 106
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ascend_config",
+          "lineNumber": 107
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 119
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 122
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 131
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 135
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 166
+        },
+        {
+          "caller": "apply",
+          "callee": "get_moe_num_logical_experts",
+          "lineNumber": 169
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 176
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.rand",
+          "lineNumber": 196
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 196
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort(random_matrix, dim=1)[:, : topk_ids.size(1)].to",
+          "lineNumber": 197
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort",
+          "lineNumber": 197
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 197
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 199
+        },
+        {
+          "caller": "apply",
+          "callee": "get_forward_context",
+          "lineNumber": 201
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 202
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 203
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_format_cast",
+          "lineNumber": 230
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_format_cast",
+          "lineNumber": 233
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.transpose",
+          "lineNumber": 236
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.transpose",
+          "lineNumber": 237
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.reshape(g, n, k // 2, 2).transpose",
+          "lineNumber": 239
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.reshape",
+          "lineNumber": 239
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.reshape(g, n, k // 2, 2).transpose",
+          "lineNumber": 241
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.reshape",
+          "lineNumber": 241
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "quantization/methods/w8a16.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 78,
+      "nonEmptyLines": 66,
+      "classes": [
+        {
+          "name": "AscendW8A16LinearMethod",
+          "startLine": 30,
+          "endLine": 78,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A16LinearMethod",
+          "line": 29,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 45
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 54
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 55
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_weight_quant_batchmatmul",
+          "lineNumber": 65
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose(0, 1).contiguous",
+          "lineNumber": 75
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 75
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 76
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.flatten",
+          "lineNumber": 77
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.flatten",
+          "lineNumber": 78
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/methods/w8a8_dynamic.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 394,
+      "nonEmptyLines": 360,
+      "functions": [
+        {
+          "name": "scale_from_float_to_int64",
+          "startLine": 39,
+          "endLine": 46,
+          "params": [
+            "scale"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendW8A8DynamicLinearMethod",
+          "startLine": 50,
+          "endLine": 150,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendW8A8DynamicFusedMoEMethod",
+          "startLine": 154,
+          "endLine": 394,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_dynamic_quant_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "scale_from_float_to_int64",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW8A8DynamicLinearMethod",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW8A8DynamicFusedMoEMethod",
+          "line": 153,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "torch.from_numpy(\n        np.frombuffer(scale.cpu().to(torch.float32).numpy().tobytes(), dtype=np.int32).astype(np.int64)\n    ).to",
+          "lineNumber": 43
+        },
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "torch.from_numpy",
+          "lineNumber": 43
+        },
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "np.frombuffer(scale.cpu().to(torch.float32).numpy().tobytes(), dtype=np.int32).astype",
+          "lineNumber": 44
+        },
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "np.frombuffer",
+          "lineNumber": 44
+        },
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "scale.cpu().to(torch.float32).numpy().tobytes",
+          "lineNumber": 44
+        },
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "scale.cpu().to(torch.float32).numpy",
+          "lineNumber": 44
+        },
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "scale.cpu().to",
+          "lineNumber": 44
+        },
+        {
+          "caller": "scale_from_float_to_int64",
+          "callee": "scale.cpu",
+          "lineNumber": 44
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 70
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 71
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_dynamic_quant",
+          "lineNumber": 81
+        },
+        {
+          "caller": "apply",
+          "callee": "pertoken_scale.dim",
+          "lineNumber": 83
+        },
+        {
+          "caller": "apply",
+          "callee": "quantized_x.squeeze",
+          "lineNumber": 85
+        },
+        {
+          "caller": "apply",
+          "callee": "pertoken_scale.squeeze",
+          "lineNumber": 86
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 88
+        },
+        {
+          "caller": "apply",
+          "callee": "isinstance",
+          "lineNumber": 89
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.cat",
+          "lineNumber": 92
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 94
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 102
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 114
+        },
+        {
+          "caller": "apply",
+          "callee": "output.unsqueeze",
+          "lineNumber": 123
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose(0, 1).contiguous",
+          "lineNumber": 127
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 127
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "getattr",
+          "lineNumber": 128
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "enable_dsa_cp",
+          "lineNumber": 128
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 134
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data[:, :chunk_size].contiguous",
+          "lineNumber": 134
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 135
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data[:, chunk_size:].contiguous",
+          "lineNumber": 135
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data[:chunk_size].flatten().contiguous",
+          "lineNumber": 136
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data[:chunk_size].flatten",
+          "lineNumber": 136
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data[chunk_size:].flatten().contiguous",
+          "lineNumber": 137
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data[chunk_size:].flatten",
+          "lineNumber": 137
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_1_scale.to",
+          "lineNumber": 138
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_2_scale.to",
+          "lineNumber": 139
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data[:chunk_size].flatten().contiguous",
+          "lineNumber": 140
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data[:chunk_size].flatten",
+          "lineNumber": 140
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data[chunk_size:].flatten().contiguous",
+          "lineNumber": 141
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data[chunk_size:].flatten",
+          "lineNumber": 141
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 147
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.flatten",
+          "lineNumber": 148
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.to",
+          "lineNumber": 149
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_offset.data.flatten",
+          "lineNumber": 150
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ep_group",
+          "lineNumber": 161
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 163
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ascend_config",
+          "lineNumber": 164
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_mc2_group",
+          "lineNumber": 176
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.distributed.get_rank",
+          "lineNumber": 178
+        },
+        {
+          "caller": "__init__",
+          "callee": "device_group._get_backend",
+          "lineNumber": 179
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.device",
+          "lineNumber": 179
+        },
+        {
+          "caller": "__init__",
+          "callee": "backend.get_hccl_comm_name",
+          "lineNumber": 180
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.warning_once",
+          "lineNumber": 182
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 192
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 195
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 204
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 207
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 210
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 211
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 240
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 241
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 242
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 243
+        },
+        {
+          "caller": "apply",
+          "callee": "get_moe_num_logical_experts",
+          "lineNumber": 246
+        },
+        {
+          "caller": "apply",
+          "callee": "get_flash_common3_context",
+          "lineNumber": 263
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 270
+        },
+        {
+          "caller": "apply",
+          "callee": "zero_experts_compute",
+          "lineNumber": 291
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.rand",
+          "lineNumber": 302
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 302
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort(random_matrix, dim=1)[:, : topk_ids.size(1)].to",
+          "lineNumber": 303
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort",
+          "lineNumber": 303
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 303
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 306
+        },
+        {
+          "caller": "apply",
+          "callee": "get_ascend_config",
+          "lineNumber": 310
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.tensor",
+          "lineNumber": 323
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.tensor",
+          "lineNumber": 324
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 326
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 327
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.transpose(1, 2).contiguous",
+          "lineNumber": 354
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.transpose",
+          "lineNumber": 354
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.transpose(1, 2).contiguous",
+          "lineNumber": 355
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.transpose",
+          "lineNumber": 355
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_format_cast",
+          "lineNumber": 358
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch_npu.npu_format_cast",
+          "lineNumber": 359
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.view",
+          "lineNumber": 360
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.to",
+          "lineNumber": 361
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_offset.data.view",
+          "lineNumber": 362
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.view",
+          "lineNumber": 363
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_offset.data.view",
+          "lineNumber": 364
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "get_ascend_config",
+          "lineNumber": 366
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "scale_from_float_to_int64",
+          "lineNumber": 367
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "scale_from_float_to_int64",
+          "lineNumber": 368
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "weight.clone",
+          "lineNumber": 371
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.unbind",
+          "lineNumber": 371
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "weight.clone",
+          "lineNumber": 372
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.unbind",
+          "lineNumber": 372
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "weight.clone",
+          "lineNumber": 374
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale_fp32.data.unbind",
+          "lineNumber": 374
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "weight.clone",
+          "lineNumber": 376
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.unbind",
+          "lineNumber": 376
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "get_ascend_config",
+          "lineNumber": 377
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "weight.clone",
+          "lineNumber": 379
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.fused_w1_scale.view(len(layer.w13_weight_list), -1).data.unbind",
+          "lineNumber": 380
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.fused_w1_scale.view",
+          "lineNumber": 380
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "len",
+          "lineNumber": 380
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "weight.clone",
+          "lineNumber": 383
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.fused_w2_scale.view(len(layer.w2_weight_list), -1).data.unbind",
+          "lineNumber": 384
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.fused_w2_scale.view",
+          "lineNumber": 384
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "len",
+          "lineNumber": 384
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "get_ascend_config",
+          "lineNumber": 391
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.npu.empty_cache",
+          "lineNumber": 394
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "quantization/methods/w8a8_mxfp8.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 428,
+      "nonEmptyLines": 365,
+      "classes": [
+        {
+          "name": "AscendW8A8MXFP8DynamicLinearMethod",
+          "startLine": 45,
+          "endLine": 186,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pergroup_param",
+            "apply",
+            "process_weights_after_loading",
+            "restore_weights_for_rl_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendW8A8MXFP8DynamicFusedMoEMethod",
+          "startLine": 190,
+          "endLine": 428,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_dynamic_quant_param",
+            "apply",
+            "process_weights_after_loading",
+            "restore_weights_for_rl_loading"
+          ],
+          "properties": [
+            "quant_type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8MXFP8DynamicLinearMethod",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW8A8MXFP8DynamicFusedMoEMethod",
+          "line": 189,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "ensure_mxfp8_linear_available",
+          "lineNumber": 56
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 57
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 58
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "torch.empty",
+          "lineNumber": 68
+        },
+        {
+          "caller": "get_pergroup_param",
+          "callee": "cdiv",
+          "lineNumber": 68
+        },
+        {
+          "caller": "apply",
+          "callee": "x.dim",
+          "lineNumber": 80
+        },
+        {
+          "caller": "apply",
+          "callee": "x.view",
+          "lineNumber": 81
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_dynamic_mx_quant",
+          "lineNumber": 82
+        },
+        {
+          "caller": "apply",
+          "callee": "bias.to",
+          "lineNumber": 85
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 87
+        },
+        {
+          "caller": "apply",
+          "callee": "len",
+          "lineNumber": 99
+        },
+        {
+          "caller": "apply",
+          "callee": "output.view",
+          "lineNumber": 100
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "getattr",
+          "lineNumber": 118
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "hasattr",
+          "lineNumber": 123
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "tuple",
+          "lineNumber": 125
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "tuple",
+          "lineNumber": 126
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "F.pad",
+          "lineNumber": 132
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.reshape",
+          "lineNumber": 133
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.reshape",
+          "lineNumber": 135
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 136
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.transpose",
+          "lineNumber": 137
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "getattr",
+          "lineNumber": 157
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "hasattr",
+          "lineNumber": 161
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "logger.error",
+          "lineNumber": 167
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "RuntimeError",
+          "lineNumber": 168
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight.data.transpose(0, 1).contiguous",
+          "lineNumber": 174
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 174
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 175
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight.data.copy_",
+          "lineNumber": 176
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight_scale.data.transpose(0, 1).reshape(orig_scale_shape).contiguous",
+          "lineNumber": 181
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight_scale.data.transpose(0, 1).reshape",
+          "lineNumber": 181
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight_scale.data.transpose",
+          "lineNumber": 181
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight_scale.data.transpose(0, 1).view",
+          "lineNumber": 182
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight_scale.data.transpose",
+          "lineNumber": 182
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "layer.weight_scale.data.copy_",
+          "lineNumber": 183
+        },
+        {
+          "caller": "__init__",
+          "callee": "ensure_mxfp8_moe_available",
+          "lineNumber": 197
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ep_group",
+          "lineNumber": 198
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 200
+        },
+        {
+          "caller": "__init__",
+          "callee": "vllm_config.quant_config.quant_description.get",
+          "lineNumber": 201
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ascend_config",
+          "lineNumber": 202
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 215
+        },
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 218
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 227
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 231
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 262
+        },
+        {
+          "caller": "apply",
+          "callee": "get_moe_num_logical_experts",
+          "lineNumber": 265
+        },
+        {
+          "caller": "apply",
+          "callee": "get_flash_common3_context",
+          "lineNumber": 273
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 278
+        },
+        {
+          "caller": "apply",
+          "callee": "RuntimeError",
+          "lineNumber": 295
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.rand",
+          "lineNumber": 301
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 301
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort(random_matrix, dim=1)[:, : topk_ids.size(1)].to",
+          "lineNumber": 302
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.argsort",
+          "lineNumber": 302
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_ids.size",
+          "lineNumber": 302
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 305
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 308
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 309
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "getattr",
+          "lineNumber": 351
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "hasattr",
+          "lineNumber": 356
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "tuple",
+          "lineNumber": 358
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "tuple",
+          "lineNumber": 359
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "tuple",
+          "lineNumber": 360
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "tuple",
+          "lineNumber": 361
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.reshape",
+          "lineNumber": 365
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.reshape",
+          "lineNumber": 367
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight.data.transpose",
+          "lineNumber": 368
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight.data.transpose",
+          "lineNumber": 369
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w13_weight_scale.data.transpose",
+          "lineNumber": 370
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.w2_weight_scale.data.transpose",
+          "lineNumber": 371
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "getattr",
+          "lineNumber": 393
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "hasattr",
+          "lineNumber": 397
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "logger.error",
+          "lineNumber": 403
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "RuntimeError",
+          "lineNumber": 404
+        },
+        {
+          "caller": "_restore",
+          "callee": "getattr",
+          "lineNumber": 411
+        },
+        {
+          "caller": "_restore",
+          "callee": "weight_tensor.data.transpose(1, 2).contiguous",
+          "lineNumber": 412
+        },
+        {
+          "caller": "_restore",
+          "callee": "weight_tensor.data.transpose",
+          "lineNumber": 412
+        },
+        {
+          "caller": "_restore",
+          "callee": "weight_tensor.data.transpose",
+          "lineNumber": 413
+        },
+        {
+          "caller": "_restore",
+          "callee": "weight_tensor.data.copy_",
+          "lineNumber": 414
+        },
+        {
+          "caller": "_restore",
+          "callee": "getattr",
+          "lineNumber": 417
+        },
+        {
+          "caller": "_restore",
+          "callee": "scale_tensor.data.transpose(1, 2).reshape(orig_scale_shape).contiguous",
+          "lineNumber": 420
+        },
+        {
+          "caller": "_restore",
+          "callee": "scale_tensor.data.transpose(1, 2).reshape",
+          "lineNumber": 420
+        },
+        {
+          "caller": "_restore",
+          "callee": "scale_tensor.data.transpose",
+          "lineNumber": 420
+        },
+        {
+          "caller": "_restore",
+          "callee": "scale_tensor.data.transpose(1, 2).view",
+          "lineNumber": 421
+        },
+        {
+          "caller": "_restore",
+          "callee": "scale_tensor.data.transpose",
+          "lineNumber": 421
+        },
+        {
+          "caller": "_restore",
+          "callee": "scale_tensor.data.copy_",
+          "lineNumber": 422
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "_restore",
+          "lineNumber": 424
+        },
+        {
+          "caller": "restore_weights_for_rl_loading",
+          "callee": "_restore",
+          "lineNumber": 425
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "quantization/methods/w8a8_pdmix.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 83,
+      "classes": [
+        {
+          "name": "AscendW8A8PDMixLinearMethod",
+          "startLine": 37,
+          "endLine": 85,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pertensor_param",
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendW8A8PDMixFusedMoeMethod",
+          "startLine": 89,
+          "endLine": 101,
+          "methods": [
+            "get_dynamic_quant_param"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8PDMixLinearMethod",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "AscendW8A8PDMixFusedMoeMethod",
+          "line": 88,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "AscendW8A8LinearMethod",
+          "lineNumber": 51
+        },
+        {
+          "caller": "__init__",
+          "callee": "AscendW8A8DynamicLinearMethod",
+          "lineNumber": 52
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 54
+        },
+        {
+          "caller": "get_weight",
+          "callee": "self._static_method.get_weight",
+          "lineNumber": 58
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "self._static_method.get_pertensor_param",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "self._static_method.get_perchannel_param",
+          "lineNumber": 68
+        },
+        {
+          "caller": "apply",
+          "callee": "self._static_method.apply",
+          "lineNumber": 78
+        },
+        {
+          "caller": "apply",
+          "callee": "self._dynamic_method.apply",
+          "lineNumber": 80
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self._static_method.process_weights_after_loading",
+          "lineNumber": 83
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight_scale.data.to",
+          "lineNumber": 84
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "super().get_dynamic_quant_param",
+          "lineNumber": 93
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "super",
+          "lineNumber": 93
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 96
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 97
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 98
+        },
+        {
+          "caller": "get_dynamic_quant_param",
+          "callee": "torch.empty",
+          "lineNumber": 99
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "quantization/methods/w8a8_static.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 161,
+      "nonEmptyLines": 143,
+      "classes": [
+        {
+          "name": "AscendW8A8LinearMethod",
+          "startLine": 34,
+          "endLine": 161,
+          "methods": [
+            "__init__",
+            "get_weight",
+            "get_pertensor_param",
+            "get_perchannel_param",
+            "apply",
+            "process_weights_after_loading"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendW8A8LinearMethod",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_weight",
+          "callee": "torch.empty",
+          "lineNumber": 50
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 55
+        },
+        {
+          "caller": "get_pertensor_param",
+          "callee": "torch.empty",
+          "lineNumber": 56
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 69
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 70
+        },
+        {
+          "caller": "get_perchannel_param",
+          "callee": "torch.empty",
+          "lineNumber": 71
+        },
+        {
+          "caller": "apply",
+          "callee": "get_weight_prefetch_method",
+          "lineNumber": 83
+        },
+        {
+          "caller": "apply",
+          "callee": "weight_prefetch_method.maybe_prefetch_attn_weight_preprocess",
+          "lineNumber": 85
+        },
+        {
+          "caller": "apply",
+          "callee": "quant_comm_config.get",
+          "lineNumber": 94
+        },
+        {
+          "caller": "apply",
+          "callee": "x.contiguous().view",
+          "lineNumber": 99
+        },
+        {
+          "caller": "apply",
+          "callee": "x.contiguous",
+          "lineNumber": 99
+        },
+        {
+          "caller": "apply",
+          "callee": "layer.aclnn_input_scale_reciprocal.size",
+          "lineNumber": 99
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.ops.vllm.quantize",
+          "lineNumber": 100
+        },
+        {
+          "caller": "apply",
+          "callee": "quant_x.view",
+          "lineNumber": 106
+        },
+        {
+          "caller": "apply",
+          "callee": "x.size",
+          "lineNumber": 106
+        },
+        {
+          "caller": "apply",
+          "callee": "comm_fn",
+          "lineNumber": 108
+        },
+        {
+          "caller": "apply",
+          "callee": "torch.ops.vllm.quantize",
+          "lineNumber": 111
+        },
+        {
+          "caller": "apply",
+          "callee": "weight_prefetch_method.maybe_prefetch_attn_weight_postprocess",
+          "lineNumber": 119
+        },
+        {
+          "caller": "apply",
+          "callee": "torch_npu.npu_quant_matmul",
+          "lineNumber": 133
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 144
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_scale.data.repeat",
+          "lineNumber": 145
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 147
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_scale.data.repeat",
+          "lineNumber": 148
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter(\n            layer.input_offset.data.repeat(expanding_factor), requires_grad=False\n        ).to",
+          "lineNumber": 150
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 150
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.input_offset.data.repeat",
+          "lineNumber": 151
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose(0, 1).contiguous",
+          "lineNumber": 154
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "layer.weight.data.transpose",
+          "lineNumber": 154
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 155
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.flatten",
+          "lineNumber": 156
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.flatten",
+          "lineNumber": 157
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "getattr",
+          "lineNumber": 158
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 161
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "quantization/modelslim_config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 839,
+      "nonEmptyLines": 755,
+      "functions": [
+        {
+          "name": "get_packed_modules_mapping",
+          "startLine": 284,
+          "endLine": 294,
+          "params": [
+            "model_type"
+          ]
+        },
+        {
+          "name": "get_linear_quant_type",
+          "startLine": 297,
+          "endLine": 331,
+          "params": [
+            "quant_description",
+            "prefix",
+            "packed_modules_mapping"
+          ]
+        },
+        {
+          "name": "get_quant_type_for_layer",
+          "startLine": 334,
+          "endLine": 363,
+          "params": [
+            "quant_description",
+            "prefix",
+            "layer_type",
+            "packed_modules_mapping"
+          ]
+        },
+        {
+          "name": "create_scheme_for_layer",
+          "startLine": 366,
+          "endLine": 398,
+          "params": [
+            "quant_description",
+            "prefix",
+            "layer_type",
+            "packed_modules_mapping"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "AscendModelSlimConfig",
+          "startLine": 402,
+          "endLine": 839,
+          "methods": [
+            "__init__",
+            "__repr__",
+            "get_name",
+            "get_supported_act_dtypes",
+            "get_min_capability",
+            "get_config_filenames",
+            "from_config",
+            "override_quantization_method",
+            "apply_vllm_mapper",
+            "get_cache_scale",
+            "quant_prefix_mapper",
+            "get_quant_method",
+            "is_layer_skipped_ascend",
+            "is_fa_quant_layer",
+            "enabling_fa_quant",
+            "is_indexer_quant_layer",
+            "is_c8_quant_layer",
+            "get_kv_quant_dtype",
+            "get_kv_quant_split_factor",
+            "maybe_update_config",
+            "_apply_extra_quant_adaptations",
+            "_add_kvcache_quant_metadata"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_packed_modules_mapping",
+          "line": 284,
+          "isDefault": false
+        },
+        {
+          "name": "get_linear_quant_type",
+          "line": 297,
+          "isDefault": false
+        },
+        {
+          "name": "get_quant_type_for_layer",
+          "line": 334,
+          "isDefault": false
+        },
+        {
+          "name": "create_scheme_for_layer",
+          "line": 366,
+          "isDefault": false
+        },
+        {
+          "name": "AscendModelSlimConfig",
+          "line": 401,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_packed_modules_mapping",
+          "callee": "packed_modules_model_mapping.get",
+          "lineNumber": 294
+        },
+        {
+          "caller": "get_linear_quant_type",
+          "callee": "prefix.split",
+          "lineNumber": 310
+        },
+        {
+          "caller": "get_linear_quant_type",
+          "callee": "prefix.replace",
+          "lineNumber": 314
+        },
+        {
+          "caller": "get_linear_quant_type",
+          "callee": "logger.error",
+          "lineNumber": 327
+        },
+        {
+          "caller": "get_linear_quant_type",
+          "callee": "ValueError",
+          "lineNumber": 328
+        },
+        {
+          "caller": "get_quant_type_for_layer",
+          "callee": "dict",
+          "lineNumber": 352
+        },
+        {
+          "caller": "get_quant_type_for_layer",
+          "callee": "quant_description.get",
+          "lineNumber": 355
+        },
+        {
+          "caller": "get_quant_type_for_layer",
+          "callee": "get_linear_quant_type",
+          "lineNumber": 363
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "logger.info_once",
+          "lineNumber": 383
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "get_quant_type_for_layer",
+          "lineNumber": 384
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "logger.error",
+          "lineNumber": 388
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "ValueError",
+          "lineNumber": 389
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "get_scheme_class",
+          "lineNumber": 392
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "scheme_cls",
+          "lineNumber": 394
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "logger.error",
+          "lineNumber": 397
+        },
+        {
+          "caller": "create_scheme_for_layer",
+          "callee": "NotImplementedError",
+          "lineNumber": 398
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 411
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 411
+        },
+        {
+          "caller": "__init__",
+          "callee": "self._apply_extra_quant_adaptations",
+          "lineNumber": 413
+        },
+        {
+          "caller": "__init__",
+          "callee": "self._add_kvcache_quant_metadata",
+          "lineNumber": 417
+        },
+        {
+          "caller": "__repr__",
+          "callee": "super().__repr__",
+          "lineNumber": 420
+        },
+        {
+          "caller": "__repr__",
+          "callee": "super",
+          "lineNumber": 420
+        },
+        {
+          "caller": "get_min_capability",
+          "callee": "logger.error",
+          "lineNumber": 432
+        },
+        {
+          "caller": "get_min_capability",
+          "callee": "NotImplementedError",
+          "lineNumber": 433
+        },
+        {
+          "caller": "from_config",
+          "callee": "cls",
+          "lineNumber": 446
+        },
+        {
+          "caller": "override_quantization_method",
+          "callee": "hf_quant_cfg.get",
+          "lineNumber": 451
+        },
+        {
+          "caller": "override_quantization_method",
+          "callee": "torch.npu.is_available",
+          "lineNumber": 452
+        },
+        {
+          "caller": "apply_vllm_mapper",
+          "callee": "hf_to_vllm_mapper.apply_dict",
+          "lineNumber": 475
+        },
+        {
+          "caller": "apply_vllm_mapper",
+          "callee": "self._add_kvcache_quant_metadata",
+          "lineNumber": 476
+        },
+        {
+          "caller": "apply_vllm_mapper",
+          "callee": "logger.info",
+          "lineNumber": 477
+        },
+        {
+          "caller": "get_cache_scale",
+          "callee": "self.quant_description.get",
+          "lineNumber": 481
+        },
+        {
+          "caller": "get_cache_scale",
+          "callee": "_C8_SCALE_MAPPING.items",
+          "lineNumber": 489
+        },
+        {
+          "caller": "get_cache_scale",
+          "callee": "name.endswith",
+          "lineNumber": 490
+        },
+        {
+          "caller": "get_cache_scale",
+          "callee": "len",
+          "lineNumber": 491
+        },
+        {
+          "caller": "quant_prefix_mapper",
+          "callee": "QUANT_MODEL_PREFIX_MAPPINGS.get",
+          "lineNumber": 505
+        },
+        {
+          "caller": "quant_prefix_mapper",
+          "callee": "QUANT_MODEL_SUBSTR_MAPPINGS.get",
+          "lineNumber": 506
+        },
+        {
+          "caller": "quant_prefix_mapper",
+          "callee": "WeightsMapper",
+          "lineNumber": 508
+        },
+        {
+          "caller": "quant_prefix_mapper",
+          "callee": "hf_to_vllm_mapper._map_name",
+          "lineNumber": 509
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 520
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "prefix.replace",
+          "lineNumber": 525
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "prefix.split",
+          "lineNumber": 527
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "len",
+          "lineNumber": 528
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "parts.index",
+          "lineNumber": 529
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "len",
+          "lineNumber": 530
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "parts[exp_idx + 1].isdigit",
+          "lineNumber": 530
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "\".\".join",
+          "lineNumber": 532
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "prefix.replace",
+          "lineNumber": 536
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "prefix.replace",
+          "lineNumber": 537
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self.quant_prefix_mapper",
+          "lineNumber": 540
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 542
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self.is_layer_skipped_ascend",
+          "lineNumber": 543
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 547
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendUnquantizedLinearMethod",
+          "lineNumber": 548
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "create_scheme_for_layer",
+          "lineNumber": 549
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 550
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendLinearMethod",
+          "lineNumber": 551
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 552
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self.is_fa_quant_layer",
+          "lineNumber": 553
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self.is_indexer_quant_layer",
+          "lineNumber": 553
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "create_scheme_for_layer",
+          "lineNumber": 555
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 556
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendKVCacheMethod",
+          "lineNumber": 557
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 558
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self.is_c8_quant_layer",
+          "lineNumber": 558
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 561
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendKVCacheMethod",
+          "lineNumber": 562
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendC8KVCacheAttentionMethod",
+          "lineNumber": 562
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 563
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self.is_layer_skipped_ascend",
+          "lineNumber": 564
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 568
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendUnquantizedFusedMoEMethod",
+          "lineNumber": 569
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "create_scheme_for_layer",
+          "lineNumber": 570
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 571
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendFusedMoEMethod",
+          "lineNumber": 572
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "isinstance",
+          "lineNumber": 573
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "self.is_layer_skipped_ascend",
+          "lineNumber": 574
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 575
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "UnquantizedEmbeddingMethod",
+          "lineNumber": 576
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "create_scheme_for_layer",
+          "lineNumber": 577
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 578
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "AscendEmbeddingMethod",
+          "lineNumber": 579
+        },
+        {
+          "caller": "get_quant_method",
+          "callee": "logger.debug",
+          "lineNumber": 580
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "MappingProxyType",
+          "lineNumber": 583
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "prefix.split",
+          "lineNumber": 585
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "prefix.replace",
+          "lineNumber": 588
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "ValueError",
+          "lineNumber": 598
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "any",
+          "lineNumber": 604
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "key.startswith",
+          "lineNumber": 605
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "key.endswith",
+          "lineNumber": 605
+        },
+        {
+          "caller": "is_layer_skipped_ascend",
+          "callee": "self.quant_description.items",
+          "lineNumber": 606
+        },
+        {
+          "caller": "is_fa_quant_layer",
+          "callee": "\"\".join",
+          "lineNumber": 614
+        },
+        {
+          "caller": "is_fa_quant_layer",
+          "callee": "re.findall",
+          "lineNumber": 614
+        },
+        {
+          "caller": "is_fa_quant_layer",
+          "callee": "layer_id_str.isdigit",
+          "lineNumber": 615
+        },
+        {
+          "caller": "is_fa_quant_layer",
+          "callee": "int",
+          "lineNumber": 615
+        },
+        {
+          "caller": "enabling_fa_quant",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 625
+        },
+        {
+          "caller": "enabling_fa_quant",
+          "callee": "self.is_fa_quant_layer",
+          "lineNumber": 626
+        },
+        {
+          "caller": "enabling_fa_quant",
+          "callee": "bool",
+          "lineNumber": 628
+        },
+        {
+          "caller": "enabling_fa_quant",
+          "callee": "self.is_fa_quant_layer",
+          "lineNumber": 628
+        },
+        {
+          "caller": "is_indexer_quant_layer",
+          "callee": "\"\".join",
+          "lineNumber": 632
+        },
+        {
+          "caller": "is_indexer_quant_layer",
+          "callee": "re.findall",
+          "lineNumber": 632
+        },
+        {
+          "caller": "is_indexer_quant_layer",
+          "callee": "layer_id_str.isdigit",
+          "lineNumber": 633
+        },
+        {
+          "caller": "is_indexer_quant_layer",
+          "callee": "int",
+          "lineNumber": 633
+        },
+        {
+          "caller": "is_c8_quant_layer",
+          "callee": "\"\".join",
+          "lineNumber": 639
+        },
+        {
+          "caller": "is_c8_quant_layer",
+          "callee": "re.findall",
+          "lineNumber": 639
+        },
+        {
+          "caller": "is_c8_quant_layer",
+          "callee": "layer_id_str.isdigit",
+          "lineNumber": 640
+        },
+        {
+          "caller": "is_c8_quant_layer",
+          "callee": "int",
+          "lineNumber": 640
+        },
+        {
+          "caller": "get_kv_quant_dtype",
+          "callee": "self.is_fa_quant_layer",
+          "lineNumber": 645
+        },
+        {
+          "caller": "get_kv_quant_dtype",
+          "callee": "get_ascend_device_type",
+          "lineNumber": 647
+        },
+        {
+          "caller": "get_kv_quant_split_factor",
+          "callee": "self.is_fa_quant_layer",
+          "lineNumber": 656
+        },
+        {
+          "caller": "get_kv_quant_split_factor",
+          "callee": "calc_split_factor",
+          "lineNumber": 660
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "get_model_file",
+          "lineNumber": 695
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "open",
+          "lineNumber": 698
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "json.load",
+          "lineNumber": 699
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "self._apply_extra_quant_adaptations",
+          "lineNumber": 700
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "self._add_kvcache_quant_metadata",
+          "lineNumber": 701
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "os.path.isdir",
+          "lineNumber": 706
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "glob.glob",
+          "lineNumber": 707
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "os.path.join",
+          "lineNumber": 707
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "os.path.basename",
+          "lineNumber": 708
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "logger.error",
+          "lineNumber": 711
+        },
+        {
+          "caller": "maybe_update_config",
+          "callee": "ValueError",
+          "lineNumber": 717
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.startswith",
+          "lineNumber": 773
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "self.quant_description.update",
+          "lineNumber": 776
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.replace",
+          "lineNumber": 782
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "self.quant_description.update",
+          "lineNumber": 784
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.replace",
+          "lineNumber": 790
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "self.quant_description.update",
+          "lineNumber": 792
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.replace",
+          "lineNumber": 798
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.replace",
+          "lineNumber": 800
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.replace",
+          "lineNumber": 802
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.replace",
+          "lineNumber": 805
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "name.replace",
+          "lineNumber": 807
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "self.quant_description.update",
+          "lineNumber": 809
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "k.replace",
+          "lineNumber": 814
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "k.replace",
+          "lineNumber": 817
+        },
+        {
+          "caller": "_apply_extra_quant_adaptations",
+          "callee": "self.quant_description.update",
+          "lineNumber": 819
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "self.quant_description.get",
+          "lineNumber": 822
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "self.quant_description.get",
+          "lineNumber": 825
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "self.quant_description.get",
+          "lineNumber": 828
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "\"\".join",
+          "lineNumber": 833
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "re.findall",
+          "lineNumber": 833
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "self.kvcache_quant_layers.append",
+          "lineNumber": 835
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "int",
+          "lineNumber": 835
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "self.indexer_quant_layers.append",
+          "lineNumber": 837
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "int",
+          "lineNumber": 837
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "self.c8_quant_layers.append",
+          "lineNumber": 839
+        },
+        {
+          "caller": "_add_kvcache_quant_metadata",
+          "callee": "int",
+          "lineNumber": 839
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 4,
+        "classCount": 1
+      }
+    }
+  ]
+}

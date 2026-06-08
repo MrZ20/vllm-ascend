@@ -1,0 +1,880 @@
+{
+  "nodes": [
+    {
+      "id": "file:sample/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "sample/__init__.py",
+      "summary": "sample 采样子包的空初始化文件，仅用于将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "barrel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sample/penalties.py",
+      "type": "file",
+      "name": "penalties.py",
+      "filePath": "sample/penalties.py",
+      "summary": "为 Ascend NPU 采样路径提供 logits 惩罚的统一入口，封装存在性、频率与重复惩罚的批量应用。",
+      "tags": ["sampling", "utility", "logits-processing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sample/penalties.py:apply_all_penalties",
+      "type": "function",
+      "name": "apply_all_penalties",
+      "filePath": "sample/penalties.py",
+      "lineRange": [25, 45],
+      "summary": "对一批 logits 依次应用存在、频率和重复惩罚，返回修正后的 logits 张量。",
+      "tags": ["sampling", "logits-processing", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sample/rejection_sampler.py",
+      "type": "file",
+      "name": "rejection_sampler.py",
+      "filePath": "sample/rejection_sampler.py",
+      "summary": "投机解码的 Ascend 拒绝采样器实现，包含贪婪/随机拒绝采样、token 展开与恢复采样的 PyTorch 算子组合。",
+      "tags": ["sampling", "speculative-decoding", "rejection-sampling", "service"],
+      "complexity": "complex",
+      "languageNotes": "包含多份针对 spec_len、blockwise 验证场景的 PyTorch 参考实现，便于与 AscendC kernel 路径对齐。"
+    },
+    {
+      "id": "class:sample/rejection_sampler.py:AscendRejectionSampler",
+      "type": "class",
+      "name": "AscendRejectionSampler",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [33, 183],
+      "summary": "Ascend 拒绝采样器主类，负责准备采样参数、应用惩罚并在 forward 中驱动拒绝采样流程。",
+      "tags": ["sampling", "speculative-decoding", "rejection-sampling"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:rejection_sample",
+      "type": "function",
+      "name": "rejection_sample",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [270, 616],
+      "summary": "核心拒绝采样调度函数，根据贪婪/随机分支与 spec 长度选择对应的逐 token 验证与恢复采样路径。",
+      "tags": ["sampling", "rejection-sampling", "speculative-decoding"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:apply_sampling_constraints",
+      "type": "function",
+      "name": "apply_sampling_constraints",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [205, 267],
+      "summary": "对目标概率施加 temperature、top-k、top-p 等采样约束，为后续拒绝采样准备规范化概率分布。",
+      "tags": ["sampling", "constraints", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:sample_recovered_tokens",
+      "type": "function",
+      "name": "sample_recovered_tokens",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [662, 739],
+      "summary": "在草稿 token 被拒绝后，从修正分布中采样恢复 token，保证最终输出符合目标模型分布。",
+      "tags": ["sampling", "rejection-sampling", "recovery"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:rejection_random_sample_pytorch",
+      "type": "function",
+      "name": "rejection_random_sample_pytorch",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [811, 961],
+      "summary": "随机拒绝采样的纯 PyTorch 参考实现，逐 token 比较草稿概率与目标概率以决定接受或恢复。",
+      "tags": ["sampling", "rejection-sampling", "reference-impl"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:sample_recovered_tokens_pytorch",
+      "type": "function",
+      "name": "sample_recovered_tokens_pytorch",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [1011, 1127],
+      "summary": "恢复 token 采样的 PyTorch 参考实现，从 target 与 draft 概率差构造的修正分布中重新采样。",
+      "tags": ["sampling", "recovery", "reference-impl"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:sample_recovered_tokens_blockwise_pytorch",
+      "type": "function",
+      "name": "sample_recovered_tokens_blockwise_pytorch",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [1228, 1348],
+      "summary": "块级验证场景下的恢复 token 采样参考实现，按 block 粒度处理草稿被拒绝后的重采样。",
+      "tags": ["sampling", "recovery", "blockwise"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:rejection_random_sample_block_verify_pytorch",
+      "type": "function",
+      "name": "rejection_random_sample_block_verify_pytorch",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [1130, 1225],
+      "summary": "块级验证的随机拒绝采样参考实现，以 block 为单位执行接受判定与回退逻辑。",
+      "tags": ["sampling", "rejection-sampling", "blockwise"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:expand_batch_to_tokens",
+      "type": "function",
+      "name": "expand_batch_to_tokens",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [619, 659],
+      "summary": "将按请求组织的批次展开为按 token 排布的扁平张量，供逐 token 拒绝采样使用。",
+      "tags": ["sampling", "tensor-reshape", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:expand_pytorch",
+      "type": "function",
+      "name": "expand_pytorch",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [964, 1008],
+      "summary": "expand_batch_to_tokens 的纯 PyTorch 参考实现，用于校验展开逻辑的正确性。",
+      "tags": ["sampling", "tensor-reshape", "reference-impl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/rejection_sampler.py:rejection_greedy_sample_pytorch",
+      "type": "function",
+      "name": "rejection_greedy_sample_pytorch",
+      "filePath": "sample/rejection_sampler.py",
+      "lineRange": [757, 808],
+      "summary": "贪婪拒绝采样的 PyTorch 参考实现，逐 token 比较草稿与目标 argmax 决定接受长度。",
+      "tags": ["sampling", "rejection-sampling", "reference-impl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:sample/sampler.py",
+      "type": "file",
+      "name": "sampler.py",
+      "filePath": "sample/sampler.py",
+      "summary": "Ascend 采样器封装，提供 top-k/top-p 采样及异步指数采样的 NPU 适配，支持 PyTorch 与 AscendC 两条实现路径。",
+      "tags": ["sampling", "service", "npu-adaptation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:sample/sampler.py:AscendSampler",
+      "type": "class",
+      "name": "AscendSampler",
+      "filePath": "sample/sampler.py",
+      "lineRange": [44, 110],
+      "summary": "Ascend 采样器主类，封装惩罚应用、采样参数准备、异步指数采样与贪婪采样等 NPU 采样入口。",
+      "tags": ["sampling", "service", "npu-adaptation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:sample/sampler.py:AscendTopKTopPSampler",
+      "type": "class",
+      "name": "AscendTopKTopPSampler",
+      "filePath": "sample/sampler.py",
+      "lineRange": [113, 164],
+      "summary": "针对 NPU 优化的 top-k/top-p 采样器，提供原生 forward 实现以裁剪 logits 并采样。",
+      "tags": ["sampling", "top-k-top-p", "npu-adaptation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/sampler.py:_apply_top_k_top_p_pytorch",
+      "type": "function",
+      "name": "_apply_top_k_top_p_pytorch",
+      "filePath": "sample/sampler.py",
+      "lineRange": [167, 239],
+      "summary": "以纯 PyTorch 实现对 logits 应用 top-k 与 top-p 截断，作为 AscendC kernel 的回退路径。",
+      "tags": ["sampling", "top-k-top-p", "reference-impl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:simple_kv_offload/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "simple_kv_offload/__init__.py",
+      "summary": "simple_kv_offload 子包的初始化文件，标记 KV cache 卸载模块为 Python 包。",
+      "tags": ["entry-point", "package-init", "kv-cache"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:simple_kv_offload/copy_backend.py",
+      "type": "file",
+      "name": "copy_backend.py",
+      "filePath": "simple_kv_offload/copy_backend.py",
+      "summary": "NPU 与 CPU 之间 KV block 的 DMA 拷贝后端，通过 torch.ops._C_ascend.swap_blocks_batch 在独立线程上异步执行批量 memcpy。",
+      "tags": ["kv-cache", "dma", "npu-adaptation", "offload"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:simple_kv_offload/copy_backend.py:NPUDmaCopyBackend",
+      "type": "class",
+      "name": "NPUDmaCopyBackend",
+      "filePath": "simple_kv_offload/copy_backend.py",
+      "lineRange": [24, 124],
+      "summary": "基于 NPU stream/event 的 DMA 拷贝后端类，在后台拷贝线程中执行 D2H/H2D 批量 block 迁移并管理生命周期。",
+      "tags": ["kv-cache", "dma", "offload", "threading"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:simple_kv_offload/npu_mem_ops.py",
+      "type": "file",
+      "name": "npu_mem_ops.py",
+      "filePath": "simple_kv_offload/npu_mem_ops.py",
+      "summary": "封装 NPU 批量内存拷贝原语，构建 BatchMemcpyParams 并调用底层算子完成 KV block 在设备与主机间的搬运。",
+      "tags": ["kv-cache", "memory-ops", "npu-adaptation", "offload"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:simple_kv_offload/npu_mem_ops.py:BatchMemcpyParams",
+      "type": "class",
+      "name": "BatchMemcpyParams",
+      "filePath": "simple_kv_offload/npu_mem_ops.py",
+      "lineRange": [21, 28],
+      "summary": "描述一次批量 memcpy 操作的参数数据类，承载源/目标地址、方向与 block 数量等字段。",
+      "tags": ["kv-cache", "data-model", "memory-ops"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:simple_kv_offload/npu_mem_ops.py:build_params",
+      "type": "function",
+      "name": "build_params",
+      "filePath": "simple_kv_offload/npu_mem_ops.py",
+      "lineRange": [36, 68],
+      "summary": "根据 block 映射构建批量 memcpy 参数，计算源/目标偏移并按拷贝方向组织 BatchMemcpyParams。",
+      "tags": ["kv-cache", "memory-ops", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:simple_kv_offload/npu_mem_ops.py:copy_blocks",
+      "type": "function",
+      "name": "copy_blocks",
+      "filePath": "simple_kv_offload/npu_mem_ops.py",
+      "lineRange": [71, 99],
+      "summary": "执行 KV block 的批量拷贝，将构建好的参数提交给 NPU 批量 memcpy 算子完成实际数据搬运。",
+      "tags": ["kv-cache", "memory-ops", "offload"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:simple_kv_offload/worker.py",
+      "type": "file",
+      "name": "worker.py",
+      "filePath": "simple_kv_offload/worker.py",
+      "summary": "Ascend SimpleCPUOffloadConnector 的 worker 端处理器，重写 NPU 特有的拷贝后端注入与 KV cache block 视图构建。",
+      "tags": ["kv-cache", "offload", "worker", "npu-adaptation"],
+      "complexity": "moderate",
+      "languageNotes": "因 NPU 上 K/V 为独立分配且按 2MiB 对齐过量分配，block 视图尺寸需依据 tensor shape/stride 而非 storage.nbytes 重建。"
+    },
+    {
+      "id": "class:simple_kv_offload/worker.py:SimpleCPUOffloadNPUWorker",
+      "type": "class",
+      "name": "SimpleCPUOffloadNPUWorker",
+      "filePath": "simple_kv_offload/worker.py",
+      "lineRange": [55, 224],
+      "summary": "继承 vLLM SimpleCPUOffloadWorker 的 NPU 实现，替换 DMA 拷贝后端并重建适配 NPU 内存布局的 KV block 视图。",
+      "tags": ["kv-cache", "offload", "worker", "npu-adaptation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:spec_decode/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "spec_decode/__init__.py",
+      "summary": "投机解码子包入口，导出各 proposer 并通过 get_spec_decode_method 工厂按方法名分发到对应的 Ascend proposer。",
+      "tags": ["entry-point", "speculative-decoding", "factory", "barrel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:spec_decode/__init__.py:get_spec_decode_method",
+      "type": "function",
+      "name": "get_spec_decode_method",
+      "filePath": "spec_decode/__init__.py",
+      "lineRange": [33, 51],
+      "summary": "投机解码方法工厂，根据 ngram/eagle/medusa/dflash/draft_model 等方法名构造并返回对应的 Ascend proposer 实例。",
+      "tags": ["factory", "speculative-decoding", "dispatch"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spec_decode/dflash_proposer.py",
+      "type": "file",
+      "name": "dflash_proposer.py",
+      "filePath": "spec_decode/dflash_proposer.py",
+      "summary": "dflash 投机解码 proposer，继承 EAGLE proposer 并定制首遍输入构建与基于 Triton kernel 的草稿输入扩展。",
+      "tags": ["speculative-decoding", "proposer", "dflash", "npu-adaptation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:spec_decode/dflash_proposer.py:AscendDflashProposer",
+      "type": "class",
+      "name": "AscendDflashProposer",
+      "filePath": "spec_decode/dflash_proposer.py",
+      "lineRange": [15, 267],
+      "summary": "dflash proposer 类，重写首遍模型输入构建与 dummy_run，并通过 Triton kernel 扩展并复制草稿输入。",
+      "tags": ["speculative-decoding", "proposer", "dflash"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:spec_decode/draft_proposer.py",
+      "type": "file",
+      "name": "draft_proposer.py",
+      "filePath": "spec_decode/draft_proposer.py",
+      "summary": "draft_model 投机解码 proposer，多继承自 vLLM DraftModelProposer 与 Ascend 基类，校验词表与草稿 TP 配置一致性。",
+      "tags": ["speculative-decoding", "proposer", "draft-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:spec_decode/draft_proposer.py:AscendDraftModelProposer",
+      "type": "class",
+      "name": "AscendDraftModelProposer",
+      "filePath": "spec_decode/draft_proposer.py",
+      "lineRange": [8, 17],
+      "summary": "草稿模型 proposer 类，组合 vLLM DraftModelProposer 与 AscendSpecDecodeBaseProposer 并执行启动期配置校验。",
+      "tags": ["speculative-decoding", "proposer", "draft-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spec_decode/eagle_proposer.py",
+      "type": "file",
+      "name": "eagle_proposer.py",
+      "filePath": "spec_decode/eagle_proposer.py",
+      "summary": "EAGLE/EAGLE3/MTP 投机解码 proposer，多继承自 vLLM EagleProposer 与 Ascend 基类并启用隐藏状态透传。",
+      "tags": ["speculative-decoding", "proposer", "eagle"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:spec_decode/eagle_proposer.py:AscendEagleProposer",
+      "type": "class",
+      "name": "AscendEagleProposer",
+      "filePath": "spec_decode/eagle_proposer.py",
+      "lineRange": [10, 19],
+      "summary": "EAGLE proposer 类，组合 vLLM EagleProposer 与 Ascend 基类，初始化时开启向模型传递隐藏状态。",
+      "tags": ["speculative-decoding", "proposer", "eagle"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spec_decode/extract_hidden_states_proposer.py",
+      "type": "file",
+      "name": "extract_hidden_states_proposer.py",
+      "filePath": "spec_decode/extract_hidden_states_proposer.py",
+      "summary": "Ascend 适配的隐藏状态提取 proposer，在投机解码过程中提取并缓存模型隐藏状态供草稿模型复用。",
+      "tags": ["speculative-decoding", "proposer", "hidden-states"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:spec_decode/extract_hidden_states_proposer.py:AscendExtractHiddenStatesProposer",
+      "type": "class",
+      "name": "AscendExtractHiddenStatesProposer",
+      "filePath": "spec_decode/extract_hidden_states_proposer.py",
+      "lineRange": [25, 116],
+      "summary": "隐藏状态提取 proposer 类，负责 dummy_run、隐藏状态缓存以及为下一轮草稿准备 padded 的 next token id。",
+      "tags": ["speculative-decoding", "proposer", "hidden-states"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:spec_decode/llm_base_proposer.py",
+      "type": "file",
+      "name": "llm_base_proposer.py",
+      "filePath": "spec_decode/llm_base_proposer.py",
+      "summary": "投机解码 proposer 的 Ascend 基类，统一处理草稿模型加载、embedding/lm_head 共享、ACL graph 参数与提案前向推理。",
+      "tags": ["speculative-decoding", "proposer", "base-class", "npu-adaptation"],
+      "complexity": "complex",
+      "languageNotes": "大量处理 TP/SP/PCP 并行通信切分与 ACL graph 参数管理，是所有基于 LLM 的草稿 proposer 的公共底座。"
+    },
+    {
+      "id": "class:spec_decode/llm_base_proposer.py:AscendSpecDecodeBaseProposer",
+      "type": "class",
+      "name": "AscendSpecDecodeBaseProposer",
+      "filePath": "spec_decode/llm_base_proposer.py",
+      "lineRange": [111, 2009],
+      "summary": "投机解码草稿 proposer 的核心基类，封装模型加载、权重共享、graph 参数更新、dummy_run 与 _propose 提案流程。",
+      "tags": ["speculative-decoding", "proposer", "base-class", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:spec_decode/llm_base_proposer.py:split_inputs_tp_to_sp",
+      "type": "function",
+      "name": "split_inputs_tp_to_sp",
+      "filePath": "spec_decode/llm_base_proposer.py",
+      "lineRange": [74, 91],
+      "summary": "将 TP 布局的输入切分为 SP 布局，用于序列并行场景下草稿模型的输入重排。",
+      "tags": ["parallelism", "tensor-reshape", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spec_decode/medusa_proposer.py",
+      "type": "file",
+      "name": "medusa_proposer.py",
+      "filePath": "spec_decode/medusa_proposer.py",
+      "summary": "Medusa 投机解码 proposer 的 Ascend 实现，提供 dummy_run 与基于 medusa 头的多 token 提案逻辑。",
+      "tags": ["speculative-decoding", "proposer", "medusa"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:spec_decode/medusa_proposer.py:AscendMedusaProposer",
+      "type": "class",
+      "name": "AscendMedusaProposer",
+      "filePath": "spec_decode/medusa_proposer.py",
+      "lineRange": [10, 70],
+      "summary": "Medusa proposer 类，实现 dummy_run 与 propose，通过 medusa 头并行生成多个候选草稿 token。",
+      "tags": ["speculative-decoding", "proposer", "medusa"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:spec_decode/ngram_proposer.py",
+      "type": "file",
+      "name": "ngram_proposer.py",
+      "filePath": "spec_decode/ngram_proposer.py",
+      "summary": "基于 n-gram 匹配的投机解码 proposer，通过历史 token 的 n-gram 查找生成草稿候选。",
+      "tags": ["speculative-decoding", "proposer", "ngram"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:spec_decode/ngram_proposer.py:AscendNgramProposer",
+      "type": "class",
+      "name": "AscendNgramProposer",
+      "filePath": "spec_decode/ngram_proposer.py",
+      "lineRange": [5, 64],
+      "summary": "n-gram proposer 类，实现 load_model、dummy_run 与 propose，依据 n-gram 匹配从上下文中提取草稿 token。",
+      "tags": ["speculative-decoding", "proposer", "ngram"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spec_decode/ngram_proposer_npu.py",
+      "type": "file",
+      "name": "ngram_proposer_npu.py",
+      "filePath": "spec_decode/ngram_proposer_npu.py",
+      "summary": "n-gram 投机解码 proposer 的 NPU 加速变体，将 n-gram 匹配下放到 NPU 设备执行。",
+      "tags": ["speculative-decoding", "proposer", "ngram", "npu-adaptation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:spec_decode/ngram_proposer_npu.py:AscendNgramProposerNPU",
+      "type": "class",
+      "name": "AscendNgramProposerNPU",
+      "filePath": "spec_decode/ngram_proposer_npu.py",
+      "lineRange": [5, 35],
+      "summary": "NPU 版 n-gram proposer 类，提供基于设备的 load_model、dummy_run 与 propose 实现。",
+      "tags": ["speculative-decoding", "proposer", "ngram"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spec_decode/suffix_proposer.py",
+      "type": "file",
+      "name": "suffix_proposer.py",
+      "filePath": "spec_decode/suffix_proposer.py",
+      "summary": "后缀解码投机 proposer 的 Ascend 封装，复用 vLLM SuffixDecodingProposer 并接入 runner 的 input batch。",
+      "tags": ["speculative-decoding", "proposer", "suffix-decoding"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:spec_decode/suffix_proposer.py:AscendSuffixDecodingProposer",
+      "type": "class",
+      "name": "AscendSuffixDecodingProposer",
+      "filePath": "spec_decode/suffix_proposer.py",
+      "lineRange": [4, 24],
+      "summary": "后缀解码 proposer 类，包装 vLLM SuffixDecodingProposer 并以 runner 的 input batch 驱动 propose。",
+      "tags": ["speculative-decoding", "proposer", "suffix-decoding"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:spec_decode/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "spec_decode/utils.py",
+      "summary": "投机解码辅助工具，提供批次变化时已计算 token 数的更新逻辑。",
+      "tags": ["speculative-decoding", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:spec_decode/utils.py:update_num_computed_tokens_for_batch_change",
+      "type": "function",
+      "name": "update_num_computed_tokens_for_batch_change",
+      "filePath": "spec_decode/utils.py",
+      "lineRange": [6, 31],
+      "summary": "在投机解码批次构成变化后，更新每个请求已计算 token 的计数以保持调度一致。",
+      "tags": ["speculative-decoding", "utility", "bookkeeping"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "utils.py",
+      "summary": "vllm-ascend 顶层通用工具集合，涵盖设备类型检测、ND/NZ 格式转换、ACL graph 尺寸更新、自定义算子注册及并行通信配置等共享辅助函数。",
+      "tags": ["utility", "npu-adaptation", "helpers", "barrel"],
+      "complexity": "complex",
+      "languageNotes": "提供大量 Ascend 平台专有工具：NZ 格式转换、HCCL 通信配置、ACL graph capture 尺寸调整以及自定义 op 注册等横向能力。"
+    },
+    {
+      "id": "function:utils.py:update_aclgraph_sizes",
+      "type": "function",
+      "name": "update_aclgraph_sizes",
+      "filePath": "utils.py",
+      "lineRange": [612, 752],
+      "summary": "根据模型层数与运行配置计算并更新 ACL graph 的 capture 尺寸列表，平衡显存占用与 graph 复用收益。",
+      "tags": ["acl-graph", "npu-adaptation", "configuration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:utils.py:register_ascend_customop",
+      "type": "function",
+      "name": "register_ascend_customop",
+      "filePath": "utils.py",
+      "lineRange": [760, 887],
+      "summary": "向 vLLM 注册 Ascend 自定义算子，将 NPU 优化实现替换到模型执行路径中。",
+      "tags": ["custom-op", "npu-adaptation", "registration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:utils.py:should_skip_allreduce_across_dp_group",
+      "type": "function",
+      "name": "should_skip_allreduce_across_dp_group",
+      "filePath": "utils.py",
+      "lineRange": [1201, 1270],
+      "summary": "判断在数据并行组内是否可跳过 allreduce，以减少 DP 通信开销。",
+      "tags": ["parallelism", "communication", "optimization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:utils.py:get_compressed_pos_and_indices",
+      "type": "function",
+      "name": "get_compressed_pos_and_indices",
+      "filePath": "utils.py",
+      "lineRange": [1583, 1649],
+      "summary": "计算压缩位置编码与索引，用于 KV 压缩或稀疏 attention 场景下的位置映射。",
+      "tags": ["kv-cache", "position-encoding", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:utils.py:device_print",
+      "type": "function",
+      "name": "device_print",
+      "filePath": "utils.py",
+      "lineRange": [161, 206],
+      "summary": "在 NPU 设备侧打印张量内容的调试辅助，按需注册底层 device print 自定义算子。",
+      "tags": ["debugging", "npu-adaptation", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:utils.py:enable_custom_op",
+      "type": "function",
+      "name": "enable_custom_op",
+      "filePath": "utils.py",
+      "lineRange": [352, 401],
+      "summary": "加载并启用 Ascend C++ 自定义算子库，确保 NPU 专用 kernel 可在运行时调用。",
+      "tags": ["custom-op", "npu-adaptation", "initialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:utils.py:get_flashcomm2_config_and_validate",
+      "type": "function",
+      "name": "get_flashcomm2_config_and_validate",
+      "filePath": "utils.py",
+      "lineRange": [1295, 1342],
+      "summary": "读取并校验 FlashComm2 通信优化配置，确保与并行布局兼容后返回可用配置。",
+      "tags": ["communication", "configuration", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:utils.py:check_ascend_device_type",
+      "type": "function",
+      "name": "check_ascend_device_type",
+      "filePath": "utils.py",
+      "lineRange": [911, 931],
+      "summary": "检测当前 Ascend NPU 的具体设备型号，返回对应的 AscendDeviceType 枚举值。",
+      "tags": ["device-detection", "npu-adaptation", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:utils.py:refresh_block_size",
+      "type": "function",
+      "name": "refresh_block_size",
+      "filePath": "utils.py",
+      "lineRange": [1364, 1402],
+      "summary": "根据模型与硬件约束刷新 KV cache 的 block 大小配置，保证内存对齐与 kernel 兼容。",
+      "tags": ["kv-cache", "configuration", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:worker/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "worker/__init__.py",
+      "summary": "worker 子包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "barrel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/block_table.py",
+      "type": "file",
+      "name": "block_table.py",
+      "filePath": "worker/block_table.py",
+      "summary": "管理 KV cache 物理 block 表与 slot 映射，支持多组 block table 及草稿场景下的 slot 计算与行级编辑。",
+      "tags": ["kv-cache", "block-table", "data-model", "worker"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:worker/block_table.py:BlockTable",
+      "type": "class",
+      "name": "BlockTable",
+      "filePath": "worker/block_table.py",
+      "lineRange": [12, 269],
+      "summary": "单组 KV cache block 表类，维护逻辑到物理 block 的映射并提供 slot mapping 计算、行追加/交换/清除等操作。",
+      "tags": ["kv-cache", "block-table", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:worker/block_table.py:MultiGroupBlockTable",
+      "type": "class",
+      "name": "MultiGroupBlockTable",
+      "filePath": "worker/block_table.py",
+      "lineRange": [272, 406],
+      "summary": "多组 block table 容器类，按 KV cache 组聚合多个 BlockTable 并统一转发行编辑与 slot 计算操作。",
+      "tags": ["kv-cache", "block-table", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:worker/kvcomp_utils.py",
+      "type": "file",
+      "name": "kvcomp_utils.py",
+      "filePath": "worker/kvcomp_utils.py",
+      "summary": "KV 压缩相关工具，提供 hash 编码器、KV 压缩配置与 hashk cache 绑定/初始化逻辑，支持 MLA 与常规 attention 路径。",
+      "tags": ["kv-cache", "compression", "hashing", "worker"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:worker/kvcomp_utils.py:KVCompConfig",
+      "type": "class",
+      "name": "KVCompConfig",
+      "filePath": "worker/kvcomp_utils.py",
+      "lineRange": [145, 365],
+      "summary": "KV 压缩配置数据类，生成常规与 MLA 配置、管理 hash 权重并支持 JSON 序列化与反序列化。",
+      "tags": ["kv-cache", "compression", "config", "serialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:worker/kvcomp_utils.py:HashEncoder",
+      "type": "class",
+      "name": "HashEncoder",
+      "filePath": "worker/kvcomp_utils.py",
+      "lineRange": [368, 488],
+      "summary": "KV 压缩用的 hash 编码器，初始化 hash 权重并对 key 计算/解包 hash 值以支撑近似匹配。",
+      "tags": ["kv-cache", "compression", "hashing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/kvcomp_utils.py:init_and_bind_hashk_cache",
+      "type": "function",
+      "name": "init_and_bind_hashk_cache",
+      "filePath": "worker/kvcomp_utils.py",
+      "lineRange": [583, 655],
+      "summary": "初始化并绑定 hashk cache，将每层 attention 的 hash key 缓存挂接到对应的 KV cache 张量上。",
+      "tags": ["kv-cache", "compression", "initialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/kvcomp_utils.py:initialize_kvcomp_metadata",
+      "type": "function",
+      "name": "initialize_kvcomp_metadata",
+      "filePath": "worker/kvcomp_utils.py",
+      "lineRange": [516, 580],
+      "summary": "构建 KV 压缩元数据，汇集各层 hash 配置与缓存引用供运行时压缩 attention 使用。",
+      "tags": ["kv-cache", "compression", "metadata"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/kvcomp_utils.py:bind_hashk_cache",
+      "type": "function",
+      "name": "bind_hashk_cache",
+      "filePath": "worker/kvcomp_utils.py",
+      "lineRange": [18, 57],
+      "summary": "将 hash key 缓存绑定到各 attention 层，参照 vLLM bind_kv_cache 的方式建立层到缓存张量的映射。",
+      "tags": ["kv-cache", "compression", "binding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:worker/model_runner_v1.py",
+      "type": "file",
+      "name": "model_runner_v1.py",
+      "filePath": "worker/model_runner_v1.py",
+      "summary": "Ascend NPU 的 v1 模型运行器核心，负责输入准备、状态管理、ACL graph 捕获、草稿 proposer 驱动与模型前向执行的端到端编排。",
+      "tags": ["model-runner", "worker", "npu-adaptation", "service"],
+      "complexity": "complex",
+      "languageNotes": "本批最大文件（4600+ 行），是 NPU 推理执行的中枢，串联 KV cache、采样、投机解码与 ACL graph 等子系统。"
+    },
+    {
+      "id": "class:worker/model_runner_v1.py:NPUModelRunner",
+      "type": "class",
+      "name": "NPUModelRunner",
+      "filePath": "worker/model_runner_v1.py",
+      "lineRange": [247, 4518],
+      "summary": "NPU 模型运行器主类，管理设备初始化、状态更新、输入准备、ACL graph 模式选择与草稿 proposer 的获取与执行。",
+      "tags": ["model-runner", "worker", "service", "npu-adaptation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:worker/model_runner_v1.py:graph_capture",
+      "type": "function",
+      "name": "graph_capture",
+      "filePath": "worker/model_runner_v1.py",
+      "lineRange": [195, 222],
+      "summary": "ACL graph 捕获上下文管理器，进入时配置捕获状态并在退出时恢复，供模型运行器录制可复用计算图。",
+      "tags": ["acl-graph", "model-runner", "context-manager"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/model_runner_v1.py:_torch_cuda_wrapper",
+      "type": "function",
+      "name": "_torch_cuda_wrapper",
+      "filePath": "worker/model_runner_v1.py",
+      "lineRange": [4545, 4585],
+      "summary": "将 torch.cuda 相关调用包装并重定向到 torch.npu 等价实现，使上游 GPU 代码可在 NPU 上复用。",
+      "tags": ["npu-adaptation", "compatibility", "wrapper"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:worker/npu_input_batch.py",
+      "type": "file",
+      "name": "npu_input_batch.py",
+      "filePath": "worker/npu_input_batch.py",
+      "summary": "NPU 输入批次数据结构，组织持久化的请求级输入张量与状态，作为模型运行器的输入承载。",
+      "tags": ["worker", "data-model", "input-batch", "npu-adaptation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:worker/npu_input_batch.py:NPUInputBatch",
+      "type": "class",
+      "name": "NPUInputBatch",
+      "filePath": "worker/npu_input_batch.py",
+      "lineRange": [33, 239],
+      "summary": "NPU 输入批次类，维护 token、位置、采样参数等持久张量及请求索引映射，供逐步推理复用。",
+      "tags": ["worker", "data-model", "input-batch"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:sample/penalties.py", "target": "function:sample/penalties.py:apply_all_penalties", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/penalties.py", "target": "function:sample/penalties.py:apply_all_penalties", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:sample/rejection_sampler.py", "target": "class:sample/rejection_sampler.py:AscendRejectionSampler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "class:sample/rejection_sampler.py:AscendRejectionSampler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:rejection_sample", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:apply_sampling_constraints", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:sample_recovered_tokens", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:rejection_random_sample_pytorch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:sample_recovered_tokens_pytorch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:sample_recovered_tokens_blockwise_pytorch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:rejection_random_sample_block_verify_pytorch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:expand_batch_to_tokens", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:expand_pytorch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/rejection_sampler.py", "target": "function:sample/rejection_sampler.py:rejection_greedy_sample_pytorch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "class:sample/rejection_sampler.py:AscendRejectionSampler", "target": "function:sample/rejection_sampler.py:rejection_sample", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:sample/rejection_sampler.py:rejection_sample", "target": "function:sample/rejection_sampler.py:sample_recovered_tokens", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:sample/sampler.py", "target": "class:sample/sampler.py:AscendSampler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/sampler.py", "target": "class:sample/sampler.py:AscendSampler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:sample/sampler.py", "target": "class:sample/sampler.py:AscendTopKTopPSampler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:sample/sampler.py", "target": "class:sample/sampler.py:AscendTopKTopPSampler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:sample/sampler.py", "target": "function:sample/sampler.py:_apply_top_k_top_p_pytorch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "class:sample/sampler.py:AscendTopKTopPSampler", "target": "function:sample/sampler.py:_apply_top_k_top_p_pytorch", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:simple_kv_offload/copy_backend.py", "target": "class:simple_kv_offload/copy_backend.py:NPUDmaCopyBackend", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:simple_kv_offload/copy_backend.py", "target": "class:simple_kv_offload/copy_backend.py:NPUDmaCopyBackend", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:simple_kv_offload/copy_backend.py", "target": "file:simple_kv_offload/npu_mem_ops.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "class:simple_kv_offload/copy_backend.py:NPUDmaCopyBackend", "target": "function:simple_kv_offload/npu_mem_ops.py:copy_blocks", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:simple_kv_offload/npu_mem_ops.py", "target": "class:simple_kv_offload/npu_mem_ops.py:BatchMemcpyParams", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:simple_kv_offload/npu_mem_ops.py", "target": "class:simple_kv_offload/npu_mem_ops.py:BatchMemcpyParams", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:simple_kv_offload/npu_mem_ops.py", "target": "function:simple_kv_offload/npu_mem_ops.py:build_params", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:simple_kv_offload/npu_mem_ops.py", "target": "function:simple_kv_offload/npu_mem_ops.py:copy_blocks", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "function:simple_kv_offload/npu_mem_ops.py:copy_blocks", "target": "function:simple_kv_offload/npu_mem_ops.py:build_params", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:simple_kv_offload/worker.py", "target": "class:simple_kv_offload/worker.py:SimpleCPUOffloadNPUWorker", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:simple_kv_offload/worker.py", "target": "class:simple_kv_offload/worker.py:SimpleCPUOffloadNPUWorker", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:simple_kv_offload/worker.py", "target": "file:simple_kv_offload/copy_backend.py", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:spec_decode/__init__.py", "target": "function:spec_decode/__init__.py:get_spec_decode_method", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/__init__.py", "target": "function:spec_decode/__init__.py:get_spec_decode_method", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/ngram_proposer.py:AscendNgramProposer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/ngram_proposer_npu.py:AscendNgramProposerNPU", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/suffix_proposer.py:AscendSuffixDecodingProposer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/medusa_proposer.py:AscendMedusaProposer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/eagle_proposer.py:AscendEagleProposer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/dflash_proposer.py:AscendDflashProposer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/draft_proposer.py:AscendDraftModelProposer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:spec_decode/__init__.py:get_spec_decode_method", "target": "class:spec_decode/extract_hidden_states_proposer.py:AscendExtractHiddenStatesProposer", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:spec_decode/dflash_proposer.py", "target": "class:spec_decode/dflash_proposer.py:AscendDflashProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/dflash_proposer.py", "target": "class:spec_decode/dflash_proposer.py:AscendDflashProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:spec_decode/dflash_proposer.py", "target": "file:spec_decode/eagle_proposer.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "class:spec_decode/dflash_proposer.py:AscendDflashProposer", "target": "class:spec_decode/eagle_proposer.py:AscendEagleProposer", "type": "inherits", "direction": "forward", "weight": 0.9},
+
+    {"source": "file:spec_decode/draft_proposer.py", "target": "class:spec_decode/draft_proposer.py:AscendDraftModelProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/draft_proposer.py", "target": "class:spec_decode/draft_proposer.py:AscendDraftModelProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:spec_decode/draft_proposer.py", "target": "file:spec_decode/llm_base_proposer.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "class:spec_decode/draft_proposer.py:AscendDraftModelProposer", "target": "class:spec_decode/llm_base_proposer.py:AscendSpecDecodeBaseProposer", "type": "inherits", "direction": "forward", "weight": 0.9},
+
+    {"source": "file:spec_decode/eagle_proposer.py", "target": "class:spec_decode/eagle_proposer.py:AscendEagleProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/eagle_proposer.py", "target": "class:spec_decode/eagle_proposer.py:AscendEagleProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:spec_decode/eagle_proposer.py", "target": "file:spec_decode/llm_base_proposer.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "class:spec_decode/eagle_proposer.py:AscendEagleProposer", "target": "class:spec_decode/llm_base_proposer.py:AscendSpecDecodeBaseProposer", "type": "inherits", "direction": "forward", "weight": 0.9},
+
+    {"source": "file:spec_decode/extract_hidden_states_proposer.py", "target": "class:spec_decode/extract_hidden_states_proposer.py:AscendExtractHiddenStatesProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/extract_hidden_states_proposer.py", "target": "class:spec_decode/extract_hidden_states_proposer.py:AscendExtractHiddenStatesProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:spec_decode/llm_base_proposer.py", "target": "class:spec_decode/llm_base_proposer.py:AscendSpecDecodeBaseProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/llm_base_proposer.py", "target": "class:spec_decode/llm_base_proposer.py:AscendSpecDecodeBaseProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:spec_decode/llm_base_proposer.py", "target": "function:spec_decode/llm_base_proposer.py:split_inputs_tp_to_sp", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:spec_decode/medusa_proposer.py", "target": "class:spec_decode/medusa_proposer.py:AscendMedusaProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/medusa_proposer.py", "target": "class:spec_decode/medusa_proposer.py:AscendMedusaProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:spec_decode/ngram_proposer.py", "target": "class:spec_decode/ngram_proposer.py:AscendNgramProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/ngram_proposer.py", "target": "class:spec_decode/ngram_proposer.py:AscendNgramProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:spec_decode/ngram_proposer_npu.py", "target": "class:spec_decode/ngram_proposer_npu.py:AscendNgramProposerNPU", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/ngram_proposer_npu.py", "target": "class:spec_decode/ngram_proposer_npu.py:AscendNgramProposerNPU", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:spec_decode/suffix_proposer.py", "target": "class:spec_decode/suffix_proposer.py:AscendSuffixDecodingProposer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/suffix_proposer.py", "target": "class:spec_decode/suffix_proposer.py:AscendSuffixDecodingProposer", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:spec_decode/utils.py", "target": "function:spec_decode/utils.py:update_num_computed_tokens_for_batch_change", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:spec_decode/utils.py", "target": "function:spec_decode/utils.py:update_num_computed_tokens_for_batch_change", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:utils.py", "target": "function:utils.py:update_aclgraph_sizes", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:register_ascend_customop", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:should_skip_allreduce_across_dp_group", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:get_compressed_pos_and_indices", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:device_print", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:enable_custom_op", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:get_flashcomm2_config_and_validate", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:check_ascend_device_type", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:utils.py", "target": "function:utils.py:refresh_block_size", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:worker/block_table.py", "target": "class:worker/block_table.py:BlockTable", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/block_table.py", "target": "class:worker/block_table.py:BlockTable", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:worker/block_table.py", "target": "class:worker/block_table.py:MultiGroupBlockTable", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/block_table.py", "target": "class:worker/block_table.py:MultiGroupBlockTable", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:worker/block_table.py:MultiGroupBlockTable", "target": "class:worker/block_table.py:BlockTable", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:worker/kvcomp_utils.py", "target": "class:worker/kvcomp_utils.py:KVCompConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/kvcomp_utils.py", "target": "class:worker/kvcomp_utils.py:KVCompConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:worker/kvcomp_utils.py", "target": "class:worker/kvcomp_utils.py:HashEncoder", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/kvcomp_utils.py", "target": "class:worker/kvcomp_utils.py:HashEncoder", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:worker/kvcomp_utils.py", "target": "function:worker/kvcomp_utils.py:init_and_bind_hashk_cache", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/kvcomp_utils.py", "target": "function:worker/kvcomp_utils.py:initialize_kvcomp_metadata", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/kvcomp_utils.py", "target": "function:worker/kvcomp_utils.py:bind_hashk_cache", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "function:worker/kvcomp_utils.py:init_and_bind_hashk_cache", "target": "function:worker/kvcomp_utils.py:bind_hashk_cache", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:worker/model_runner_v1.py", "target": "class:worker/model_runner_v1.py:NPUModelRunner", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/model_runner_v1.py", "target": "class:worker/model_runner_v1.py:NPUModelRunner", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:worker/model_runner_v1.py", "target": "function:worker/model_runner_v1.py:graph_capture", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/model_runner_v1.py", "target": "function:worker/model_runner_v1.py:_torch_cuda_wrapper", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "class:worker/model_runner_v1.py:NPUModelRunner", "target": "function:spec_decode/__init__.py:get_spec_decode_method", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:worker/model_runner_v1.py:NPUModelRunner", "target": "class:worker/npu_input_batch.py:NPUInputBatch", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "class:worker/model_runner_v1.py:NPUModelRunner", "target": "class:worker/block_table.py:MultiGroupBlockTable", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:worker/npu_input_batch.py", "target": "class:worker/npu_input_batch.py:NPUInputBatch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:worker/npu_input_batch.py", "target": "class:worker/npu_input_batch.py:NPUInputBatch", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:worker/npu_input_batch.py:NPUInputBatch", "target": "class:worker/block_table.py:MultiGroupBlockTable", "type": "depends_on", "direction": "forward", "weight": 0.6}
+  ]
+}

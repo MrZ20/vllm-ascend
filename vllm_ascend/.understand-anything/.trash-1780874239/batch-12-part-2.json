@@ -1,0 +1,1033 @@
+{
+ "nodes": [
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "type": "file",
+   "name": "backend.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "summary": "存储后端抽象基类，定义 register_buffer、exists、put、get 等 KV 存储统一接口。",
+   "tags": [
+    "type-definition",
+    "storage",
+    "interface"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py:Backend",
+   "type": "class",
+   "name": "Backend",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "lineRange": [
+    6,
+    29
+   ],
+   "summary": "KV 存储后端抽象基类，规定缓冲区注册与存取的统一接口。",
+   "tags": [
+    "type-definition",
+    "storage",
+    "interface"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+   "type": "file",
+   "name": "memcache_backend.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+   "summary": "基于 Memcache 的 KV 存储后端实现，封装缓冲区注册与 KV block 的存取。",
+   "tags": [
+    "service",
+    "storage",
+    "backend",
+    "kv-cache"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py:MemcacheBackend",
+   "type": "class",
+   "name": "MemcacheBackend",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+   "lineRange": [
+    22,
+    134
+   ],
+   "summary": "Memcache KV 存储后端，实现缓冲区延迟注册与 KV block 存取。",
+   "tags": [
+    "service",
+    "storage",
+    "backend"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "type": "file",
+   "name": "mooncake_backend.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "summary": "基于 Mooncake 分布式存储的 KV 后端实现，支持 SSD 卸载与从环境/文件加载存储配置。",
+   "tags": [
+    "service",
+    "storage",
+    "backend",
+    "kv-cache"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py:MooncakeBackend",
+   "type": "class",
+   "name": "MooncakeBackend",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "lineRange": [
+    61,
+    222
+   ],
+   "summary": "Mooncake KV 存储后端，实现缓冲区注册与 KV block 的存取，支持 SSD 卸载。",
+   "tags": [
+    "service",
+    "storage",
+    "backend"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py:MooncakeStoreConfig",
+   "type": "class",
+   "name": "MooncakeStoreConfig",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "lineRange": [
+    226,
+    278
+   ],
+   "summary": "Mooncake 存储配置数据类，支持从文件或环境变量加载。",
+   "tags": [
+    "config",
+    "storage",
+    "data-model"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "type": "file",
+   "name": "yuanrong_backend.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "summary": "基于 Yuanrong 的 KV 存储后端实现，含键归一化、blob 列表构建与设备就绪检查。",
+   "tags": [
+    "service",
+    "storage",
+    "backend",
+    "kv-cache"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongConfig",
+   "type": "class",
+   "name": "YuanrongConfig",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "lineRange": [
+    23,
+    38
+   ],
+   "summary": "Yuanrong 存储配置数据类，从环境变量加载。",
+   "tags": [
+    "config",
+    "storage",
+    "data-model"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongHelper",
+   "type": "class",
+   "name": "YuanrongHelper",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "lineRange": [
+    41,
+    87
+   ],
+   "summary": "Yuanrong 后端辅助类，处理键归一化与 blob 列表构建。",
+   "tags": [
+    "utility",
+    "storage"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongBackend",
+   "type": "class",
+   "name": "YuanrongBackend",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "lineRange": [
+    90,
+    191
+   ],
+   "summary": "Yuanrong KV 存储后端，实现缓冲区注册与 KV block 存取。",
+   "tags": [
+    "service",
+    "storage",
+    "backend"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "type": "file",
+   "name": "config_data.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "summary": "AscendStore 的核心数据结构与键编码逻辑，定义 PoolKey、ReqMeta、token 数据库及缓存族（cache family）推断等。",
+   "tags": [
+    "data-model",
+    "kv-cache",
+    "type-definition",
+    "serialization"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:PoolKey",
+   "type": "class",
+   "name": "PoolKey",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "lineRange": [
+    42,
+    84
+   ],
+   "summary": "存储池键，支持哈希、字符串编码与按层拆分。",
+   "tags": [
+    "data-model",
+    "kv-cache",
+    "serialization"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:ChunkedTokenDatabase",
+   "type": "class",
+   "name": "ChunkedTokenDatabase",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "lineRange": [
+    202,
+    434
+   ],
+   "summary": "分块 token 数据库，按 block hash 生成存储键并准备逐层 KV 值，支持 prefill PP 适配。",
+   "tags": [
+    "data-model",
+    "kv-cache",
+    "hashing"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:RequestTracker",
+   "type": "class",
+   "name": "RequestTracker",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "lineRange": [
+    497,
+    565
+   ],
+   "summary": "请求追踪器，记录已分配 block id 并支持增量更新。",
+   "tags": [
+    "data-model",
+    "tracking"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:ReqMeta",
+   "type": "class",
+   "name": "ReqMeta",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "lineRange": [
+    569,
+    706
+   ],
+   "summary": "请求元数据，封装 block id 与从请求追踪器构造的传输信息。",
+   "tags": [
+    "data-model",
+    "kv-cache"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:LayerMultiBlockReqMeta",
+   "type": "class",
+   "name": "LayerMultiBlockReqMeta",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "lineRange": [
+    721,
+    772
+   ],
+   "summary": "逐层多 block 请求元数据封装。",
+   "tags": [
+    "data-model",
+    "kv-cache"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "type": "file",
+   "name": "kv_transfer.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "summary": "AscendStore 的 KV 传输线程实现，包含存储/接收线程及逐层发送/接收线程，负责与外部存储后端的 KV 搬运与事件记录。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "thread",
+    "transfer"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVTransferThread",
+   "type": "class",
+   "name": "KVTransferThread",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "lineRange": [
+    24,
+    206
+   ],
+   "summary": "KV 传输基础线程，处理请求分发、键查找、token 处理与 KV 事件更新。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "thread"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreSendingThread",
+   "type": "class",
+   "name": "KVCacheStoreSendingThread",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "lineRange": [
+    209,
+    392
+   ],
+   "summary": "KV 存储发送线程，管理待存储请求、引用计数与完成事件上报。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "thread",
+    "transfer"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreRecvingThread",
+   "type": "class",
+   "name": "KVCacheStoreRecvingThread",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "lineRange": [
+    395,
+    488
+   ],
+   "summary": "KV 存储接收线程，处理从存储后端拉取 KV 的请求。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "thread"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreLayerSendingThread",
+   "type": "class",
+   "name": "KVCacheStoreLayerSendingThread",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "lineRange": [
+    491,
+    670
+   ],
+   "summary": "逐层 KV 存储发送线程，记录层级事件起始并构建存储完成事件。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "thread",
+    "layerwise"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreLayerRecvingThread",
+   "type": "class",
+   "name": "KVCacheStoreLayerRecvingThread",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "lineRange": [
+    673,
+    733
+   ],
+   "summary": "逐层 KV 存储接收线程。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "thread",
+    "layerwise"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "type": "file",
+   "name": "pool_scheduler.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "summary": "KV 存储池调度器，负责缓存族/块大小推断、滑动窗口裁剪、新匹配 token 计算与连接器元数据构建。",
+   "tags": [
+    "service",
+    "scheduler",
+    "kv-cache",
+    "storage"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py:KVPoolScheduler",
+   "type": "class",
+   "name": "KVPoolScheduler",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "lineRange": [
+    38,
+    628
+   ],
+   "summary": "KV 池调度器，推断分组缓存族与块大小、处理混合/mamba/SWA 缓存并构建连接器元数据。",
+   "tags": [
+    "service",
+    "scheduler",
+    "kv-cache"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py:LookupKeyClient",
+   "type": "class",
+   "name": "LookupKeyClient",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "lineRange": [
+    631,
+    661
+   ],
+   "summary": "查找键客户端，通过 ZMQ 向查找服务端发起 KV 键存在性查询。",
+   "tags": [
+    "service",
+    "lookup",
+    "client"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py",
+   "type": "file",
+   "name": "pool_worker.py",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py",
+   "summary": "KV 存储池 worker，运行在每个 NPU rank 上，负责 KV cache 注册、逐层存取、查找命中计算与存储后端交互。",
+   "tags": [
+    "service",
+    "worker",
+    "kv-cache",
+    "storage"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py:KVPoolWorker",
+   "type": "class",
+   "name": "KVPoolWorker",
+   "filePath": "distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py",
+   "lineRange": [
+    63,
+    1108
+   ],
+   "summary": "KV 池 worker，在 NPU rank 上注册 KV cache、执行逐层存取、查找命中索引计算与 KV 事件管理。",
+   "tags": [
+    "service",
+    "worker",
+    "kv-cache"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/cpu_offload/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/__init__.py",
+   "summary": "CPU 卸载子包的空初始化文件。",
+   "tags": [
+    "barrel",
+    "kv-cache",
+    "entry-point"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "type": "file",
+   "name": "cpu_kv_cache_manager.py",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "summary": "CPU KV cache 管理器，管理 CPU 侧 KV cache 的前缀缓存命中、slot 分配与释放及缓存统计。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "cpu-offload",
+    "cache-management"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py:CPUCacheStats",
+   "type": "class",
+   "name": "CPUCacheStats",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "lineRange": [
+    14,
+    52
+   ],
+   "summary": "CPU 缓存统计，记录命中率等前缀缓存指标。",
+   "tags": [
+    "monitoring",
+    "metrics",
+    "kv-cache"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py:CPUKVCacheManager",
+   "type": "class",
+   "name": "CPUKVCacheManager",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "lineRange": [
+    55,
+    179
+   ],
+   "summary": "CPU KV cache 管理器，处理前缀缓存命中查询、slot 分配与释放。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "cpu-offload"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "type": "file",
+   "name": "cpu_offload_connector.py",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "summary": "CPU 卸载 KV connector，使用 aclrtMemcpyBatchAsync 与 torch.npu stream 在 NPU 与 CPU 间异步搬运 KV cache。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "connector",
+    "cpu-offload"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnector",
+   "type": "class",
+   "name": "CPUOffloadingConnector",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "lineRange": [
+    64,
+    136
+   ],
+   "summary": "CPU 卸载 KV connector 主类，向 vLLM 暴露 NPU 与 CPU 间的 KV load/save 接口。",
+   "tags": [
+    "service",
+    "connector",
+    "kv-cache",
+    "cpu-offload"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnectorScheduler",
+   "type": "class",
+   "name": "CPUOffloadingConnectorScheduler",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "lineRange": [
+    139,
+    224
+   ],
+   "summary": "CPU 卸载连接器调度侧，计算新匹配 token 与构建连接器元数据。",
+   "tags": [
+    "service",
+    "connector",
+    "scheduler",
+    "kv-cache"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnectorWorker",
+   "type": "class",
+   "name": "CPUOffloadingConnectorWorker",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "lineRange": [
+    227,
+    396
+   ],
+   "summary": "CPU 卸载连接器 worker 侧，启动元数据服务进程并执行异步 KV 搬运。",
+   "tags": [
+    "service",
+    "connector",
+    "worker",
+    "cpu-offload"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "type": "file",
+   "name": "metadata.py",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "summary": "CPU 卸载元数据服务，基于共享内存在独立进程中维护 CPU KV cache 的前缀缓存元数据。",
+   "tags": [
+    "service",
+    "kv-cache",
+    "cpu-offload",
+    "ipc"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py:MetadataServer",
+   "type": "class",
+   "name": "MetadataServer",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "lineRange": [
+    41,
+    223
+   ],
+   "summary": "元数据服务进程，基于共享内存初始化 CPU KV cache 并提供逐步服务循环。",
+   "tags": [
+    "service",
+    "ipc",
+    "kv-cache",
+    "shared-memory"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py:MetadataServerProc",
+   "type": "class",
+   "name": "MetadataServerProc",
+   "filePath": "distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "lineRange": [
+    226,
+    257
+   ],
+   "summary": "元数据服务进程封装，负责启动并运行 MetadataServer。",
+   "tags": [
+    "service",
+    "ipc",
+    "process"
+   ],
+   "complexity": "simple"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py:Backend",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py:Backend",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py:MemcacheBackend",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py:MemcacheBackend",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py:MooncakeBackend",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py:MooncakeBackend",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py:MooncakeStoreConfig",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py:MooncakeStoreConfig",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongConfig",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongConfig",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongHelper",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongHelper",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongBackend",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py:YuanrongBackend",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:PoolKey",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:PoolKey",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:ChunkedTokenDatabase",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:ChunkedTokenDatabase",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:RequestTracker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:RequestTracker",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:ReqMeta",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:ReqMeta",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:LayerMultiBlockReqMeta",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/config_data.py:LayerMultiBlockReqMeta",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVTransferThread",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVTransferThread",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreSendingThread",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreSendingThread",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreRecvingThread",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreRecvingThread",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreLayerSendingThread",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreLayerSendingThread",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreLayerRecvingThread",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py:KVCacheStoreLayerRecvingThread",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py:KVPoolScheduler",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py:KVPoolScheduler",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py:LookupKeyClient",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py:LookupKeyClient",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py:KVPoolWorker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py",
+   "target": "class:distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py:KVPoolWorker",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py:CPUCacheStats",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py:CPUCacheStats",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py:CPUKVCacheManager",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py:CPUKVCacheManager",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnector",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnector",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnectorScheduler",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnectorScheduler",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnectorWorker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py:CPUOffloadingConnectorWorker",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py:MetadataServer",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py:MetadataServer",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py:MetadataServerProc",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+   "target": "class:distributed/kv_transfer/kv_pool/cpu_offload/metadata.py:MetadataServerProc",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+   "target": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "type": "related",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+   "target": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "type": "related",
+   "direction": "forward",
+   "weight": 0.5
+  },
+  {
+   "source": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+   "target": "file:distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+   "type": "related",
+   "direction": "forward",
+   "weight": 0.5
+  }
+ ]
+}

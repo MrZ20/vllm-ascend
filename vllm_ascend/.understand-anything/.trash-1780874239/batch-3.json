@@ -1,0 +1,387 @@
+{
+  "nodes": [
+    {
+      "id": "file:_310p/quantization/methods/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "_310p/quantization/methods/__init__.py",
+      "summary": "310P 量化方案子包的入口文件，通过导入四个具体的 W8A8 方法模块来触发各方案在本地注册表中的注册。",
+      "tags": ["entry-point", "barrel", "quantization", "registry"],
+      "complexity": "simple",
+      "languageNotes": "Python 包 __init__.py 作为 barrel，通过 import 副作用触发装饰器注册，自身不导出符号。"
+    },
+    {
+      "id": "file:_310p/quantization/methods/registry.py",
+      "type": "file",
+      "name": "registry.py",
+      "filePath": "_310p/quantization/methods/registry.py",
+      "summary": "提供 310P 量化方案的本地注册表，以 (quant_type, layer_type) 为键映射到方案类，并暴露注册装饰器与查询函数。",
+      "tags": ["registry", "quantization", "factory", "utility"],
+      "complexity": "simple",
+      "languageNotes": "使用模块级 dict 作为注册表，配合装饰器工厂实现按 (量化类型, 层类型) 的方案分发。"
+    },
+    {
+      "id": "file:_310p/quantization/methods/w8a8_base.py",
+      "type": "file",
+      "name": "w8a8_base.py",
+      "filePath": "_310p/quantization/methods/w8a8_base.py",
+      "summary": "定义 310P W8A8 线性层量化方案的基类，提供权重与 per-tensor / per-channel 量化参数的张量创建接口供子类复用。",
+      "tags": ["quantization", "data-model", "base-class", "w8a8"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "type": "file",
+      "name": "w8a8_dynamic.py",
+      "filePath": "_310p/quantization/methods/w8a8_dynamic.py",
+      "summary": "实现 310P W8A8 动态量化方法，覆盖 FusedMoE 与 Linear 两种层类型，包含权重创建、动态 per-token 量化以及 NPU quant matmul 推理逻辑。",
+      "tags": ["quantization", "w8a8", "moe", "service", "npu"],
+      "complexity": "complex",
+      "languageNotes": "通过 torch_npu.npu_dynamic_quant 做激活动态量化、npu_quant_matmul 执行量化矩阵乘，并在加载后 process_weights_after_loading 中做 NZ 转换与权重布局调整。"
+    },
+    {
+      "id": "file:_310p/quantization/methods/w8a8_static.py",
+      "type": "file",
+      "name": "w8a8_static.py",
+      "filePath": "_310p/quantization/methods/w8a8_static.py",
+      "summary": "实现 310P W8A8 静态量化的 Linear 方法，使用预置 scale/offset 完成激活量化与 NPU quant matmul，并在加载后调整权重布局。",
+      "tags": ["quantization", "w8a8", "service", "npu", "static"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_310p/quantization/methods/w8a8s.py",
+      "type": "file",
+      "name": "w8a8s.py",
+      "filePath": "_310p/quantization/methods/w8a8s.py",
+      "summary": "实现 310P W8A8S 稀疏量化的 Linear 方法，调用 vllm.quantize 量化激活并经 NPU quant matmul 完成稀疏量化前向。",
+      "tags": ["quantization", "w8a8", "sparse", "service", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_310p/quantization/methods/w8a8sc.py",
+      "type": "file",
+      "name": "w8a8sc.py",
+      "filePath": "_310p/quantization/methods/w8a8sc.py",
+      "summary": "实现 310P W8A8SC 压缩稀疏量化的 Linear 方法，按压缩布局创建权重并通过 torch_npu.npu_matmul_compress_dequant 执行压缩反量化矩阵乘。",
+      "tags": ["quantization", "w8a8", "sparse-compress", "service", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "function",
+      "name": "register_scheme",
+      "filePath": "_310p/quantization/methods/registry.py",
+      "lineRange": [24, 36],
+      "summary": "装饰器工厂，将量化方案类按 (quant_type, layer_type) 键注册进本地注册表，重复注册时抛出 ValueError。",
+      "tags": ["registry", "decorator", "factory", "quantization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/quantization/methods/w8a8_base.py:AscendW8A8Linear310pScheme",
+      "type": "class",
+      "name": "AscendW8A8Linear310pScheme",
+      "filePath": "_310p/quantization/methods/w8a8_base.py",
+      "lineRange": [25, 44],
+      "summary": "310P W8A8 线性量化方案基类，提供创建权重张量及 per-tensor / per-channel 量化参数的通用接口。",
+      "tags": ["quantization", "base-class", "data-model", "w8a8"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicFusedMoEMethod310",
+      "type": "class",
+      "name": "AscendW8A8DynamicFusedMoEMethod310",
+      "filePath": "_310p/quantization/methods/w8a8_dynamic.py",
+      "lineRange": [38, 163],
+      "summary": "310P 上 FusedMoE 的 W8A8 动态量化方法，负责创建权重与动态量化参数、专家选择、调用 MoE 通信方法执行融合专家计算，并在加载后调整权重布局。",
+      "tags": ["quantization", "moe", "w8a8", "service", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicLinearMethod310",
+      "type": "class",
+      "name": "AscendW8A8DynamicLinearMethod310",
+      "filePath": "_310p/quantization/methods/w8a8_dynamic.py",
+      "lineRange": [167, 218],
+      "summary": "310P Linear 层的 W8A8 动态量化方法，使用 npu_dynamic_quant 对激活做 per-token 动态量化并经 npu_quant_matmul 完成前向。",
+      "tags": ["quantization", "w8a8", "service", "npu", "linear"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/quantization/methods/w8a8_static.py:AscendW8A8LinearMethod310",
+      "type": "class",
+      "name": "AscendW8A8LinearMethod310",
+      "filePath": "_310p/quantization/methods/w8a8_static.py",
+      "lineRange": [30, 98],
+      "summary": "310P Linear 层的 W8A8 静态量化方法，使用预置 scale/offset 量化激活并执行 NPU quant matmul，加载后重排权重与量化参数。",
+      "tags": ["quantization", "w8a8", "service", "npu", "static"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/quantization/methods/w8a8s.py:AscendW8A8SLinearMethod310",
+      "type": "class",
+      "name": "AscendW8A8SLinearMethod310",
+      "filePath": "_310p/quantization/methods/w8a8s.py",
+      "lineRange": [29, 66],
+      "summary": "310P Linear 层的 W8A8S 稀疏量化方法，量化激活后经 NPU quant matmul 完成稀疏量化前向，并在加载后转置权重布局。",
+      "tags": ["quantization", "w8a8", "sparse", "service", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/quantization/methods/w8a8sc.py:AscendW8A8SCLinearMethod310",
+      "type": "class",
+      "name": "AscendW8A8SCLinearMethod310",
+      "filePath": "_310p/quantization/methods/w8a8sc.py",
+      "lineRange": [32, 104],
+      "summary": "310P Linear 层的 W8A8SC 压缩稀疏量化方法，按压缩布局创建权重并通过 npu_matmul_compress_dequant 执行压缩反量化矩阵乘。",
+      "tags": ["quantization", "w8a8", "sparse-compress", "service", "npu"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:_310p/quantization/methods/__init__.py",
+      "target": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/__init__.py",
+      "target": "file:_310p/quantization/methods/w8a8_static.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/__init__.py",
+      "target": "file:_310p/quantization/methods/w8a8s.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/__init__.py",
+      "target": "file:_310p/quantization/methods/w8a8sc.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "target": "file:_310p/quantization/methods/registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "target": "file:_310p/quantization/methods/w8a8_base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_static.py",
+      "target": "file:_310p/quantization/methods/registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_static.py",
+      "target": "file:_310p/quantization/methods/w8a8_base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8s.py",
+      "target": "file:_310p/quantization/methods/registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8s.py",
+      "target": "file:_310p/quantization/methods/w8a8_base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8sc.py",
+      "target": "file:_310p/quantization/methods/registry.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8sc.py",
+      "target": "file:_310p/quantization/methods/w8a8_base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:_310p/quantization/methods/registry.py",
+      "target": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:_310p/quantization/methods/registry.py",
+      "target": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_base.py",
+      "target": "class:_310p/quantization/methods/w8a8_base.py:AscendW8A8Linear310pScheme",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_base.py",
+      "target": "class:_310p/quantization/methods/w8a8_base.py:AscendW8A8Linear310pScheme",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "target": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicFusedMoEMethod310",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "target": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicFusedMoEMethod310",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "target": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicLinearMethod310",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_dynamic.py",
+      "target": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicLinearMethod310",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_static.py",
+      "target": "class:_310p/quantization/methods/w8a8_static.py:AscendW8A8LinearMethod310",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8_static.py",
+      "target": "class:_310p/quantization/methods/w8a8_static.py:AscendW8A8LinearMethod310",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8s.py",
+      "target": "class:_310p/quantization/methods/w8a8s.py:AscendW8A8SLinearMethod310",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8s.py",
+      "target": "class:_310p/quantization/methods/w8a8s.py:AscendW8A8SLinearMethod310",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8sc.py",
+      "target": "class:_310p/quantization/methods/w8a8sc.py:AscendW8A8SCLinearMethod310",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:_310p/quantization/methods/w8a8sc.py",
+      "target": "class:_310p/quantization/methods/w8a8sc.py:AscendW8A8SCLinearMethod310",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicLinearMethod310",
+      "target": "class:_310p/quantization/methods/w8a8_base.py:AscendW8A8Linear310pScheme",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8_static.py:AscendW8A8LinearMethod310",
+      "target": "class:_310p/quantization/methods/w8a8_base.py:AscendW8A8Linear310pScheme",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8s.py:AscendW8A8SLinearMethod310",
+      "target": "class:_310p/quantization/methods/w8a8_base.py:AscendW8A8Linear310pScheme",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8sc.py:AscendW8A8SCLinearMethod310",
+      "target": "class:_310p/quantization/methods/w8a8_base.py:AscendW8A8Linear310pScheme",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicFusedMoEMethod310",
+      "target": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8_dynamic.py:AscendW8A8DynamicLinearMethod310",
+      "target": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8_static.py:AscendW8A8LinearMethod310",
+      "target": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8s.py:AscendW8A8SLinearMethod310",
+      "target": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:_310p/quantization/methods/w8a8sc.py:AscendW8A8SCLinearMethod310",
+      "target": "function:_310p/quantization/methods/registry.py:register_scheme",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

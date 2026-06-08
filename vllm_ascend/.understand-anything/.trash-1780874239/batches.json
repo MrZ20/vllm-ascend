@@ -1,0 +1,5314 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 393,
+  "totalBatches": 22,
+  "exportsByPath": {
+    "__init__.py": [
+      "_ensure_global_patch",
+      "register",
+      "register_connector",
+      "register_model_loader",
+      "register_service_profiling",
+      "register_model"
+    ],
+    "_310p/__init__.py": [],
+    "_310p/attention/__init__.py": [],
+    "_310p/attention/attention_mask.py": [
+      "AttentionMaskBuilder310"
+    ],
+    "_310p/attention/attention_v1.py": [
+      "AscendAttentionBackend310",
+      "AscendAttentionBackendImpl310"
+    ],
+    "_310p/attention/metadata_builder.py": [
+      "AscendAttentionMetadataBuilder310"
+    ],
+    "_310p/block_table.py": [
+      "BlockTable",
+      "MultiGroupBlockTable"
+    ],
+    "_310p/fused_moe/__init__.py": [],
+    "_310p/fused_moe/experts_selector.py": [
+      "select_experts"
+    ],
+    "_310p/fused_moe/fused_moe.py": [
+      "AscendUnquantizedFusedMoEMethod310",
+      "AscendFusedMoE310"
+    ],
+    "_310p/fused_moe/moe_comm_method.py": [
+      "AllGatherCommImpl310"
+    ],
+    "_310p/fused_moe/moe_mlp.py": [
+      "quant_apply_mlp",
+      "unquant_apply_mlp",
+      "unified_apply_mlp"
+    ],
+    "_310p/fused_moe/token_dispatcher.py": [
+      "TokenDispatcherWithAllGather310"
+    ],
+    "_310p/model_runner_310p.py": [
+      "NPUModelRunner310"
+    ],
+    "_310p/npu_input_batch.py": [
+      "NPUInputBatch310"
+    ],
+    "_310p/ops/__init__.py": [],
+    "_310p/ops/activation.py": [
+      "AscendSiluAndMul310"
+    ],
+    "_310p/ops/causal_conv1d.py": [
+      "causal_conv1d_ref",
+      "causal_conv1d_fn",
+      "causal_conv1d_update"
+    ],
+    "_310p/ops/conv.py": [
+      "AscendConv3dLayer310"
+    ],
+    "_310p/ops/fla/__init__.py": [],
+    "_310p/ops/fla/chunk_gated_delta_rule.py": [
+      "_expand_qk_to_v_heads",
+      "_iter_seq_ranges",
+      "_normalize_chunk_inputs",
+      "_torch_chunk_gated_delta_rule_chunked",
+      "chunk_gated_delta_rule_pytorch"
+    ],
+    "_310p/ops/fla/fused_gdn_gating.py": [
+      "fused_gdn_gating_pytorch"
+    ],
+    "_310p/ops/fla/fused_recurrent_gated_delta_rule.py": [
+      "_maybe_l2norm",
+      "_expand_to_hv",
+      "_infer_num_states",
+      "_state_index",
+      "_run_recurrent_gated_delta_rule",
+      "fused_recurrent_gated_delta_rule_pytorch"
+    ],
+    "_310p/ops/fla/gdn_310.py": [
+      "_l2norm",
+      "_flatten_state_indices",
+      "npu_recurrent_gated_delta_rule_310",
+      "_310p_get_state_dtype",
+      "AscendGatedDeltaNetAttention310"
+    ],
+    "_310p/ops/fla/idex.py": [
+      "prepare_chunk_indices_310",
+      "prepare_chunk_offsets_310"
+    ],
+    "_310p/ops/layernorm.py": [
+      "AscendRMSNorm310",
+      "AscendGemmaRMSNorm310",
+      "AscendRMSNormGated310"
+    ],
+    "_310p/ops/mm_encoder_attention.py": [
+      "AscendMMEncoderAttention310"
+    ],
+    "_310p/ops/rotary_embedding.py": [
+      "_apply_rotary_mrope_torch",
+      "merge_mrope_cos_sin_for_apply",
+      "set_mrope_apply_rotary_slices",
+      "_rope_forward_oot",
+      "AscendMRotaryEmbedding310",
+      "prepare_mrope_cos_sin_slices_from_runner",
+      "AscendRotaryEmbedding310"
+    ],
+    "_310p/ops/vocab_parallel_embedding.py": [
+      "AscendUnquantizedEmbeddingMethod310",
+      "AscendVocabParallelEmbedding310",
+      "AscendParallelLMHead310"
+    ],
+    "_310p/quantization/__init__.py": [],
+    "_310p/quantization/methods/__init__.py": [],
+    "_310p/quantization/methods/registry.py": [
+      "register_scheme",
+      "get_scheme_class"
+    ],
+    "_310p/quantization/methods/w8a8_base.py": [
+      "AscendW8A8Linear310pScheme"
+    ],
+    "_310p/quantization/methods/w8a8_dynamic.py": [
+      "AscendW8A8DynamicFusedMoEMethod310",
+      "AscendW8A8DynamicLinearMethod310"
+    ],
+    "_310p/quantization/methods/w8a8_static.py": [
+      "AscendW8A8LinearMethod310"
+    ],
+    "_310p/quantization/methods/w8a8s.py": [
+      "AscendW8A8SLinearMethod310"
+    ],
+    "_310p/quantization/methods/w8a8sc.py": [
+      "AscendW8A8SCLinearMethod310"
+    ],
+    "_310p/quantization/modelslim_config.py": [
+      "create_scheme_for_layer",
+      "AscendModelSlimConfig310"
+    ],
+    "_310p/sample/__init__.py": [],
+    "_310p/sample/sampler.py": [
+      "_random_sample_310p",
+      "AscendTopKTopPSampler310",
+      "AscendSampler310"
+    ],
+    "_310p/sharded_state_loader_310p.py": [
+      "ShardedStateLoader310"
+    ],
+    "_310p/worker_310p.py": [
+      "_is_rc_device",
+      "NPUWorker310"
+    ],
+    "_cann_ops_custom/.gitkeep": [],
+    "ascend_config.py": [
+      "AscendConfig",
+      "FinegrainedTPConfig",
+      "AscendCompilationConfig",
+      "AscendFusionConfig",
+      "XliteGraphConfig",
+      "WeightPrefetchConfig",
+      "ProfilingChunkConfig",
+      "EplbConfig",
+      "_is_ascend_config_initialized",
+      "init_ascend_config",
+      "clear_ascend_config",
+      "get_ascend_config"
+    ],
+    "ascend_forward_context.py": [
+      "MoECommType",
+      "override_mrv2_in_profile_run",
+      "get_mrv2_in_profile_run",
+      "set_ascend_forward_context",
+      "set_mc2_tokens_capacity",
+      "get_mc2_tokens_capacity",
+      "set_mc2_mask",
+      "get_mc2_mask",
+      "select_moe_comm_method",
+      "_ExtraForwardContextProxy"
+    ],
+    "attention/__init__.py": [],
+    "attention/abstract.py": [
+      "AttentionMetadata",
+      "DSAAttentionImpl"
+    ],
+    "attention/attention_mask.py": [
+      "_generate_attn_mask",
+      "AttentionMaskBuilder"
+    ],
+    "attention/attention_v1.py": [
+      "AscendAttentionBackend",
+      "AscendAttentionState",
+      "AscendMetadata",
+      "AscendAttentionMetadataBuilder",
+      "AscendAttentionBackendImpl",
+      "AscendC8AttentionBackendImpl"
+    ],
+    "attention/context_parallel/__init__.py": [],
+    "attention/context_parallel/attention_cp.py": [
+      "AscendAttentionCPMetadataBuilder",
+      "AscendAttentionCPImpl"
+    ],
+    "attention/context_parallel/common_cp.py": [
+      "AscendPCPMetadata",
+      "CPChunkedContextMetadata",
+      "AscendMetadataForPrefill",
+      "AscendMetadataForDecode",
+      "_process_attn_out_lse",
+      "_npu_attention_update",
+      "_npu_attn_out_lse_update",
+      "_out_lse_reshape",
+      "_update_out_and_lse"
+    ],
+    "attention/context_parallel/dsa_cp.py": [
+      "hadamard_transform_ref",
+      "rotate_activation",
+      "_has_prefill",
+      "DSACPMetadata",
+      "AscendDSAReqMetadata",
+      "AscendDSAMetadata",
+      "AscendDSACPMetadataBuilder",
+      "AscendDSACPImpl"
+    ],
+    "attention/context_parallel/mla_cp.py": [
+      "AscendMlaCPMetadataBuilder",
+      "AscendMlaCPImpl"
+    ],
+    "attention/context_parallel/sfa_cp.py": [
+      "AscendSFACPMetadataBuilder",
+      "AscendSFACPImpl"
+    ],
+    "attention/dsa_v1.py": [
+      "dsv4_dsa_overlap_stream",
+      "hadamard_transform_ref",
+      "rotate_activation",
+      "hadamard_linear",
+      "hadamard_scale",
+      "pad_to_blocks",
+      "AscendDSABackend",
+      "AscendDSAPrefillMetadata",
+      "AscendDSADecodeMetadata",
+      "AscendDSAMetadata",
+      "_require_prefill_metadata",
+      "_require_decode_metadata",
+      "AscendDSAMetadataBuilder",
+      "AscendDSAImpl"
+    ],
+    "attention/fa3_v1.py": [
+      "AscendFABackend",
+      "AscendFAImpl"
+    ],
+    "attention/kvcomp_attn/__init__.py": [],
+    "attention/kvcomp_attn/attention_utils.py": [
+      "build_kvcomp_metadata",
+      "reshape_and_cache_kvcomp",
+      "get_kvcomp_decode_params",
+      "is_enable_hamming_sparse"
+    ],
+    "attention/mla_v1.py": [
+      "AscendMLABackend",
+      "ChunkedContextMetadata",
+      "AscendMLAPrefillMetadata",
+      "AscendMLADecodeMetadata",
+      "AscendMLAMetadata",
+      "AscendMLAMetadataBuilder",
+      "DecodeMLAPreprocessResult",
+      "PrefillMLAPreprocessResult",
+      "AscendMLAImpl"
+    ],
+    "attention/sfa_v1.py": [
+      "AscendSFABackend",
+      "DSACPContext",
+      "AscendSFAMetadata",
+      "AscendSFAMetadataBuilder",
+      "AscendSFAImpl"
+    ],
+    "attention/utils.py": [
+      "ascend_chunked_prefill_workspace_size",
+      "using_paged_attention",
+      "enable_cp",
+      "AscendPrefillContextParallelMetadata",
+      "AscendCommonAttentionMetadata",
+      "filter_chunked_req_indices",
+      "split_decodes_and_prefills",
+      "wait_for_kv_layer_from_connector",
+      "maybe_save_kv_layer_to_connector",
+      "round_up",
+      "trans_rope_weight",
+      "transdata",
+      "enabling_mlapo"
+    ],
+    "batch_invariant.py": [
+      "add_rms_norm",
+      "reduce_sum",
+      "override_envs_for_invariance",
+      "enable_batch_invariant_mode",
+      "init_batch_invariance"
+    ],
+    "compilation/__init__.py": [],
+    "compilation/acl_graph.py": [
+      "ACLGraphEntry",
+      "ACLGraphWrapper",
+      "weak_ref_workspaces",
+      "update_full_graph_params",
+      "GraphParams",
+      "set_graph_params",
+      "update_graph_params_workspaces",
+      "get_graph_params",
+      "set_draft_graph_params",
+      "update_draft_graph_params_workspaces",
+      "get_draft_graph_params",
+      "set_draft_graph_prefill_params",
+      "update_draft_graph_prefill_params_workspaces",
+      "get_draft_graph_prefill_params"
+    ],
+    "compilation/compiler_interface.py": [
+      "compile_fx",
+      "fusion_pass_compile",
+      "_compute_decode_cudagraph_batch_sizes",
+      "_configure_backend",
+      "npugraph_ex_compile",
+      "AscendCompiler"
+    ],
+    "compilation/graph_fusion_pass_manager.py": [
+      "GraphFusionPassManager"
+    ],
+    "compilation/passes/__init__.py": [],
+    "compilation/passes/allgather_chunk_noop_pass.py": [
+      "AllGatherChunkNoOpCleanupPass"
+    ],
+    "compilation/passes/allreduce_rmsnorm_fusion_pass.py": [
+      "MiddleLayerMatmulAllReduceAddRMSNormPattern",
+      "LastLayerMatmulAllReduceAddRMSNormPattern",
+      "MatmulAllReduceAddRMSNormPass"
+    ],
+    "compilation/passes/base_pattern.py": [
+      "BasePattern"
+    ],
+    "compilation/passes/muls_add_pass.py": [
+      "MulsAddPattern",
+      "MulsAddFusionPass"
+    ],
+    "compilation/passes/noop_elimination.py": [
+      "NoOpEliminationPass"
+    ],
+    "compilation/passes/norm_quant_fusion_pass.py": [
+      "AddRMSNormQuantPattern",
+      "AddRMSNormQuantPatternWithBias",
+      "AddRMSNormQuantSPPattern",
+      "AddRMSNormQuantSPPatternWithBias",
+      "AddRMSNormDynamicQuantPattern",
+      "AddRMSNormDynamicQuantPatternWithBias",
+      "AddRMSNormDynamicQuantSPPattern",
+      "AddRMSNormDynamicQuantSPPatternWithBias",
+      "AddRMSNormQuantFusionPass"
+    ],
+    "compilation/passes/qknorm_rope_fusion_pass.py": [
+      "QKNormRopeFusionPattern",
+      "QKNormRopeFusionPatternWithBias",
+      "QKNormRopeFusionPass"
+    ],
+    "compilation/passes/sequence_parallelism_moe.py": [
+      "MiddleLayerAllgatherAddRMSNormPattern",
+      "LastLayerAllgatherRMSNormPattern",
+      "Qwen3VLMiddleLayerAllgatherAddRMSNormPattern",
+      "AllGatherChunkNoOpPattern",
+      "SequenceParallelismMoePass"
+    ],
+    "compilation/passes/sequence_parallelism.py": [
+      "get_sp_min_token_num",
+      "_SequenceParallelPatternHelper",
+      "MiddleAllReduceRMSNormPattern",
+      "LastAllReduceRMSNormPattern",
+      "Qwen3VLMiddleAllReduceRMSNormPattern",
+      "SequenceParallelismPass"
+    ],
+    "compilation/passes/utils/__init__.py": [],
+    "compilation/passes/utils/npugraph_ex_utils_check.py": [
+      "extra_stream_scope_check",
+      "check_and_register_fusion_pass"
+    ],
+    "core/__init__.py": [],
+    "core/profiling_chunk_predictor.py": [
+      "ChunkSizePredictor",
+      "ProfilingChunkManager"
+    ],
+    "core/recompute_scheduler.py": [
+      "register_ascend_mla_spec_in_manager",
+      "RecomputeSchedulerConfig",
+      "RecomputeReqInfo",
+      "RecomputeSchedulerOutput",
+      "RecomputeScheduler",
+      "AsyncRecomputeScheduler"
+    ],
+    "core/scheduler_dynamic_batch.py": [
+      "BudgetRefiner",
+      "SchedulerDynamicBatch"
+    ],
+    "core/scheduler_profiling_chunk.py": [
+      "ProfilingChunkScheduler"
+    ],
+    "core/single_type_kv_cache_manager.py": [
+      "CompressAttentionManager",
+      "get_manager_for_kv_cache_spec"
+    ],
+    "cpu_binding.py": [
+      "is_arm_cpu",
+      "execute_command",
+      "DeviceInfo",
+      "CpuAlloc",
+      "bind_cpus"
+    ],
+    "device_allocator/__init__.py": [],
+    "device_allocator/camem.py": [
+      "find_loaded_library",
+      "AllocationData",
+      "create_and_map",
+      "unmap_and_release",
+      "get_pluggable_allocator",
+      "use_memory_pool_with_allocator",
+      "CaMemAllocator"
+    ],
+    "device/__init__.py": [],
+    "device/device_op.py": [
+      "BaseDeviceAdaptor",
+      "A5DeviceAdaptor",
+      "get_device_adaptor"
+    ],
+    "device/mxfp_compat.py": [
+      "_get_missing_symbols",
+      "_ensure_symbols_available",
+      "ensure_mxfp8_scale_dtype_available",
+      "ensure_mxfp4_dtype_available",
+      "ensure_mxfp8_linear_available",
+      "ensure_mxfp8_moe_available",
+      "ensure_mxfp4_linear_available",
+      "ensure_mxfp4_flatquant_linear_available",
+      "ensure_mxfp4_moe_available"
+    ],
+    "distributed/__init__.py": [],
+    "distributed/device_communicators/__init__.py": [],
+    "distributed/device_communicators/npu_communicator.py": [
+      "NPUCommunicator"
+    ],
+    "distributed/device_communicators/pyhccl_wrapper.py": [
+      "hcclUniqueId",
+      "hcclDataTypeEnum",
+      "hcclRedOpTypeEnum",
+      "Function",
+      "HCCLLibrary"
+    ],
+    "distributed/device_communicators/pyhccl.py": [
+      "PyHcclCommunicator"
+    ],
+    "distributed/kv_transfer/__init__.py": [
+      "register_connector"
+    ],
+    "distributed/kv_transfer/ascend_multi_connector.py": [
+      "AscendMultiConnector"
+    ],
+    "distributed/kv_transfer/kv_p2p/__init__.py": [],
+    "distributed/kv_transfer/kv_p2p/mooncake_connector.py": [
+      "RemotePortInfo",
+      "MooncakeAgentMetadata",
+      "ReqMeta",
+      "GroupPull",
+      "SizedDict",
+      "KVCacheTaskTracker",
+      "KVCacheSendingThread",
+      "KVCacheRecvingThread",
+      "MooncakeConnectorMetadata",
+      "MooncakeConnector",
+      "MooncakeConnectorScheduler",
+      "MooncakeConnectorWorker",
+      "zmq_ctx",
+      "group_concurrent_contiguous",
+      "string_to_int64_hash",
+      "ensure_zmq_send",
+      "ensure_zmq_recv",
+      "get_prefill_pp_indices"
+    ],
+    "distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py": [
+      "RemotePortInfo",
+      "MooncakeAgentMetadata",
+      "ReqMeta",
+      "SizedDict",
+      "KVCacheTaskTracker",
+      "KVCacheSendingThread",
+      "KVCacheRecvingThread",
+      "MooncakeConnectorMetadata",
+      "MooncakeConnector",
+      "MooncakeConnectorScheduler",
+      "MooncakeConnectorWorker",
+      "zmq_ctx",
+      "group_concurrent_contiguous",
+      "string_to_int64_hash",
+      "ensure_zmq_send",
+      "ensure_zmq_recv",
+      "get_prefill_pp_indices"
+    ],
+    "distributed/kv_transfer/kv_p2p/mooncake_layerwise_connector.py": [
+      "LayerMetadata",
+      "MooncakeAgentMetadata",
+      "ReqMeta",
+      "SendTask",
+      "TransferMeta",
+      "SendReqInfo",
+      "SizedDict",
+      "KVCacheSendingLayerThread",
+      "KVCacheRecvingLayerThread",
+      "MooncakeLayerwiseConnectorMetadata",
+      "MooncakeLayerwiseConnector",
+      "MooncakeLayerwiseConnectorScheduler",
+      "MooncakeLayerwiseConnectorWorker",
+      "zmq_ctx",
+      "group_concurrent_contiguous",
+      "string_to_int64_hash",
+      "ensure_zmq_send",
+      "ensure_zmq_recv",
+      "get_external_request_id"
+    ],
+    "distributed/kv_transfer/kv_pool/__init__.py": [],
+    "distributed/kv_transfer/kv_pool/ascend_store/__init__.py": [],
+    "distributed/kv_transfer/kv_pool/ascend_store/ascend_store_connector.py": [
+      "AscendStoreKVEvents",
+      "AscendStoreConnector",
+      "LookupKeyServer"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/backend/__init__.py": [],
+    "distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py": [
+      "Backend"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py": [
+      "MmcDirect",
+      "MemcacheBackend"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py": [
+      "_mooncake_setup_supports_ssd_offload",
+      "_ssd_setup_kwargs",
+      "MooncakeBackend",
+      "MooncakeStoreConfig",
+      "_parse_global_segment_size",
+      "_convert_to_bytes"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py": [
+      "_iter_slices",
+      "YuanrongConfig",
+      "YuanrongHelper",
+      "YuanrongBackend"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/config_data.py": [
+      "KeyMetadata",
+      "PoolKey",
+      "LayerPoolKey",
+      "infer_cache_family_from_ratio",
+      "infer_cache_family_ratio",
+      "get_cache_family_granularity",
+      "_get_layer_compress_ratio",
+      "_get_group_spec_ratios",
+      "infer_group_cache_families",
+      "ChunkedTokenDatabase",
+      "normalize_block_ids_by_group",
+      "get_block_hashes",
+      "_rehash_block_hash_group",
+      "_block_hash_to_bytes",
+      "LoadSpec",
+      "RequestTracker",
+      "ReqMeta",
+      "AscendConnectorMetadata",
+      "LayerMultiBlockReqMeta",
+      "AscendStoreKVConnectorWorkerMetadata"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py": [
+      "KVTransferThread",
+      "KVCacheStoreSendingThread",
+      "KVCacheStoreRecvingThread",
+      "KVCacheStoreLayerSendingThread",
+      "KVCacheStoreLayerRecvingThread",
+      "record_failed_blocks"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py": [
+      "KVPoolScheduler",
+      "LookupKeyClient",
+      "get_zmq_rpc_path_lookup"
+    ],
+    "distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py": [
+      "KVPoolWorker"
+    ],
+    "distributed/kv_transfer/kv_pool/cpu_offload/__init__.py": [],
+    "distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py": [
+      "CPUCacheStats",
+      "CPUKVCacheManager"
+    ],
+    "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py": [
+      "ReqMeta",
+      "CPUOffloadingConnectorMetadata",
+      "CPUOffloadingConnector",
+      "CPUOffloadingConnectorScheduler",
+      "CPUOffloadingConnectorWorker",
+      "get_kv_cache_spec"
+    ],
+    "distributed/kv_transfer/kv_pool/cpu_offload/metadata.py": [
+      "MLAConfig",
+      "get_cpu_offload_connector",
+      "MetadataServer",
+      "MetadataServerProc"
+    ],
+    "distributed/kv_transfer/kv_pool/lmcache_ascend_connector.py": [],
+    "distributed/kv_transfer/kv_pool/simple_cpu_offload/__init__.py": [],
+    "distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py": [
+      "AscendSimpleCPUOffloadConnector"
+    ],
+    "distributed/kv_transfer/kv_pool/ucm_connector.py": [
+      "UCMConnectorV1"
+    ],
+    "distributed/kv_transfer/utils/__init__.py": [],
+    "distributed/kv_transfer/utils/mooncake_transfer_engine.py": [
+      "GlobalTE"
+    ],
+    "distributed/kv_transfer/utils/utils.py": [
+      "kv_alltoall_and_rearrange",
+      "alltoall_and_rearrange",
+      "rearrange_output",
+      "align_memory",
+      "get_transfer_timeout_value",
+      "parallel_info",
+      "get_cp_group",
+      "context_parallel_parameters_check",
+      "get_tp_rank_head_mapping",
+      "get_head_group_mapping",
+      "get_local_remote_block_port_mappings",
+      "get_transfer_mappings"
+    ],
+    "distributed/parallel_state.py": [
+      "init_ascend_model_parallel",
+      "model_parallel_initialized",
+      "get_mc2_group",
+      "get_mlp_tp_group",
+      "get_otp_group",
+      "get_lmhead_tp_group",
+      "get_embed_tp_group",
+      "get_flashcomm2_otp_group",
+      "get_flashcomm2_odp_group",
+      "get_shard_weight_group",
+      "get_p_tp_group",
+      "get_fc3_quant_x_group",
+      "get_dynamic_eplb_group",
+      "destroy_ascend_model_parallel"
+    ],
+    "distributed/utils.py": [
+      "fc3_all_gather_and_maybe_unpad_impl",
+      "all_gather_async",
+      "split_tensor_along_first_dim"
+    ],
+    "envs.py": [
+      "__getattr__",
+      "__dir__"
+    ],
+    "eplb/__init__.py": [],
+    "eplb/adaptor/__init__.py": [],
+    "eplb/adaptor/vllm_adaptor.py": [
+      "VllmEplbAdaptor"
+    ],
+    "eplb/core/__init__.py": [],
+    "eplb/core/eplb_device_transfer_loader.py": [
+      "ExpertWeightUpdateState",
+      "D2DExpertWeightLoader"
+    ],
+    "eplb/core/eplb_utils.py": [
+      "expert_file_to_tensor",
+      "generate_global_placement",
+      "init_eplb_config",
+      "generate_log2phy_map"
+    ],
+    "eplb/core/eplb_worker.py": [
+      "EplbWorker",
+      "EplbProcess"
+    ],
+    "eplb/core/policy/__init__.py": [],
+    "eplb/core/policy/policy_abstract.py": [
+      "EplbPolicy"
+    ],
+    "eplb/core/policy/policy_default_eplb.py": [
+      "DynamicTable",
+      "DefaultEplb"
+    ],
+    "eplb/core/policy/policy_factory.py": [
+      "PolicyFactory"
+    ],
+    "eplb/core/policy/policy_flashlb.py": [
+      "min_max_replica",
+      "max_delta_replica",
+      "percentage_replica",
+      "make_replica",
+      "compute_updated_device_variance",
+      "lpt_deployment",
+      "compute_score",
+      "FlashTree",
+      "FlashLBConfig",
+      "FlashLB",
+      "generate_layered_experts",
+      "warm_up"
+    ],
+    "eplb/core/policy/policy_random.py": [
+      "RandomLoadBalance"
+    ],
+    "eplb/core/policy/policy_swift_balancer.py": [
+      "DynamicTable",
+      "SwiftBalanceEplb"
+    ],
+    "eplb/eplb_updator.py": [
+      "EplbUpdator"
+    ],
+    "eplb/utils.py": [
+      "get_expert_map",
+      "get_log2phy_map",
+      "get_all_moe_loads",
+      "clear_all_moe_loads",
+      "model_register"
+    ],
+    "flash_common3_context.py": [
+      "FlashCommon3Context",
+      "get_flash_common3_context",
+      "set_flash_common3_context"
+    ],
+    "kv_offload/__init__.py": [],
+    "kv_offload/cpu_npu.py": [
+      "Transfer",
+      "expand_block_ids",
+      "CpuNpuOffloadingHandler"
+    ],
+    "kv_offload/npu.py": [
+      "NPUOffloadingSpec"
+    ],
+    "lora/__init__.py": [],
+    "lora/lora_ops.py": [
+      "bgmv_shrink",
+      "bgmv_expand",
+      "bgmv_expand_slice",
+      "sgmv_shrink",
+      "sgmv_expand",
+      "sgmv_expand_slice"
+    ],
+    "lora/punica_npu.py": [
+      "PunicaWrapperNPU"
+    ],
+    "lora/utils.py": [
+      "AscendQKVParallelLinearWithLoRA",
+      "AscendMergedQKVParallelLinearWithLoRA",
+      "AscendMergedQKVParallelLinearWithShardedLoRA",
+      "AscendQKVParallelLinearWithShardedLoRA",
+      "refresh_all_lora_classes"
+    ],
+    "meta_registration.py": [
+      "register_meta_if_necessary",
+      "get_masked_input_and_mask_meta",
+      "bgmv_expand_meta",
+      "sgmv_expand_meta"
+    ],
+    "model_loader/__init__.py": [],
+    "model_loader/netloader/__init__.py": [
+      "register_netloader"
+    ],
+    "model_loader/netloader/executor/__init__.py": [],
+    "model_loader/netloader/executor/elastic_load.py": [
+      "P2PLoad",
+      "P2PSend"
+    ],
+    "model_loader/netloader/executor/netloader_pg.py": [
+      "stateless_init_process_group",
+      "destroy_stateless_process_group"
+    ],
+    "model_loader/netloader/interaction/__init__.py": [],
+    "model_loader/netloader/interaction/elastic.py": [
+      "ElasticClient",
+      "ElasticServer"
+    ],
+    "model_loader/netloader/load.py": [
+      "elastic_load"
+    ],
+    "model_loader/netloader/netloader.py": [
+      "ModelNetLoaderElastic"
+    ],
+    "model_loader/netloader/utils.py": [
+      "find_free_port",
+      "is_valid_path_prefix"
+    ],
+    "model_loader/rfork/__init__.py": [
+      "register_rforkloader"
+    ],
+    "model_loader/rfork/rfork_loader.py": [
+      "RForkModelLoader"
+    ],
+    "model_loader/rfork/rfork_worker.py": [
+      "RForkWorker"
+    ],
+    "model_loader/rfork/seed_protocol.py": [
+      "get_local_seed_key",
+      "RForkSeedProtocol"
+    ],
+    "model_loader/rfork/seed_server.py": [
+      "start_fastapi_server",
+      "start_rfork_server"
+    ],
+    "model_loader/rfork/transfer_backend.py": [
+      "RForkTransferBackend",
+      "get_remote_instance_transfer_engine_info"
+    ],
+    "models/__init__.py": [
+      "register_model"
+    ],
+    "models/deepseek_v4_mtp.py": [
+      "SharedHead",
+      "DeepSeekMultiTokenPredictorLayer",
+      "DeepSeekMultiTokenPredictor",
+      "DeepSeekV4MTP"
+    ],
+    "models/deepseek_v4.py": [
+      "hadamard_transform_ref",
+      "rotate_activation",
+      "precompute_freqs_cis_cpu",
+      "apply_rotary_emb",
+      "get_spec_layer_idx_from_weight_name",
+      "DeepseekV2MLP",
+      "DeepseekV4MoE",
+      "yarn_get_mscale",
+      "_get_llama_4_scaling",
+      "Indexer",
+      "Compressor",
+      "DeepseekV4Attention",
+      "DeepseekV2DecoderLayer",
+      "DeepseekV4Model",
+      "DeepseekV2MixtureOfExperts",
+      "AscendDeepseekV4ForCausalLM"
+    ],
+    "models/layer/__init__.py": [],
+    "models/layer/attention/__init__.py": [],
+    "models/layer/attention/layer.py": [
+      "DSAAttention"
+    ],
+    "ops/__init__.py": [
+      "dummyFusionOp",
+      "register_dummy_fusion_op"
+    ],
+    "ops/activation.py": [
+      "AscendQuickGELU",
+      "AscendSiluAndMul",
+      "AscendSiluAndMulWithClamp",
+      "AscendSwigluOAIAndMul"
+    ],
+    "ops/bailing_moe_linear_attn.py": [
+      "AscendBailingMoELinearAttention"
+    ],
+    "ops/conv.py": [
+      "AscendConv3dLayer"
+    ],
+    "ops/cv_linear.py": [
+      "CVLinearWrapper"
+    ],
+    "ops/dsa.py": [
+      "DSAModules",
+      "AscendDeepseekSparseAttention",
+      "dsa_forward",
+      "dsa_forward_fake",
+      "filter_metadata",
+      "_build_kv_cache",
+      "unfold_kvcache"
+    ],
+    "ops/flashcomm2_oshard_manager.py": [
+      "Flashcomm2OShardManager"
+    ],
+    "ops/fused_moe/__init__.py": [],
+    "ops/fused_moe/comm_utils.py": [
+      "async_all_to_all",
+      "_gather_along_first_dim",
+      "gather_from_sequence_parallel_region"
+    ],
+    "ops/fused_moe/experts_selector.py": [
+      "select_experts",
+      "check_npu_moe_gating_top_k",
+      "_native_grouped_topk",
+      "_renormalize_topk_weights",
+      "_select_expert_use_group_topk",
+      "_select_experts_with_fusion_ops",
+      "_native_select_experts",
+      "zero_experts_compute"
+    ],
+    "ops/fused_moe/fused_moe.py": [
+      "FusedMoEResult",
+      "FusedMoEEvents",
+      "mock_false",
+      "mock_true",
+      "AscendUnquantizedFusedMoEMethod",
+      "AscendMoERunner",
+      "AscendFusedMoE"
+    ],
+    "ops/fused_moe/gate_linear.py": [
+      "AscendGateLinear"
+    ],
+    "ops/fused_moe/moe_comm_method.py": [
+      "get_moe_comm_method",
+      "setup_moe_comm_method",
+      "set_gmmswigluquant_method",
+      "FusedExpertsResult",
+      "MoECommMethod",
+      "AllGatherCommImpl",
+      "MC2CommImpl",
+      "AlltoAllCommImpl",
+      "FusedMC2CommImpl"
+    ],
+    "ops/fused_moe/moe_mlp.py": [
+      "_custom_gmm_swiglu_enabled",
+      "cumsum_group_list",
+      "_require_single_tensor_for_swiglu_quant",
+      "quant_apply_mlp",
+      "unquant_apply_mlp",
+      "unified_apply_mlp"
+    ],
+    "ops/fused_moe/moe_runtime_args.py": [
+      "_build_mxfp_params",
+      "build_fused_experts_input",
+      "build_token_dispatch_input",
+      "build_mlp_compute_input"
+    ],
+    "ops/fused_moe/moe_stage_contracts.py": [
+      "MoEPrepareOutput",
+      "MoEWeights",
+      "MoEFusedExpertsInput",
+      "MoETokenDispatchInput",
+      "MoEMC2CombineMetadata",
+      "MoEAllGatherCombineMetadata",
+      "MoEAllToAllCombineMetadata",
+      "MoETokenDispatchOutput",
+      "MoEMlpComputeInput"
+    ],
+    "ops/fused_moe/moe_stage_params.py": [
+      "MoERoutingParams",
+      "MoEMxfpParams",
+      "MoEQuantParams"
+    ],
+    "ops/fused_moe/prepare_finalize.py": [
+      "PrepareAndFinalize",
+      "PrepareAndFinalizeWithAll2All",
+      "PrepareAndFinalizeWithMC2",
+      "PrepareAndFinalizeWithAllGather"
+    ],
+    "ops/fused_moe/token_dispatcher.py": [
+      "_get_expert_token_nums_type",
+      "MoETokenDispatcher",
+      "TokenDispatcherWithMC2",
+      "TokenDispatcherWithAllGather",
+      "TokenDispatcherWithAll2AllV"
+    ],
+    "ops/gdn.py": [
+      "to_int64_tuple",
+      "_check_and_get_host_args",
+      "get_non_spec_causal_conv1d_host_args",
+      "get_causal_conv1d_update_host_args",
+      "get_spec_causal_conv1d_update_host_args",
+      "_pad_conv1d_host_args_to_capture",
+      "update_conv1d_graph_params",
+      "get_non_spec_chunked_prefill_meta",
+      "AscendGatedDeltaNetAttention"
+    ],
+    "ops/layer_shard_linear.py": [
+      "dispose_tensor",
+      "LayerMetadata",
+      "ShardWindowMetadata",
+      "SeriesMetadata",
+      "LayerExternalMetadata",
+      "_create_forward_wrapper",
+      "register_layer_to_shard_weight_series",
+      "post_process_after_loading_for_shard_weight_series",
+      "reach_layer_for_shard_weight_series",
+      "wait_layer_for_shard_weight_series",
+      "get_current_model_num_hidden_layers",
+      "is_hidden_layer",
+      "register_all_layers_to_shard_weight_series"
+    ],
+    "ops/layernorm.py": [
+      "AscendRMSNorm",
+      "AscendGemmaRMSNorm",
+      "LayerNormFn",
+      "AscendRMSNormGated"
+    ],
+    "ops/linear_op.py": [
+      "CustomLinearOp",
+      "CustomColumnParallelOp",
+      "CustomRowParallelOp",
+      "CustomReplicatedOp",
+      "MLPColumnParallelOp",
+      "MLPRowParallelOp",
+      "OProjRowParallelOp",
+      "Flashcomm2OProjRowParallelOp",
+      "MatmulAllreduceRowParallelOp",
+      "SequenceColumnParallelOp",
+      "Flashcomm2OshardQKVParallelOp",
+      "SequenceRowParallelOp",
+      "ShardedCPRowParallelOp",
+      "ShardedCPColumnParallelOp",
+      "_get_column_parallel_op",
+      "_get_row_parallel_op",
+      "get_parallel_op",
+      "get_replicated_op",
+      "is_moe_layer"
+    ],
+    "ops/linear.py": [
+      "unquantized_gemm",
+      "unquantized_gemm_fake",
+      "AscendUnquantizedLinearMethod",
+      "AscendLinearBase",
+      "AscendQKVParallelLinear",
+      "AscendMergedColumnParallelLinear",
+      "AscendRowParallelLinear",
+      "AscendColumnParallelLinear",
+      "AscendReplicatedLinear"
+    ],
+    "ops/mhc.py": [
+      "hc_split_sinkhorn_ref"
+    ],
+    "ops/mla.py": [
+      "IndexerWrapper",
+      "AscendMultiHeadLatentAttention",
+      "mla_forward",
+      "mla_forward_fake"
+    ],
+    "ops/mm_encoder_attention.py": [
+      "AscendMMEncoderAttention"
+    ],
+    "ops/qwen2_decoder.py": [
+      "AscendCustomQwen2Decoder",
+      "AscendQwen2Model",
+      "AscendQwen2DecoderLayer",
+      "optimized_apply_rotary_pos_emb",
+      "AscendQwen2Attention",
+      "AscendQwen2RMSNorm"
+    ],
+    "ops/register_custom_ops.py": [
+      "_maybe_chunk_residual_impl",
+      "_maybe_all_gather_and_maybe_unpad_impl",
+      "_maybe_pad_and_reduce_impl",
+      "_maybe_all_gather_and_maybe_unpad_fake",
+      "_maybe_pad_and_reduce_fake",
+      "_prefetch_preprocess_impl",
+      "_prefetch_preprocess_impl_fake",
+      "_prefetch_postprocess_impl",
+      "_prefetch_postprocess_impl_fake",
+      "_maybe_all_reduce_tensor_model_parallel_impl",
+      "_matmul_and_reduce_impl",
+      "_matmul_and_reduce_impl_fake",
+      "_quantize_impl",
+      "_quantize_impl_fake",
+      "_rope_forward_oot_impl_fake",
+      "_muls_add_impl_fake"
+    ],
+    "ops/rel_pos_attention.py": [
+      "AscendRelPosAttention"
+    ],
+    "ops/rope_dsv4.py": [
+      "RopeGlobalState",
+      "RopeDataProxy",
+      "get_cos_and_sin_dsa",
+      "ComplexExpRotaryEmbedding"
+    ],
+    "ops/rotary_embedding.py": [
+      "set_cos_and_sin",
+      "get_cos_and_sin_mla",
+      "_record_cos_sin_cache",
+      "_record_cos_and_sin_cache",
+      "_record_cos_and_sin_cache_interleaved",
+      "update_cos_sin",
+      "get_cos_and_sin_slice",
+      "rope_forward_oot",
+      "AscendRotaryEmbedding",
+      "AscendYaRNRotaryEmbedding",
+      "AscendDeepseekScalingRotaryEmbedding",
+      "AscendMRotaryEmbedding",
+      "AscendApplyRotaryEmb"
+    ],
+    "ops/triton/__init__.py": [],
+    "ops/triton/activation/__init__.py": [],
+    "ops/triton/activation/swiglu_quant.py": [
+      "_swiglu_quant_kernel",
+      "swiglu_quant"
+    ],
+    "ops/triton/batch_invariant/__init__.py": [],
+    "ops/triton/batch_invariant/matmul.py": [
+      "matmul_bias_persistent_kernel",
+      "matmul_persistent",
+      "linear_persistent_kernel",
+      "linear_persistent",
+      "mm_batch_invariant",
+      "bmm_batch_invariant",
+      "addmm_batch_invariant",
+      "matmul_batch_invariant",
+      "linear_batch_invariant"
+    ],
+    "ops/triton/batch_invariant/mean.py": [
+      "mean_kernel",
+      "mean_dim",
+      "mean_batch_invariant"
+    ],
+    "ops/triton/batch_invariant/rmsnorm.py": [
+      "_rms_norm_kernel",
+      "rms_norm",
+      "rms_norm_batch_invariant"
+    ],
+    "ops/triton/batch_invariant/softmax.py": [
+      "softmax_batch_invariant"
+    ],
+    "ops/triton/batch_memcpy.py": [
+      "batch_memcpy_kernel"
+    ],
+    "ops/triton/bincount.py": [
+      "token_bin_counts_and_mask_kernel",
+      "get_token_bin_counts_and_mask_triton"
+    ],
+    "ops/triton/fla/__init__.py": [],
+    "ops/triton/fla/chunk_delta_h.py": [
+      "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+      "chunk_gated_delta_rule_fwd_h"
+    ],
+    "ops/triton/fla/chunk_delta_hupdate.py": [
+      "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+      "chunk_gated_delta_rule_fwd_hupdate"
+    ],
+    "ops/triton/fla/chunk_o_update.py": [
+      "chunk_fwd_kernel_o_update",
+      "chunk_fwd_o_update"
+    ],
+    "ops/triton/fla/chunk_o.py": [
+      "chunk_fwd_kernel_o",
+      "chunk_fwd_o"
+    ],
+    "ops/triton/fla/chunk_scaled_dot_kkt.py": [
+      "chunk_scaled_dot_kkt_fwd_kernel",
+      "chunk_scaled_dot_kkt_fwd"
+    ],
+    "ops/triton/fla/chunk.py": [
+      "chunk_gated_delta_rule_fwd",
+      "ChunkGatedDeltaRuleFunction",
+      "chunk_gated_delta_rule"
+    ],
+    "ops/triton/fla/cumsum.py": [
+      "chunk_local_cumsum_scalar_kernel",
+      "chunk_local_cumsum_scalar",
+      "chunk_local_cumsum"
+    ],
+    "ops/triton/fla/fused_qkvzba_split_reshape.py": [
+      "fused_qkvzba_split_reshape_cat_kernel",
+      "fused_qkvzba_split_reshape_cat"
+    ],
+    "ops/triton/fla/l2norm.py": [
+      "l2norm_fwd_kernel2_loop",
+      "l2norm_fwd"
+    ],
+    "ops/triton/fla/layernorm_guard.py": [
+      "layer_norm_fwd_kernel",
+      "_layer_norm_fwd",
+      "LayerNormFn"
+    ],
+    "ops/triton/fla/sigmoid_gating.py": [
+      "fused_recurrent_gated_delta_rule_fwd_kernel",
+      "fused_sigmoid_gating_delta_rule_update_kernel",
+      "fused_sigmoid_gating_delta_rule_update"
+    ],
+    "ops/triton/fla/solve_tril.py": [
+      "solve_tril_16x16_kernel",
+      "merge_16x16_to_32x32_inverse_kernel",
+      "merge_16x16_to_64x64_inverse_kernel",
+      "solve_tril"
+    ],
+    "ops/triton/fla/utils.py": [
+      "prepare_lens",
+      "prepare_chunk_indices",
+      "prepare_final_chunk_indices",
+      "prepare_chunk_offsets",
+      "prepare_update_chunk_offsets",
+      "input_guard",
+      "safe_exp",
+      "_clear_ssm_states_kernel",
+      "clear_ssm_states"
+    ],
+    "ops/triton/fla/wy_fast.py": [
+      "recompute_w_u_fwd_kernel",
+      "recompute_w_u_fwd"
+    ],
+    "ops/triton/fused_gdn_gating.py": [
+      "fused_gdn_gating_kernel",
+      "fused_gdn_gating_patch"
+    ],
+    "ops/triton/gdn_chunk_meta.py": [
+      "_cdiv",
+      "_build_chunk_counts_kernel",
+      "_build_chunk_offsets_kernel",
+      "_build_final_chunk_indices_kernel",
+      "_validate_optional_output",
+      "_validate_cu_seqlens",
+      "_build_seq_lens",
+      "_build_chunk_counts",
+      "_build_chunk_offsets",
+      "_build_final_chunk_indices",
+      "_build_chunk_meta_device_from_seq_lens",
+      "build_chunk_meta_device"
+    ],
+    "ops/triton/layernorm_gated.py": [
+      "_layer_norm_fwd_1pass_kernel_npu",
+      "layer_norm_fwd_npu"
+    ],
+    "ops/triton/linearnorm/__init__.py": [],
+    "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py": [
+      "split_qkv_rmsnorm_mrope_kernel",
+      "triton_split_qkv_rmsnorm_mrope",
+      "triton_split_qkv_rmsnorm_mrope_fake"
+    ],
+    "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py": [
+      "precompute_rope_cos_sin_kernel",
+      "split_qkv_rmsnorm_rope_simt_kernel",
+      "split_qkv_rmsnorm_rope_simt_impl",
+      "split_qkv_rmsnorm_rope_simt_impl_fake"
+    ],
+    "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py": [
+      "split_qkv_rmsnorm_rope_kernel",
+      "split_qkv_rmsnorm_rope_impl",
+      "split_qkv_rmsnorm_rope_impl_fake"
+    ],
+    "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py": [
+      "_split_qkv_and_compute_local_qk_var_kernel",
+      "_apply_global_rmsnorm_kernel",
+      "split_qkv_tp_rmsnorm_rope_impl",
+      "split_qkv_tp_rmsnorm_rope_impl_fake"
+    ],
+    "ops/triton/mamba/__init__.py": [],
+    "ops/triton/mamba/causal_conv1d.py": [
+      "causal_conv1d_ref",
+      "causal_conv1d_fn",
+      "extract_last_width",
+      "_causal_conv1d_update_kernel_npu_tiled",
+      "causal_conv1d_update_npu"
+    ],
+    "ops/triton/mamba/lightning_attn.py": [
+      "_fwd_diag_kernel",
+      "_fwd_kv_parallel",
+      "_fwd_kv_reduce",
+      "_fwd_none_diag_kernel",
+      "_attention",
+      "lightning_attention_npu",
+      "AscendLightningAttentionKernel"
+    ],
+    "ops/triton/mul_add.py": [
+      "muls_add_kernel",
+      "muls_add_triton"
+    ],
+    "ops/triton/muls_add.py": [
+      "muls_add_kernel",
+      "muls_add_triton"
+    ],
+    "ops/triton/penalty.py": [
+      "apply_all_penalties_kernel",
+      "apply_penalties_triton",
+      "_apply_all_penalties_triton"
+    ],
+    "ops/triton/reject_sample.py": [
+      "cal_grid_and_block_size",
+      "bonus_renew_1",
+      "rejection_greedy_sample_spec_len_1_triton",
+      "bonus_renew",
+      "rejection_greedy_sample_triton",
+      "rejection_random_sample_kernel",
+      "expand_kernel",
+      "sample_recovered_tokens_kernel",
+      "rejection_greedy_sample_with_triton",
+      "expand_triton",
+      "rejection_random_sample_block_verify_kernel"
+    ],
+    "ops/triton/rms_norm.py": [
+      "triton_rms_kernel",
+      "triton_q_rms"
+    ],
+    "ops/triton/rope.py": [
+      "_triton_rope",
+      "_triton_rope_siso",
+      "rope_forward_triton",
+      "rope_forward_triton_siso"
+    ],
+    "ops/triton/spec_decode/__init__.py": [],
+    "ops/triton/spec_decode/utils.py": [
+      "prepare_inputs_padded_kernel",
+      "copy_and_expand_dflash_inputs_kernel_single_grid"
+    ],
+    "ops/triton/triton_utils.py": [
+      "_resolve_triton_ascend_op",
+      "init_device_properties_triton",
+      "get_aicore_num",
+      "get_vectorcore_num"
+    ],
+    "ops/vocab_parallel_embedding.py": [
+      "AscendVocabParallelEmbedding",
+      "AscendParallelLMHead",
+      "AscendLogitsProcessor"
+    ],
+    "ops/weight_prefetch.py": [
+      "ModuleWeightPrefetchConfig",
+      "WeightPrefetchMethod",
+      "maybe_npu_prefetch"
+    ],
+    "patch/__init__.py": [],
+    "patch/platform/__init__.py": [],
+    "patch/platform/patch_balance_schedule.py": [
+      "_balance_scheduling_enabled",
+      "BalanceScheduler",
+      "BalanceDPEngineCoreProc",
+      "run_engine_core"
+    ],
+    "patch/platform/patch_camem_allocator.py": [
+      "_patched_is_cumem_allocator_available"
+    ],
+    "patch/platform/patch_deepseek_v4_thinking.py": [
+      "_rebuild_model_field",
+      "_patched_build_chat_params",
+      "_patched_get_deepseek_v4_tokenizer",
+      "_patched_deepseek_v4_from_pretrained"
+    ],
+    "patch/platform/patch_deepseek_v4_tool_call_parser.py": [
+      "_ensure_parser_regexes",
+      "_partial_tag_overlap",
+      "_ensure_streaming_attrs",
+      "_function_name",
+      "_function_parameters",
+      "_extract_types_from_schema",
+      "_coerce_to_schema_type",
+      "_convert_param_value_checked",
+      "_convert_param_value",
+      "_extract_param_name",
+      "_get_param_config",
+      "_coerce_param_value",
+      "_repair_param_dict",
+      "_parse_invoke_params",
+      "_patched_extract_tool_calls",
+      "_reset_streaming_state",
+      "_json_escape_string_content",
+      "_drain_pending_tool_call_deltas",
+      "_pop_pending_delta_message",
+      "_queue_delta_message",
+      "_emit_tool_name_delta",
+      "_emit_tool_args_delta",
+      "_begin_streaming_tool_call",
+      "_append_param_prefix",
+      "_append_json_param_value",
+      "_append_raw_param_value",
+      "_param_types_for_name",
+      "_can_stream_raw_param",
+      "_finish_buffered_param",
+      "_should_buffer_wrapper_param",
+      "_finish_buffered_wrapper_param",
+      "_close_streaming_tool_call",
+      "_safe_content_len_before_tag_end",
+      "_process_streaming_buffer",
+      "_patched_extract_tool_calls_streaming"
+    ],
+    "patch/platform/patch_distributed.py": [
+      "NullHandle",
+      "communication_adaptation_310p"
+    ],
+    "patch/platform/patch_glm_tool_call_streaming.py": [
+      "_create_remaining_args_delta",
+      "_terminal_tool_arg_choice",
+      "_split_terminal_tool_arg_chunk",
+      "_wrapped_chat_completion_stream_generator"
+    ],
+    "patch/platform/patch_glm47_tool_call_parser.py": [
+      "_patched_extract_tool_call_regions"
+    ],
+    "patch/platform/patch_kv_cache_coordinator.py": [
+      "AscendHybridKVCacheCoordinator",
+      "get_kv_cache_coordinator"
+    ],
+    "patch/platform/patch_kv_cache_interface.py": [
+      "_get_c8_k_cache_dtype",
+      "_get_c8_k_scale_cache_dtype",
+      "AscendMLAAttentionSpec",
+      "_init_mla_cache_fields",
+      "AscendSlidingWindowMLASpec"
+    ],
+    "patch/platform/patch_kv_cache_utils.py": [
+      "_ascend_resolve_kv_cache_block_sizes",
+      "group_and_unify_kv_cache_specs",
+      "_get_kv_cache_groups_uniform_groups",
+      "_get_kv_cache_config_deepseek_v4"
+    ],
+    "patch/platform/patch_mamba_config_310.py": [
+      "verify_and_update_config"
+    ],
+    "patch/platform/patch_mamba_config.py": [
+      "verify_and_update_config"
+    ],
+    "patch/platform/patch_mamba_manager.py": [
+      "AscendMambaManager"
+    ],
+    "patch/platform/patch_minimax_m2_config.py": [
+      "_get_model_type",
+      "_should_disable_fp8",
+      "_disable_fp8",
+      "_patched_verify_quantization",
+      "_patched_verify_cuda_graph",
+      "_patch_speculative_minimax_whitelist",
+      "_patch_eagle3_registry_alias"
+    ],
+    "patch/platform/patch_minimax_m2_tool_call_parser.py": [
+      "_patched_init",
+      "_extract_types_from_schema_fallback",
+      "_extract_param_types_from_schema",
+      "_coerce_param_value_fallback",
+      "_coerce_param_value",
+      "_get_param_types_from_config",
+      "_patched_parse_single_invoke",
+      "_reset_streaming_state",
+      "_ensure_streaming_slots",
+      "_get_param_config",
+      "_serialize_partial_param_value",
+      "_build_partial_arguments",
+      "_get_invoke_states",
+      "_finalize_completed_tool_call",
+      "_extract_delta_tool_call",
+      "_patched_extract_tool_calls_streaming"
+    ],
+    "patch/platform/patch_minimax_usage_accounting.py": [
+      "CompletionTokenUsageInfo",
+      "UsageInfo",
+      "_rebuild_model_field",
+      "_count_minimax_reasoning_tokens",
+      "_patched_count_reasoning_tokens",
+      "_count_reasoning_tokens_for_usage",
+      "_clamp_reasoning_tokens",
+      "_make_usage_info",
+      "_UsageTrackingState",
+      "_create_usage_tracking_state",
+      "_update_usage_tracking_state",
+      "_tracked_result_generator",
+      "_sum_reasoning_tokens_for_usage",
+      "_reasoning_tokens_for_choice",
+      "_make_full_response_usage",
+      "_usage_reasoning_tokens_for_stream_chunk",
+      "_inject_stream_usage_details",
+      "_wrapped_chat_completion_stream_generator",
+      "_wrapped_chat_completion_full_generator"
+    ],
+    "patch/platform/patch_mla_prefill_backend.py": [],
+    "patch/platform/patch_multiproc_executor.py": [
+      "AscendMultiprocExecutor",
+      "AscendWorkerProc"
+    ],
+    "patch/platform/patch_profiling_chunk.py": [
+      "_record_execution_timing",
+      "_ensure_update_from_output_wrapped",
+      "_ensure_schedule_wrapped",
+      "_apply_profiling_patches",
+      "_patched_run_engine_core"
+    ],
+    "patch/platform/patch_scheduler.py": [
+      "_mamba_block_aligned_split"
+    ],
+    "patch/platform/patch_speculative_config.py": [
+      "hf_config_override"
+    ],
+    "patch/platform/patch_tool_choice_none_content.py": [
+      "_omit_empty_tool_calls",
+      "_patched_chat_completion_response_model_dump",
+      "_patched_chat_completion_stream_response_model_dump",
+      "_patched_chat_completion_stream_response_model_dump_json",
+      "_is_forced_tool_choice",
+      "_set_no_forced_tool_call",
+      "_patch_named_tool_choice_bool",
+      "_patched_parse_tool_calls_from_content",
+      "_patched_delegating_parse_tool_calls"
+    ],
+    "patch/platform/patch_torch_accelerator.py": [
+      "patch_empty_cache"
+    ],
+    "patch/worker/__init__.py": [],
+    "patch/worker/_hccl_pg_registry.py": [
+      "HcclPgKey",
+      "RegistryEntry",
+      "make_hccl_pg_key",
+      "HcclPgRegistry",
+      "_normalize_hccl_pg_options",
+      "_has_unknown_non_default_fields",
+      "_global_ranks_match_requested_ranks",
+      "_freeze_for_key",
+      "_is_default_option_value",
+      "_is_non_group_member",
+      "_load_non_group_member_sentinel",
+      "_destroy_process_group"
+    ],
+    "patch/worker/patch_cudagraph.py": [
+      "_create_padded_batch_descriptor"
+    ],
+    "patch/worker/patch_deepseek_compressor.py": [
+      "AscendCompressorStateCache",
+      "AscendDeepseekV4IndexerCache",
+      "AscendDeepseekV4SWACache"
+    ],
+    "patch/worker/patch_deepseek_mtp.py": [
+      "get_spec_layer_idx_from_weight_name",
+      "get_spec_layer_idx_from_weight_name_020",
+      "AscendDeepSeekMultiTokenPredictorLayer",
+      "AscendDeepSeekMTP"
+    ],
+    "patch/worker/patch_distributed.py": [
+      "_normalize_backend",
+      "_resolve_reuse_domain",
+      "_create_device_group",
+      "_acquire_hccl_group",
+      "_wrap_destroy_distributed_environment",
+      "_patch_destroy_distributed_environment",
+      "GroupCoordinatorPatch"
+    ],
+    "patch/worker/patch_draft_quarot.py": [
+      "get_embedding_tensor",
+      "get_rotation_path",
+      "get_rotataion_matrix",
+      "compute_rotataion_matrix3",
+      "patch_load_weights",
+      "make_load_weights"
+    ],
+    "patch/worker/patch_gdn_attn.py": [
+      "GDNChunkedPrefillMetadata",
+      "GDNCausalConv1dHostMetadata",
+      "GDNSpecCausalConv1dHostMetadata",
+      "GDNPrefillFallbackMeta",
+      "GDNDecodeFallbackMeta",
+      "GDNSpecDecodeFallbackMeta",
+      "_GDNChunkedPrefillBufferSlot",
+      "_GDNCausalConv1dHostBufferSlot",
+      "_GDNSpecCausalConv1dHostBufferSlot",
+      "_GDNChunkMetaSizeInfo",
+      "_GDNChunkMetaShapeInfo",
+      "_next_power_of_2",
+      "_prepare_chunk_counts_cpu",
+      "_fill_chunk_indices_cpu",
+      "_fill_chunk_offsets_cpu",
+      "_fill_update_chunk_offsets_cpu",
+      "_fill_final_chunk_indices_cpu",
+      "_build_chunk_meta_shape_info",
+      "_count_chunk_indices_cpu",
+      "_build_chunk_meta_size_info",
+      "_allocate_chunk_meta_cpu_tensors",
+      "_slice_chunk_meta_slot_tensors",
+      "_fill_chunk_meta_cpu_tensors",
+      "_fill_chunk_meta_device_tensors",
+      "_build_chunked_prefill_metadata",
+      "_get_gdn_num_heads",
+      "_allocate_chunked_prefill_slot",
+      "_ensure_chunk_meta_state",
+      "_build_spec_sequence_masks_cpu",
+      "_build_non_spec_query_start_loc_cpu",
+      "_build_spec_query_start_loc_cpu",
+      "_allocate_causal_conv1d_host_slot",
+      "_ensure_causal_conv1d_host_meta_state",
+      "_acquire_causal_conv1d_host_slot",
+      "_allocate_spec_causal_conv1d_host_slot",
+      "_ensure_spec_causal_conv1d_host_meta_state",
+      "_acquire_spec_causal_conv1d_host_slot",
+      "_copy_to_pinned_cpu",
+      "_build_non_spec_causal_conv1d_host_meta",
+      "_build_non_spec_decode_causal_conv1d_host_meta",
+      "_build_spec_causal_conv1d_host_meta",
+      "_build_non_spec_chunked_prefill_meta_cpu",
+      "_build_non_spec_chunked_prefill_meta",
+      "_patched_build",
+      "_patched_build_prefill",
+      "_init_reorder_batch_threshold",
+      "_patched_build_spec",
+      "_patched_build_decode"
+    ],
+    "patch/worker/patch_gqa_c8.py": [
+      "_patched_causal_lm_load_weights"
+    ],
+    "patch/worker/patch_idex_310.py": [],
+    "patch/worker/patch_kimi_k25.py": [
+      "get_rope_shape",
+      "AscendLearnable2DInterpPosEmbDivided_fixed"
+    ],
+    "patch/worker/patch_mamba_utils.py": [
+      "_can_launch_triton_batch_memcpy",
+      "_batch_memcpy_triton",
+      "_tensor_view_from_data_ptr",
+      "_get_tensor_copy_pairs",
+      "_collect_mamba_copy_meta_torch",
+      "_do_mamba_copy_block_torch",
+      "_batch_memcpy_unavailable",
+      "preprocess_mamba"
+    ],
+    "patch/worker/patch_minimax_m2_linear_attn.py": [
+      "_patched_qk",
+      "_patched_weight_loader",
+      "_patched_init"
+    ],
+    "patch/worker/patch_minimax_m2.py": [
+      "_patched_moe_forward",
+      "_patched_attention_init",
+      "_patch_forward",
+      "_need_dequantize_fp8_weights",
+      "_dequantize_fp8_block_weight",
+      "_fp8_dequant_weight_iter",
+      "_patched_load_weights",
+      "_patched_minimax_m2_forward",
+      "_set_aux_hidden_state_layers",
+      "_get_eagle3_default_aux_hidden_state_layers",
+      "_get_eagle3_aux_hidden_state_layers"
+    ],
+    "patch/worker/patch_npugraph_ex_triton.py": [
+      "ValuePack",
+      "_unpack_meta",
+      "_unpack_npu"
+    ],
+    "patch/worker/patch_qwen3_5.py": [
+      "AscendQwen3NextAttention",
+      "AscendQwen3_5DecoderLayer"
+    ],
+    "patch/worker/patch_qwen3_dflash.py": [
+      "precompute_and_store_context_kv"
+    ],
+    "patch/worker/patch_qwen3_next_mtp.py": [
+      "bind_kv_cache"
+    ],
+    "patch/worker/patch_qwen3vl.py": [
+      "tensor_parallel_wrap",
+      "forward_with_split_qkv_rmsnorm_mrope",
+      "_fast_pos_embed_interpolate",
+      "patch_qwen3_vl_moe_pp_layer_range"
+    ],
+    "patch/worker/patch_rejection_sampler.py": [],
+    "patch/worker/patch_routed_experts_capture.py": [
+      "capture"
+    ],
+    "patch/worker/patch_triton.py": [],
+    "patch/worker/patch_v2/__init__.py": [],
+    "patch/worker/patch_v2/patch_attn_utils.py": [],
+    "patch/worker/patch_v2/patch_block_table.py": [],
+    "patch/worker/patch_v2/patch_input_batch.py": [],
+    "patch/worker/patch_v2/patch_model_state.py": [],
+    "patch/worker/patch_v2/patch_triton.py": [],
+    "patch/worker/patch_v2/patch_uva.py": [
+      "get_row_indices_from_key",
+      "MonitoredNumPyArray",
+      "MonitoredTorchTensor",
+      "UvaBufferWrapper"
+    ],
+    "patch/worker/patch_weight_utils.py": [
+      "ImportPatchDecorator",
+      "patch_deepseek",
+      "patch_weight_utils",
+      "patched_import"
+    ],
+    "platform.py": [
+      "config_deprecated_logging",
+      "NPUPlatform"
+    ],
+    "profiler/__init__.py": [],
+    "profiler/torch_npu_profiler.py": [
+      "TorchNPUProfilerWrapper"
+    ],
+    "profiling_config.py": [
+      "get_config_dir",
+      "_cleanup_temp_file",
+      "generate_service_profiling_config"
+    ],
+    "quantization/__init__.py": [
+      "__getattr__"
+    ],
+    "quantization/compressed_tensors_config.py": [
+      "_remove_quantization_method",
+      "AscendCompressedTensorsConfig"
+    ],
+    "quantization/fp8_config.py": [
+      "remove_quantization_method",
+      "create_scheme_for_layer",
+      "AscendFp8Config"
+    ],
+    "quantization/method_adapters.py": [
+      "AscendLinearMethod",
+      "AscendKVCacheMethod",
+      "AscendFusedMoEMethod",
+      "AscendEmbeddingMethod"
+    ],
+    "quantization/methods/__init__.py": [
+      "is_mx_quant_type"
+    ],
+    "quantization/methods/base.py": [
+      "get_moe_num_logical_experts",
+      "AscendLinearScheme",
+      "AscendAttentionScheme",
+      "AscendMoEScheme"
+    ],
+    "quantization/methods/fp8.py": [
+      "AscendW8A8MXFP8DSDynamicLinearMethod",
+      "AscendW4A8MXFPDSDynamicFusedMoEMethod"
+    ],
+    "quantization/methods/kv_c8.py": [
+      "_fa_quant_weight_loader",
+      "AscendFAQuantAttentionMethod",
+      "AscendSFAQuantAttentionMethod",
+      "_c8_kv_scale_weight_loader",
+      "AscendC8KVCacheAttentionMethod"
+    ],
+    "quantization/methods/registry.py": [
+      "register_scheme",
+      "get_scheme_class"
+    ],
+    "quantization/methods/w4a16.py": [
+      "unpack_from_int32",
+      "pack_to_int32",
+      "AscendW4A16FusedMoEMethod"
+    ],
+    "quantization/methods/w4a4_flatquant.py": [
+      "pack_int4_weights",
+      "get_decompose_dim",
+      "batched_kronecker_quant",
+      "AscendW4A4FlatQuantDynamicLinearMethod"
+    ],
+    "quantization/methods/w4a4_laos_dynamic.py": [
+      "AscendW4A4LaosDynamicLinearMethod"
+    ],
+    "quantization/methods/w4a4_mxfp4_flatquant.py": [
+      "get_decompose_dim",
+      "AscendW4A4MXFP4FlatQuantDynamicLinearMethod"
+    ],
+    "quantization/methods/w4a4_mxfp4.py": [
+      "AscendW4A4MXFP4DynamicLinearMethod",
+      "AscendW4A4MXFP4DynamicFusedMoEMethod"
+    ],
+    "quantization/methods/w4a8_mxfp4.py": [
+      "AscendW4A8MXFPDynamicLinearMethod",
+      "AscendW4A8MXFPDynamicFusedMoEMethod"
+    ],
+    "quantization/methods/w4a8.py": [
+      "AscendW4A8DynamicLinearMethod",
+      "AscendW4A8DynamicFusedMoEMethod"
+    ],
+    "quantization/methods/w8a16.py": [
+      "AscendW8A16LinearMethod"
+    ],
+    "quantization/methods/w8a8_dynamic.py": [
+      "scale_from_float_to_int64",
+      "AscendW8A8DynamicLinearMethod",
+      "AscendW8A8DynamicFusedMoEMethod"
+    ],
+    "quantization/methods/w8a8_mxfp8.py": [
+      "AscendW8A8MXFP8DynamicLinearMethod",
+      "AscendW8A8MXFP8DynamicFusedMoEMethod"
+    ],
+    "quantization/methods/w8a8_pdmix.py": [
+      "AscendW8A8PDMixLinearMethod",
+      "AscendW8A8PDMixFusedMoeMethod"
+    ],
+    "quantization/methods/w8a8_static.py": [
+      "AscendW8A8LinearMethod"
+    ],
+    "quantization/modelslim_config.py": [
+      "get_packed_modules_mapping",
+      "get_linear_quant_type",
+      "get_quant_type_for_layer",
+      "create_scheme_for_layer",
+      "AscendModelSlimConfig"
+    ],
+    "quantization/quant_parser.py": [
+      "QuantTypeMapping",
+      "get_rollback_quant_type",
+      "parse_mxfp_quant_params",
+      "parse_quant_moe_down_proj_params"
+    ],
+    "quantization/quant_type.py": [
+      "QuantType"
+    ],
+    "quantization/utils.py": [
+      "get_model_file",
+      "detect_quantization_method",
+      "maybe_auto_detect_quantization",
+      "enable_fa_quant"
+    ],
+    "sample/__init__.py": [],
+    "sample/penalties.py": [
+      "_convert_to_tensors",
+      "apply_all_penalties"
+    ],
+    "sample/rejection_sampler.py": [
+      "AscendRejectionSampler",
+      "greedy_sample",
+      "apply_sampling_constraints",
+      "rejection_sample",
+      "expand_batch_to_tokens",
+      "sample_recovered_tokens",
+      "rejection_greedy_sample_spec_len_1_pytorch",
+      "rejection_greedy_sample_pytorch",
+      "rejection_random_sample_pytorch",
+      "expand_pytorch",
+      "sample_recovered_tokens_pytorch",
+      "rejection_random_sample_block_verify_pytorch",
+      "sample_recovered_tokens_blockwise_pytorch"
+    ],
+    "sample/sampler.py": [
+      "random_sample",
+      "AscendSampler",
+      "AscendTopKTopPSampler",
+      "_apply_top_k_top_p_pytorch",
+      "_apply_top_k_top_p_ascendc"
+    ],
+    "simple_kv_offload/__init__.py": [],
+    "simple_kv_offload/copy_backend.py": [
+      "NPUDmaCopyBackend"
+    ],
+    "simple_kv_offload/npu_mem_ops.py": [
+      "BatchMemcpyParams",
+      "_ordered_tensors",
+      "build_params",
+      "copy_blocks"
+    ],
+    "simple_kv_offload/worker.py": [
+      "_flatten_kv_value",
+      "SimpleCPUOffloadNPUWorker"
+    ],
+    "spec_decode/__init__.py": [
+      "get_spec_decode_method"
+    ],
+    "spec_decode/dflash_proposer.py": [
+      "AscendDflashProposer"
+    ],
+    "spec_decode/draft_proposer.py": [
+      "AscendDraftModelProposer"
+    ],
+    "spec_decode/eagle_proposer.py": [
+      "AscendEagleProposer"
+    ],
+    "spec_decode/extract_hidden_states_proposer.py": [
+      "AscendExtractHiddenStatesProposer"
+    ],
+    "spec_decode/llm_base_proposer.py": [
+      "_maybe_eager_context",
+      "split_inputs_tp_to_sp",
+      "greedy_sample",
+      "AscendSpecDecodeBaseProposer"
+    ],
+    "spec_decode/medusa_proposer.py": [
+      "AscendMedusaProposer"
+    ],
+    "spec_decode/ngram_proposer_npu.py": [
+      "AscendNgramProposerNPU"
+    ],
+    "spec_decode/ngram_proposer.py": [
+      "AscendNgramProposer"
+    ],
+    "spec_decode/suffix_proposer.py": [
+      "AscendSuffixDecodingProposer"
+    ],
+    "spec_decode/utils.py": [
+      "update_num_computed_tokens_for_batch_change"
+    ],
+    "utils.py": [
+      "extract_dsv4_layer_index",
+      "get_dsv4_spec_layer_idx_from_weight_name",
+      "get_dsv4_compress_ratio",
+      "clear_enable_sp",
+      "is_310p",
+      "is_950",
+      "_mark_op_side_effectful",
+      "_ensure_device_print_registered",
+      "device_print",
+      "_should_trans_nz",
+      "maybe_trans_nz",
+      "_round_up",
+      "_prepend_env_path",
+      "bootstrap_custom_op_env",
+      "_custom_pad",
+      "_custom_reshape",
+      "_custom_transpose",
+      "nd_to_nz_2d",
+      "nd_to_nz_spec",
+      "aligned_16",
+      "enable_custom_op",
+      "find_hccl_library",
+      "current_stream",
+      "prefetch_stream",
+      "set_weight_prefetch_method",
+      "get_weight_prefetch_method",
+      "global_stream",
+      "shared_experts_calculation_stream",
+      "cp_chunkedprefill_comm_stream",
+      "attention_calculation_stream",
+      "adapt_patch",
+      "setup_ascend_local_comm_res",
+      "vllm_version_is",
+      "get_max_hidden_layers",
+      "update_cudagraph_capture_sizes",
+      "update_aclgraph_sizes",
+      "dispose_tensor",
+      "register_ascend_customop",
+      "AscendDeviceType",
+      "_init_ascend_device_type",
+      "check_ascend_device_type",
+      "get_ascend_device_type",
+      "lmhead_tp_enable",
+      "embedding_tp_enable",
+      "oproj_tp_enable",
+      "olora_tp_enable",
+      "mlp_tp_enable",
+      "matmul_allreduce_enable",
+      "enable_sp_by_pass",
+      "enable_sp",
+      "shared_expert_dp_enabled",
+      "is_moe_model",
+      "is_drafter_moe_model",
+      "speculative_enable_dispatch_gmm_combine_decode",
+      "_is_contain_expert",
+      "is_vl_model",
+      "has_rope",
+      "weak_ref_tensor",
+      "weak_ref_tensors",
+      "npu_stream_switch",
+      "create_hccl_pg_options",
+      "get_hccl_config_for_pg_options",
+      "get_default_buffer_config",
+      "calculate_dp_buffer_size",
+      "is_hierarchical_communication_enabled",
+      "should_skip_allreduce_across_dp_group",
+      "has_layer_idx",
+      "flashcomm2_enable",
+      "o_shard_enable",
+      "get_flashcomm2_config_and_validate",
+      "get_flashcomm2_reorgnized_batch_ids",
+      "refresh_block_size",
+      "dispose_layer",
+      "check_kv_extra_config",
+      "singleton",
+      "enable_dsa_cp",
+      "enable_dsa_cp_with_layer_shard",
+      "enable_dsa_cp_with_o_proj_tp",
+      "check_gdn_layer",
+      "get_rope_dim",
+      "calc_split_factor",
+      "trans_nd_to_nz",
+      "parse_layer_idx",
+      "get_compressed_pos_and_indices",
+      "kv_cache_spec_uses_sparse_c8",
+      "_libc_getenv",
+      "get_c_env"
+    ],
+    "worker/__init__.py": [],
+    "worker/block_table.py": [
+      "BlockTable",
+      "MultiGroupBlockTable"
+    ],
+    "worker/kvcomp_utils.py": [
+      "bind_hashk_cache",
+      "bind_hashk_cache_nope",
+      "bind_hashk_cache_rope",
+      "KVCompConfig",
+      "HashEncoder",
+      "KVCompMetaData",
+      "initialize_kvcomp_metadata",
+      "init_and_bind_hashk_cache",
+      "recover_request_lengths"
+    ],
+    "worker/model_runner_v1.py": [
+      "GraphCaptureContext",
+      "graph_capture",
+      "get_tp_context",
+      "ExecuteModelState",
+      "NPUModelRunner",
+      "_post_process_cudagraph_mode",
+      "_get_gpu_model_runner_module_name",
+      "_torch_cuda_wrapper",
+      "_replace_gpu_model_runner_function_wrapper",
+      "update_pass_config"
+    ],
+    "worker/npu_input_batch.py": [
+      "NPUInputBatch"
+    ],
+    "worker/pcp_utils.py": [
+      "PCPManager"
+    ],
+    "worker/v2/__init__.py": [],
+    "worker/v2/aclgraph_utils.py": [
+      "ModelAclGraphManager",
+      "ModelWithContext"
+    ],
+    "worker/v2/attn_utils.py": [
+      "get_attn_mask_builder",
+      "build_attn_metadata",
+      "build_attn_state",
+      "_get_layer_kv_cache_specs",
+      "_get_attention_kv_cache_dims",
+      "_align_memory",
+      "_allocate_kv_cache",
+      "_reshape_kv_cache",
+      "_reshape_kv_cache_v2"
+    ],
+    "worker/v2/block_table.py": [
+      "AscendBlockTables",
+      "_compute_slot_mappings_kernel"
+    ],
+    "worker/v2/input_batch.py": [
+      "AscendInputBuffers",
+      "AscendInputBatch",
+      "_post_update_kernel",
+      "post_update"
+    ],
+    "worker/v2/model_runner.py": [
+      "NPUModelRunner",
+      "graph_manager_wrapper"
+    ],
+    "worker/v2/model_states/__init__.py": [
+      "init_asecnd_model_state"
+    ],
+    "worker/v2/model_states/default.py": [
+      "AscendModelState"
+    ],
+    "worker/v2/sample/__init__.py": [],
+    "worker/v2/sample/bad_words.py": [
+      "_bad_words_kernel",
+      "apply_bad_words"
+    ],
+    "worker/v2/sample/gumbel.py": [
+      "_temperature_kernel",
+      "apply_temperature",
+      "_gumbel_sample_kernel",
+      "gumbel_sample"
+    ],
+    "worker/v2/sample/logprob.py": [
+      "_topk_log_softmax_kernel",
+      "compute_token_logprobs",
+      "_ranks_kernel",
+      "compute_topk_logprobs"
+    ],
+    "worker/v2/sample/min_p.py": [
+      "_min_p_kernel",
+      "apply_min_p"
+    ],
+    "worker/v2/sample/penalties.py": [
+      "_penalties_kernel",
+      "apply_penalties",
+      "_bincount_kernel",
+      "bincount"
+    ],
+    "worker/v2/spec_decode/__init__.py": [],
+    "worker/v2/spec_decode/eagle/__init__.py": [
+      "init_speculator"
+    ],
+    "worker/v2/spec_decode/eagle/aclgraph.py": [
+      "PrefillEagleAclGraphManager",
+      "DecodeEagleAclGraphManager",
+      "model_capture_wrapper"
+    ],
+    "worker/v2/spec_decode/eagle/speculator.py": [
+      "AscendEagleSpeculator",
+      "build_attn_metadata_wrapper",
+      "gather",
+      "torch_gather_wrapper",
+      "graph_manager_wrapper"
+    ],
+    "worker/v2/spec_decode/rejection_sampler_utils.py": [
+      "_npu_gumbel_block_argmax",
+      "_resample_kernel",
+      "_probabilistic_rejection_kernel",
+      "rejection_sample"
+    ],
+    "worker/v2/states.py": [
+      "AscendRequestState"
+    ],
+    "worker/v2/structured_outputs.py": [
+      "_apply_grammar_bitmask_kernel"
+    ],
+    "worker/v2/utils.py": [
+      "torch_cuda_wrapper",
+      "communicator_switch",
+      "torch_npu_graph_wrapper"
+    ],
+    "worker/worker.py": [
+      "NPUWorker",
+      "parse_text_output"
+    ],
+    "xlite/__init__.py": [],
+    "xlite/utils.py": [
+      "_get_nested_attr",
+      "rgetattr"
+    ],
+    "xlite/xlite_model_runner.py": [
+      "XliteModelRunner"
+    ],
+    "xlite/xlite_worker.py": [
+      "XliteWorker"
+    ],
+    "xlite/xlite.py": [
+      "XliteModel",
+      "LlamaXliteModel",
+      "QwenMoeXliteModel",
+      "Glm4MoeXliteModel",
+      "MiniMaxM2XliteModel",
+      "xlite_model_init",
+      "XliteWrapper"
+    ]
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": "quantization/compressed_tensors_config.py",
+          "language": "python",
+          "sizeLines": 429,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/fp8_config.py",
+          "language": "python",
+          "sizeLines": 125,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/method_adapters.py",
+          "language": "python",
+          "sizeLines": 324,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/__init__.py",
+          "language": "python",
+          "sizeLines": 98,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/base.py",
+          "language": "python",
+          "sizeLines": 298,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/fp8.py",
+          "language": "python",
+          "sizeLines": 130,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/kv_c8.py",
+          "language": "python",
+          "sizeLines": 164,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/registry.py",
+          "language": "python",
+          "sizeLines": 62,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w4a16.py",
+          "language": "python",
+          "sizeLines": 364,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w4a4_flatquant.py",
+          "language": "python",
+          "sizeLines": 171,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w4a4_laos_dynamic.py",
+          "language": "python",
+          "sizeLines": 76,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w4a4_mxfp4.py",
+          "language": "python",
+          "sizeLines": 260,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w4a4_mxfp4_flatquant.py",
+          "language": "python",
+          "sizeLines": 180,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w4a8.py",
+          "language": "python",
+          "sizeLines": 778,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w4a8_mxfp4.py",
+          "language": "python",
+          "sizeLines": 241,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w8a16.py",
+          "language": "python",
+          "sizeLines": 78,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w8a8_dynamic.py",
+          "language": "python",
+          "sizeLines": 394,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w8a8_mxfp8.py",
+          "language": "python",
+          "sizeLines": 428,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w8a8_pdmix.py",
+          "language": "python",
+          "sizeLines": 101,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/methods/w8a8_static.py",
+          "language": "python",
+          "sizeLines": 161,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/modelslim_config.py",
+          "language": "python",
+          "sizeLines": 839,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "quantization/compressed_tensors_config.py": [
+          "quantization/methods/__init__.py"
+        ],
+        "quantization/fp8_config.py": [
+          "quantization/methods/__init__.py"
+        ],
+        "quantization/method_adapters.py": [
+          "quantization/methods/__init__.py"
+        ],
+        "quantization/methods/__init__.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/fp8.py",
+          "quantization/methods/kv_c8.py",
+          "quantization/methods/registry.py",
+          "quantization/methods/w4a16.py",
+          "quantization/methods/w4a4_flatquant.py",
+          "quantization/methods/w4a4_laos_dynamic.py",
+          "quantization/methods/w4a4_mxfp4_flatquant.py",
+          "quantization/methods/w4a4_mxfp4.py",
+          "quantization/methods/w4a8_mxfp4.py",
+          "quantization/methods/w4a8.py",
+          "quantization/methods/w8a16.py",
+          "quantization/methods/w8a8_dynamic.py",
+          "quantization/methods/w8a8_mxfp8.py",
+          "quantization/methods/w8a8_pdmix.py",
+          "quantization/methods/w8a8_static.py"
+        ],
+        "quantization/methods/base.py": [],
+        "quantization/methods/fp8.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py",
+          "quantization/methods/w4a8_mxfp4.py",
+          "quantization/methods/w8a8_mxfp8.py"
+        ],
+        "quantization/methods/kv_c8.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/registry.py": [],
+        "quantization/methods/w4a16.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w4a4_flatquant.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w4a4_laos_dynamic.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w4a4_mxfp4.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w4a4_mxfp4_flatquant.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w4a8.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w4a8_mxfp4.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w8a16.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w8a8_dynamic.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w8a8_mxfp8.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/methods/w8a8_pdmix.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py",
+          "quantization/methods/w8a8_dynamic.py",
+          "quantization/methods/w8a8_static.py"
+        ],
+        "quantization/methods/w8a8_static.py": [
+          "quantization/methods/base.py",
+          "quantization/methods/registry.py"
+        ],
+        "quantization/modelslim_config.py": [
+          "quantization/methods/__init__.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "ops/triton/fla/chunk.py",
+          "language": "python",
+          "sizeLines": 353,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/chunk_delta_h.py",
+          "language": "python",
+          "sizeLines": 244,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/chunk_delta_hupdate.py",
+          "language": "python",
+          "sizeLines": 219,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/chunk_o.py",
+          "language": "python",
+          "sizeLines": 163,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/chunk_o_update.py",
+          "language": "python",
+          "sizeLines": 121,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/chunk_scaled_dot_kkt.py",
+          "language": "python",
+          "sizeLines": 142,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/cumsum.py",
+          "language": "python",
+          "sizeLines": 144,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/l2norm.py",
+          "language": "python",
+          "sizeLines": 66,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/solve_tril.py",
+          "language": "python",
+          "sizeLines": 404,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/utils.py",
+          "language": "python",
+          "sizeLines": 132,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/wy_fast.py",
+          "language": "python",
+          "sizeLines": 143,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "ops/triton/fla/chunk.py": [
+          "ops/triton/fla/chunk_delta_h.py",
+          "ops/triton/fla/chunk_delta_hupdate.py",
+          "ops/triton/fla/chunk_o.py",
+          "ops/triton/fla/chunk_scaled_dot_kkt.py",
+          "ops/triton/fla/cumsum.py",
+          "ops/triton/fla/l2norm.py",
+          "ops/triton/fla/solve_tril.py",
+          "ops/triton/fla/utils.py",
+          "ops/triton/fla/wy_fast.py"
+        ],
+        "ops/triton/fla/chunk_delta_h.py": [
+          "ops/triton/fla/utils.py"
+        ],
+        "ops/triton/fla/chunk_delta_hupdate.py": [
+          "ops/triton/fla/utils.py"
+        ],
+        "ops/triton/fla/chunk_o.py": [
+          "ops/triton/fla/utils.py"
+        ],
+        "ops/triton/fla/chunk_o_update.py": [
+          "ops/triton/fla/utils.py"
+        ],
+        "ops/triton/fla/chunk_scaled_dot_kkt.py": [
+          "ops/triton/fla/utils.py"
+        ],
+        "ops/triton/fla/cumsum.py": [
+          "ops/triton/fla/utils.py"
+        ],
+        "ops/triton/fla/l2norm.py": [],
+        "ops/triton/fla/solve_tril.py": [
+          "ops/triton/fla/utils.py"
+        ],
+        "ops/triton/fla/utils.py": [],
+        "ops/triton/fla/wy_fast.py": [
+          "ops/triton/fla/utils.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": "_310p/quantization/methods/__init__.py",
+          "language": "python",
+          "sizeLines": 23,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/methods/registry.py",
+          "language": "python",
+          "sizeLines": 41,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/methods/w8a8_base.py",
+          "language": "python",
+          "sizeLines": 44,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/methods/w8a8_dynamic.py",
+          "language": "python",
+          "sizeLines": 218,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/methods/w8a8_static.py",
+          "language": "python",
+          "sizeLines": 98,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/methods/w8a8s.py",
+          "language": "python",
+          "sizeLines": 66,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/methods/w8a8sc.py",
+          "language": "python",
+          "sizeLines": 104,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "_310p/quantization/methods/__init__.py": [
+          "_310p/quantization/methods/w8a8_dynamic.py",
+          "_310p/quantization/methods/w8a8_static.py",
+          "_310p/quantization/methods/w8a8s.py",
+          "_310p/quantization/methods/w8a8sc.py"
+        ],
+        "_310p/quantization/methods/registry.py": [],
+        "_310p/quantization/methods/w8a8_base.py": [],
+        "_310p/quantization/methods/w8a8_dynamic.py": [
+          "_310p/quantization/methods/registry.py",
+          "_310p/quantization/methods/w8a8_base.py"
+        ],
+        "_310p/quantization/methods/w8a8_static.py": [
+          "_310p/quantization/methods/registry.py",
+          "_310p/quantization/methods/w8a8_base.py"
+        ],
+        "_310p/quantization/methods/w8a8s.py": [
+          "_310p/quantization/methods/registry.py",
+          "_310p/quantization/methods/w8a8_base.py"
+        ],
+        "_310p/quantization/methods/w8a8sc.py": [
+          "_310p/quantization/methods/registry.py",
+          "_310p/quantization/methods/w8a8_base.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": "eplb/core/policy/policy_abstract.py",
+          "language": "python",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/policy/policy_default_eplb.py",
+          "language": "python",
+          "sizeLines": 350,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/policy/policy_factory.py",
+          "language": "python",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/policy/policy_flashlb.py",
+          "language": "python",
+          "sizeLines": 1026,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/policy/policy_random.py",
+          "language": "python",
+          "sizeLines": 26,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/policy/policy_swift_balancer.py",
+          "language": "python",
+          "sizeLines": 751,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "eplb/core/policy/policy_abstract.py": [],
+        "eplb/core/policy/policy_default_eplb.py": [
+          "eplb/core/policy/policy_abstract.py"
+        ],
+        "eplb/core/policy/policy_factory.py": [
+          "eplb/core/policy/policy_abstract.py",
+          "eplb/core/policy/policy_default_eplb.py",
+          "eplb/core/policy/policy_flashlb.py",
+          "eplb/core/policy/policy_random.py",
+          "eplb/core/policy/policy_swift_balancer.py"
+        ],
+        "eplb/core/policy/policy_flashlb.py": [
+          "eplb/core/policy/policy_abstract.py"
+        ],
+        "eplb/core/policy/policy_random.py": [
+          "eplb/core/policy/policy_abstract.py"
+        ],
+        "eplb/core/policy/policy_swift_balancer.py": [
+          "eplb/core/policy/policy_abstract.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": "model_loader/netloader/executor/elastic_load.py",
+          "language": "python",
+          "sizeLines": 161,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/executor/netloader_pg.py",
+          "language": "python",
+          "sizeLines": 180,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/interaction/elastic.py",
+          "language": "python",
+          "sizeLines": 422,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/load.py",
+          "language": "python",
+          "sizeLines": 77,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/netloader.py",
+          "language": "python",
+          "sizeLines": 367,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/utils.py",
+          "language": "python",
+          "sizeLines": 63,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "model_loader/netloader/executor/elastic_load.py": [
+          "model_loader/netloader/executor/netloader_pg.py"
+        ],
+        "model_loader/netloader/executor/netloader_pg.py": [],
+        "model_loader/netloader/interaction/elastic.py": [
+          "model_loader/netloader/executor/elastic_load.py",
+          "model_loader/netloader/utils.py"
+        ],
+        "model_loader/netloader/load.py": [
+          "model_loader/netloader/executor/elastic_load.py",
+          "model_loader/netloader/interaction/elastic.py"
+        ],
+        "model_loader/netloader/netloader.py": [
+          "model_loader/netloader/interaction/elastic.py",
+          "model_loader/netloader/load.py",
+          "model_loader/netloader/utils.py"
+        ],
+        "model_loader/netloader/utils.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 6,
+      "files": [
+        {
+          "path": "_310p/fused_moe/experts_selector.py",
+          "language": "python",
+          "sizeLines": 81,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/fused_moe/fused_moe.py",
+          "language": "python",
+          "sizeLines": 296,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/fused_moe/moe_comm_method.py",
+          "language": "python",
+          "sizeLines": 50,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/fused_moe/moe_mlp.py",
+          "language": "python",
+          "sizeLines": 102,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/fused_moe/token_dispatcher.py",
+          "language": "python",
+          "sizeLines": 88,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "_310p/fused_moe/experts_selector.py": [],
+        "_310p/fused_moe/fused_moe.py": [
+          "_310p/fused_moe/experts_selector.py",
+          "_310p/fused_moe/moe_comm_method.py"
+        ],
+        "_310p/fused_moe/moe_comm_method.py": [
+          "_310p/fused_moe/moe_mlp.py",
+          "_310p/fused_moe/token_dispatcher.py"
+        ],
+        "_310p/fused_moe/moe_mlp.py": [],
+        "_310p/fused_moe/token_dispatcher.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 7,
+      "files": [
+        {
+          "path": "_310p/ops/fla/__init__.py",
+          "language": "python",
+          "sizeLines": 9,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/fla/chunk_gated_delta_rule.py",
+          "language": "python",
+          "sizeLines": 255,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/fla/fused_gdn_gating.py",
+          "language": "python",
+          "sizeLines": 62,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/fla/fused_recurrent_gated_delta_rule.py",
+          "language": "python",
+          "sizeLines": 226,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "_310p/ops/fla/__init__.py": [
+          "_310p/ops/fla/chunk_gated_delta_rule.py",
+          "_310p/ops/fla/fused_gdn_gating.py",
+          "_310p/ops/fla/fused_recurrent_gated_delta_rule.py"
+        ],
+        "_310p/ops/fla/chunk_gated_delta_rule.py": [],
+        "_310p/ops/fla/fused_gdn_gating.py": [],
+        "_310p/ops/fla/fused_recurrent_gated_delta_rule.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 8,
+      "files": [
+        {
+          "path": "cpu_binding.py",
+          "language": "python",
+          "sizeLines": 537,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/device_communicators/pyhccl_wrapper.py",
+          "language": "python",
+          "sizeLines": 263,
+          "fileCategory": "code"
+        },
+        {
+          "path": "platform.py",
+          "language": "python",
+          "sizeLines": 1138,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "cpu_binding.py": [
+          "platform.py"
+        ],
+        "distributed/device_communicators/pyhccl_wrapper.py": [
+          "platform.py"
+        ],
+        "platform.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 9,
+      "files": [
+        {
+          "path": "__init__.py",
+          "language": "python",
+          "sizeLines": 73,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/attention/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/attention/attention_mask.py",
+          "language": "python",
+          "sizeLines": 157,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/attention/attention_v1.py",
+          "language": "python",
+          "sizeLines": 281,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/attention/metadata_builder.py",
+          "language": "python",
+          "sizeLines": 58,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/block_table.py",
+          "language": "python",
+          "sizeLines": 202,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/fused_moe/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/model_runner_310p.py",
+          "language": "python",
+          "sizeLines": 899,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/npu_input_batch.py",
+          "language": "python",
+          "sizeLines": 59,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/activation.py",
+          "language": "python",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/causal_conv1d.py",
+          "language": "python",
+          "sizeLines": 297,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/conv.py",
+          "language": "python",
+          "sizeLines": 27,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/fla/gdn_310.py",
+          "language": "python",
+          "sizeLines": 333,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/fla/idex.py",
+          "language": "python",
+          "sizeLines": 42,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/layernorm.py",
+          "language": "python",
+          "sizeLines": 68,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/mm_encoder_attention.py",
+          "language": "python",
+          "sizeLines": 142,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/rotary_embedding.py",
+          "language": "python",
+          "sizeLines": 262,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/ops/vocab_parallel_embedding.py",
+          "language": "python",
+          "sizeLines": 82,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/__init__.py",
+          "language": "python",
+          "sizeLines": 22,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/quantization/modelslim_config.py",
+          "language": "python",
+          "sizeLines": 140,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/sample/__init__.py",
+          "language": "python",
+          "sizeLines": 3,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/sample/sampler.py",
+          "language": "python",
+          "sizeLines": 93,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_310p/sharded_state_loader_310p.py",
+          "language": "python",
+          "sizeLines": 80,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "__init__.py": [],
+        "_310p/__init__.py": [],
+        "_310p/attention/__init__.py": [],
+        "_310p/attention/attention_mask.py": [],
+        "_310p/attention/attention_v1.py": [],
+        "_310p/attention/metadata_builder.py": [],
+        "_310p/block_table.py": [],
+        "_310p/fused_moe/__init__.py": [],
+        "_310p/model_runner_310p.py": [],
+        "_310p/npu_input_batch.py": [],
+        "_310p/ops/__init__.py": [],
+        "_310p/ops/activation.py": [],
+        "_310p/ops/causal_conv1d.py": [],
+        "_310p/ops/conv.py": [],
+        "_310p/ops/fla/gdn_310.py": [],
+        "_310p/ops/fla/idex.py": [],
+        "_310p/ops/layernorm.py": [],
+        "_310p/ops/mm_encoder_attention.py": [],
+        "_310p/ops/rotary_embedding.py": [],
+        "_310p/ops/vocab_parallel_embedding.py": [],
+        "_310p/quantization/__init__.py": [],
+        "_310p/quantization/modelslim_config.py": [],
+        "_310p/sample/__init__.py": [],
+        "_310p/sample/sampler.py": [],
+        "_310p/sharded_state_loader_310p.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 10,
+      "files": [
+        {
+          "path": "_310p/worker_310p.py",
+          "language": "python",
+          "sizeLines": 191,
+          "fileCategory": "code"
+        },
+        {
+          "path": "_cann_ops_custom/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 3,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ascend_config.py",
+          "language": "python",
+          "sizeLines": 722,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ascend_forward_context.py",
+          "language": "python",
+          "sizeLines": 381,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/abstract.py",
+          "language": "python",
+          "sizeLines": 51,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/attention_mask.py",
+          "language": "python",
+          "sizeLines": 85,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/attention_v1.py",
+          "language": "python",
+          "sizeLines": 1784,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/context_parallel/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/context_parallel/attention_cp.py",
+          "language": "python",
+          "sizeLines": 1018,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/context_parallel/common_cp.py",
+          "language": "python",
+          "sizeLines": 193,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/context_parallel/dsa_cp.py",
+          "language": "python",
+          "sizeLines": 1349,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/context_parallel/mla_cp.py",
+          "language": "python",
+          "sizeLines": 842,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/context_parallel/sfa_cp.py",
+          "language": "python",
+          "sizeLines": 578,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/dsa_v1.py",
+          "language": "python",
+          "sizeLines": 2825,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/fa3_v1.py",
+          "language": "python",
+          "sizeLines": 145,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/kvcomp_attn/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/kvcomp_attn/attention_utils.py",
+          "language": "python",
+          "sizeLines": 152,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/mla_v1.py",
+          "language": "python",
+          "sizeLines": 1803,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/sfa_v1.py",
+          "language": "python",
+          "sizeLines": 1335,
+          "fileCategory": "code"
+        },
+        {
+          "path": "attention/utils.py",
+          "language": "python",
+          "sizeLines": 386,
+          "fileCategory": "code"
+        },
+        {
+          "path": "batch_invariant.py",
+          "language": "python",
+          "sizeLines": 149,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/acl_graph.py",
+          "language": "python",
+          "sizeLines": 353,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/compiler_interface.py",
+          "language": "python",
+          "sizeLines": 216,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "_310p/worker_310p.py": [],
+        "_cann_ops_custom/.gitkeep": [],
+        "ascend_config.py": [],
+        "ascend_forward_context.py": [],
+        "attention/__init__.py": [],
+        "attention/abstract.py": [],
+        "attention/attention_mask.py": [],
+        "attention/attention_v1.py": [],
+        "attention/context_parallel/__init__.py": [],
+        "attention/context_parallel/attention_cp.py": [],
+        "attention/context_parallel/common_cp.py": [],
+        "attention/context_parallel/dsa_cp.py": [],
+        "attention/context_parallel/mla_cp.py": [],
+        "attention/context_parallel/sfa_cp.py": [],
+        "attention/dsa_v1.py": [],
+        "attention/fa3_v1.py": [],
+        "attention/kvcomp_attn/__init__.py": [],
+        "attention/kvcomp_attn/attention_utils.py": [],
+        "attention/mla_v1.py": [],
+        "attention/sfa_v1.py": [],
+        "attention/utils.py": [],
+        "batch_invariant.py": [],
+        "compilation/__init__.py": [],
+        "compilation/acl_graph.py": [
+          "utils.py"
+        ],
+        "compilation/compiler_interface.py": []
+      },
+      "neighborMap": {
+        "compilation/acl_graph.py": [
+          {
+            "path": "utils.py",
+            "batchIndex": 20,
+            "symbols": [
+              "extract_dsv4_layer_index",
+              "get_dsv4_spec_layer_idx_from_weight_name",
+              "get_dsv4_compress_ratio",
+              "clear_enable_sp",
+              "is_310p",
+              "is_950",
+              "_mark_op_side_effectful",
+              "_ensure_device_print_registered",
+              "device_print",
+              "_should_trans_nz",
+              "maybe_trans_nz",
+              "_round_up",
+              "_prepend_env_path",
+              "bootstrap_custom_op_env",
+              "_custom_pad",
+              "_custom_reshape",
+              "_custom_transpose",
+              "nd_to_nz_2d",
+              "nd_to_nz_spec",
+              "aligned_16",
+              "enable_custom_op",
+              "find_hccl_library",
+              "current_stream",
+              "prefetch_stream",
+              "set_weight_prefetch_method",
+              "get_weight_prefetch_method",
+              "global_stream",
+              "shared_experts_calculation_stream",
+              "cp_chunkedprefill_comm_stream",
+              "attention_calculation_stream",
+              "adapt_patch",
+              "setup_ascend_local_comm_res",
+              "vllm_version_is",
+              "get_max_hidden_layers",
+              "update_cudagraph_capture_sizes",
+              "update_aclgraph_sizes",
+              "dispose_tensor",
+              "register_ascend_customop",
+              "AscendDeviceType",
+              "_init_ascend_device_type",
+              "check_ascend_device_type",
+              "get_ascend_device_type",
+              "lmhead_tp_enable",
+              "embedding_tp_enable",
+              "oproj_tp_enable",
+              "olora_tp_enable",
+              "mlp_tp_enable",
+              "matmul_allreduce_enable",
+              "enable_sp_by_pass",
+              "enable_sp",
+              "shared_expert_dp_enabled",
+              "is_moe_model",
+              "is_drafter_moe_model",
+              "speculative_enable_dispatch_gmm_combine_decode",
+              "_is_contain_expert",
+              "is_vl_model",
+              "has_rope",
+              "weak_ref_tensor",
+              "weak_ref_tensors",
+              "npu_stream_switch",
+              "create_hccl_pg_options",
+              "get_hccl_config_for_pg_options",
+              "get_default_buffer_config",
+              "calculate_dp_buffer_size",
+              "is_hierarchical_communication_enabled",
+              "should_skip_allreduce_across_dp_group",
+              "has_layer_idx",
+              "flashcomm2_enable",
+              "o_shard_enable",
+              "get_flashcomm2_config_and_validate",
+              "get_flashcomm2_reorgnized_batch_ids",
+              "refresh_block_size",
+              "dispose_layer",
+              "check_kv_extra_config",
+              "singleton",
+              "enable_dsa_cp",
+              "enable_dsa_cp_with_layer_shard",
+              "enable_dsa_cp_with_o_proj_tp",
+              "check_gdn_layer",
+              "get_rope_dim",
+              "calc_split_factor",
+              "trans_nd_to_nz",
+              "parse_layer_idx",
+              "get_compressed_pos_and_indices",
+              "kv_cache_spec_uses_sparse_c8",
+              "_libc_getenv",
+              "get_c_env"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 11,
+      "files": [
+        {
+          "path": "compilation/graph_fusion_pass_manager.py",
+          "language": "python",
+          "sizeLines": 79,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/allgather_chunk_noop_pass.py",
+          "language": "python",
+          "sizeLines": 40,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/allreduce_rmsnorm_fusion_pass.py",
+          "language": "python",
+          "sizeLines": 159,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/base_pattern.py",
+          "language": "python",
+          "sizeLines": 63,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/muls_add_pass.py",
+          "language": "python",
+          "sizeLines": 110,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/noop_elimination.py",
+          "language": "python",
+          "sizeLines": 62,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/norm_quant_fusion_pass.py",
+          "language": "python",
+          "sizeLines": 513,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/qknorm_rope_fusion_pass.py",
+          "language": "python",
+          "sizeLines": 244,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/sequence_parallelism_moe.py",
+          "language": "python",
+          "sizeLines": 204,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/sequence_parallelism.py",
+          "language": "python",
+          "sizeLines": 234,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/utils/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "compilation/passes/utils/npugraph_ex_utils_check.py",
+          "language": "python",
+          "sizeLines": 75,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/profiling_chunk_predictor.py",
+          "language": "python",
+          "sizeLines": 385,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/recompute_scheduler.py",
+          "language": "python",
+          "sizeLines": 1042,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/scheduler_dynamic_batch.py",
+          "language": "python",
+          "sizeLines": 574,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/scheduler_profiling_chunk.py",
+          "language": "python",
+          "sizeLines": 746,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/single_type_kv_cache_manager.py",
+          "language": "python",
+          "sizeLines": 275,
+          "fileCategory": "code"
+        },
+        {
+          "path": "device_allocator/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "device_allocator/camem.py",
+          "language": "python",
+          "sizeLines": 273,
+          "fileCategory": "code"
+        },
+        {
+          "path": "device/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "device/device_op.py",
+          "language": "python",
+          "sizeLines": 1635,
+          "fileCategory": "code"
+        },
+        {
+          "path": "device/mxfp_compat.py",
+          "language": "python",
+          "sizeLines": 69,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "compilation/graph_fusion_pass_manager.py": [],
+        "compilation/passes/__init__.py": [],
+        "compilation/passes/allgather_chunk_noop_pass.py": [],
+        "compilation/passes/allreduce_rmsnorm_fusion_pass.py": [],
+        "compilation/passes/base_pattern.py": [],
+        "compilation/passes/muls_add_pass.py": [],
+        "compilation/passes/noop_elimination.py": [],
+        "compilation/passes/norm_quant_fusion_pass.py": [],
+        "compilation/passes/qknorm_rope_fusion_pass.py": [],
+        "compilation/passes/sequence_parallelism_moe.py": [],
+        "compilation/passes/sequence_parallelism.py": [],
+        "compilation/passes/utils/__init__.py": [],
+        "compilation/passes/utils/npugraph_ex_utils_check.py": [],
+        "core/__init__.py": [],
+        "core/profiling_chunk_predictor.py": [],
+        "core/recompute_scheduler.py": [],
+        "core/scheduler_dynamic_batch.py": [],
+        "core/scheduler_profiling_chunk.py": [],
+        "core/single_type_kv_cache_manager.py": [],
+        "device_allocator/__init__.py": [],
+        "device_allocator/camem.py": [],
+        "device/__init__.py": [],
+        "device/device_op.py": [],
+        "device/mxfp_compat.py": [],
+        "distributed/__init__.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 12,
+      "files": [
+        {
+          "path": "distributed/device_communicators/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/device_communicators/npu_communicator.py",
+          "language": "python",
+          "sizeLines": 68,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/device_communicators/pyhccl.py",
+          "language": "python",
+          "sizeLines": 171,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/__init__.py",
+          "language": "python",
+          "sizeLines": 81,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/ascend_multi_connector.py",
+          "language": "python",
+          "sizeLines": 67,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_p2p/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_p2p/mooncake_connector.py",
+          "language": "python",
+          "sizeLines": 2563,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py",
+          "language": "python",
+          "sizeLines": 1888,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_p2p/mooncake_layerwise_connector.py",
+          "language": "python",
+          "sizeLines": 1990,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/ascend_store_connector.py",
+          "language": "python",
+          "sizeLines": 321,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py",
+          "language": "python",
+          "sizeLines": 29,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py",
+          "language": "python",
+          "sizeLines": 134,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py",
+          "language": "python",
+          "sizeLines": 351,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py",
+          "language": "python",
+          "sizeLines": 191,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/config_data.py",
+          "language": "python",
+          "sizeLines": 795,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py",
+          "language": "python",
+          "sizeLines": 746,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py",
+          "language": "python",
+          "sizeLines": 679,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py",
+          "language": "python",
+          "sizeLines": 1108,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/cpu_offload/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py",
+          "language": "python",
+          "sizeLines": 179,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py",
+          "language": "python",
+          "sizeLines": 448,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/cpu_offload/metadata.py",
+          "language": "python",
+          "sizeLines": 257,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "distributed/device_communicators/__init__.py": [],
+        "distributed/device_communicators/npu_communicator.py": [],
+        "distributed/device_communicators/pyhccl.py": [],
+        "distributed/kv_transfer/__init__.py": [],
+        "distributed/kv_transfer/ascend_multi_connector.py": [],
+        "distributed/kv_transfer/kv_p2p/__init__.py": [],
+        "distributed/kv_transfer/kv_p2p/mooncake_connector.py": [],
+        "distributed/kv_transfer/kv_p2p/mooncake_hybrid_connector.py": [],
+        "distributed/kv_transfer/kv_p2p/mooncake_layerwise_connector.py": [],
+        "distributed/kv_transfer/kv_pool/__init__.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/__init__.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/ascend_store_connector.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/backend/__init__.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/backend/backend.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/backend/memcache_backend.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/backend/mooncake_backend.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/backend/yuanrong_backend.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/config_data.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/kv_transfer.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py": [],
+        "distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py": [],
+        "distributed/kv_transfer/kv_pool/cpu_offload/__init__.py": [],
+        "distributed/kv_transfer/kv_pool/cpu_offload/cpu_kv_cache_manager.py": [],
+        "distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py": [],
+        "distributed/kv_transfer/kv_pool/cpu_offload/metadata.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 13,
+      "files": [
+        {
+          "path": "distributed/kv_transfer/kv_pool/lmcache_ascend_connector.py",
+          "language": "python",
+          "sizeLines": 5,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/simple_cpu_offload/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+          "language": "python",
+          "sizeLines": 60,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/kv_pool/ucm_connector.py",
+          "language": "python",
+          "sizeLines": 324,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/utils/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+          "language": "python",
+          "sizeLines": 43,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/kv_transfer/utils/utils.py",
+          "language": "python",
+          "sizeLines": 302,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/parallel_state.py",
+          "language": "python",
+          "sizeLines": 341,
+          "fileCategory": "code"
+        },
+        {
+          "path": "distributed/utils.py",
+          "language": "python",
+          "sizeLines": 77,
+          "fileCategory": "code"
+        },
+        {
+          "path": "envs.py",
+          "language": "python",
+          "sizeLines": 128,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/adaptor/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/adaptor/vllm_adaptor.py",
+          "language": "python",
+          "sizeLines": 169,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/eplb_device_transfer_loader.py",
+          "language": "python",
+          "sizeLines": 122,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/eplb_utils.py",
+          "language": "python",
+          "sizeLines": 128,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/eplb_worker.py",
+          "language": "python",
+          "sizeLines": 385,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/core/policy/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/eplb_updator.py",
+          "language": "python",
+          "sizeLines": 178,
+          "fileCategory": "code"
+        },
+        {
+          "path": "eplb/utils.py",
+          "language": "python",
+          "sizeLines": 54,
+          "fileCategory": "code"
+        },
+        {
+          "path": "flash_common3_context.py",
+          "language": "python",
+          "sizeLines": 41,
+          "fileCategory": "code"
+        },
+        {
+          "path": "kv_offload/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "kv_offload/cpu_npu.py",
+          "language": "python",
+          "sizeLines": 261,
+          "fileCategory": "code"
+        },
+        {
+          "path": "kv_offload/npu.py",
+          "language": "python",
+          "sizeLines": 63,
+          "fileCategory": "code"
+        },
+        {
+          "path": "lora/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "distributed/kv_transfer/kv_pool/lmcache_ascend_connector.py": [],
+        "distributed/kv_transfer/kv_pool/simple_cpu_offload/__init__.py": [],
+        "distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py": [],
+        "distributed/kv_transfer/kv_pool/ucm_connector.py": [],
+        "distributed/kv_transfer/utils/__init__.py": [],
+        "distributed/kv_transfer/utils/mooncake_transfer_engine.py": [],
+        "distributed/kv_transfer/utils/utils.py": [],
+        "distributed/parallel_state.py": [],
+        "distributed/utils.py": [],
+        "envs.py": [],
+        "eplb/__init__.py": [],
+        "eplb/adaptor/__init__.py": [],
+        "eplb/adaptor/vllm_adaptor.py": [],
+        "eplb/core/__init__.py": [],
+        "eplb/core/eplb_device_transfer_loader.py": [],
+        "eplb/core/eplb_utils.py": [],
+        "eplb/core/eplb_worker.py": [],
+        "eplb/core/policy/__init__.py": [],
+        "eplb/eplb_updator.py": [],
+        "eplb/utils.py": [],
+        "flash_common3_context.py": [],
+        "kv_offload/__init__.py": [],
+        "kv_offload/cpu_npu.py": [],
+        "kv_offload/npu.py": [],
+        "lora/__init__.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 14,
+      "files": [
+        {
+          "path": "lora/lora_ops.py",
+          "language": "python",
+          "sizeLines": 122,
+          "fileCategory": "code"
+        },
+        {
+          "path": "lora/punica_npu.py",
+          "language": "python",
+          "sizeLines": 352,
+          "fileCategory": "code"
+        },
+        {
+          "path": "lora/utils.py",
+          "language": "python",
+          "sizeLines": 82,
+          "fileCategory": "code"
+        },
+        {
+          "path": "meta_registration.py",
+          "language": "python",
+          "sizeLines": 94,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/__init__.py",
+          "language": "python",
+          "sizeLines": 20,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/executor/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/netloader/interaction/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/rfork/__init__.py",
+          "language": "python",
+          "sizeLines": 20,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/rfork/rfork_loader.py",
+          "language": "python",
+          "sizeLines": 190,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/rfork/rfork_worker.py",
+          "language": "python",
+          "sizeLines": 130,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/rfork/seed_protocol.py",
+          "language": "python",
+          "sizeLines": 212,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/rfork/seed_server.py",
+          "language": "python",
+          "sizeLines": 130,
+          "fileCategory": "code"
+        },
+        {
+          "path": "model_loader/rfork/transfer_backend.py",
+          "language": "python",
+          "sizeLines": 231,
+          "fileCategory": "code"
+        },
+        {
+          "path": "models/__init__.py",
+          "language": "python",
+          "sizeLines": 7,
+          "fileCategory": "code"
+        },
+        {
+          "path": "models/deepseek_v4_mtp.py",
+          "language": "python",
+          "sizeLines": 523,
+          "fileCategory": "code"
+        },
+        {
+          "path": "models/deepseek_v4.py",
+          "language": "python",
+          "sizeLines": 1384,
+          "fileCategory": "code"
+        },
+        {
+          "path": "models/layer/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "models/layer/attention/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "models/layer/attention/layer.py",
+          "language": "python",
+          "sizeLines": 172,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/__init__.py",
+          "language": "python",
+          "sizeLines": 54,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/activation.py",
+          "language": "python",
+          "sizeLines": 61,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/bailing_moe_linear_attn.py",
+          "language": "python",
+          "sizeLines": 169,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/conv.py",
+          "language": "python",
+          "sizeLines": 26,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/cv_linear.py",
+          "language": "python",
+          "sizeLines": 145,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "lora/lora_ops.py": [],
+        "lora/punica_npu.py": [],
+        "lora/utils.py": [],
+        "meta_registration.py": [],
+        "model_loader/__init__.py": [],
+        "model_loader/netloader/__init__.py": [],
+        "model_loader/netloader/executor/__init__.py": [],
+        "model_loader/netloader/interaction/__init__.py": [],
+        "model_loader/rfork/__init__.py": [],
+        "model_loader/rfork/rfork_loader.py": [],
+        "model_loader/rfork/rfork_worker.py": [],
+        "model_loader/rfork/seed_protocol.py": [],
+        "model_loader/rfork/seed_server.py": [],
+        "model_loader/rfork/transfer_backend.py": [],
+        "models/__init__.py": [],
+        "models/deepseek_v4_mtp.py": [
+          "models/deepseek_v4.py"
+        ],
+        "models/deepseek_v4.py": [],
+        "models/layer/__init__.py": [],
+        "models/layer/attention/__init__.py": [],
+        "models/layer/attention/layer.py": [],
+        "ops/__init__.py": [],
+        "ops/activation.py": [],
+        "ops/bailing_moe_linear_attn.py": [],
+        "ops/conv.py": [],
+        "ops/cv_linear.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 15,
+      "files": [
+        {
+          "path": "ops/dsa.py",
+          "language": "python",
+          "sizeLines": 300,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/flashcomm2_oshard_manager.py",
+          "language": "python",
+          "sizeLines": 101,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/comm_utils.py",
+          "language": "python",
+          "sizeLines": 104,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/experts_selector.py",
+          "language": "python",
+          "sizeLines": 420,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/fused_moe.py",
+          "language": "python",
+          "sizeLines": 898,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/gate_linear.py",
+          "language": "python",
+          "sizeLines": 63,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/moe_comm_method.py",
+          "language": "python",
+          "sizeLines": 348,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/moe_mlp.py",
+          "language": "python",
+          "sizeLines": 486,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/moe_runtime_args.py",
+          "language": "python",
+          "sizeLines": 251,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/moe_stage_contracts.py",
+          "language": "python",
+          "sizeLines": 157,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/moe_stage_params.py",
+          "language": "python",
+          "sizeLines": 91,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/prepare_finalize.py",
+          "language": "python",
+          "sizeLines": 518,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/fused_moe/token_dispatcher.py",
+          "language": "python",
+          "sizeLines": 666,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/gdn.py",
+          "language": "python",
+          "sizeLines": 718,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/layer_shard_linear.py",
+          "language": "python",
+          "sizeLines": 290,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/layernorm.py",
+          "language": "python",
+          "sizeLines": 201,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/linear_op.py",
+          "language": "python",
+          "sizeLines": 753,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/linear.py",
+          "language": "python",
+          "sizeLines": 572,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/mhc.py",
+          "language": "python",
+          "sizeLines": 37,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/mla.py",
+          "language": "python",
+          "sizeLines": 213,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/mm_encoder_attention.py",
+          "language": "python",
+          "sizeLines": 177,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/qwen2_decoder.py",
+          "language": "python",
+          "sizeLines": 356,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/register_custom_ops.py",
+          "language": "python",
+          "sizeLines": 298,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/rel_pos_attention.py",
+          "language": "python",
+          "sizeLines": 68,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "ops/dsa.py": [],
+        "ops/flashcomm2_oshard_manager.py": [],
+        "ops/fused_moe/__init__.py": [],
+        "ops/fused_moe/comm_utils.py": [],
+        "ops/fused_moe/experts_selector.py": [],
+        "ops/fused_moe/fused_moe.py": [],
+        "ops/fused_moe/gate_linear.py": [],
+        "ops/fused_moe/moe_comm_method.py": [],
+        "ops/fused_moe/moe_mlp.py": [],
+        "ops/fused_moe/moe_runtime_args.py": [],
+        "ops/fused_moe/moe_stage_contracts.py": [],
+        "ops/fused_moe/moe_stage_params.py": [],
+        "ops/fused_moe/prepare_finalize.py": [],
+        "ops/fused_moe/token_dispatcher.py": [],
+        "ops/gdn.py": [],
+        "ops/layer_shard_linear.py": [],
+        "ops/layernorm.py": [],
+        "ops/linear_op.py": [],
+        "ops/linear.py": [],
+        "ops/mhc.py": [],
+        "ops/mla.py": [],
+        "ops/mm_encoder_attention.py": [],
+        "ops/qwen2_decoder.py": [],
+        "ops/register_custom_ops.py": [],
+        "ops/rel_pos_attention.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 16,
+      "files": [
+        {
+          "path": "ops/rope_dsv4.py",
+          "language": "python",
+          "sizeLines": 230,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/rotary_embedding.py",
+          "language": "python",
+          "sizeLines": 590,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/activation/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/activation/swiglu_quant.py",
+          "language": "python",
+          "sizeLines": 100,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/batch_invariant/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/batch_invariant/matmul.py",
+          "language": "python",
+          "sizeLines": 441,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/batch_invariant/mean.py",
+          "language": "python",
+          "sizeLines": 173,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/batch_invariant/rmsnorm.py",
+          "language": "python",
+          "sizeLines": 153,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/batch_invariant/softmax.py",
+          "language": "python",
+          "sizeLines": 29,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/batch_memcpy.py",
+          "language": "python",
+          "sizeLines": 31,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/bincount.py",
+          "language": "python",
+          "sizeLines": 151,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/fused_qkvzba_split_reshape.py",
+          "language": "python",
+          "sizeLines": 225,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/layernorm_guard.py",
+          "language": "python",
+          "sizeLines": 198,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fla/sigmoid_gating.py",
+          "language": "python",
+          "sizeLines": 393,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/fused_gdn_gating.py",
+          "language": "python",
+          "sizeLines": 99,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/gdn_chunk_meta.py",
+          "language": "python",
+          "sizeLines": 295,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/layernorm_gated.py",
+          "language": "python",
+          "sizeLines": 168,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/linearnorm/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+          "language": "python",
+          "sizeLines": 427,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+          "language": "python",
+          "sizeLines": 403,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+          "language": "python",
+          "sizeLines": 390,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+          "language": "python",
+          "sizeLines": 344,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/mamba/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "ops/rope_dsv4.py": [],
+        "ops/rotary_embedding.py": [],
+        "ops/triton/__init__.py": [],
+        "ops/triton/activation/__init__.py": [],
+        "ops/triton/activation/swiglu_quant.py": [],
+        "ops/triton/batch_invariant/__init__.py": [],
+        "ops/triton/batch_invariant/matmul.py": [],
+        "ops/triton/batch_invariant/mean.py": [],
+        "ops/triton/batch_invariant/rmsnorm.py": [],
+        "ops/triton/batch_invariant/softmax.py": [],
+        "ops/triton/batch_memcpy.py": [],
+        "ops/triton/bincount.py": [],
+        "ops/triton/fla/__init__.py": [],
+        "ops/triton/fla/fused_qkvzba_split_reshape.py": [],
+        "ops/triton/fla/layernorm_guard.py": [],
+        "ops/triton/fla/sigmoid_gating.py": [],
+        "ops/triton/fused_gdn_gating.py": [],
+        "ops/triton/gdn_chunk_meta.py": [],
+        "ops/triton/layernorm_gated.py": [],
+        "ops/triton/linearnorm/__init__.py": [],
+        "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py": [],
+        "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py": [],
+        "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py": [],
+        "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py": [],
+        "ops/triton/mamba/__init__.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 17,
+      "files": [
+        {
+          "path": "ops/triton/mamba/causal_conv1d.py",
+          "language": "python",
+          "sizeLines": 724,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/mamba/lightning_attn.py",
+          "language": "python",
+          "sizeLines": 615,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/mul_add.py",
+          "language": "python",
+          "sizeLines": 57,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/muls_add.py",
+          "language": "python",
+          "sizeLines": 57,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/penalty.py",
+          "language": "python",
+          "sizeLines": 158,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/reject_sample.py",
+          "language": "python",
+          "sizeLines": 652,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/rms_norm.py",
+          "language": "python",
+          "sizeLines": 66,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/rope.py",
+          "language": "python",
+          "sizeLines": 426,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/spec_decode/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/spec_decode/utils.py",
+          "language": "python",
+          "sizeLines": 136,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/triton/triton_utils.py",
+          "language": "python",
+          "sizeLines": 66,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/vocab_parallel_embedding.py",
+          "language": "python",
+          "sizeLines": 298,
+          "fileCategory": "code"
+        },
+        {
+          "path": "ops/weight_prefetch.py",
+          "language": "python",
+          "sizeLines": 214,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/__init__.py",
+          "language": "python",
+          "sizeLines": 892,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/__init__.py",
+          "language": "python",
+          "sizeLines": 52,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_balance_schedule.py",
+          "language": "python",
+          "sizeLines": 725,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_camem_allocator.py",
+          "language": "python",
+          "sizeLines": 28,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_deepseek_v4_thinking.py",
+          "language": "python",
+          "sizeLines": 153,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+          "language": "python",
+          "sizeLines": 802,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_distributed.py",
+          "language": "python",
+          "sizeLines": 89,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_glm_tool_call_streaming.py",
+          "language": "python",
+          "sizeLines": 127,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_glm47_tool_call_parser.py",
+          "language": "python",
+          "sizeLines": 47,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_kv_cache_coordinator.py",
+          "language": "python",
+          "sizeLines": 335,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_kv_cache_interface.py",
+          "language": "python",
+          "sizeLines": 266,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_kv_cache_utils.py",
+          "language": "python",
+          "sizeLines": 258,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "ops/triton/mamba/causal_conv1d.py": [],
+        "ops/triton/mamba/lightning_attn.py": [],
+        "ops/triton/mul_add.py": [],
+        "ops/triton/muls_add.py": [],
+        "ops/triton/penalty.py": [],
+        "ops/triton/reject_sample.py": [],
+        "ops/triton/rms_norm.py": [],
+        "ops/triton/rope.py": [],
+        "ops/triton/spec_decode/__init__.py": [],
+        "ops/triton/spec_decode/utils.py": [],
+        "ops/triton/triton_utils.py": [],
+        "ops/vocab_parallel_embedding.py": [],
+        "ops/weight_prefetch.py": [],
+        "patch/__init__.py": [],
+        "patch/platform/__init__.py": [],
+        "patch/platform/patch_balance_schedule.py": [],
+        "patch/platform/patch_camem_allocator.py": [],
+        "patch/platform/patch_deepseek_v4_thinking.py": [],
+        "patch/platform/patch_deepseek_v4_tool_call_parser.py": [],
+        "patch/platform/patch_distributed.py": [],
+        "patch/platform/patch_glm_tool_call_streaming.py": [],
+        "patch/platform/patch_glm47_tool_call_parser.py": [],
+        "patch/platform/patch_kv_cache_coordinator.py": [],
+        "patch/platform/patch_kv_cache_interface.py": [],
+        "patch/platform/patch_kv_cache_utils.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 18,
+      "files": [
+        {
+          "path": "patch/platform/patch_mamba_config_310.py",
+          "language": "python",
+          "sizeLines": 103,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_mamba_config.py",
+          "language": "python",
+          "sizeLines": 119,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_mamba_manager.py",
+          "language": "python",
+          "sizeLines": 53,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_minimax_m2_config.py",
+          "language": "python",
+          "sizeLines": 282,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+          "language": "python",
+          "sizeLines": 520,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_minimax_usage_accounting.py",
+          "language": "python",
+          "sizeLines": 395,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_mla_prefill_backend.py",
+          "language": "python",
+          "sizeLines": 52,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_multiproc_executor.py",
+          "language": "python",
+          "sizeLines": 211,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_profiling_chunk.py",
+          "language": "python",
+          "sizeLines": 229,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_scheduler.py",
+          "language": "python",
+          "sizeLines": 45,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_speculative_config.py",
+          "language": "python",
+          "sizeLines": 130,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_tool_choice_none_content.py",
+          "language": "python",
+          "sizeLines": 161,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/platform/patch_torch_accelerator.py",
+          "language": "python",
+          "sizeLines": 16,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/__init__.py",
+          "language": "python",
+          "sizeLines": 71,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/_hccl_pg_registry.py",
+          "language": "python",
+          "sizeLines": 295,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_cudagraph.py",
+          "language": "python",
+          "sizeLines": 38,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_deepseek_compressor.py",
+          "language": "python",
+          "sizeLines": 156,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_deepseek_mtp.py",
+          "language": "python",
+          "sizeLines": 87,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_distributed.py",
+          "language": "python",
+          "sizeLines": 233,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_draft_quarot.py",
+          "language": "python",
+          "sizeLines": 145,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_gdn_attn.py",
+          "language": "python",
+          "sizeLines": 869,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_gqa_c8.py",
+          "language": "python",
+          "sizeLines": 73,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_idex_310.py",
+          "language": "python",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_kimi_k25.py",
+          "language": "python",
+          "sizeLines": 90,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_mamba_utils.py",
+          "language": "python",
+          "sizeLines": 188,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "patch/platform/patch_mamba_config_310.py": [],
+        "patch/platform/patch_mamba_config.py": [],
+        "patch/platform/patch_mamba_manager.py": [],
+        "patch/platform/patch_minimax_m2_config.py": [],
+        "patch/platform/patch_minimax_m2_tool_call_parser.py": [],
+        "patch/platform/patch_minimax_usage_accounting.py": [],
+        "patch/platform/patch_mla_prefill_backend.py": [],
+        "patch/platform/patch_multiproc_executor.py": [],
+        "patch/platform/patch_profiling_chunk.py": [],
+        "patch/platform/patch_scheduler.py": [],
+        "patch/platform/patch_speculative_config.py": [],
+        "patch/platform/patch_tool_choice_none_content.py": [],
+        "patch/platform/patch_torch_accelerator.py": [],
+        "patch/worker/__init__.py": [],
+        "patch/worker/_hccl_pg_registry.py": [],
+        "patch/worker/patch_cudagraph.py": [],
+        "patch/worker/patch_deepseek_compressor.py": [],
+        "patch/worker/patch_deepseek_mtp.py": [],
+        "patch/worker/patch_distributed.py": [],
+        "patch/worker/patch_draft_quarot.py": [],
+        "patch/worker/patch_gdn_attn.py": [],
+        "patch/worker/patch_gqa_c8.py": [],
+        "patch/worker/patch_idex_310.py": [],
+        "patch/worker/patch_kimi_k25.py": [],
+        "patch/worker/patch_mamba_utils.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 19,
+      "files": [
+        {
+          "path": "patch/worker/patch_minimax_m2_linear_attn.py",
+          "language": "python",
+          "sizeLines": 152,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_minimax_m2.py",
+          "language": "python",
+          "sizeLines": 289,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_npugraph_ex_triton.py",
+          "language": "python",
+          "sizeLines": 129,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_qwen3_5.py",
+          "language": "python",
+          "sizeLines": 165,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_qwen3_dflash.py",
+          "language": "python",
+          "sizeLines": 62,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_qwen3_next_mtp.py",
+          "language": "python",
+          "sizeLines": 50,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_qwen3vl.py",
+          "language": "python",
+          "sizeLines": 110,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_rejection_sampler.py",
+          "language": "python",
+          "sizeLines": 9,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_routed_experts_capture.py",
+          "language": "python",
+          "sizeLines": 188,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_triton.py",
+          "language": "python",
+          "sizeLines": 130,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_v2/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_v2/patch_attn_utils.py",
+          "language": "python",
+          "sizeLines": 15,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_v2/patch_block_table.py",
+          "language": "python",
+          "sizeLines": 25,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_v2/patch_input_batch.py",
+          "language": "python",
+          "sizeLines": 27,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_v2/patch_model_state.py",
+          "language": "python",
+          "sizeLines": 26,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_v2/patch_triton.py",
+          "language": "python",
+          "sizeLines": 34,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_v2/patch_uva.py",
+          "language": "python",
+          "sizeLines": 125,
+          "fileCategory": "code"
+        },
+        {
+          "path": "patch/worker/patch_weight_utils.py",
+          "language": "python",
+          "sizeLines": 93,
+          "fileCategory": "code"
+        },
+        {
+          "path": "profiler/__init__.py",
+          "language": "python",
+          "sizeLines": 21,
+          "fileCategory": "code"
+        },
+        {
+          "path": "profiler/torch_npu_profiler.py",
+          "language": "python",
+          "sizeLines": 85,
+          "fileCategory": "code"
+        },
+        {
+          "path": "profiling_config.py",
+          "language": "python",
+          "sizeLines": 217,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/__init__.py",
+          "language": "python",
+          "sizeLines": 47,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/quant_parser.py",
+          "language": "python",
+          "sizeLines": 73,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/quant_type.py",
+          "language": "python",
+          "sizeLines": 35,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quantization/utils.py",
+          "language": "python",
+          "sizeLines": 226,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "patch/worker/patch_minimax_m2_linear_attn.py": [],
+        "patch/worker/patch_minimax_m2.py": [],
+        "patch/worker/patch_npugraph_ex_triton.py": [],
+        "patch/worker/patch_qwen3_5.py": [],
+        "patch/worker/patch_qwen3_dflash.py": [],
+        "patch/worker/patch_qwen3_next_mtp.py": [],
+        "patch/worker/patch_qwen3vl.py": [],
+        "patch/worker/patch_rejection_sampler.py": [],
+        "patch/worker/patch_routed_experts_capture.py": [],
+        "patch/worker/patch_triton.py": [],
+        "patch/worker/patch_v2/__init__.py": [],
+        "patch/worker/patch_v2/patch_attn_utils.py": [],
+        "patch/worker/patch_v2/patch_block_table.py": [],
+        "patch/worker/patch_v2/patch_input_batch.py": [],
+        "patch/worker/patch_v2/patch_model_state.py": [],
+        "patch/worker/patch_v2/patch_triton.py": [],
+        "patch/worker/patch_v2/patch_uva.py": [],
+        "patch/worker/patch_weight_utils.py": [],
+        "profiler/__init__.py": [],
+        "profiler/torch_npu_profiler.py": [],
+        "profiling_config.py": [],
+        "quantization/__init__.py": [],
+        "quantization/quant_parser.py": [],
+        "quantization/quant_type.py": [],
+        "quantization/utils.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 20,
+      "files": [
+        {
+          "path": "sample/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "sample/penalties.py",
+          "language": "python",
+          "sizeLines": 45,
+          "fileCategory": "code"
+        },
+        {
+          "path": "sample/rejection_sampler.py",
+          "language": "python",
+          "sizeLines": 1348,
+          "fileCategory": "code"
+        },
+        {
+          "path": "sample/sampler.py",
+          "language": "python",
+          "sizeLines": 274,
+          "fileCategory": "code"
+        },
+        {
+          "path": "simple_kv_offload/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "simple_kv_offload/copy_backend.py",
+          "language": "python",
+          "sizeLines": 124,
+          "fileCategory": "code"
+        },
+        {
+          "path": "simple_kv_offload/npu_mem_ops.py",
+          "language": "python",
+          "sizeLines": 99,
+          "fileCategory": "code"
+        },
+        {
+          "path": "simple_kv_offload/worker.py",
+          "language": "python",
+          "sizeLines": 224,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/__init__.py",
+          "language": "python",
+          "sizeLines": 51,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/dflash_proposer.py",
+          "language": "python",
+          "sizeLines": 267,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/draft_proposer.py",
+          "language": "python",
+          "sizeLines": 17,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/eagle_proposer.py",
+          "language": "python",
+          "sizeLines": 19,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/extract_hidden_states_proposer.py",
+          "language": "python",
+          "sizeLines": 116,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/llm_base_proposer.py",
+          "language": "python",
+          "sizeLines": 2009,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/medusa_proposer.py",
+          "language": "python",
+          "sizeLines": 70,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/ngram_proposer_npu.py",
+          "language": "python",
+          "sizeLines": 35,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/ngram_proposer.py",
+          "language": "python",
+          "sizeLines": 64,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/suffix_proposer.py",
+          "language": "python",
+          "sizeLines": 24,
+          "fileCategory": "code"
+        },
+        {
+          "path": "spec_decode/utils.py",
+          "language": "python",
+          "sizeLines": 31,
+          "fileCategory": "code"
+        },
+        {
+          "path": "utils.py",
+          "language": "python",
+          "sizeLines": 1673,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/block_table.py",
+          "language": "python",
+          "sizeLines": 406,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/kvcomp_utils.py",
+          "language": "python",
+          "sizeLines": 666,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/model_runner_v1.py",
+          "language": "python",
+          "sizeLines": 4609,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/npu_input_batch.py",
+          "language": "python",
+          "sizeLines": 239,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "sample/__init__.py": [],
+        "sample/penalties.py": [],
+        "sample/rejection_sampler.py": [],
+        "sample/sampler.py": [],
+        "simple_kv_offload/__init__.py": [],
+        "simple_kv_offload/copy_backend.py": [],
+        "simple_kv_offload/npu_mem_ops.py": [],
+        "simple_kv_offload/worker.py": [],
+        "spec_decode/__init__.py": [],
+        "spec_decode/dflash_proposer.py": [],
+        "spec_decode/draft_proposer.py": [],
+        "spec_decode/eagle_proposer.py": [],
+        "spec_decode/extract_hidden_states_proposer.py": [],
+        "spec_decode/llm_base_proposer.py": [],
+        "spec_decode/medusa_proposer.py": [],
+        "spec_decode/ngram_proposer_npu.py": [],
+        "spec_decode/ngram_proposer.py": [],
+        "spec_decode/suffix_proposer.py": [],
+        "spec_decode/utils.py": [],
+        "utils.py": [],
+        "worker/__init__.py": [],
+        "worker/block_table.py": [],
+        "worker/kvcomp_utils.py": [],
+        "worker/model_runner_v1.py": [],
+        "worker/npu_input_batch.py": []
+      },
+      "neighborMap": {
+        "utils.py": [
+          {
+            "path": "compilation/acl_graph.py",
+            "batchIndex": 10,
+            "symbols": [
+              "ACLGraphEntry",
+              "ACLGraphWrapper",
+              "weak_ref_workspaces",
+              "update_full_graph_params",
+              "GraphParams",
+              "set_graph_params",
+              "update_graph_params_workspaces",
+              "get_graph_params",
+              "set_draft_graph_params",
+              "update_draft_graph_params_workspaces",
+              "get_draft_graph_params",
+              "set_draft_graph_prefill_params",
+              "update_draft_graph_prefill_params_workspaces",
+              "get_draft_graph_prefill_params"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 21,
+      "files": [
+        {
+          "path": "worker/pcp_utils.py",
+          "language": "python",
+          "sizeLines": 1358,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/aclgraph_utils.py",
+          "language": "python",
+          "sizeLines": 158,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/attn_utils.py",
+          "language": "python",
+          "sizeLines": 464,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/block_table.py",
+          "language": "python",
+          "sizeLines": 178,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/input_batch.py",
+          "language": "python",
+          "sizeLines": 210,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/model_runner.py",
+          "language": "python",
+          "sizeLines": 464,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/model_states/__init__.py",
+          "language": "python",
+          "sizeLines": 34,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/model_states/default.py",
+          "language": "python",
+          "sizeLines": 77,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/README.md",
+          "language": "markdown",
+          "sizeLines": 39,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "worker/v2/sample/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/sample/bad_words.py",
+          "language": "python",
+          "sizeLines": 183,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/sample/gumbel.py",
+          "language": "python",
+          "sizeLines": 202,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/sample/logprob.py",
+          "language": "python",
+          "sizeLines": 164,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/sample/min_p.py",
+          "language": "python",
+          "sizeLines": 91,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/sample/penalties.py",
+          "language": "python",
+          "sizeLines": 236,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/spec_decode/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/spec_decode/eagle/__init__.py",
+          "language": "python",
+          "sizeLines": 36,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/spec_decode/eagle/aclgraph.py",
+          "language": "python",
+          "sizeLines": 227,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/spec_decode/eagle/speculator.py",
+          "language": "python",
+          "sizeLines": 393,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/spec_decode/rejection_sampler_utils.py",
+          "language": "python",
+          "sizeLines": 482,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/states.py",
+          "language": "python",
+          "sizeLines": 69,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/structured_outputs.py",
+          "language": "python",
+          "sizeLines": 68,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/v2/utils.py",
+          "language": "python",
+          "sizeLines": 55,
+          "fileCategory": "code"
+        },
+        {
+          "path": "worker/worker.py",
+          "language": "python",
+          "sizeLines": 812,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "worker/pcp_utils.py": [],
+        "worker/v2/__init__.py": [],
+        "worker/v2/aclgraph_utils.py": [],
+        "worker/v2/attn_utils.py": [],
+        "worker/v2/block_table.py": [],
+        "worker/v2/input_batch.py": [],
+        "worker/v2/model_runner.py": [],
+        "worker/v2/model_states/__init__.py": [],
+        "worker/v2/model_states/default.py": [],
+        "worker/v2/README.md": [],
+        "worker/v2/sample/__init__.py": [],
+        "worker/v2/sample/bad_words.py": [],
+        "worker/v2/sample/gumbel.py": [],
+        "worker/v2/sample/logprob.py": [],
+        "worker/v2/sample/min_p.py": [],
+        "worker/v2/sample/penalties.py": [],
+        "worker/v2/spec_decode/__init__.py": [],
+        "worker/v2/spec_decode/eagle/__init__.py": [],
+        "worker/v2/spec_decode/eagle/aclgraph.py": [],
+        "worker/v2/spec_decode/eagle/speculator.py": [],
+        "worker/v2/spec_decode/rejection_sampler_utils.py": [],
+        "worker/v2/states.py": [],
+        "worker/v2/structured_outputs.py": [],
+        "worker/v2/utils.py": [],
+        "worker/worker.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 22,
+      "files": [
+        {
+          "path": "xlite/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "xlite/utils.py",
+          "language": "python",
+          "sizeLines": 51,
+          "fileCategory": "code"
+        },
+        {
+          "path": "xlite/xlite_model_runner.py",
+          "language": "python",
+          "sizeLines": 52,
+          "fileCategory": "code"
+        },
+        {
+          "path": "xlite/xlite_worker.py",
+          "language": "python",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "xlite/xlite.py",
+          "language": "python",
+          "sizeLines": 803,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "xlite/__init__.py": [],
+        "xlite/utils.py": [],
+        "xlite/xlite_model_runner.py": [],
+        "xlite/xlite_worker.py": [],
+        "xlite/xlite.py": []
+      },
+      "neighborMap": {}
+    }
+  ]
+}

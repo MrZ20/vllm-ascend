@@ -1,0 +1,1432 @@
+{
+ "nodes": [
+  {
+   "id": "file:ops/dsa.py",
+   "type": "file",
+   "name": "dsa.py",
+   "filePath": "ops/dsa.py",
+   "summary": "DeepSeek 稀疏注意力（DSA）在 Ascend NPU 上的实现，封装稀疏 attention 前向、KV cache 构建与 metadata 过滤。",
+   "tags": [
+    "attention",
+    "data-model",
+    "npu",
+    "sparse-attention"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/dsa.py:dsa_forward",
+   "type": "function",
+   "name": "dsa_forward",
+   "filePath": "ops/dsa.py",
+   "lineRange": [
+    186,
+    209
+   ],
+   "summary": "DSA 注意力前向计算的自定义算子入口，调度稀疏 attention kernel。",
+   "tags": [
+    "attention",
+    "forward",
+    "custom-op"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/dsa.py:_build_kv_cache",
+   "type": "function",
+   "name": "_build_kv_cache",
+   "filePath": "ops/dsa.py",
+   "lineRange": [
+    235,
+    294
+   ],
+   "summary": "为稀疏注意力构建并组织 KV cache 张量布局。",
+   "tags": [
+    "kv-cache",
+    "attention",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/dsa.py:AscendDeepseekSparseAttention",
+   "type": "class",
+   "name": "AscendDeepseekSparseAttention",
+   "filePath": "ops/dsa.py",
+   "lineRange": [
+    61,
+    183
+   ],
+   "summary": "Ascend NPU 上的 DeepSeek 稀疏注意力模块，实现 indexer 选择与稀疏 attention 前向。",
+   "tags": [
+    "attention",
+    "sparse-attention",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/flashcomm2_oshard_manager.py",
+   "type": "file",
+   "name": "flashcomm2_oshard_manager.py",
+   "filePath": "ops/flashcomm2_oshard_manager.py",
+   "summary": "管理 FlashComm2 O-proj 分片（O-shard）的注册、广播触发与加载后处理，协调跨层的张量并行通信。",
+   "tags": [
+    "service",
+    "communication",
+    "tensor-parallel",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/flashcomm2_oshard_manager.py:Flashcomm2OShardManager",
+   "type": "class",
+   "name": "Flashcomm2OShardManager",
+   "filePath": "ops/flashcomm2_oshard_manager.py",
+   "lineRange": [
+    15,
+    98
+   ],
+   "summary": "FlashComm2 O-shard 管理器，负责注册参与层、触发权重广播并在加载后做后处理。",
+   "tags": [
+    "service",
+    "communication",
+    "tensor-parallel",
+    "singleton"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/fused_moe/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "ops/fused_moe/__init__.py",
+   "summary": "fused_moe 子包的初始化文件（空），标记 MoE 算子包。",
+   "tags": [
+    "entry-point",
+    "barrel",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/fused_moe/comm_utils.py",
+   "type": "file",
+   "name": "comm_utils.py",
+   "filePath": "ops/fused_moe/comm_utils.py",
+   "summary": "MoE 专家并行的通信工具，提供异步 all-to-all 与沿首维 all-gather 的集合通信辅助函数。",
+   "tags": [
+    "utility",
+    "communication",
+    "moe",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:ops/fused_moe/comm_utils.py:async_all_to_all",
+   "type": "function",
+   "name": "async_all_to_all",
+   "filePath": "ops/fused_moe/comm_utils.py",
+   "lineRange": [
+    26,
+    62
+   ],
+   "summary": "执行异步 all-to-all 集合通信，用于 MoE token 在专家并行组间的分发。",
+   "tags": [
+    "communication",
+    "moe",
+    "async"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/fused_moe/comm_utils.py:_gather_along_first_dim",
+   "type": "function",
+   "name": "_gather_along_first_dim",
+   "filePath": "ops/fused_moe/comm_utils.py",
+   "lineRange": [
+    65,
+    95
+   ],
+   "summary": "沿张量首维执行 all-gather 通信并拼接结果。",
+   "tags": [
+    "communication",
+    "all-gather",
+    "utility"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/fused_moe/experts_selector.py",
+   "type": "file",
+   "name": "experts_selector.py",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "summary": "MoE 专家路由与 top-k 选择逻辑，包含分组 top-k、融合算子选择及原生回退实现。",
+   "tags": [
+    "moe",
+    "routing",
+    "validation",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/fused_moe/experts_selector.py:select_experts",
+   "type": "function",
+   "name": "select_experts",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "lineRange": [
+    30,
+    137
+   ],
+   "summary": "MoE 路由主入口，根据门控 logits 选择 top-k 专家并计算权重。",
+   "tags": [
+    "moe",
+    "routing",
+    "top-k"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/fused_moe/experts_selector.py:check_npu_moe_gating_top_k",
+   "type": "function",
+   "name": "check_npu_moe_gating_top_k",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "lineRange": [
+    140,
+    169
+   ],
+   "summary": "校验并适配 NPU 融合 top-k 门控算子的可用条件。",
+   "tags": [
+    "moe",
+    "validation",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/fused_moe/experts_selector.py:_native_grouped_topk",
+   "type": "function",
+   "name": "_native_grouped_topk",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "lineRange": [
+    172,
+    192
+   ],
+   "summary": "分组 top-k 选择的原生 PyTorch 回退实现。",
+   "tags": [
+    "moe",
+    "top-k",
+    "routing"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/fused_moe/experts_selector.py:_select_expert_use_group_topk",
+   "type": "function",
+   "name": "_select_expert_use_group_topk",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "lineRange": [
+    204,
+    233
+   ],
+   "summary": "基于专家分组的 top-k 专家选择实现。",
+   "tags": [
+    "moe",
+    "routing",
+    "top-k"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/fused_moe/experts_selector.py:_select_experts_with_fusion_ops",
+   "type": "function",
+   "name": "_select_experts_with_fusion_ops",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "lineRange": [
+    236,
+    310
+   ],
+   "summary": "使用 NPU 融合算子完成专家选择与权重归一化。",
+   "tags": [
+    "moe",
+    "routing",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:ops/fused_moe/experts_selector.py:_native_select_experts",
+   "type": "function",
+   "name": "_native_select_experts",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "lineRange": [
+    313,
+    396
+   ],
+   "summary": "专家选择的原生实现，覆盖 softmax/sigmoid 评分与归一化路径。",
+   "tags": [
+    "moe",
+    "routing",
+    "top-k"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/fused_moe/experts_selector.py:zero_experts_compute",
+   "type": "function",
+   "name": "zero_experts_compute",
+   "filePath": "ops/fused_moe/experts_selector.py",
+   "lineRange": [
+    399,
+    420
+   ],
+   "summary": "处理 zero-expert（占位专家）的权重计算。",
+   "tags": [
+    "moe",
+    "routing"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/fused_moe/fused_moe.py",
+   "type": "file",
+   "name": "fused_moe.py",
+   "filePath": "ops/fused_moe/fused_moe.py",
+   "summary": "Ascend 融合 MoE 层的核心实现，提供非量化 MoE 方法、运行器与 AscendFusedMoE 模块，串联门控、专家计算与共享专家。",
+   "tags": [
+    "moe",
+    "data-model",
+    "npu",
+    "service"
+   ],
+   "complexity": "complex",
+   "languageNotes": "文件较大（800+ 行），围绕 FusedMoE 层组织门控/分发/专家/共享专家的完整前向流水线。"
+  },
+  {
+   "id": "class:ops/fused_moe/fused_moe.py:AscendUnquantizedFusedMoEMethod",
+   "type": "class",
+   "name": "AscendUnquantizedFusedMoEMethod",
+   "filePath": "ops/fused_moe/fused_moe.py",
+   "lineRange": [
+    93,
+    261
+   ],
+   "summary": "非量化 MoE 计算方法，负责权重加载后处理与 apply 前向调度。",
+   "tags": [
+    "moe",
+    "method",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/fused_moe.py:AscendMoERunner",
+   "type": "class",
+   "name": "AscendMoERunner",
+   "filePath": "ops/fused_moe/fused_moe.py",
+   "lineRange": [
+    264,
+    331
+   ],
+   "summary": "MoE 前向运行器，处理 DP 分块、输出 reduce 与共享专家输出合并。",
+   "tags": [
+    "moe",
+    "runtime",
+    "data-parallel"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/fused_moe.py:AscendFusedMoE",
+   "type": "class",
+   "name": "AscendFusedMoE",
+   "filePath": "ops/fused_moe/fused_moe.py",
+   "lineRange": [
+    334,
+    898
+   ],
+   "summary": "Ascend 融合 MoE 模块主类，整合门控、专家映射、共享专家与张量并行 all-reduce 的完整前向。",
+   "tags": [
+    "moe",
+    "data-model",
+    "npu",
+    "service"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:ops/fused_moe/gate_linear.py",
+   "type": "file",
+   "name": "gate_linear.py",
+   "filePath": "ops/fused_moe/gate_linear.py",
+   "summary": "MoE 门控线性层封装，实现路由 logits 的线性投影。",
+   "tags": [
+    "moe",
+    "gate",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/gate_linear.py:AscendGateLinear",
+   "type": "class",
+   "name": "AscendGateLinear",
+   "filePath": "ops/fused_moe/gate_linear.py",
+   "lineRange": [
+    25,
+    63
+   ],
+   "summary": "MoE 门控线性层，对隐藏态做线性投影产生路由 logits。",
+   "tags": [
+    "moe",
+    "gate",
+    "linear"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/fused_moe/moe_comm_method.py",
+   "type": "file",
+   "name": "moe_comm_method.py",
+   "filePath": "ops/fused_moe/moe_comm_method.py",
+   "summary": "MoE 通信方法抽象与多种实现（AllGather/MC2/AllToAll/FusedMC2），统一 prepare/finalize 与专家计算的通信策略。",
+   "tags": [
+    "moe",
+    "communication",
+    "factory",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_comm_method.py:MoECommMethod",
+   "type": "class",
+   "name": "MoECommMethod",
+   "filePath": "ops/fused_moe/moe_comm_method.py",
+   "lineRange": [
+    87,
+    182
+   ],
+   "summary": "MoE 通信方法抽象基类，定义 prepare/finalize/fused_experts 与 token dispatcher 接入点。",
+   "tags": [
+    "moe",
+    "communication",
+    "abstract"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_comm_method.py:AllGatherCommImpl",
+   "type": "class",
+   "name": "AllGatherCommImpl",
+   "filePath": "ops/fused_moe/moe_comm_method.py",
+   "lineRange": [
+    185,
+    212
+   ],
+   "summary": "基于 all-gather 的 MoE 通信实现。",
+   "tags": [
+    "moe",
+    "communication",
+    "all-gather"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_comm_method.py:MC2CommImpl",
+   "type": "class",
+   "name": "MC2CommImpl",
+   "filePath": "ops/fused_moe/moe_comm_method.py",
+   "lineRange": [
+    215,
+    232
+   ],
+   "summary": "基于 MC2 算子的 MoE 通信实现。",
+   "tags": [
+    "moe",
+    "communication",
+    "mc2"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_comm_method.py:AlltoAllCommImpl",
+   "type": "class",
+   "name": "AlltoAllCommImpl",
+   "filePath": "ops/fused_moe/moe_comm_method.py",
+   "lineRange": [
+    235,
+    256
+   ],
+   "summary": "基于 all-to-all 的 MoE 通信实现。",
+   "tags": [
+    "moe",
+    "communication",
+    "all-to-all"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_comm_method.py:FusedMC2CommImpl",
+   "type": "class",
+   "name": "FusedMC2CommImpl",
+   "filePath": "ops/fused_moe/moe_comm_method.py",
+   "lineRange": [
+    259,
+    348
+   ],
+   "summary": "融合 MC2 的 MoE 通信实现，将专家计算与通信融合以降低开销。",
+   "tags": [
+    "moe",
+    "communication",
+    "mc2",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/fused_moe/moe_mlp.py",
+   "type": "file",
+   "name": "moe_mlp.py",
+   "filePath": "ops/fused_moe/moe_mlp.py",
+   "summary": "MoE 专家 MLP 计算核心，提供量化/非量化的 group GEMM + SwiGLU 实现与统一调度入口。",
+   "tags": [
+    "moe",
+    "quantization",
+    "npu",
+    "data-pipeline"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_mlp.py:cumsum_group_list",
+   "type": "function",
+   "name": "cumsum_group_list",
+   "filePath": "ops/fused_moe/moe_mlp.py",
+   "lineRange": [
+    45,
+    74
+   ],
+   "summary": "对分组 token 计数做累加，生成 group GEMM 所需的偏移列表。",
+   "tags": [
+    "moe",
+    "utility",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_mlp.py:quant_apply_mlp",
+   "type": "function",
+   "name": "quant_apply_mlp",
+   "filePath": "ops/fused_moe/moe_mlp.py",
+   "lineRange": [
+    87,
+    350
+   ],
+   "summary": "量化 MoE 专家 MLP 计算，覆盖 FP8/INT 等量化路径的 group GEMM 与 SwiGLU。",
+   "tags": [
+    "moe",
+    "quantization",
+    "mlp",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_mlp.py:unquant_apply_mlp",
+   "type": "function",
+   "name": "unquant_apply_mlp",
+   "filePath": "ops/fused_moe/moe_mlp.py",
+   "lineRange": [
+    353,
+    399
+   ],
+   "summary": "非量化 MoE 专家 MLP 计算实现。",
+   "tags": [
+    "moe",
+    "mlp",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_mlp.py:unified_apply_mlp",
+   "type": "function",
+   "name": "unified_apply_mlp",
+   "filePath": "ops/fused_moe/moe_mlp.py",
+   "lineRange": [
+    402,
+    486
+   ],
+   "summary": "统一的专家 MLP 调度入口，按量化配置分派到量化或非量化实现。",
+   "tags": [
+    "moe",
+    "mlp",
+    "dispatch"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/fused_moe/moe_runtime_args.py",
+   "type": "file",
+   "name": "moe_runtime_args.py",
+   "filePath": "ops/fused_moe/moe_runtime_args.py",
+   "summary": "构建 MoE 运行时参数的工厂函数集合，组装专家计算、token 分发与 MLP 计算所需的输入结构。",
+   "tags": [
+    "moe",
+    "factory",
+    "runtime",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_runtime_args.py:_build_mxfp_params",
+   "type": "function",
+   "name": "_build_mxfp_params",
+   "filePath": "ops/fused_moe/moe_runtime_args.py",
+   "lineRange": [
+    82,
+    113
+   ],
+   "summary": "构建 MXFP 量化相关的运行时参数。",
+   "tags": [
+    "moe",
+    "quantization",
+    "factory"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_runtime_args.py:build_fused_experts_input",
+   "type": "function",
+   "name": "build_fused_experts_input",
+   "filePath": "ops/fused_moe/moe_runtime_args.py",
+   "lineRange": [
+    116,
+    191
+   ],
+   "summary": "组装融合专家计算所需的完整输入参数结构。",
+   "tags": [
+    "moe",
+    "factory",
+    "runtime"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_runtime_args.py:build_token_dispatch_input",
+   "type": "function",
+   "name": "build_token_dispatch_input",
+   "filePath": "ops/fused_moe/moe_runtime_args.py",
+   "lineRange": [
+    194,
+    205
+   ],
+   "summary": "构建 token 分发阶段的输入参数。",
+   "tags": [
+    "moe",
+    "factory",
+    "runtime"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/fused_moe/moe_runtime_args.py:build_mlp_compute_input",
+   "type": "function",
+   "name": "build_mlp_compute_input",
+   "filePath": "ops/fused_moe/moe_runtime_args.py",
+   "lineRange": [
+    208,
+    232
+   ],
+   "summary": "构建专家 MLP 计算阶段的输入参数。",
+   "tags": [
+    "moe",
+    "factory",
+    "runtime"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/fused_moe/moe_stage_contracts.py",
+   "type": "file",
+   "name": "moe_stage_contracts.py",
+   "filePath": "ops/fused_moe/moe_stage_contracts.py",
+   "summary": "定义 MoE 各阶段间数据契约的 dataclass 集合（prepare 输出、权重、专家输入、分发输入输出、combine metadata 等）。",
+   "tags": [
+    "moe",
+    "type-definition",
+    "data-model",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_stage_contracts.py:MoEPrepareOutput",
+   "type": "class",
+   "name": "MoEPrepareOutput",
+   "filePath": "ops/fused_moe/moe_stage_contracts.py",
+   "lineRange": [
+    32,
+    39
+   ],
+   "summary": "MoE prepare 阶段输出数据契约。",
+   "tags": [
+    "moe",
+    "type-definition",
+    "data-model"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_stage_contracts.py:MoEFusedExpertsInput",
+   "type": "class",
+   "name": "MoEFusedExpertsInput",
+   "filePath": "ops/fused_moe/moe_stage_contracts.py",
+   "lineRange": [
+    59,
+    71
+   ],
+   "summary": "融合专家计算输入数据契约。",
+   "tags": [
+    "moe",
+    "type-definition",
+    "data-model"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_stage_contracts.py:MoETokenDispatchInput",
+   "type": "class",
+   "name": "MoETokenDispatchInput",
+   "filePath": "ops/fused_moe/moe_stage_contracts.py",
+   "lineRange": [
+    75,
+    82
+   ],
+   "summary": "token 分发输入数据契约。",
+   "tags": [
+    "moe",
+    "type-definition",
+    "data-model"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_stage_contracts.py:MoETokenDispatchOutput",
+   "type": "class",
+   "name": "MoETokenDispatchOutput",
+   "filePath": "ops/fused_moe/moe_stage_contracts.py",
+   "lineRange": [
+    118,
+    124
+   ],
+   "summary": "token 分发输出数据契约。",
+   "tags": [
+    "moe",
+    "type-definition",
+    "data-model"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_stage_contracts.py:MoEMlpComputeInput",
+   "type": "class",
+   "name": "MoEMlpComputeInput",
+   "filePath": "ops/fused_moe/moe_stage_contracts.py",
+   "lineRange": [
+    129,
+    143
+   ],
+   "summary": "专家 MLP 计算输入数据契约。",
+   "tags": [
+    "moe",
+    "type-definition",
+    "data-model"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/fused_moe/moe_stage_params.py",
+   "type": "file",
+   "name": "moe_stage_params.py",
+   "filePath": "ops/fused_moe/moe_stage_params.py",
+   "summary": "MoE 量化参数模型，封装是否量化、MXFP/INT 量化与 W4A8 等配置判定。",
+   "tags": [
+    "moe",
+    "quantization",
+    "type-definition",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/moe_stage_params.py:MoEQuantParams",
+   "type": "class",
+   "name": "MoEQuantParams",
+   "filePath": "ops/fused_moe/moe_stage_params.py",
+   "lineRange": [
+    58,
+    84
+   ],
+   "summary": "MoE 量化参数 dataclass，提供 is_quant/is_mxfp/is_int_quant 等量化模式判定。",
+   "tags": [
+    "moe",
+    "quantization",
+    "type-definition"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/fused_moe/prepare_finalize.py",
+   "type": "file",
+   "name": "prepare_finalize.py",
+   "filePath": "ops/fused_moe/prepare_finalize.py",
+   "summary": "MoE prepare/finalize 通信策略的多种实现（All2All/MC2/AllGather），处理 DP/TP 维度的张量重排与 token padding。",
+   "tags": [
+    "moe",
+    "communication",
+    "factory",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalize",
+   "type": "class",
+   "name": "PrepareAndFinalize",
+   "filePath": "ops/fused_moe/prepare_finalize.py",
+   "lineRange": [
+    40,
+    113
+   ],
+   "summary": "MoE prepare/finalize 基类，定义无通信的默认 prepare 与 finalize。",
+   "tags": [
+    "moe",
+    "communication",
+    "abstract"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithAll2All",
+   "type": "class",
+   "name": "PrepareAndFinalizeWithAll2All",
+   "filePath": "ops/fused_moe/prepare_finalize.py",
+   "lineRange": [
+    116,
+    225
+   ],
+   "summary": "基于 all-to-all 的 prepare/finalize，处理跨 DP 的 TP 还原与 token padding。",
+   "tags": [
+    "moe",
+    "communication",
+    "all-to-all"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithMC2",
+   "type": "class",
+   "name": "PrepareAndFinalizeWithMC2",
+   "filePath": "ops/fused_moe/prepare_finalize.py",
+   "lineRange": [
+    228,
+    318
+   ],
+   "summary": "基于 MC2 的 prepare/finalize 实现。",
+   "tags": [
+    "moe",
+    "communication",
+    "mc2"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithAllGather",
+   "type": "class",
+   "name": "PrepareAndFinalizeWithAllGather",
+   "filePath": "ops/fused_moe/prepare_finalize.py",
+   "lineRange": [
+    321,
+    518
+   ],
+   "summary": "基于 all-gather 的 prepare/finalize，覆盖 EP/DP 组的分发与合并路径。",
+   "tags": [
+    "moe",
+    "communication",
+    "all-gather"
+   ],
+   "complexity": "complex"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:ops/dsa.py",
+   "target": "function:ops/dsa.py:dsa_forward",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/dsa.py",
+   "target": "function:ops/dsa.py:dsa_forward",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/dsa.py",
+   "target": "function:ops/dsa.py:_build_kv_cache",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/dsa.py",
+   "target": "function:ops/dsa.py:_build_kv_cache",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/dsa.py",
+   "target": "class:ops/dsa.py:AscendDeepseekSparseAttention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/dsa.py",
+   "target": "class:ops/dsa.py:AscendDeepseekSparseAttention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/flashcomm2_oshard_manager.py",
+   "target": "class:ops/flashcomm2_oshard_manager.py:Flashcomm2OShardManager",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/flashcomm2_oshard_manager.py",
+   "target": "class:ops/flashcomm2_oshard_manager.py:Flashcomm2OShardManager",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/comm_utils.py",
+   "target": "function:ops/fused_moe/comm_utils.py:async_all_to_all",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/comm_utils.py",
+   "target": "function:ops/fused_moe/comm_utils.py:async_all_to_all",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/comm_utils.py",
+   "target": "function:ops/fused_moe/comm_utils.py:_gather_along_first_dim",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/comm_utils.py",
+   "target": "function:ops/fused_moe/comm_utils.py:_gather_along_first_dim",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:select_experts",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:select_experts",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:check_npu_moe_gating_top_k",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:check_npu_moe_gating_top_k",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_native_grouped_topk",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_native_grouped_topk",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_select_expert_use_group_topk",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_select_expert_use_group_topk",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_select_experts_with_fusion_ops",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_select_experts_with_fusion_ops",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_native_select_experts",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:_native_select_experts",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:zero_experts_compute",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/experts_selector.py",
+   "target": "function:ops/fused_moe/experts_selector.py:zero_experts_compute",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/fused_moe.py",
+   "target": "class:ops/fused_moe/fused_moe.py:AscendUnquantizedFusedMoEMethod",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/fused_moe.py",
+   "target": "class:ops/fused_moe/fused_moe.py:AscendUnquantizedFusedMoEMethod",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/fused_moe.py",
+   "target": "class:ops/fused_moe/fused_moe.py:AscendMoERunner",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/fused_moe.py",
+   "target": "class:ops/fused_moe/fused_moe.py:AscendMoERunner",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/fused_moe.py",
+   "target": "class:ops/fused_moe/fused_moe.py:AscendFusedMoE",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/fused_moe.py",
+   "target": "class:ops/fused_moe/fused_moe.py:AscendFusedMoE",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/gate_linear.py",
+   "target": "class:ops/fused_moe/gate_linear.py:AscendGateLinear",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/gate_linear.py",
+   "target": "class:ops/fused_moe/gate_linear.py:AscendGateLinear",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:MoECommMethod",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:MoECommMethod",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:AllGatherCommImpl",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:AllGatherCommImpl",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:MC2CommImpl",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:MC2CommImpl",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:AlltoAllCommImpl",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:AlltoAllCommImpl",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:FusedMC2CommImpl",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_comm_method.py",
+   "target": "class:ops/fused_moe/moe_comm_method.py:FusedMC2CommImpl",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:cumsum_group_list",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:cumsum_group_list",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:quant_apply_mlp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:quant_apply_mlp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:unquant_apply_mlp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:unquant_apply_mlp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:unified_apply_mlp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_mlp.py",
+   "target": "function:ops/fused_moe/moe_mlp.py:unified_apply_mlp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:_build_mxfp_params",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:_build_mxfp_params",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:build_fused_experts_input",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:build_fused_experts_input",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:build_token_dispatch_input",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:build_token_dispatch_input",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:build_mlp_compute_input",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_runtime_args.py",
+   "target": "function:ops/fused_moe/moe_runtime_args.py:build_mlp_compute_input",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoEPrepareOutput",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoEPrepareOutput",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoEFusedExpertsInput",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoEFusedExpertsInput",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoETokenDispatchInput",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoETokenDispatchInput",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoETokenDispatchOutput",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoETokenDispatchOutput",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoEMlpComputeInput",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_contracts.py",
+   "target": "class:ops/fused_moe/moe_stage_contracts.py:MoEMlpComputeInput",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_params.py",
+   "target": "class:ops/fused_moe/moe_stage_params.py:MoEQuantParams",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/moe_stage_params.py",
+   "target": "class:ops/fused_moe/moe_stage_params.py:MoEQuantParams",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalize",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalize",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithAll2All",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithAll2All",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithMC2",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithMC2",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithAllGather",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/fused_moe/prepare_finalize.py",
+   "target": "class:ops/fused_moe/prepare_finalize.py:PrepareAndFinalizeWithAllGather",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

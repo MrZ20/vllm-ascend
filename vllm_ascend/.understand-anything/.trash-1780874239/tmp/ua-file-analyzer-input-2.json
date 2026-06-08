@@ -1,0 +1,29 @@
+{
+  "projectRoot": "d:/57108/Desktop/code/vllm-ascend/vllm_ascend",
+  "batchFiles": [
+    {"path": "ops/triton/fla/chunk.py", "language": "python", "sizeLines": 353, "fileCategory": "code"},
+    {"path": "ops/triton/fla/chunk_delta_h.py", "language": "python", "sizeLines": 244, "fileCategory": "code"},
+    {"path": "ops/triton/fla/chunk_delta_hupdate.py", "language": "python", "sizeLines": 219, "fileCategory": "code"},
+    {"path": "ops/triton/fla/chunk_o.py", "language": "python", "sizeLines": 163, "fileCategory": "code"},
+    {"path": "ops/triton/fla/chunk_o_update.py", "language": "python", "sizeLines": 121, "fileCategory": "code"},
+    {"path": "ops/triton/fla/chunk_scaled_dot_kkt.py", "language": "python", "sizeLines": 142, "fileCategory": "code"},
+    {"path": "ops/triton/fla/cumsum.py", "language": "python", "sizeLines": 144, "fileCategory": "code"},
+    {"path": "ops/triton/fla/l2norm.py", "language": "python", "sizeLines": 66, "fileCategory": "code"},
+    {"path": "ops/triton/fla/solve_tril.py", "language": "python", "sizeLines": 404, "fileCategory": "code"},
+    {"path": "ops/triton/fla/utils.py", "language": "python", "sizeLines": 132, "fileCategory": "code"},
+    {"path": "ops/triton/fla/wy_fast.py", "language": "python", "sizeLines": 143, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "ops/triton/fla/chunk.py": ["ops/triton/fla/chunk_delta_h.py","ops/triton/fla/chunk_delta_hupdate.py","ops/triton/fla/chunk_o.py","ops/triton/fla/chunk_scaled_dot_kkt.py","ops/triton/fla/cumsum.py","ops/triton/fla/l2norm.py","ops/triton/fla/solve_tril.py","ops/triton/fla/utils.py","ops/triton/fla/wy_fast.py"],
+    "ops/triton/fla/chunk_delta_h.py": ["ops/triton/fla/utils.py"],
+    "ops/triton/fla/chunk_delta_hupdate.py": ["ops/triton/fla/utils.py"],
+    "ops/triton/fla/chunk_o.py": ["ops/triton/fla/utils.py"],
+    "ops/triton/fla/chunk_o_update.py": ["ops/triton/fla/utils.py"],
+    "ops/triton/fla/chunk_scaled_dot_kkt.py": ["ops/triton/fla/utils.py"],
+    "ops/triton/fla/cumsum.py": ["ops/triton/fla/utils.py"],
+    "ops/triton/fla/l2norm.py": [],
+    "ops/triton/fla/solve_tril.py": ["ops/triton/fla/utils.py"],
+    "ops/triton/fla/utils.py": [],
+    "ops/triton/fla/wy_fast.py": ["ops/triton/fla/utils.py"]
+  }
+}

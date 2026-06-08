@@ -1,0 +1,85 @@
+[
+  {
+    "order": 1,
+    "title": "平台入口与启动注册",
+    "description": "vLLM-Ascend 是一个硬件可插拔后端，把 Ascend NPU 的集成逻辑与 vLLM 主干解耦。一切从 platform.py 中的 NPUPlatform 插件入口开始：vLLM 启动时通过它完成设备能力查询、配置校验与修正、attention 后端选择以及通信器与图模式的接入。读懂这个文件，就理解了整个插件挂载到 vLLM 上的方式。",
+    "nodeIds": ["file:platform.py"],
+    "languageLesson": "vLLM 通过 entry point 机制发现平台插件：NPUPlatform 作为一个 Platform 子类被注册，vLLM 在运行时按设备类型动态选择它，从而无需修改主干即可支持新硬件。"
+  },
+  {
+    "order": 2,
+    "title": "全局配置与运行上下文",
+    "description": "平台入口确定后，接下来是它所依赖的配置体系。ascend_config.py 以单例方式聚合编译、融合、图模式、权重预取、EPLB 等子配置；envs.py 通过模块级 __getattr__ 惰性读取环境变量；ascend_forward_context.py 则在每次前向时设置 MoE 通信方式、MC2 token 容量与掩码等运行时状态。这三者共同构成了贯穿全栈的配置与上下文基础设施。",
+    "nodeIds": ["file:ascend_config.py", "file:envs.py", "file:ascend_forward_context.py"],
+    "languageLesson": "Python 的模块级 __getattr__（PEP 562）让 envs.py 能把环境变量做成按需读取的惰性属性，避免在导入期就固定所有配置值。"
+  },
+  {
+    "order": 3,
+    "title": "注意力计算后端",
+    "description": "配置就绪后进入核心数值计算。attention_v1.py 提供标准注意力后端（含 backend、metadata builder 与 C8 量化算子），mla_v1.py 则实现 DeepSeek 系常用的 MLA（Multi-head Latent Attention）latent 压缩注意力，包含 prefill/decode 预处理。这一层是平台在 platform.py 中选择 attention 后端时真正落地的计算实现。",
+    "nodeIds": ["file:attention/attention_v1.py", "file:attention/mla_v1.py"]
+  },
+  {
+    "order": 4,
+    "title": "融合 MoE 与图编译优化",
+    "description": "除了 attention，MoE 是另一核心算子。fused_moe.py 串联门控、专家计算与共享专家，提供 AscendFusedMoE 模块。计算之上还有图优化：acl_graph.py 封装 Ascend ACL Graph 图模式执行，graph_fusion_pass_manager.py 在 torch.compile 编译期按配置注册 RMSNorm 量化、QKNorm-RoPE、MatmulAllReduce 等融合 pass。它们把零散算子融合成高效图，是吞吐的关键。",
+    "nodeIds": ["file:ops/fused_moe/fused_moe.py", "file:compilation/acl_graph.py", "file:compilation/graph_fusion_pass_manager.py"]
+  },
+  {
+    "order": 5,
+    "title": "量化方案注册与分发",
+    "description": "为在 NPU 上降低显存、提升吞吐，量化层按 layer 类型分发 W4A4/W8A8/FP8/MXFP 等方案。base.py 定义 Linear/Attention/MoE 三类量化 scheme 抽象基类（fan-in 最高，被各具体方法继承），registry.py 用装饰器按 (quant_type, layer_type) 注册并查询方案，quant_parser.py 负责把模型配置解析成量化类型与参数。这是一套清晰的注册表式可扩展架构。",
+    "nodeIds": ["file:quantization/methods/base.py", "file:quantization/methods/registry.py", "file:quantization/quant_parser.py"],
+    "languageLesson": "registry.py 使用装饰器 + 二元键 (quant_type, layer_type) 的注册表模式：新增量化方法只需 @register_scheme 装饰一个类即可被自动发现，无需改动分发逻辑。"
+  },
+  {
+    "order": 6,
+    "title": "分布式并行与 HCCL 通信",
+    "description": "多卡多机推理依赖并行状态与集合通信。parallel_state.py 初始化并管理 MC2、MLP-TP、OTP、LMHead-TP、FlashComm2、EPLB 等多种自定义通信组，pyhccl.py 在 Python 层封装 HCCL 通信器，桥接 torch-npu 的 HCCL 后端提供 all_reduce、broadcast 等集合操作。这是 attention 与 MoE 在分布式场景下能够协同的通信底座。",
+    "nodeIds": ["file:distributed/parallel_state.py", "file:distributed/device_communicators/pyhccl.py"],
+    "languageLesson": "HCCL 是 Ascend 的集合通信库，地位类比 GPU 上的 NCCL；pyhccl.py 把它包装成与 vLLM 通信接口一致的形态，使上层并行逻辑无需感知底层硬件差异。"
+  },
+  {
+    "order": 7,
+    "title": "EPLB 专家并行负载均衡",
+    "description": "MoE 模型在多卡上会出现专家负载不均。EPLB 子系统解决这一问题：eplb_updator.py 编排运行时迭代，在 forward 前后触发专家权重的 D2D 传输与映射更新；eplb_worker.py 作为后台子进程依据负载统计重新平衡专家放置并生成贪心迁移计划；policy_factory.py 则按策略 ID 选择默认/随机/FlashLB/SwiftBalancer 等均衡策略。",
+    "nodeIds": ["file:eplb/eplb_updator.py", "file:eplb/core/eplb_worker.py", "file:eplb/core/policy/policy_factory.py"]
+  },
+  {
+    "order": 8,
+    "title": "Worker 与调度执行",
+    "description": "前述各层最终由执行层驱动。worker.py 中的 NPUWorker 是 NPU 上的 vLLM worker 入口，负责设备初始化、KV cache/显存评估、模型加载、编译预热与执行采样的完整生命周期；model_runner_v1.py 编排输入准备、ACL graph 捕获与模型前向；scheduler_dynamic_batch.py 用查找表按序列长度动态精炼 token 预算以平衡吞吐与时延。",
+    "nodeIds": ["file:worker/worker.py", "file:worker/model_runner_v1.py", "file:core/scheduler_dynamic_batch.py"]
+  },
+  {
+    "order": 9,
+    "title": "Model Runner V2 与投机解码",
+    "description": "执行层正在演进出新一代实现。model_runner.py 中的 NPUModelRunner（V2）继承 vLLM 的 GPUModelRunner 并适配 NPU，负责 KV cache 初始化、输入准备与 speculative decoding 接入；配套的 README.md 记录了该实验子系统与上游 vLLM 之间待解决的差异。sampler.py 提供 top-k/top-p 与异步指数采样的 NPU 适配，eagle_proposer.py 实现 EAGLE/MTP 投机解码以加速生成。",
+    "nodeIds": ["file:worker/v2/model_runner.py", "document:worker/v2/README.md", "file:sample/sampler.py", "file:spec_decode/eagle_proposer.py"]
+  },
+  {
+    "order": 10,
+    "title": "模型定义与权重加载",
+    "description": "执行需要先把模型结构与权重就位。deepseek_v4.py 给出 DeepSeek V4 在 NPU 上的完整实现（含 MoE、稀疏注意力 DSA、YaRN RoPE 与 CausalLM 封装）；netloader.py 实现弹性网络 P2P 权重加载并在失败时回退默认加载器；rfork_loader.py 则通过 RFork 远程 fork / seed 传输从已有实例拉取权重，跳过磁盘加载以加快冷启动。",
+    "nodeIds": ["file:models/deepseek_v4.py", "file:model_loader/netloader/netloader.py", "file:model_loader/rfork/rfork_loader.py"]
+  },
+  {
+    "order": 11,
+    "title": "KV 缓存卸载",
+    "description": "长上下文推理对显存压力大，KV cache 卸载层把 KV 在 NPU 与主机内存间分层存放与迁移。kv_offload/npu.py 定义 NPUOffloadingSpec 与卸载处理器入口，cpu_offload_connector.py 用 aclrtMemcpyBatchAsync 配合 npu stream 在 NPU 与 CPU 间异步搬运 KV，simple_kv_offload/worker.py 提供更精简的 worker 端拷贝后端与 KV block 视图构建。",
+    "nodeIds": ["file:kv_offload/npu.py", "file:distributed/kv_transfer/kv_pool/cpu_offload/cpu_offload_connector.py", "file:simple_kv_offload/worker.py"]
+  },
+  {
+    "order": 12,
+    "title": "运行时补丁层",
+    "description": "为让原生 vLLM 逻辑适配 Ascend 特性与限制，插件采用运行时 monkey-patch。patch/__init__.py 集中记录 platform 与 worker 两类补丁及其原因，platform/__init__.py 在 worker 启动前应用平台级补丁，worker/__init__.py 按设备类型与 vLLM 版本条件性应用 worker 层补丁，patch_distributed.py 则为对齐要求改写通信操作。这一层是解耦理念的关键——尽量不改主干，而以补丁桥接差异。",
+    "nodeIds": ["file:patch/__init__.py", "file:patch/platform/__init__.py", "file:patch/worker/__init__.py", "file:patch/platform/patch_distributed.py"],
+    "languageLesson": "monkey-patch 指在运行时替换上游对象的属性或方法。vLLM-Ascend 用它在不 fork vLLM 源码的前提下注入 NPU 行为，代价是需要严格按 vLLM 版本守护补丁的兼容性。"
+  },
+  {
+    "order": 13,
+    "title": "310P 设备适配与 xLite 轻量运行",
+    "description": "最后是两条特化运行路径。_310p 子树为 Ascend 310P 提供专属变体：model_runner_310p.py 处理其特有的 padding 决策与 KV cache 分配，worker_310p.py 定制 310P 的设备初始化与执行。xLite 轻量层则提供精简执行路径：xlite.py 把 vLLM 模型适配到 xlite C++ runtime，xlite_model_runner.py 与 xlite_worker.py 分别替换 model runner 与 worker，使推理走轻量化部署路径。",
+    "nodeIds": ["file:_310p/model_runner_310p.py", "file:_310p/worker_310p.py", "file:xlite/xlite.py", "file:xlite/xlite_model_runner.py", "file:xlite/xlite_worker.py"]
+  }
+]

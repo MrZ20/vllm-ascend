@@ -1,0 +1,669 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 5,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "_310p/fused_moe/experts_selector.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 74,
+      "functions": [
+        {
+          "name": "select_experts",
+          "startLine": 25,
+          "endLine": 81,
+          "params": [
+            "hidden_states",
+            "router_logits",
+            "top_k",
+            "use_grouped_topk",
+            "renormalize",
+            "topk_group",
+            "num_expert_group",
+            "custom_routing_function",
+            "scoring_func",
+            "routed_scaling_factor",
+            "e_score_correction_bias",
+            "global_num_experts"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "select_experts",
+          "line": 25,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "select_experts",
+          "callee": "torch_npu.npu_moe_gating_top_k_softmax",
+          "lineNumber": 61
+        },
+        {
+          "caller": "select_experts",
+          "callee": "_renormalize_topk_weights",
+          "lineNumber": 62
+        },
+        {
+          "caller": "select_experts",
+          "callee": "_native_select_experts",
+          "lineNumber": 64
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "_310p/fused_moe/fused_moe.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 296,
+      "nonEmptyLines": 255,
+      "classes": [
+        {
+          "name": "AscendUnquantizedFusedMoEMethod310",
+          "startLine": 39,
+          "endLine": 126,
+          "methods": [
+            "__init__",
+            "is_monolithic",
+            "maybe_make_prepare_finalize",
+            "process_weights_after_loading",
+            "apply"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AscendFusedMoE310",
+          "startLine": 129,
+          "endLine": 296,
+          "methods": [
+            "__init__",
+            "is_internal_router",
+            "init_experts_map",
+            "get_quant_type",
+            "forward_impl",
+            "_forward_shared_experts",
+            "shared_forward_impl"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendUnquantizedFusedMoEMethod310",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "AscendFusedMoE310",
+          "line": 129,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 41
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 41
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "super().process_weights_after_loading",
+          "lineNumber": 53
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "super",
+          "lineNumber": 53
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self._maybe_pad_weight(layer.w13_weight.data).transpose(1, 2).contiguous",
+          "lineNumber": 56
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self._maybe_pad_weight(layer.w13_weight.data).transpose",
+          "lineNumber": 56
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self._maybe_pad_weight",
+          "lineNumber": 56
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 57
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 58
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self._maybe_pad_weight(layer.w2_weight.data).transpose(1, 2).contiguous",
+          "lineNumber": 60
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self._maybe_pad_weight(layer.w2_weight.data).transpose",
+          "lineNumber": 60
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "self._maybe_pad_weight",
+          "lineNumber": 60
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "maybe_trans_nz",
+          "lineNumber": 61
+        },
+        {
+          "caller": "process_weights_after_loading",
+          "callee": "torch.nn.Parameter",
+          "lineNumber": 62
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 82
+        },
+        {
+          "caller": "apply",
+          "callee": "getattr",
+          "lineNumber": 83
+        },
+        {
+          "caller": "apply",
+          "callee": "select_experts",
+          "lineNumber": 85
+        },
+        {
+          "caller": "apply",
+          "callee": "zero_experts_compute",
+          "lineNumber": 100
+        },
+        {
+          "caller": "apply",
+          "callee": "topk_weights.to",
+          "lineNumber": 108
+        },
+        {
+          "caller": "apply",
+          "callee": "moe_comm_method.fused_experts",
+          "lineNumber": 111
+        },
+        {
+          "caller": "apply",
+          "callee": "build_fused_experts_input",
+          "lineNumber": 112
+        },
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 131
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 131
+        },
+        {
+          "caller": "__init__",
+          "callee": "kwargs.get",
+          "lineNumber": 133
+        },
+        {
+          "caller": "__init__",
+          "callee": "kwargs.get",
+          "lineNumber": 134
+        },
+        {
+          "caller": "__init__",
+          "callee": "AscendUnquantizedFusedMoEMethod310",
+          "lineNumber": 138
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.quant_config.get_quant_method",
+          "lineNumber": 140
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_tp_group",
+          "lineNumber": 148
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_dp_group",
+          "lineNumber": 149
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_ep_group",
+          "lineNumber": 150
+        },
+        {
+          "caller": "__init__",
+          "callee": "RuntimeError",
+          "lineNumber": 157
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.quant_method.create_weights",
+          "lineNumber": 172
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.get_quant_type",
+          "lineNumber": 173
+        },
+        {
+          "caller": "__init__",
+          "callee": "AllGatherCommImpl310",
+          "lineNumber": 175
+        },
+        {
+          "caller": "__init__",
+          "callee": "AscendMoERunner",
+          "lineNumber": 179
+        },
+        {
+          "caller": "__init__",
+          "callee": "kwargs.pop",
+          "lineNumber": 184
+        },
+        {
+          "caller": "__init__",
+          "callee": "kwargs.pop",
+          "lineNumber": 185
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "torch.arange",
+          "lineNumber": 215
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "all_experts.chunk",
+          "lineNumber": 216
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "range",
+          "lineNumber": 219
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "torch.full",
+          "lineNumber": 220
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "torch.arange",
+          "lineNumber": 222
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "global_expert_map.append",
+          "lineNumber": 223
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "expert_map.npu",
+          "lineNumber": 225
+        },
+        {
+          "caller": "init_experts_map",
+          "callee": "torch.stack",
+          "lineNumber": 226
+        },
+        {
+          "caller": "get_quant_type",
+          "callee": "hasattr",
+          "lineNumber": 230
+        },
+        {
+          "caller": "get_quant_type",
+          "callee": "getattr",
+          "lineNumber": 234
+        },
+        {
+          "caller": "get_quant_type",
+          "callee": "RuntimeError",
+          "lineNumber": 236
+        },
+        {
+          "caller": "forward_impl",
+          "callee": "_EXTRA_CTX.moe_comm_method.prepare",
+          "lineNumber": 245
+        },
+        {
+          "caller": "forward_impl",
+          "callee": "self.quant_method.apply",
+          "lineNumber": 254
+        },
+        {
+          "caller": "forward_impl",
+          "callee": "_EXTRA_CTX.moe_comm_method.finalize",
+          "lineNumber": 272
+        },
+        {
+          "caller": "forward_impl",
+          "callee": "isinstance",
+          "lineNumber": 274
+        },
+        {
+          "caller": "_forward_shared_experts",
+          "callee": "self._shared_experts",
+          "lineNumber": 283
+        },
+        {
+          "caller": "shared_forward_impl",
+          "callee": "AscendFusedMoE310.forward_impl",
+          "lineNumber": 288
+        },
+        {
+          "caller": "shared_forward_impl",
+          "callee": "self._forward_shared_experts",
+          "lineNumber": 295
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "_310p/fused_moe/moe_comm_method.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 41,
+      "classes": [
+        {
+          "name": "AllGatherCommImpl310",
+          "startLine": 27,
+          "endLine": 50,
+          "methods": [
+            "__init__",
+            "_apply_mlp",
+            "_get_token_dispatcher"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AllGatherCommImpl310",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 39
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_apply_mlp",
+          "callee": "unified_apply_mlp",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_get_token_dispatcher",
+          "callee": "TokenDispatcherWithAllGather310",
+          "lineNumber": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "_310p/fused_moe/moe_mlp.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 102,
+      "nonEmptyLines": 89,
+      "functions": [
+        {
+          "name": "quant_apply_mlp",
+          "startLine": 24,
+          "endLine": 44,
+          "params": [
+            "hidden_states",
+            "w1",
+            "w1_scale",
+            "w2",
+            "w2_scale",
+            "group_list",
+            "group_list_type"
+          ]
+        },
+        {
+          "name": "unquant_apply_mlp",
+          "startLine": 47,
+          "endLine": 68,
+          "params": [
+            "hidden_states",
+            "w1",
+            "w2",
+            "group_list",
+            "group_list_type"
+          ]
+        },
+        {
+          "name": "unified_apply_mlp",
+          "startLine": 71,
+          "endLine": 102,
+          "params": [
+            "mlp_compute_input"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "quant_apply_mlp",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "unquant_apply_mlp",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "unified_apply_mlp",
+          "line": 71,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "quant_apply_mlp",
+          "callee": "torch.cumsum",
+          "lineNumber": 35
+        },
+        {
+          "caller": "quant_apply_mlp",
+          "callee": "torch_npu.npu_quant_grouped_matmul_dequant",
+          "lineNumber": 37
+        },
+        {
+          "caller": "quant_apply_mlp",
+          "callee": "torch_npu.npu_swiglu",
+          "lineNumber": 40
+        },
+        {
+          "caller": "quant_apply_mlp",
+          "callee": "torch_npu.npu_quant_grouped_matmul_dequant",
+          "lineNumber": 41
+        },
+        {
+          "caller": "unquant_apply_mlp",
+          "callee": "torch_npu.npu_grouped_matmul",
+          "lineNumber": 50
+        },
+        {
+          "caller": "unquant_apply_mlp",
+          "callee": "torch_npu.npu_swiglu",
+          "lineNumber": 58
+        },
+        {
+          "caller": "unquant_apply_mlp",
+          "callee": "torch_npu.npu_grouped_matmul",
+          "lineNumber": 60
+        },
+        {
+          "caller": "unified_apply_mlp",
+          "callee": "isinstance",
+          "lineNumber": 79
+        },
+        {
+          "caller": "unified_apply_mlp",
+          "callee": "isinstance",
+          "lineNumber": 80
+        },
+        {
+          "caller": "unified_apply_mlp",
+          "callee": "isinstance",
+          "lineNumber": 83
+        },
+        {
+          "caller": "unified_apply_mlp",
+          "callee": "isinstance",
+          "lineNumber": 84
+        },
+        {
+          "caller": "unified_apply_mlp",
+          "callee": "quant_apply_mlp",
+          "lineNumber": 86
+        },
+        {
+          "caller": "unified_apply_mlp",
+          "callee": "unquant_apply_mlp",
+          "lineNumber": 96
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "_310p/fused_moe/token_dispatcher.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 79,
+      "classes": [
+        {
+          "name": "TokenDispatcherWithAllGather310",
+          "startLine": 33,
+          "endLine": 88,
+          "methods": [
+            "__init__",
+            "token_dispatch"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TokenDispatcherWithAllGather310",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 35
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 35
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "hidden_states.shape[:-1].numel",
+          "lineNumber": 48
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "topk_weights.dim",
+          "lineNumber": 50
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "topk_weights.to",
+          "lineNumber": 53
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "get_ep_group",
+          "lineNumber": 57
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "torch_npu.npu_moe_init_routing_v2",
+          "lineNumber": 66
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "expert_tokens.to",
+          "lineNumber": 76
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "MoETokenDispatchOutput",
+          "lineNumber": 79
+        },
+        {
+          "caller": "token_dispatch",
+          "callee": "MoEAllGatherCombineMetadata",
+          "lineNumber": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    }
+  ]
+}

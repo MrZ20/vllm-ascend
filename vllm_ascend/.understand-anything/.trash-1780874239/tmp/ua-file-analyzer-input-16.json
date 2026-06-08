@@ -1,0 +1,182 @@
+{
+ "projectRoot": "d:/57108/Desktop/code/vllm-ascend/vllm_ascend",
+ "batchFiles": [
+  {
+   "path": "ops/rope_dsv4.py",
+   "language": "python",
+   "sizeLines": 230,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/rotary_embedding.py",
+   "language": "python",
+   "sizeLines": 590,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/activation/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/activation/swiglu_quant.py",
+   "language": "python",
+   "sizeLines": 100,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/batch_invariant/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/batch_invariant/matmul.py",
+   "language": "python",
+   "sizeLines": 441,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/batch_invariant/mean.py",
+   "language": "python",
+   "sizeLines": 173,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/batch_invariant/rmsnorm.py",
+   "language": "python",
+   "sizeLines": 153,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/batch_invariant/softmax.py",
+   "language": "python",
+   "sizeLines": 29,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/batch_memcpy.py",
+   "language": "python",
+   "sizeLines": 31,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/bincount.py",
+   "language": "python",
+   "sizeLines": 151,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/fla/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/fla/fused_qkvzba_split_reshape.py",
+   "language": "python",
+   "sizeLines": 225,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/fla/layernorm_guard.py",
+   "language": "python",
+   "sizeLines": 198,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/fla/sigmoid_gating.py",
+   "language": "python",
+   "sizeLines": 393,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/fused_gdn_gating.py",
+   "language": "python",
+   "sizeLines": 99,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/gdn_chunk_meta.py",
+   "language": "python",
+   "sizeLines": 295,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/layernorm_gated.py",
+   "language": "python",
+   "sizeLines": 168,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/linearnorm/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+   "language": "python",
+   "sizeLines": 427,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+   "language": "python",
+   "sizeLines": 403,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+   "language": "python",
+   "sizeLines": 390,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+   "language": "python",
+   "sizeLines": 344,
+   "fileCategory": "code"
+  },
+  {
+   "path": "ops/triton/mamba/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "ops/rope_dsv4.py": [],
+  "ops/rotary_embedding.py": [],
+  "ops/triton/__init__.py": [],
+  "ops/triton/activation/__init__.py": [],
+  "ops/triton/activation/swiglu_quant.py": [],
+  "ops/triton/batch_invariant/__init__.py": [],
+  "ops/triton/batch_invariant/matmul.py": [],
+  "ops/triton/batch_invariant/mean.py": [],
+  "ops/triton/batch_invariant/rmsnorm.py": [],
+  "ops/triton/batch_invariant/softmax.py": [],
+  "ops/triton/batch_memcpy.py": [],
+  "ops/triton/bincount.py": [],
+  "ops/triton/fla/__init__.py": [],
+  "ops/triton/fla/fused_qkvzba_split_reshape.py": [],
+  "ops/triton/fla/layernorm_guard.py": [],
+  "ops/triton/fla/sigmoid_gating.py": [],
+  "ops/triton/fused_gdn_gating.py": [],
+  "ops/triton/gdn_chunk_meta.py": [],
+  "ops/triton/layernorm_gated.py": [],
+  "ops/triton/linearnorm/__init__.py": [],
+  "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py": [],
+  "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py": [],
+  "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py": [],
+  "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py": [],
+  "ops/triton/mamba/__init__.py": []
+ }
+}

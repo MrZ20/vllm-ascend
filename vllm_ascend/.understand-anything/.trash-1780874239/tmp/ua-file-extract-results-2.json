@@ -1,0 +1,4199 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 11,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "ops/triton/fla/chunk.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 353,
+      "nonEmptyLines": 332,
+      "functions": [
+        {
+          "name": "chunk_gated_delta_rule_fwd",
+          "startLine": 30,
+          "endLine": 185,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "g",
+            "beta",
+            "scale",
+            "initial_state",
+            "output_final_state",
+            "cu_seqlens",
+            "prebuilt_meta"
+          ]
+        },
+        {
+          "name": "chunk_gated_delta_rule",
+          "startLine": 226,
+          "endLine": 353,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "g",
+            "beta",
+            "scale",
+            "initial_state",
+            "output_final_state",
+            "cu_seqlens",
+            "prebuilt_meta",
+            "head_first",
+            "use_qk_l2norm_in_kernel",
+            "chunk_indices",
+            "chunk_offsets",
+            "core_attn_out"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ChunkGatedDeltaRuleFunction",
+          "startLine": 188,
+          "endLine": 222,
+          "methods": [
+            "forward"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunk_gated_delta_rule_fwd",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "ChunkGatedDeltaRuleFunction",
+          "line": 188,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_gated_delta_rule",
+          "line": 225,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_forward_context",
+          "lineNumber": 42
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "isinstance",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "next",
+          "lineNumber": 46
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "iter",
+          "lineNumber": 46
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "attn_metadata.values",
+          "lineNumber": 46
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_local_cumsum",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_scaled_dot_kkt_fwd",
+          "lineNumber": 63
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "solve_tril",
+          "lineNumber": 71
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "recompute_w_u_fwd",
+          "lineNumber": 78
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "k.to(torch.bfloat16).transpose(1, 2).contiguous",
+          "lineNumber": 88
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "k.to(torch.bfloat16).transpose",
+          "lineNumber": 88
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "k.to",
+          "lineNumber": 88
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "w.to(torch.bfloat16).transpose(1, 2).contiguous",
+          "lineNumber": 89
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "w.to(torch.bfloat16).transpose",
+          "lineNumber": 89
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "w.to",
+          "lineNumber": 89
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "u.to(torch.bfloat16).transpose(1, 2).contiguous",
+          "lineNumber": 90
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "u.to(torch.bfloat16).transpose",
+          "lineNumber": 90
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "u.to",
+          "lineNumber": 90
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "g.transpose(1, 2).contiguous",
+          "lineNumber": 91
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "g.transpose",
+          "lineNumber": 91
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "q.to(torch.bfloat16).transpose(1, 2).contiguous",
+          "lineNumber": 92
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "q.to(torch.bfloat16).transpose",
+          "lineNumber": 92
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "q.to",
+          "lineNumber": 92
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "cu_seqlens.to",
+          "lineNumber": 94
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_indices_chunk64.to",
+          "lineNumber": 95
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "torch.ops._C_ascend.chunk_gated_delta_rule_fwd_h",
+          "lineNumber": 96
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "cu_seqlens.tolist",
+          "lineNumber": 106
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_indices.flatten().tolist",
+          "lineNumber": 107
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_indices.flatten",
+          "lineNumber": 107
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 112
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_gated_delta_rule_fwd_hupdate",
+          "lineNumber": 113
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group().all_gather",
+          "lineNumber": 124
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 124
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "final_state.unsqueeze",
+          "lineNumber": 124
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "prepare_final_chunk_indices",
+          "lineNumber": 127
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group().all_gather",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "final_state.new_empty",
+          "lineNumber": 131
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 131
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "range",
+          "lineNumber": 133
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 133
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "torch.matmul",
+          "lineNumber": 134
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 141
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "torch.zeros_like",
+          "lineNumber": 142
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 144
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "get_pcp_group",
+          "lineNumber": 146
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "initial_state.clone",
+          "lineNumber": 147
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "slice",
+          "lineNumber": 148
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_gated_delta_rule_fwd_h",
+          "lineNumber": 150
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "h.transpose(1, 2).contiguous",
+          "lineNumber": 161
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "h.transpose",
+          "lineNumber": 161
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "v_new.transpose(1, 2).contiguous",
+          "lineNumber": 162
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "v_new.transpose",
+          "lineNumber": 162
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "torch.ops._C_ascend.chunk_fwd_o",
+          "lineNumber": 164
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "cu_seqlens.tolist",
+          "lineNumber": 172
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_indices.flatten().tolist",
+          "lineNumber": 173
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "chunk_indices.flatten",
+          "lineNumber": 173
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "o_ascendc.to(torch.bfloat16).transpose(1, 2).contiguous",
+          "lineNumber": 178
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "o_ascendc.to(torch.bfloat16).transpose",
+          "lineNumber": 178
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "o_ascendc.to",
+          "lineNumber": 178
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "v_new.to(torch.bfloat16).transpose(1, 2).contiguous",
+          "lineNumber": 179
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "v_new.to(torch.bfloat16).transpose",
+          "lineNumber": 179
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "v_new.to",
+          "lineNumber": 179
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "h.to(torch.bfloat16).transpose(1, 2).contiguous",
+          "lineNumber": 180
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "h.to(torch.bfloat16).transpose",
+          "lineNumber": 180
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd",
+          "callee": "h.to",
+          "lineNumber": 180
+        },
+        {
+          "caller": "forward",
+          "callee": "l2norm_fwd",
+          "lineNumber": 206
+        },
+        {
+          "caller": "forward",
+          "callee": "l2norm_fwd",
+          "lineNumber": 207
+        },
+        {
+          "caller": "forward",
+          "callee": "chunk_gated_delta_rule_fwd",
+          "lineNumber": 208
+        },
+        {
+          "caller": "forward",
+          "callee": "o.to",
+          "lineNumber": 222
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "len",
+          "lineNumber": 308
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "DeprecationWarning",
+          "lineNumber": 311
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "map",
+          "lineNumber": 316
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "rearrange",
+          "lineNumber": 316
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "warnings.warn",
+          "lineNumber": 318
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "ValueError",
+          "lineNumber": 327
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "len",
+          "lineNumber": 331
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "ValueError",
+          "lineNumber": 332
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "len",
+          "lineNumber": 334
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "ChunkGatedDeltaRuleFunction.apply",
+          "lineNumber": 338
+        },
+        {
+          "caller": "chunk_gated_delta_rule",
+          "callee": "rearrange",
+          "lineNumber": 352
+        }
+      ],
+      "metrics": {
+        "importCount": 9,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "ops/triton/fla/chunk_delta_h.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 244,
+      "nonEmptyLines": 204,
+      "functions": [
+        {
+          "name": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "startLine": 30,
+          "endLine": 176,
+          "params": [
+            "k",
+            "v",
+            "w",
+            "v_new",
+            "g",
+            "h",
+            "h0",
+            "ht",
+            "cu_seqlens",
+            "chunk_offsets",
+            "h_update",
+            "T",
+            "H",
+            "Hg",
+            "K",
+            "V",
+            "BT",
+            "USE_G",
+            "USE_INITIAL_STATE",
+            "STORE_FINAL_STATE",
+            "SAVE_NEW_VALUE",
+            "IS_VARLEN"
+          ]
+        },
+        {
+          "name": "chunk_gated_delta_rule_fwd_h",
+          "startLine": 179,
+          "endLine": 244,
+          "params": [
+            "k",
+            "w",
+            "u",
+            "g",
+            "initial_state",
+            "output_final_state",
+            "chunk_size",
+            "save_new_value",
+            "cu_seqlens",
+            "chunk_indices",
+            "chunk_offsets"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_gated_delta_rule_fwd_h",
+          "line": 179,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.program_id",
+          "lineNumber": 54
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 59
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 59
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 60
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 60
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.cdiv",
+          "lineNumber": 63
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load(chunk_offsets + i_n).to",
+          "lineNumber": 64
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 64
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.cdiv",
+          "lineNumber": 67
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.zeros",
+          "lineNumber": 74
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.zeros",
+          "lineNumber": 75
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 81
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 82
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 83
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load(ptr_h0_bv1, mask=mask_kv1, other=0.0).to",
+          "lineNumber": 91
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 91
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load(ptr_h0_bv2, mask=mask_kv2, other=0.0).to",
+          "lineNumber": 94
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 94
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "range",
+          "lineNumber": 97
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 100
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 101
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_h1_bv1.to",
+          "lineNumber": 101
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 103
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 104
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_h1_bv2.to",
+          "lineNumber": 104
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 106
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 107
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 112
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 115
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 116
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "min",
+          "lineNumber": 120
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 121
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 123
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 126
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "safe_exp",
+          "lineNumber": 128
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.exp",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 131
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 136
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_v1.to",
+          "lineNumber": 137
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 138
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_h1_bv1.to",
+          "lineNumber": 138
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 141
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 142
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_v_new1.to",
+          "lineNumber": 142
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_v_new1.to",
+          "lineNumber": 148
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 149
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 153
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_v2.to",
+          "lineNumber": 154
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 155
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_h1_bv2.to",
+          "lineNumber": 155
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 158
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 159
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_v_new2.to",
+          "lineNumber": 159
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_v_new2.to",
+          "lineNumber": 165
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 166
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 172
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 173
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_h1_bv1.to",
+          "lineNumber": 173
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 175
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 176
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+          "callee": "b_h1_bv2.to",
+          "lineNumber": 176
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "prepare_chunk_indices",
+          "lineNumber": 199
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "triton.cdiv",
+          "lineNumber": 202
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "prepare_chunk_offsets",
+          "lineNumber": 205
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "len",
+          "lineNumber": 207
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "len",
+          "lineNumber": 208
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "k.new_empty",
+          "lineNumber": 213
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "k.new_empty",
+          "lineNumber": 214
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "k.new_empty",
+          "lineNumber": 215
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "torch.empty_like",
+          "lineNumber": 217
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "g.transpose(1, 2).contiguous",
+          "lineNumber": 218
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_h",
+          "callee": "g.transpose",
+          "lineNumber": 218
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/chunk_delta_hupdate.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 219,
+      "nonEmptyLines": 186,
+      "functions": [
+        {
+          "name": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "startLine": 27,
+          "endLine": 156,
+          "params": [
+            "k",
+            "w",
+            "g",
+            "cu_seqlens",
+            "chunk_offsets",
+            "h_update",
+            "T",
+            "H",
+            "Hg",
+            "K",
+            "BT",
+            "USE_G",
+            "IS_VARLEN"
+          ]
+        },
+        {
+          "name": "chunk_gated_delta_rule_fwd_hupdate",
+          "startLine": 159,
+          "endLine": 219,
+          "params": [
+            "k",
+            "w",
+            "u",
+            "g",
+            "chunk_size",
+            "cu_seqlens",
+            "chunk_indices",
+            "chunk_offsets",
+            "update_chunk_offsets",
+            "num_decodes"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_gated_delta_rule_fwd_hupdate",
+          "line": 159,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.program_id",
+          "lineNumber": 42
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 46
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 46
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 47
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 47
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.cdiv",
+          "lineNumber": 50
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(chunk_offsets + i_n).to",
+          "lineNumber": 51
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 51
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 54
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 54
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 55
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 55
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.cdiv",
+          "lineNumber": 58
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(chunk_offsets + i_n).to",
+          "lineNumber": 59
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 59
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.cdiv",
+          "lineNumber": 62
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 69
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 70
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "range",
+          "lineNumber": 73
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "min",
+          "lineNumber": 74
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 75
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 77
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 80
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "safe_exp",
+          "lineNumber": 82
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.exp",
+          "lineNumber": 83
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 85
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 88
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(ptr_w_upd1, mask=mask_w_upd1, other=0.0).to",
+          "lineNumber": 91
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 91
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.arange",
+          "lineNumber": 93
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load(ptr_w_upd2, mask=mask_w_upd2, other=0.0).to",
+          "lineNumber": 96
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 96
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 100
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 101
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 102
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 103
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "(off_hupd_1_top == off_hupd_2_top).to",
+          "lineNumber": 110
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "(off_hupd_1_top == off_hupd_2_top).to",
+          "lineNumber": 111
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 118
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_w_upd1.to",
+          "lineNumber": 118
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 119
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_w_upd2.to",
+          "lineNumber": 119
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot(b_k_upd1, b_w_upd2.to(b_k_upd1.dtype)).to",
+          "lineNumber": 120
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 120
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_w_upd2.to",
+          "lineNumber": 120
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot(b_k_upd2, b_w_upd1.to(b_k_upd2.dtype)).to",
+          "lineNumber": 121
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 121
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_w_upd1.to",
+          "lineNumber": 121
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 124
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 125
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 126
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 127
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 128
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 130
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.load",
+          "lineNumber": 131
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot(b_hupd_local_11.to(b_hupd_11.dtype), b_hupd_11).to",
+          "lineNumber": 133
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 133
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_11.to",
+          "lineNumber": 133
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 134
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_12.to",
+          "lineNumber": 134
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot(b_hupd_local_21.to(b_hupd_11.dtype), b_hupd_11).to",
+          "lineNumber": 136
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 136
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_21.to",
+          "lineNumber": 136
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 137
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_22.to",
+          "lineNumber": 137
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot(b_hupd_local_11.to(b_hupd_12.dtype), b_hupd_12).to",
+          "lineNumber": 139
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 139
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_11.to",
+          "lineNumber": 139
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 140
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_12.to",
+          "lineNumber": 140
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot(b_hupd_local_21.to(b_hupd_12.dtype), b_hupd_12).to",
+          "lineNumber": 142
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 142
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_21.to",
+          "lineNumber": 142
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.dot",
+          "lineNumber": 143
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd_local_22.to",
+          "lineNumber": 143
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 146
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 147
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd11_new.to",
+          "lineNumber": 147
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 149
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 150
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd21_new.to",
+          "lineNumber": 150
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 152
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 153
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd12_new.to",
+          "lineNumber": 153
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 155
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "tl.store",
+          "lineNumber": 156
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+          "callee": "b_hupd22_new.to",
+          "lineNumber": 156
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "prepare_chunk_indices",
+          "lineNumber": 178
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "triton.cdiv",
+          "lineNumber": 181
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "prepare_chunk_offsets",
+          "lineNumber": 184
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "len",
+          "lineNumber": 186
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "len",
+          "lineNumber": 187
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "k.new_empty",
+          "lineNumber": 192
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "prepare_update_chunk_offsets",
+          "lineNumber": 194
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "torch.eye",
+          "lineNumber": 196
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "g.transpose(1, 2).contiguous",
+          "lineNumber": 198
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "g.transpose",
+          "lineNumber": 198
+        },
+        {
+          "caller": "chunk_gated_delta_rule_fwd_hupdate",
+          "callee": "torch.zeros",
+          "lineNumber": 218
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/chunk_o.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 163,
+      "nonEmptyLines": 142,
+      "functions": [
+        {
+          "name": "chunk_fwd_kernel_o",
+          "startLine": 26,
+          "endLine": 109,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "h",
+            "g",
+            "o",
+            "cu_seqlens",
+            "chunk_offsets",
+            "scale",
+            "T",
+            "H",
+            "Hg",
+            "K",
+            "V",
+            "BT",
+            "BK",
+            "BV",
+            "USE_G",
+            "IS_VARLEN"
+          ]
+        },
+        {
+          "name": "chunk_fwd_o",
+          "startLine": 112,
+          "endLine": 163,
+          "params": [
+            "q",
+            "k",
+            "v",
+            "h",
+            "g",
+            "scale",
+            "cu_seqlens",
+            "chunk_size",
+            "chunk_offsets"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunk_fwd_kernel_o",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_fwd_o",
+          "line": 112,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.program_id",
+          "lineNumber": 47
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.program_id",
+          "lineNumber": 47
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.cdiv",
+          "lineNumber": 54
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load(chunk_offsets + i_n).to",
+          "lineNumber": 55
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 55
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.cdiv",
+          "lineNumber": 58
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "range",
+          "lineNumber": 67
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "(i_tg * H + i_h).to",
+          "lineNumber": 69
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.zeros",
+          "lineNumber": 70
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.zeros",
+          "lineNumber": 71
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "range",
+          "lineNumber": 73
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.cdiv",
+          "lineNumber": 73
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 74
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 75
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 76
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 78
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 80
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 82
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.dot",
+          "lineNumber": 85
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.dot",
+          "lineNumber": 87
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.arange",
+          "lineNumber": 90
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 93
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.exp",
+          "lineNumber": 95
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "safe_exp",
+          "lineNumber": 96
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.arange(0, BT).to",
+          "lineNumber": 98
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.arange",
+          "lineNumber": 98
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.where",
+          "lineNumber": 100
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 102
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 103
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.load",
+          "lineNumber": 105
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.dot",
+          "lineNumber": 108
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "b_A.to",
+          "lineNumber": 108
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "tl.store",
+          "lineNumber": 109
+        },
+        {
+          "caller": "chunk_fwd_kernel_o",
+          "callee": "b_o.to",
+          "lineNumber": 109
+        },
+        {
+          "caller": "chunk_fwd_o",
+          "callee": "torch.empty_like",
+          "lineNumber": 130
+        },
+        {
+          "caller": "chunk_fwd_o",
+          "callee": "len",
+          "lineNumber": 134
+        },
+        {
+          "caller": "chunk_fwd_o",
+          "callee": "prepare_chunk_offsets",
+          "lineNumber": 136
+        },
+        {
+          "caller": "grid",
+          "callee": "triton.cdiv",
+          "lineNumber": 139
+        },
+        {
+          "caller": "chunk_fwd_o",
+          "callee": "g.transpose(1, 2).contiguous",
+          "lineNumber": 141
+        },
+        {
+          "caller": "chunk_fwd_o",
+          "callee": "g.transpose",
+          "lineNumber": 141
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/chunk_o_update.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 121,
+      "nonEmptyLines": 105,
+      "functions": [
+        {
+          "name": "chunk_fwd_kernel_o_update",
+          "startLine": 25,
+          "endLine": 77,
+          "params": [
+            "h",
+            "h_update",
+            "updated_h_state",
+            "cu_seqlens",
+            "chunk_offsets",
+            "T",
+            "H",
+            "Hg",
+            "K",
+            "V",
+            "BT",
+            "BK",
+            "BV",
+            "IS_VARLEN"
+          ]
+        },
+        {
+          "name": "chunk_fwd_o_update",
+          "startLine": 80,
+          "endLine": 121,
+          "params": [
+            "q",
+            "v",
+            "h",
+            "h_update",
+            "updated_h_state",
+            "cu_seqlens",
+            "chunk_size",
+            "chunk_offsets"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunk_fwd_kernel_o_update",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_fwd_o_update",
+          "line": 80,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.program_id",
+          "lineNumber": 41
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.program_id",
+          "lineNumber": 41
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.cdiv",
+          "lineNumber": 47
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load(chunk_offsets + i_n).to",
+          "lineNumber": 48
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load",
+          "lineNumber": 48
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.cdiv",
+          "lineNumber": 51
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "(i_n * H + i_h).to",
+          "lineNumber": 55
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "range",
+          "lineNumber": 57
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "(i_tg * H + i_h).to",
+          "lineNumber": 59
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "((i_tg + i_n) * H + i_h).to",
+          "lineNumber": 60
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "range",
+          "lineNumber": 62
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.cdiv",
+          "lineNumber": 62
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 63
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 64
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 65
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load",
+          "lineNumber": 70
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load",
+          "lineNumber": 72
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.load",
+          "lineNumber": 74
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.dot",
+          "lineNumber": 76
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "b_hupd.to",
+          "lineNumber": 76
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "b_updated_h_state.to",
+          "lineNumber": 76
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "tl.store",
+          "lineNumber": 77
+        },
+        {
+          "caller": "chunk_fwd_kernel_o_update",
+          "callee": "b_h.to",
+          "lineNumber": 77
+        },
+        {
+          "caller": "chunk_fwd_o_update",
+          "callee": "len",
+          "lineNumber": 97
+        },
+        {
+          "caller": "chunk_fwd_o_update",
+          "callee": "prepare_chunk_offsets",
+          "lineNumber": 99
+        },
+        {
+          "caller": "grid",
+          "callee": "triton.cdiv",
+          "lineNumber": 102
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/chunk_scaled_dot_kkt.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 142,
+      "nonEmptyLines": 126,
+      "functions": [
+        {
+          "name": "chunk_scaled_dot_kkt_fwd_kernel",
+          "startLine": 25,
+          "endLine": 80,
+          "params": [
+            "k",
+            "beta",
+            "g_cumsum",
+            "A",
+            "cu_seqlens",
+            "chunk_indices",
+            "T",
+            "B",
+            "H",
+            "Hg",
+            "K",
+            "BT",
+            "BK",
+            "IS_VARLEN",
+            "USE_G"
+          ]
+        },
+        {
+          "name": "chunk_scaled_dot_kkt_fwd",
+          "startLine": 83,
+          "endLine": 142,
+          "params": [
+            "k",
+            "beta",
+            "g_cumsum",
+            "cu_seqlens",
+            "chunk_indices",
+            "chunk_size",
+            "output_dtype"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunk_scaled_dot_kkt_fwd_kernel",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_scaled_dot_kkt_fwd",
+          "line": 83,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 43
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 43
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "range",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load(chunk_indices + i_t_i * 2).to",
+          "lineNumber": 49
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 49
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load(chunk_indices + i_t_i * 2 + 1).to",
+          "lineNumber": 50
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 50
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 57
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "o_t.to",
+          "lineNumber": 58
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 60
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 61
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.zeros",
+          "lineNumber": 63
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "range",
+          "lineNumber": 64
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.cdiv",
+          "lineNumber": 64
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 65
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 68
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 69
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.trans",
+          "lineNumber": 69
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 72
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 73
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "safe_exp",
+          "lineNumber": 75
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.where",
+          "lineNumber": 78
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 79
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "tl.store",
+          "lineNumber": 80
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd_kernel",
+          "callee": "b_A.to",
+          "lineNumber": 80
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "prepare_chunk_indices",
+          "lineNumber": 120
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "triton.cdiv",
+          "lineNumber": 121
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "len",
+          "lineNumber": 121
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "torch.empty",
+          "lineNumber": 122
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "DeviceOperator.chunk_scaled_dot_kkt_fwd",
+          "lineNumber": 126
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "torch.permute(beta, (2, 0, 1)).contiguous",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "torch.permute",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "torch.permute(g_cumsum, (2, 0, 1)).contiguous",
+          "lineNumber": 130
+        },
+        {
+          "caller": "chunk_scaled_dot_kkt_fwd",
+          "callee": "torch.permute",
+          "lineNumber": 130
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/cumsum.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 144,
+      "nonEmptyLines": 133,
+      "functions": [
+        {
+          "name": "chunk_local_cumsum_scalar_kernel",
+          "startLine": 22,
+          "endLine": 74,
+          "params": [
+            "s",
+            "o",
+            "scale",
+            "cu_seqlens",
+            "chunk_indices",
+            "T",
+            "H",
+            "BLOCK_T",
+            "REVERSE",
+            "HAS_SCALE",
+            "IS_VARLEN",
+            "HEAD_FIRST",
+            "CHUNK_SIZE"
+          ]
+        },
+        {
+          "name": "chunk_local_cumsum_scalar",
+          "startLine": 77,
+          "endLine": 113,
+          "params": [
+            "g",
+            "chunk_size",
+            "reverse",
+            "scale",
+            "cu_seqlens",
+            "block_indices",
+            "head_first",
+            "output_dtype"
+          ]
+        },
+        {
+          "name": "chunk_local_cumsum",
+          "startLine": 116,
+          "endLine": 144,
+          "params": [
+            "g",
+            "chunk_size",
+            "reverse",
+            "scale",
+            "cu_seqlens",
+            "head_first",
+            "output_dtype",
+            "**kwargs"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunk_local_cumsum_scalar_kernel",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_local_cumsum_scalar",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "chunk_local_cumsum",
+          "line": 116,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 37
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 37
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load(chunk_indices + i_block * 2).to",
+          "lineNumber": 42
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load",
+          "lineNumber": 42
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load(chunk_indices + i_block * 2 + 1).to",
+          "lineNumber": 43
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load",
+          "lineNumber": 43
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load(cu_seqlens + i_s).to",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load(cu_seqlens + i_s + 1).to",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load",
+          "lineNumber": 45
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 51
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 52
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load(ptr_s, boundary_check=(0,)).to",
+          "lineNumber": 53
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load",
+          "lineNumber": 53
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.reshape",
+          "lineNumber": 54
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.trans",
+          "lineNumber": 55
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.cumsum",
+          "lineNumber": 56
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.trans",
+          "lineNumber": 59
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.reshape",
+          "lineNumber": 60
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 62
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 63
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load(ptr_s, boundary_check=(0,)).to",
+          "lineNumber": 64
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.load",
+          "lineNumber": 64
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.reshape",
+          "lineNumber": 65
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.trans",
+          "lineNumber": 66
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.cumsum",
+          "lineNumber": 67
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.trans",
+          "lineNumber": 70
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.reshape",
+          "lineNumber": 71
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "tl.store",
+          "lineNumber": 73
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar_kernel",
+          "callee": "b_o.to",
+          "lineNumber": 73
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar",
+          "callee": "chunk_size.bit_length",
+          "lineNumber": 91
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar",
+          "callee": "triton.next_power_of_2",
+          "lineNumber": 92
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar",
+          "callee": "prepare_chunk_indices",
+          "lineNumber": 94
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar",
+          "callee": "len",
+          "lineNumber": 95
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar",
+          "callee": "triton.cdiv",
+          "lineNumber": 95
+        },
+        {
+          "caller": "chunk_local_cumsum_scalar",
+          "callee": "torch.empty_like",
+          "lineNumber": 96
+        },
+        {
+          "caller": "chunk_local_cumsum",
+          "callee": "len",
+          "lineNumber": 128
+        },
+        {
+          "caller": "chunk_local_cumsum",
+          "callee": "chunk_local_cumsum_scalar",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk_local_cumsum",
+          "callee": "kwargs.get",
+          "lineNumber": 135
+        },
+        {
+          "caller": "chunk_local_cumsum",
+          "callee": "ValueError",
+          "lineNumber": 140
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/l2norm.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 55,
+      "functions": [
+        {
+          "name": "l2norm_fwd_kernel2_loop",
+          "startLine": 18,
+          "endLine": 31,
+          "params": [
+            "X",
+            "Y",
+            "eps",
+            "M",
+            "N",
+            "MBLOCK",
+            "NUM_CHUNKS"
+          ]
+        },
+        {
+          "name": "l2norm_fwd",
+          "startLine": 34,
+          "endLine": 66,
+          "params": [
+            "x",
+            "eps",
+            "output_dtype"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "l2norm_fwd_kernel2_loop",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "l2norm_fwd",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.program_id",
+          "lineNumber": 19
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.arange",
+          "lineNumber": 20
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "range",
+          "lineNumber": 22
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.arange",
+          "lineNumber": 23
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.load(X + (rindex + N * row_idx), mask=xmask, other=0.0).to",
+          "lineNumber": 26
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.load",
+          "lineNumber": 26
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.sum",
+          "lineNumber": 28
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.rsqrt",
+          "lineNumber": 29
+        },
+        {
+          "caller": "l2norm_fwd_kernel2_loop",
+          "callee": "tl.store",
+          "lineNumber": 31
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "x.reshape",
+          "lineNumber": 36
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "torch.empty_like",
+          "lineNumber": 39
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "torch.empty_like",
+          "lineNumber": 41
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "y.stride",
+          "lineNumber": 42
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "x.element_size",
+          "lineNumber": 45
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "min",
+          "lineNumber": 46
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "triton.next_power_of_2",
+          "lineNumber": 46
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "RuntimeError",
+          "lineNumber": 48
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "get_vectorcore_num",
+          "lineNumber": 52
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "triton.cdiv",
+          "lineNumber": 53
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "triton.cdiv",
+          "lineNumber": 54
+        },
+        {
+          "caller": "l2norm_fwd",
+          "callee": "y.view",
+          "lineNumber": 66
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/solve_tril.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 404,
+      "nonEmptyLines": 344,
+      "functions": [
+        {
+          "name": "solve_tril_16x16_kernel",
+          "startLine": 22,
+          "endLine": 134,
+          "params": [
+            "A",
+            "Ad",
+            "cu_seqlens",
+            "chunk_indices",
+            "T",
+            "H",
+            "BT",
+            "IS_VARLEN",
+            "LARGE_BLOCK_T",
+            "EXTRACT_SLICE_STRIDE_1"
+          ]
+        },
+        {
+          "name": "merge_16x16_to_32x32_inverse_kernel",
+          "startLine": 139,
+          "endLine": 198,
+          "params": [
+            "A",
+            "Ad",
+            "Ai",
+            "cu_seqlens",
+            "chunk_indices",
+            "T",
+            "H",
+            "BT",
+            "IS_VARLEN"
+          ]
+        },
+        {
+          "name": "merge_16x16_to_64x64_inverse_kernel",
+          "startLine": 203,
+          "endLine": 328,
+          "params": [
+            "A",
+            "Ad",
+            "Ai",
+            "cu_seqlens",
+            "chunk_indices",
+            "T",
+            "H",
+            "BT",
+            "IS_VARLEN"
+          ]
+        },
+        {
+          "name": "solve_tril",
+          "startLine": 331,
+          "endLine": 404,
+          "params": [
+            "A",
+            "cu_seqlens",
+            "chunk_indices_large_block",
+            "chunk_indices_bt",
+            "output_dtype"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "solve_tril_16x16_kernel",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "merge_16x16_to_32x32_inverse_kernel",
+          "line": 137,
+          "isDefault": false
+        },
+        {
+          "name": "merge_16x16_to_64x64_inverse_kernel",
+          "line": 201,
+          "isDefault": false
+        },
+        {
+          "name": "solve_tril",
+          "line": 331,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 34
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 34
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load(chunk_indices + i_t * 2).to",
+          "lineNumber": 38
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load",
+          "lineNumber": 38
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load(chunk_indices + i_t * 2 + 1).to",
+          "lineNumber": 39
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load",
+          "lineNumber": 39
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 42
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load",
+          "lineNumber": 42
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 43
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load",
+          "lineNumber": 43
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "range",
+          "lineNumber": 57
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.zeros",
+          "lineNumber": 61
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "range",
+          "lineNumber": 62
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 67
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 68
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load(ptr_A_subrec16, mask=load_mask, other=0.0).to",
+          "lineNumber": 85
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.load",
+          "lineNumber": 85
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 86
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.trans",
+          "lineNumber": 94
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.reshape",
+          "lineNumber": 95
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.arange(0, 16).to",
+          "lineNumber": 98
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 98
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "(rows > cols).to",
+          "lineNumber": 101
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "range",
+          "lineNumber": 105
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "extract_slice",
+          "lineNumber": 106
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.reshape",
+          "lineNumber": 107
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.trans",
+          "lineNumber": 109
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.sum",
+          "lineNumber": 110
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 114
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.where",
+          "lineNumber": 119
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.reshape",
+          "lineNumber": 121
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 122
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 125
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 126
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "tl.store",
+          "lineNumber": 134
+        },
+        {
+          "caller": "solve_tril_16x16_kernel",
+          "callee": "b_A.to",
+          "lineNumber": 134
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 150
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 150
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load(chunk_indices + i_t * 2).to",
+          "lineNumber": 154
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 154
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load(chunk_indices + i_t * 2 + 1).to",
+          "lineNumber": 155
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 155
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 158
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 158
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 159
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 159
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 169
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 170
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 171
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 172
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 173
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.make_block_ptr",
+          "lineNumber": 174
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load(p_A_21, boundary_check=(0, 1)).to",
+          "lineNumber": 176
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 176
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load(p_Ad_11, boundary_check=(0, 1)).to",
+          "lineNumber": 177
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 177
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load(p_Ad_22, boundary_check=(0, 1)).to",
+          "lineNumber": 178
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 178
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 179
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 180
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.store",
+          "lineNumber": 184
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "Ai_11.to",
+          "lineNumber": 186
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.store",
+          "lineNumber": 189
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "Ai_22.to",
+          "lineNumber": 191
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "tl.store",
+          "lineNumber": 194
+        },
+        {
+          "caller": "merge_16x16_to_32x32_inverse_kernel",
+          "callee": "Ai_21.to",
+          "lineNumber": 196
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 214
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 214
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(chunk_indices + i_t * 2).to",
+          "lineNumber": 218
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 218
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(chunk_indices + i_t * 2 + 1).to",
+          "lineNumber": 219
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 219
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 222
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 222
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 223
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 223
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 236
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 237
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(ptr_Ad, mask=mask_Ad, other=0.0).to",
+          "lineNumber": 240
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 240
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(ptr_A, mask=mask_A, other=0.0).to",
+          "lineNumber": 245
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 245
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 246
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 249
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 250
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(ptr_Ad, mask=mask_Ad, other=0.0).to",
+          "lineNumber": 253
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 253
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 255
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 258
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 259
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(ptr_Ad, mask=mask_Ad, other=0.0).to",
+          "lineNumber": 262
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 262
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 265
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(ptr_A, mask=mask_A, other=0.0).to",
+          "lineNumber": 268
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 268
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 269
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 272
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 273
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(ptr_Ad, mask=mask_Ad, other=0.0).to",
+          "lineNumber": 276
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 276
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 278
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.zeros",
+          "lineNumber": 281
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 282
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 283
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 284
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 287
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 288
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load(ptr_A, mask=mask_A, other=0.0).to",
+          "lineNumber": 291
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.load",
+          "lineNumber": 291
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 292
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.zeros",
+          "lineNumber": 295
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 296
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 297
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "insert_slice",
+          "lineNumber": 298
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 300
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 303
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 304
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.store",
+          "lineNumber": 307
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "Ai_11_32.to",
+          "lineNumber": 307
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 310
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 311
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.store",
+          "lineNumber": 314
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "Ai_22_32.to",
+          "lineNumber": 314
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 317
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.store",
+          "lineNumber": 320
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "Ai_21_32.to",
+          "lineNumber": 320
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 323
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 324
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.zeros",
+          "lineNumber": 327
+        },
+        {
+          "caller": "merge_16x16_to_64x64_inverse_kernel",
+          "callee": "tl.store",
+          "lineNumber": 328
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "torch.empty",
+          "lineNumber": 357
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "prepare_chunk_indices",
+          "lineNumber": 362
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "len",
+          "lineNumber": 364
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "triton.cdiv",
+          "lineNumber": 364
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "DeviceOperator.solve_tril_16x16",
+          "lineNumber": 368
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "torch.empty",
+          "lineNumber": 384
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "prepare_chunk_indices",
+          "lineNumber": 387
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "len",
+          "lineNumber": 389
+        },
+        {
+          "caller": "solve_tril",
+          "callee": "triton.cdiv",
+          "lineNumber": 389
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/utils.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 132,
+      "nonEmptyLines": 101,
+      "functions": [
+        {
+          "name": "prepare_lens",
+          "startLine": 18,
+          "endLine": 19,
+          "params": [
+            "cu_seqlens"
+          ]
+        },
+        {
+          "name": "prepare_chunk_indices",
+          "startLine": 22,
+          "endLine": 24,
+          "params": [
+            "cu_seqlens",
+            "chunk_size"
+          ]
+        },
+        {
+          "name": "prepare_final_chunk_indices",
+          "startLine": 27,
+          "endLine": 29,
+          "params": [
+            "cu_seqlens",
+            "chunk_size"
+          ]
+        },
+        {
+          "name": "prepare_chunk_offsets",
+          "startLine": 32,
+          "endLine": 33,
+          "params": [
+            "cu_seqlens",
+            "chunk_size"
+          ]
+        },
+        {
+          "name": "prepare_update_chunk_offsets",
+          "startLine": 36,
+          "endLine": 37,
+          "params": [
+            "cu_seqlens",
+            "chunk_size"
+          ]
+        },
+        {
+          "name": "input_guard",
+          "startLine": 40,
+          "endLine": 69,
+          "params": [
+            "fn"
+          ]
+        },
+        {
+          "name": "safe_exp",
+          "startLine": 73,
+          "endLine": 74,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "_clear_ssm_states_kernel",
+          "startLine": 78,
+          "endLine": 95,
+          "params": [
+            "states_ptr",
+            "has_initial_state_ptr",
+            "inner_size",
+            "row_stride",
+            "BLOCK_SIZE"
+          ]
+        },
+        {
+          "name": "clear_ssm_states",
+          "startLine": 98,
+          "endLine": 132,
+          "params": [
+            "ssm_states",
+            "has_initial_state"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "prepare_lens",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "prepare_chunk_indices",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "prepare_final_chunk_indices",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "prepare_chunk_offsets",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "prepare_update_chunk_offsets",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "input_guard",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "safe_exp",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "_clear_ssm_states_kernel",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "clear_ssm_states",
+          "line": 98,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "torch.cat",
+          "lineNumber": 23
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "torch.arange",
+          "lineNumber": 23
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "triton.cdiv(prepare_lens(cu_seqlens), chunk_size).tolist",
+          "lineNumber": 23
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "triton.cdiv",
+          "lineNumber": 23
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "prepare_lens",
+          "lineNumber": 23
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "torch.stack([indices.eq(0).cumsum(0) - 1, indices], 1).to",
+          "lineNumber": 24
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "torch.stack",
+          "lineNumber": 24
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "indices.eq(0).cumsum",
+          "lineNumber": 24
+        },
+        {
+          "caller": "prepare_chunk_indices",
+          "callee": "indices.eq",
+          "lineNumber": 24
+        },
+        {
+          "caller": "prepare_final_chunk_indices",
+          "callee": "triton.cdiv",
+          "lineNumber": 28
+        },
+        {
+          "caller": "prepare_final_chunk_indices",
+          "callee": "prepare_lens",
+          "lineNumber": 28
+        },
+        {
+          "caller": "prepare_final_chunk_indices",
+          "callee": "torch.cumsum",
+          "lineNumber": 29
+        },
+        {
+          "caller": "prepare_chunk_offsets",
+          "callee": "torch.cat([cu_seqlens.new_tensor([0]), triton.cdiv(prepare_lens(cu_seqlens), chunk_size)]).cumsum",
+          "lineNumber": 33
+        },
+        {
+          "caller": "prepare_chunk_offsets",
+          "callee": "torch.cat",
+          "lineNumber": 33
+        },
+        {
+          "caller": "prepare_chunk_offsets",
+          "callee": "cu_seqlens.new_tensor",
+          "lineNumber": 33
+        },
+        {
+          "caller": "prepare_chunk_offsets",
+          "callee": "triton.cdiv",
+          "lineNumber": 33
+        },
+        {
+          "caller": "prepare_chunk_offsets",
+          "callee": "prepare_lens",
+          "lineNumber": 33
+        },
+        {
+          "caller": "prepare_update_chunk_offsets",
+          "callee": "torch.cat([cu_seqlens.new_tensor([0]), triton.cdiv(prepare_lens(cu_seqlens), chunk_size) + 1]).cumsum",
+          "lineNumber": 37
+        },
+        {
+          "caller": "prepare_update_chunk_offsets",
+          "callee": "torch.cat",
+          "lineNumber": 37
+        },
+        {
+          "caller": "prepare_update_chunk_offsets",
+          "callee": "cu_seqlens.new_tensor",
+          "lineNumber": 37
+        },
+        {
+          "caller": "prepare_update_chunk_offsets",
+          "callee": "triton.cdiv",
+          "lineNumber": 37
+        },
+        {
+          "caller": "prepare_update_chunk_offsets",
+          "callee": "prepare_lens",
+          "lineNumber": 37
+        },
+        {
+          "caller": "input_guard",
+          "callee": "functools.wraps",
+          "lineNumber": 45
+        },
+        {
+          "caller": "wrapper",
+          "callee": "isinstance",
+          "lineNumber": 47
+        },
+        {
+          "caller": "wrapper",
+          "callee": "i.contiguous",
+          "lineNumber": 47
+        },
+        {
+          "caller": "wrapper",
+          "callee": "isinstance",
+          "lineNumber": 48
+        },
+        {
+          "caller": "wrapper",
+          "callee": "v.contiguous",
+          "lineNumber": 48
+        },
+        {
+          "caller": "wrapper",
+          "callee": "kwargs.items",
+          "lineNumber": 48
+        },
+        {
+          "caller": "wrapper",
+          "callee": "isinstance",
+          "lineNumber": 52
+        },
+        {
+          "caller": "wrapper",
+          "callee": "kwargs.values",
+          "lineNumber": 56
+        },
+        {
+          "caller": "wrapper",
+          "callee": "isinstance",
+          "lineNumber": 57
+        },
+        {
+          "caller": "wrapper",
+          "callee": "torch.npu.device",
+          "lineNumber": 62
+        },
+        {
+          "caller": "wrapper",
+          "callee": "contextlib.nullcontext",
+          "lineNumber": 64
+        },
+        {
+          "caller": "wrapper",
+          "callee": "fn",
+          "lineNumber": 67
+        },
+        {
+          "caller": "safe_exp",
+          "callee": "tl.exp",
+          "lineNumber": 74
+        },
+        {
+          "caller": "safe_exp",
+          "callee": "tl.where",
+          "lineNumber": 74
+        },
+        {
+          "caller": "safe_exp",
+          "callee": "float",
+          "lineNumber": 74
+        },
+        {
+          "caller": "_clear_ssm_states_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 85
+        },
+        {
+          "caller": "_clear_ssm_states_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_clear_ssm_states_kernel",
+          "callee": "tl.load(has_initial_state_ptr + row_idx).to",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_clear_ssm_states_kernel",
+          "callee": "tl.load",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_clear_ssm_states_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 92
+        },
+        {
+          "caller": "_clear_ssm_states_kernel",
+          "callee": "tl.store",
+          "lineNumber": 95
+        },
+        {
+          "caller": "_clear_ssm_states_kernel",
+          "callee": "tl.zeros",
+          "lineNumber": 95
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "ssm_states.numel",
+          "lineNumber": 105
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "has_initial_state.to",
+          "lineNumber": 109
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "has_initial_state.to",
+          "lineNumber": 111
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "has_initial_state.reshape(-1).contiguous",
+          "lineNumber": 113
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "has_initial_state.reshape",
+          "lineNumber": 113
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "has_initial_state.numel",
+          "lineNumber": 117
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "ValueError",
+          "lineNumber": 118
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "has_initial_state.numel",
+          "lineNumber": 118
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "ssm_states.numel",
+          "lineNumber": 120
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "triton.cdiv",
+          "lineNumber": 125
+        },
+        {
+          "caller": "clear_ssm_states",
+          "callee": "ssm_states.stride",
+          "lineNumber": 130
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "ops/triton/fla/wy_fast.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 143,
+      "nonEmptyLines": 121,
+      "functions": [
+        {
+          "name": "recompute_w_u_fwd_kernel",
+          "startLine": 21,
+          "endLine": 95,
+          "params": [
+            "k",
+            "v",
+            "beta",
+            "w",
+            "u",
+            "A",
+            "g",
+            "cu_seqlens",
+            "chunk_indices",
+            "T",
+            "H",
+            "Hg",
+            "K",
+            "V",
+            "BT",
+            "BK",
+            "BV",
+            "IS_VARLEN"
+          ]
+        },
+        {
+          "name": "recompute_w_u_fwd",
+          "startLine": 98,
+          "endLine": 143,
+          "params": [
+            "k",
+            "v",
+            "beta",
+            "g_cumsum",
+            "A",
+            "cu_seqlens",
+            "chunk_indices"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "recompute_w_u_fwd_kernel",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "recompute_w_u_fwd",
+          "line": 98,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.program_id",
+          "lineNumber": 42
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "range",
+          "lineNumber": 44
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(chunk_indices + i_t_o * 2).to",
+          "lineNumber": 48
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 48
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(chunk_indices + i_t_o * 2 + 1).to",
+          "lineNumber": 49
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 49
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(cu_seqlens + i_n).to",
+          "lineNumber": 51
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 51
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(cu_seqlens + i_n + 1).to",
+          "lineNumber": 51
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 51
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 56
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 61
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(ptr_A, mask=mask_A, other=0.0).to",
+          "lineNumber": 64
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 64
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.exp(tl.load(ptr_g, mask=mask_t, other=0.0)).to",
+          "lineNumber": 67
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.exp",
+          "lineNumber": 67
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 67
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(ptr_beta, mask=mask_t, other=0.0).to",
+          "lineNumber": 70
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 70
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "range",
+          "lineNumber": 72
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.cdiv",
+          "lineNumber": 72
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 73
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(ptr_v, mask=mask_v, other=0.0).to",
+          "lineNumber": 77
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 77
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 80
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.store",
+          "lineNumber": 83
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "b_u.to",
+          "lineNumber": 83
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "range",
+          "lineNumber": 85
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.cdiv",
+          "lineNumber": 85
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.arange",
+          "lineNumber": 86
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load(ptr_k, mask=mask_k, other=0.0).to",
+          "lineNumber": 89
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.load",
+          "lineNumber": 89
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.dot",
+          "lineNumber": 92
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "tl.store",
+          "lineNumber": 95
+        },
+        {
+          "caller": "recompute_w_u_fwd_kernel",
+          "callee": "b_w.to",
+          "lineNumber": 95
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "prepare_chunk_indices",
+          "lineNumber": 112
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "triton.cdiv",
+          "lineNumber": 113
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "len",
+          "lineNumber": 113
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "torch.empty_like",
+          "lineNumber": 118
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "k.new_empty",
+          "lineNumber": 119
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "beta.transpose(1, 2).contiguous",
+          "lineNumber": 120
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "beta.transpose",
+          "lineNumber": 120
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "g_cumsum.transpose(1, 2).contiguous",
+          "lineNumber": 121
+        },
+        {
+          "caller": "recompute_w_u_fwd",
+          "callee": "g_cumsum.transpose",
+          "lineNumber": 121
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,936 @@
+{
+  "nodes": [
+    {
+      "id": "file:distributed/kv_transfer/kv_pool/lmcache_ascend_connector.py",
+      "type": "file",
+      "name": "lmcache_ascend_connector.py",
+      "filePath": "distributed/kv_transfer/kv_pool/lmcache_ascend_connector.py",
+      "summary": "导入 lmcache_ascend 副作用模块并重新导出 vLLM 的 LMCacheConnectorV1，使 LMCache 在 Ascend NPU 上可用于 KV cache 传输。",
+      "tags": ["barrel", "kv-cache", "connector", "re-export"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:distributed/kv_transfer/kv_pool/simple_cpu_offload/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "distributed/kv_transfer/kv_pool/simple_cpu_offload/__init__.py",
+      "summary": "simple_cpu_offload 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+      "type": "file",
+      "name": "simple_cpu_offload_connector.py",
+      "filePath": "distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+      "summary": "定义 AscendSimpleCPUOffloadConnector，将 KV cache 简单地卸载到 CPU，内部委托给 SimpleCPUOffloadNPUWorker 完成 NPU 侧的传输。",
+      "tags": ["connector", "kv-cache", "cpu-offload", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py:AscendSimpleCPUOffloadConnector",
+      "type": "class",
+      "name": "AscendSimpleCPUOffloadConnector",
+      "filePath": "distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+      "lineRange": [24, 60],
+      "summary": "面向 Ascend NPU 的简单 CPU 卸载 KV connector，在初始化时创建 SimpleCPUOffloadNPUWorker 处理实际的 KV 块搬运。",
+      "tags": ["connector", "kv-cache", "cpu-offload"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:distributed/kv_transfer/kv_pool/ucm_connector.py",
+      "type": "file",
+      "name": "ucm_connector.py",
+      "filePath": "distributed/kv_transfer/kv_pool/ucm_connector.py",
+      "summary": "实现 UCMConnectorV1，作为统一缓存管理（UCM）KV connector 的适配层，将大量 connector 接口方法转发给内部 UCM engine 委托对象。",
+      "tags": ["connector", "kv-cache", "api-handler", "adapter"],
+      "complexity": "complex",
+      "languageNotes": "使用 _get_ucm_delegate_for 和 _call_ucm_reserved_hook 动态查找并调用底层 engine 上的保留钩子方法，是典型的委托/适配器模式。"
+    },
+    {
+      "id": "class:distributed/kv_transfer/kv_pool/ucm_connector.py:UCMConnectorV1",
+      "type": "class",
+      "name": "UCMConnectorV1",
+      "filePath": "distributed/kv_transfer/kv_pool/ucm_connector.py",
+      "lineRange": [37, 324],
+      "summary": "UCM KV connector 的 V1 实现，封装注册 KV cache、加载/保存 KV 层、连接器元数据管理及统计指标等完整生命周期接口，全部委托给内部 _ucm_engine。",
+      "tags": ["connector", "kv-cache", "adapter", "api-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:distributed/kv_transfer/utils/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "distributed/kv_transfer/utils/__init__.py",
+      "summary": "kv_transfer/utils 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+      "type": "file",
+      "name": "mooncake_transfer_engine.py",
+      "filePath": "distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+      "summary": "提供 GlobalTE 单例，惰性初始化并缓存 Mooncake TransferEngine，并以线程锁保护 buffer 注册，供分布式 KV 传输共享。",
+      "tags": ["singleton", "kv-cache", "transfer-engine", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:distributed/kv_transfer/utils/mooncake_transfer_engine.py:GlobalTE",
+      "type": "class",
+      "name": "GlobalTE",
+      "filePath": "distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+      "lineRange": [4, 40],
+      "summary": "封装全局 Mooncake TransferEngine 的单例类，惰性初始化引擎并提供线程安全的 buffer 内存注册。",
+      "tags": ["singleton", "transfer-engine", "thread-safe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:distributed/kv_transfer/utils/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "distributed/kv_transfer/utils/utils.py",
+      "summary": "PD 分离与 context parallel 场景下的 KV 传输工具集，包含 all-to-all 重排、内存对齐、CP group 推导以及本地/远端 block 与端口映射的复杂计算。",
+      "tags": ["utility", "kv-cache", "context-parallel", "pd-disaggregation"],
+      "complexity": "complex",
+      "languageNotes": "get_local_remote_block_port_mappings 与 get_transfer_mappings 处理 PCP/DCP/TP 多维并行下的 head 分组与 block 端口映射，是 PD 分离 KV 传输的核心索引逻辑。"
+    },
+    {
+      "id": "function:distributed/kv_transfer/utils/utils.py:get_tp_rank_head_mapping",
+      "type": "function",
+      "name": "get_tp_rank_head_mapping",
+      "filePath": "distributed/kv_transfer/utils/utils.py",
+      "lineRange": [99, 119],
+      "summary": "根据 KV head 数与 TP size 计算每个 TP rank 负责的 KV head 列表，处理 head 数与 TP size 不整除的边界情况。",
+      "tags": ["utility", "tensor-parallel", "kv-cache"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:distributed/kv_transfer/utils/utils.py:get_head_group_mapping",
+      "type": "function",
+      "name": "get_head_group_mapping",
+      "filePath": "distributed/kv_transfer/utils/utils.py",
+      "lineRange": [122, 140],
+      "summary": "在指定的 CP group 内汇总各 TP rank 的 KV head，得到去重排序后的 head 分组映射。",
+      "tags": ["utility", "context-parallel", "kv-cache"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:distributed/kv_transfer/utils/utils.py:get_local_remote_block_port_mappings",
+      "type": "function",
+      "name": "get_local_remote_block_port_mappings",
+      "filePath": "distributed/kv_transfer/utils/utils.py",
+      "lineRange": [143, 259],
+      "summary": "计算 prefill 与 decode 实例间在 PCP/DCP/TP 并行布局下的 block 到远端 host/port 的传输映射，是 PD 分离 KV 传输的核心调度函数。",
+      "tags": ["kv-cache", "pd-disaggregation", "context-parallel", "complex-logic"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:distributed/kv_transfer/utils/utils.py:get_transfer_mappings",
+      "type": "function",
+      "name": "get_transfer_mappings",
+      "filePath": "distributed/kv_transfer/utils/utils.py",
+      "lineRange": [262, 302],
+      "summary": "依据 rank/block 映射构建按 (remote_host, remote_port) 聚合的本地与远端 block id 传输表，供实际 KV 块搬运使用。",
+      "tags": ["kv-cache", "pd-disaggregation", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:distributed/parallel_state.py",
+      "type": "file",
+      "name": "parallel_state.py",
+      "filePath": "distributed/parallel_state.py",
+      "summary": "Ascend 专有的模型并行状态管理模块，初始化并提供 MC2、MLP-TP、OTP、LMHead-TP、FlashComm2、shard-weight、EPLB 等多种自定义通信组的访问与销毁接口。",
+      "tags": ["distributed", "parallel-state", "communication-group", "entry-point"],
+      "complexity": "complex",
+      "languageNotes": "通过对 all_ranks 张量进行 view/permute/reshape/transpose 来切分各类并行通信组的 rank，是 Ascend 扩展并行通信的关键初始化逻辑。"
+    },
+    {
+      "id": "function:distributed/parallel_state.py:init_ascend_model_parallel",
+      "type": "function",
+      "name": "init_ascend_model_parallel",
+      "filePath": "distributed/parallel_state.py",
+      "lineRange": [30, 226],
+      "summary": "初始化全部 Ascend 自定义模型并行通信组，基于 world rank 张量切分出 MC2、MLP-TP、OTP、FlashComm2、shard-weight 等多种通信组。",
+      "tags": ["distributed", "parallel-state", "initialization", "communication-group"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:distributed/parallel_state.py:destroy_ascend_model_parallel",
+      "type": "function",
+      "name": "destroy_ascend_model_parallel",
+      "filePath": "distributed/parallel_state.py",
+      "lineRange": [287, 341],
+      "summary": "依次销毁所有已创建的 Ascend 自定义并行通信组并清空全局引用，用于退出时释放分布式资源。",
+      "tags": ["distributed", "parallel-state", "teardown"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:distributed/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "distributed/utils.py",
+      "summary": "分布式通信辅助函数集合，提供 FlashComm3 的 all-gather 与可选去填充、异步 all-gather 以及按首维切分张量的工具。",
+      "tags": ["utility", "distributed", "all-gather", "tensor-ops"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:distributed/utils.py:fc3_all_gather_and_maybe_unpad_impl",
+      "type": "function",
+      "name": "fc3_all_gather_and_maybe_unpad_impl",
+      "filePath": "distributed/utils.py",
+      "lineRange": [10, 36],
+      "summary": "在 FlashComm3 quant-x 通信组上对输入做 all-gather，并根据 DP 各 rank token 数对结果按需去除填充。",
+      "tags": ["distributed", "all-gather", "flashcomm3"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:distributed/utils.py:split_tensor_along_first_dim",
+      "type": "function",
+      "name": "split_tensor_along_first_dim",
+      "filePath": "distributed/utils.py",
+      "lineRange": [51, 77],
+      "summary": "将张量沿首维均分为 num_partitions 份，可选返回各分片的连续内存副本。",
+      "tags": ["utility", "tensor-ops", "distributed"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:envs.py",
+      "type": "file",
+      "name": "envs.py",
+      "filePath": "envs.py",
+      "summary": "vLLM-Ascend 的环境变量定义模块，通过 env_variables 字典与模块级 __getattr__ 提供对各类 Ascend NPU 运行时配置项的惰性按需读取。",
+      "tags": ["config", "environment", "entry-point"],
+      "complexity": "moderate",
+      "languageNotes": "使用模块级 __getattr__ 与 __dir__ 实现环境变量的惰性求值，访问属性时才执行对应的 lambda 读取 os.environ。"
+    },
+    {
+      "id": "file:eplb/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "eplb/__init__.py",
+      "summary": "eplb 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:eplb/adaptor/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "eplb/adaptor/__init__.py",
+      "summary": "eplb/adaptor 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:eplb/adaptor/vllm_adaptor.py",
+      "type": "file",
+      "name": "vllm_adaptor.py",
+      "filePath": "eplb/adaptor/vllm_adaptor.py",
+      "summary": "定义 VllmEplbAdaptor，将 vLLM 模型与 EPLB（专家并行负载均衡）对接，负责构建专家参数缓存、采集专家负载并执行专家 map/权重/log2phy 的更新。",
+      "tags": ["eplb", "moe", "adapter", "expert-parallel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:eplb/adaptor/vllm_adaptor.py:VllmEplbAdaptor",
+      "type": "class",
+      "name": "VllmEplbAdaptor",
+      "filePath": "eplb/adaptor/vllm_adaptor.py",
+      "lineRange": [29, 169],
+      "summary": "EPLB 与 vLLM 模型间的适配器，初始化 expert map/权重缓冲张量、采集 rank 专家负载，并提供更新专家映射、权重与 log2phy map 的方法。",
+      "tags": ["eplb", "moe", "adapter", "expert-parallel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:eplb/core/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "eplb/core/__init__.py",
+      "summary": "eplb/core 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:eplb/core/eplb_device_transfer_loader.py",
+      "type": "file",
+      "name": "eplb_device_transfer_loader.py",
+      "filePath": "eplb/core/eplb_device_transfer_loader.py",
+      "summary": "实现 D2DExpertWeightLoader，通过 P2P 通信在设备间异步传输 MoE 专家权重，并在传输完成后更新专家 map、log2phy map 与权重。",
+      "tags": ["eplb", "moe", "expert-parallel", "p2p-transfer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:eplb/core/eplb_device_transfer_loader.py:D2DExpertWeightLoader",
+      "type": "class",
+      "name": "D2DExpertWeightLoader",
+      "filePath": "eplb/core/eplb_device_transfer_loader.py",
+      "lineRange": [32, 122],
+      "summary": "设备到设备专家权重加载器，依据专家收发计划生成 P2P 传输任务、异步执行 batch isend/irecv，并在完成后回写专家映射与权重。",
+      "tags": ["eplb", "moe", "p2p-transfer", "expert-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:eplb/core/eplb_utils.py",
+      "type": "file",
+      "name": "eplb_utils.py",
+      "filePath": "eplb/core/eplb_utils.py",
+      "summary": "EPLB 核心工具函数集，提供从文件加载专家 map、生成全局专家布局、初始化 EPLB 配置以及构建 log2phy 映射的能力。",
+      "tags": ["eplb", "moe", "utility", "expert-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/eplb_utils.py:expert_file_to_tensor",
+      "type": "function",
+      "name": "expert_file_to_tensor",
+      "filePath": "eplb/core/eplb_utils.py",
+      "lineRange": [33, 49],
+      "summary": "从 JSON 专家分布文件中读取指定层的专家部署信息并转换为张量，校验数据合法性。",
+      "tags": ["eplb", "moe", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:eplb/core/eplb_utils.py:generate_global_placement",
+      "type": "function",
+      "name": "generate_global_placement",
+      "filePath": "eplb/core/eplb_utils.py",
+      "lineRange": [52, 67],
+      "summary": "根据专家数、EP size 与冗余/共享专家数量，生成跨 EP rank 的全局专家放置方案张量。",
+      "tags": ["eplb", "moe", "expert-parallel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:eplb/core/eplb_utils.py:init_eplb_config",
+      "type": "function",
+      "name": "init_eplb_config",
+      "filePath": "eplb/core/eplb_utils.py",
+      "lineRange": [70, 105],
+      "summary": "初始化某层的 EPLB 配置，依据是否提供专家 map 文件选择加载或生成全局放置，并构建专家 map 与 log2phy map。",
+      "tags": ["eplb", "moe", "initialization", "expert-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:eplb/core/eplb_utils.py:generate_log2phy_map",
+      "type": "function",
+      "name": "generate_log2phy_map",
+      "filePath": "eplb/core/eplb_utils.py",
+      "lineRange": [108, 128],
+      "summary": "基于全局专家 map 构建逻辑专家到物理专家的映射（log2phy），为冗余专家随机选择可用物理位置。",
+      "tags": ["eplb", "moe", "expert-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:eplb/core/eplb_worker.py",
+      "type": "file",
+      "name": "eplb_worker.py",
+      "filePath": "eplb/core/eplb_worker.py",
+      "summary": "EPLB 后台计算核心，EplbWorker 依据负载信息重新平衡专家放置、生成贪心专家迁移计划并打包更新信息，EplbProcess 将其封装为独立子进程异步运行。",
+      "tags": ["eplb", "moe", "load-balancing", "service"],
+      "complexity": "complex",
+      "languageNotes": "EplbProcess 通过 multiprocessing.Queue 与 Process 将专家重平衡计算放到独立进程，避免阻塞主推理流程。"
+    },
+    {
+      "id": "class:eplb/core/eplb_worker.py:EplbWorker",
+      "type": "class",
+      "name": "EplbWorker",
+      "filePath": "eplb/core/eplb_worker.py",
+      "lineRange": [29, 320],
+      "summary": "EPLB 重平衡核心 worker，汇总各 rank 专家负载、调用策略计算新专家放置、校验放置合法性并生成贪心专家收发与更新信息。",
+      "tags": ["eplb", "moe", "load-balancing", "expert-parallel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:eplb/core/eplb_worker.py:EplbProcess",
+      "type": "class",
+      "name": "EplbProcess",
+      "filePath": "eplb/core/eplb_worker.py",
+      "lineRange": [323, 385],
+      "summary": "将 EplbWorker 封装为独立子进程，通过 planner 与 block_update 队列与主进程通信，循环消费负载信息并产出专家更新计划。",
+      "tags": ["eplb", "moe", "multiprocessing", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:eplb/core/policy/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "eplb/core/policy/__init__.py",
+      "summary": "eplb/core/policy 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:eplb/eplb_updator.py",
+      "type": "file",
+      "name": "eplb_updator.py",
+      "filePath": "eplb/eplb_updator.py",
+      "summary": "EplbUpdator 编排 EPLB 的运行时迭代：管理唤醒/更新标志，在 forward 前后触发专家权重 D2D 传输与映射更新，并维护 MoE 负载统计与子进程生命周期。",
+      "tags": ["eplb", "moe", "orchestration", "load-balancing"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:eplb/eplb_updator.py:EplbUpdator",
+      "type": "class",
+      "name": "EplbUpdator",
+      "filePath": "eplb/eplb_updator.py",
+      "lineRange": [31, 178],
+      "summary": "EPLB 运行时更新协调器，按迭代节奏唤醒 EPLB worker、在 forward 前后发起专家权重传输与映射更新，并计算汇总 MoE 负载。",
+      "tags": ["eplb", "moe", "orchestration", "expert-parallel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:eplb/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "eplb/utils.py",
+      "summary": "提供向模型动态注册 EPLB 相关方法（获取专家 map、log2phy map、汇总/清空 MoE 负载）的工具，通过 MethodType 将这些方法绑定到模型实例。",
+      "tags": ["eplb", "moe", "utility", "monkey-patch"],
+      "complexity": "simple",
+      "languageNotes": "model_register 使用 types.MethodType 将多个 EPLB 辅助函数动态绑定到模型实例上，实现非侵入式的能力注入。"
+    },
+    {
+      "id": "function:eplb/utils.py:get_all_moe_loads",
+      "type": "function",
+      "name": "get_all_moe_loads",
+      "filePath": "eplb/utils.py",
+      "lineRange": [31, 38],
+      "summary": "遍历模型各 MoE 层收集专家负载张量并堆叠为单一张量，供 EPLB 重平衡决策使用。",
+      "tags": ["eplb", "moe", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:eplb/utils.py:model_register",
+      "type": "function",
+      "name": "model_register",
+      "filePath": "eplb/utils.py",
+      "lineRange": [48, 54],
+      "summary": "将 EPLB 辅助方法通过 MethodType 动态绑定到模型实例，使其具备获取专家 map 与 MoE 负载的能力。",
+      "tags": ["eplb", "moe", "monkey-patch"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:flash_common3_context.py",
+      "type": "file",
+      "name": "flash_common3_context.py",
+      "filePath": "flash_common3_context.py",
+      "summary": "维护 FlashCommon3（FlashComm3）前向上下文的全局状态，提供获取与设置 topk 权重、topk ids、共享专家及共享输出的接口。",
+      "tags": ["flashcomm3", "context", "moe", "global-state"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:kv_offload/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "kv_offload/__init__.py",
+      "summary": "kv_offload 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:kv_offload/cpu_npu.py",
+      "type": "file",
+      "name": "cpu_npu.py",
+      "filePath": "kv_offload/cpu_npu.py",
+      "summary": "实现 CPU 与 NPU 之间 KV cache 块的异步搬运处理器 CpuNpuOffloadingHandler，预计算块指针与字节布局，借助 NPU stream/event 与底层 swap_blocks_batch 算子完成批量传输。",
+      "tags": ["kv-cache", "cpu-offload", "npu", "async-transfer"],
+      "complexity": "complex",
+      "languageNotes": "通过预先计算 npu/cpu base pointer 与 block 字节大小的 numpy 数组，再调用 torch.ops._C_ascend.swap_blocks_batch 实现批量零拷贝指针级 KV 块搬运。"
+    },
+    {
+      "id": "function:kv_offload/cpu_npu.py:expand_block_ids",
+      "type": "function",
+      "name": "expand_block_ids",
+      "filePath": "kv_offload/cpu_npu.py",
+      "lineRange": [22, 51],
+      "summary": "将逻辑 block id 按 block_size_factor 展开为细粒度子块 id，支持跳过首部若干元素以处理对齐。",
+      "tags": ["kv-cache", "utility", "indexing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:kv_offload/cpu_npu.py:CpuNpuOffloadingHandler",
+      "type": "class",
+      "name": "CpuNpuOffloadingHandler",
+      "filePath": "kv_offload/cpu_npu.py",
+      "lineRange": [54, 261],
+      "summary": "CPU↔NPU KV cache 卸载处理器，初始化时建立 CPU/NPU 张量与指针映射，通过 NPU stream 与 event 异步提交批量 block swap 并跟踪完成状态。",
+      "tags": ["kv-cache", "cpu-offload", "npu", "async-transfer"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:kv_offload/npu.py",
+      "type": "file",
+      "name": "npu.py",
+      "filePath": "kv_offload/npu.py",
+      "summary": "定义 NPUOffloadingSpec，作为 NPU KV cache 卸载的规格描述，提供 CPU 卸载管理器与 CpuNpuOffloadingHandler 处理器的构建入口。",
+      "tags": ["kv-cache", "cpu-offload", "npu", "factory"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:kv_offload/npu.py:NPUOffloadingSpec",
+      "type": "class",
+      "name": "NPUOffloadingSpec",
+      "filePath": "kv_offload/npu.py",
+      "lineRange": [16, 63],
+      "summary": "NPU 卸载规格类，依据额外配置创建 CPUOffloadingManager 并实例化 CpuNpuOffloadingHandler 处理器列表。",
+      "tags": ["kv-cache", "cpu-offload", "factory", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lora/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "lora/__init__.py",
+      "summary": "lora 包的空初始化文件，将该目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "empty"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+      "target": "class:distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py:AscendSimpleCPUOffloadConnector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+      "target": "class:distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py:AscendSimpleCPUOffloadConnector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/kv_transfer/kv_pool/ucm_connector.py",
+      "target": "class:distributed/kv_transfer/kv_pool/ucm_connector.py:UCMConnectorV1",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/kv_transfer/kv_pool/ucm_connector.py",
+      "target": "class:distributed/kv_transfer/kv_pool/ucm_connector.py:UCMConnectorV1",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+      "target": "class:distributed/kv_transfer/utils/mooncake_transfer_engine.py:GlobalTE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+      "target": "class:distributed/kv_transfer/utils/mooncake_transfer_engine.py:GlobalTE",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_tp_rank_head_mapping",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_head_group_mapping",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_local_remote_block_port_mappings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_transfer_mappings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_tp_rank_head_mapping",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_head_group_mapping",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_local_remote_block_port_mappings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/kv_transfer/utils/utils.py",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_transfer_mappings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:distributed/kv_transfer/utils/utils.py:get_local_remote_block_port_mappings",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_head_group_mapping",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:distributed/kv_transfer/utils/utils.py:get_head_group_mapping",
+      "target": "function:distributed/kv_transfer/utils/utils.py:get_tp_rank_head_mapping",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/parallel_state.py",
+      "target": "function:distributed/parallel_state.py:init_ascend_model_parallel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/parallel_state.py",
+      "target": "function:distributed/parallel_state.py:destroy_ascend_model_parallel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/parallel_state.py",
+      "target": "function:distributed/parallel_state.py:init_ascend_model_parallel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/parallel_state.py",
+      "target": "function:distributed/parallel_state.py:destroy_ascend_model_parallel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/utils.py",
+      "target": "function:distributed/utils.py:fc3_all_gather_and_maybe_unpad_impl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/utils.py",
+      "target": "function:distributed/utils.py:split_tensor_along_first_dim",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/utils.py",
+      "target": "function:distributed/utils.py:fc3_all_gather_and_maybe_unpad_impl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/utils.py",
+      "target": "function:distributed/utils.py:split_tensor_along_first_dim",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:distributed/utils.py:fc3_all_gather_and_maybe_unpad_impl",
+      "target": "function:distributed/parallel_state.py:init_ascend_model_parallel",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:eplb/adaptor/vllm_adaptor.py",
+      "target": "class:eplb/adaptor/vllm_adaptor.py:VllmEplbAdaptor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/adaptor/vllm_adaptor.py",
+      "target": "class:eplb/adaptor/vllm_adaptor.py:VllmEplbAdaptor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/eplb_device_transfer_loader.py",
+      "target": "class:eplb/core/eplb_device_transfer_loader.py:D2DExpertWeightLoader",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/eplb_device_transfer_loader.py",
+      "target": "class:eplb/core/eplb_device_transfer_loader.py:D2DExpertWeightLoader",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/core/eplb_device_transfer_loader.py:D2DExpertWeightLoader",
+      "target": "class:eplb/adaptor/vllm_adaptor.py:VllmEplbAdaptor",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:expert_file_to_tensor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:generate_global_placement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:init_eplb_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:generate_log2phy_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:expert_file_to_tensor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:generate_global_placement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:init_eplb_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/eplb_utils.py",
+      "target": "function:eplb/core/eplb_utils.py:generate_log2phy_map",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/eplb_utils.py:init_eplb_config",
+      "target": "function:eplb/core/eplb_utils.py:expert_file_to_tensor",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/eplb_utils.py:init_eplb_config",
+      "target": "function:eplb/core/eplb_utils.py:generate_global_placement",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:eplb/core/eplb_utils.py:init_eplb_config",
+      "target": "function:eplb/core/eplb_utils.py:generate_log2phy_map",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/eplb_worker.py",
+      "target": "class:eplb/core/eplb_worker.py:EplbWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/eplb_worker.py",
+      "target": "class:eplb/core/eplb_worker.py:EplbProcess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/core/eplb_worker.py",
+      "target": "class:eplb/core/eplb_worker.py:EplbWorker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/core/eplb_worker.py",
+      "target": "class:eplb/core/eplb_worker.py:EplbProcess",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/core/eplb_worker.py:EplbProcess",
+      "target": "class:eplb/core/eplb_worker.py:EplbWorker",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:eplb/core/eplb_worker.py:EplbWorker",
+      "target": "function:eplb/core/eplb_utils.py:generate_log2phy_map",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/eplb_updator.py",
+      "target": "class:eplb/eplb_updator.py:EplbUpdator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/eplb_updator.py",
+      "target": "class:eplb/eplb_updator.py:EplbUpdator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:eplb/eplb_updator.py:EplbUpdator",
+      "target": "class:eplb/core/eplb_worker.py:EplbProcess",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:eplb/eplb_updator.py:EplbUpdator",
+      "target": "class:eplb/core/eplb_device_transfer_loader.py:D2DExpertWeightLoader",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:eplb/eplb_updator.py:EplbUpdator",
+      "target": "class:eplb/adaptor/vllm_adaptor.py:VllmEplbAdaptor",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:eplb/utils.py",
+      "target": "function:eplb/utils.py:get_all_moe_loads",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/utils.py",
+      "target": "function:eplb/utils.py:model_register",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:eplb/utils.py",
+      "target": "function:eplb/utils.py:get_all_moe_loads",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:eplb/utils.py",
+      "target": "function:eplb/utils.py:model_register",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:kv_offload/cpu_npu.py",
+      "target": "function:kv_offload/cpu_npu.py:expand_block_ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:kv_offload/cpu_npu.py",
+      "target": "class:kv_offload/cpu_npu.py:CpuNpuOffloadingHandler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:kv_offload/cpu_npu.py",
+      "target": "function:kv_offload/cpu_npu.py:expand_block_ids",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:kv_offload/cpu_npu.py",
+      "target": "class:kv_offload/cpu_npu.py:CpuNpuOffloadingHandler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:kv_offload/cpu_npu.py:CpuNpuOffloadingHandler",
+      "target": "function:kv_offload/cpu_npu.py:expand_block_ids",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:kv_offload/npu.py",
+      "target": "class:kv_offload/npu.py:NPUOffloadingSpec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:kv_offload/npu.py",
+      "target": "class:kv_offload/npu.py:NPUOffloadingSpec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:kv_offload/npu.py:NPUOffloadingSpec",
+      "target": "class:kv_offload/cpu_npu.py:CpuNpuOffloadingHandler",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

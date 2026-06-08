@@ -1,0 +1,1029 @@
+{
+ "nodes": [
+  {
+   "id": "file:model_loader/rfork/transfer_backend.py",
+   "type": "file",
+   "name": "transfer_backend.py",
+   "filePath": "model_loader/rfork/transfer_backend.py",
+   "summary": "RForkTransferBackend 封装 Mooncake/TransferEngine RDMA 传输引擎，完成 NPU 权重内存区注册与从源端实例批量读取权重。",
+   "tags": [
+    "weight-transfer",
+    "rdma",
+    "service",
+    "backend"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:model_loader/rfork/transfer_backend.py:RForkTransferBackend",
+   "type": "class",
+   "name": "RForkTransferBackend",
+   "filePath": "model_loader/rfork/transfer_backend.py",
+   "lineRange": [
+    26,
+    202
+   ],
+   "summary": "初始化传输引擎并提供内存区注册/注销、从源端同步读取权重张量的方法。",
+   "tags": [
+    "weight-transfer",
+    "rdma",
+    "backend"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:model_loader/rfork/transfer_backend.py:get_remote_instance_transfer_engine_info",
+   "type": "function",
+   "name": "get_remote_instance_transfer_engine_info",
+   "filePath": "model_loader/rfork/transfer_backend.py",
+   "lineRange": [
+    205,
+    231
+   ],
+   "summary": "通过 HTTP 从 seed URL 获取远端实例的传输引擎信息与权重元数据。",
+   "tags": [
+    "weight-transfer",
+    "http-client",
+    "metadata"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:models/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "models/__init__.py",
+   "summary": "models 包初始化文件，提供 register_model 将 Ascend 自定义模型注册到 vLLM ModelRegistry。",
+   "tags": [
+    "entry-point",
+    "registration",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:models/deepseek_v4_mtp.py",
+   "type": "file",
+   "name": "deepseek_v4_mtp.py",
+   "filePath": "models/deepseek_v4_mtp.py",
+   "summary": "DeepSeek V4 多 token 预测（MTP）模块的 NPU 实现，定义共享头、MTP 预测层与 DeepSeekV4MTP 顶层模型及其投机解码权重加载逻辑。",
+   "tags": [
+    "data-model",
+    "speculative-decoding",
+    "mtp",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4_mtp.py:SharedHead",
+   "type": "class",
+   "name": "SharedHead",
+   "filePath": "models/deepseek_v4_mtp.py",
+   "lineRange": [
+    36,
+    53
+   ],
+   "summary": "MTP 共享头，归一化后接 ParallelLMHead 输出 logits。",
+   "tags": [
+    "data-model",
+    "mtp",
+    "head"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:models/deepseek_v4_mtp.py:DeepSeekMultiTokenPredictorLayer",
+   "type": "class",
+   "name": "DeepSeekMultiTokenPredictorLayer",
+   "filePath": "models/deepseek_v4_mtp.py",
+   "lineRange": [
+    56,
+    137
+   ],
+   "summary": "单个 MTP 预测层，融合嵌入与前一隐藏状态后经 decoder block 与 hc_head 产生下一 token 预测。",
+   "tags": [
+    "data-model",
+    "mtp",
+    "speculative-decoding"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4_mtp.py:DeepSeekMultiTokenPredictor",
+   "type": "class",
+   "name": "DeepSeekMultiTokenPredictor",
+   "filePath": "models/deepseek_v4_mtp.py",
+   "lineRange": [
+    140,
+    197
+   ],
+   "summary": "管理多个 MTP 预测层并提供嵌入、前向与 compute_logits 接口。",
+   "tags": [
+    "data-model",
+    "mtp",
+    "speculative-decoding"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:models/deepseek_v4_mtp.py:DeepSeekV4MTP",
+   "type": "class",
+   "name": "DeepSeekV4MTP",
+   "filePath": "models/deepseek_v4_mtp.py",
+   "lineRange": [
+    201,
+    523
+   ],
+   "summary": "DeepSeek V4 MTP 顶层模型，封装 MoE 参数设置、前向、logits 计算与复杂的投机层权重重映射加载逻辑。",
+   "tags": [
+    "data-model",
+    "mtp",
+    "speculative-decoding",
+    "weight-loading"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:models/deepseek_v4.py",
+   "type": "file",
+   "name": "deepseek_v4.py",
+   "filePath": "models/deepseek_v4.py",
+   "summary": "DeepSeek V4 模型的 Ascend NPU 完整实现，含 MoE、稀疏注意力（DSA）Indexer/Compressor、YaRN RoPE、decoder 层、整模型与 CausalLM 封装及权重加载。",
+   "tags": [
+    "data-model",
+    "moe",
+    "attention",
+    "npu"
+   ],
+   "complexity": "complex",
+   "languageNotes": "包含 YaRN 频率预计算、hadamard 变换、复指数 RoPE 以及 DSA 稀疏注意力等多种数值密集逻辑。"
+  },
+  {
+   "id": "function:models/deepseek_v4.py:hadamard_transform_ref",
+   "type": "function",
+   "name": "hadamard_transform_ref",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    92,
+    106
+   ],
+   "summary": "基于 Hadamard 矩阵的激活旋转参考实现，对输入做 padding 后线性变换。",
+   "tags": [
+    "utility",
+    "math",
+    "activation"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:models/deepseek_v4.py:precompute_freqs_cis_cpu",
+   "type": "function",
+   "name": "precompute_freqs_cis_cpu",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    114,
+    149
+   ],
+   "summary": "在 CPU 上预计算 YaRN 扩展的复数旋转频率（freqs_cis），含修正范围与线性 ramp 因子。",
+   "tags": [
+    "utility",
+    "rope",
+    "yarn",
+    "math"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:models/deepseek_v4.py:get_spec_layer_idx_from_weight_name",
+   "type": "function",
+   "name": "get_spec_layer_idx_from_weight_name",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    176,
+    179
+   ],
+   "summary": "根据权重名称解析其对应的投机（MTP）层索引，供 MTP 权重加载使用。",
+   "tags": [
+    "utility",
+    "weight-loading",
+    "mtp"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:models/deepseek_v4.py:apply_rotary_emb",
+   "type": "function",
+   "name": "apply_rotary_emb",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    152,
+    173
+   ],
+   "summary": "将预计算的复数旋转频率应用到输入张量实现 RoPE。",
+   "tags": [
+    "utility",
+    "rope",
+    "attention"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:DeepseekV2MLP",
+   "type": "class",
+   "name": "DeepseekV2MLP",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    182,
+    225
+   ],
+   "summary": "DeepSeek MLP 模块，gate_up 投影后接 SiLU 门控再行 down 投影。",
+   "tags": [
+    "data-model",
+    "mlp",
+    "npu"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:DeepseekV4MoE",
+   "type": "class",
+   "name": "DeepseekV4MoE",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    228,
+    386
+   ],
+   "summary": "DeepSeek V4 混合专家（MoE）层，含路由门控、共享专家、专家并行与序列并行的前向调度。",
+   "tags": [
+    "data-model",
+    "moe",
+    "expert-parallel",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:Indexer",
+   "type": "class",
+   "name": "Indexer",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    405,
+    469
+   ],
+   "summary": "DSA 稀疏注意力的索引器，负责为稀疏注意力选择 top-k 关注键的索引计算。",
+   "tags": [
+    "data-model",
+    "sparse-attention",
+    "dsa"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:Compressor",
+   "type": "class",
+   "name": "Compressor",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    472,
+    582
+   ],
+   "summary": "DSA 压缩器，对 KV 做压缩变换并应用单边 RoPE，支持重叠变换与状态缓存。",
+   "tags": [
+    "data-model",
+    "sparse-attention",
+    "dsa",
+    "kv-compression"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:DeepseekV4Attention",
+   "type": "class",
+   "name": "DeepseekV4Attention",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    585,
+    773
+   ],
+   "summary": "DeepSeek V4 注意力模块，组合 MLA 投影、Indexer、Compressor 与 DSA 稀疏注意力后端完成前向。",
+   "tags": [
+    "data-model",
+    "attention",
+    "sparse-attention",
+    "mla"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:DeepseekV2DecoderLayer",
+   "type": "class",
+   "name": "DeepseekV2DecoderLayer",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    776,
+    866
+   ],
+   "summary": "单个 decoder 层，融合 hc_pre/hc_post 自定义算子、layernorm、注意力与 MLP/MoE。",
+   "tags": [
+    "data-model",
+    "decoder",
+    "attention",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:DeepseekV4Model",
+   "type": "class",
+   "name": "DeepseekV4Model",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    870,
+    1032
+   ],
+   "summary": "DeepSeek V4 整模型，堆叠 decoder 层并管理嵌入、流水线并行与 MTP 隐藏状态缓冲。",
+   "tags": [
+    "data-model",
+    "model",
+    "pipeline-parallel"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:DeepseekV2MixtureOfExperts",
+   "type": "class",
+   "name": "DeepseekV2MixtureOfExperts",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    1035,
+    1072
+   ],
+   "summary": "MoE 混入类，提供专家参数抽取与物理专家元数据更新（含专家映射刷新）。",
+   "tags": [
+    "data-model",
+    "moe",
+    "mixin",
+    "expert-parallel"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:models/deepseek_v4.py:AscendDeepseekV4ForCausalLM",
+   "type": "class",
+   "name": "AscendDeepseekV4ForCausalLM",
+   "filePath": "models/deepseek_v4.py",
+   "lineRange": [
+    1075,
+    1384
+   ],
+   "summary": "DeepSeek V4 CausalLM 顶层封装，提供 LM head、logits 计算、专家映射、MTP 目标隐藏状态获取与完整权重加载。",
+   "tags": [
+    "data-model",
+    "causal-lm",
+    "weight-loading",
+    "moe"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:models/layer/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "models/layer/__init__.py",
+   "summary": "models/layer 子包的空初始化文件。",
+   "tags": [
+    "entry-point",
+    "barrel",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:models/layer/attention/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "models/layer/attention/__init__.py",
+   "summary": "models/layer/attention 子包的空初始化文件。",
+   "tags": [
+    "entry-point",
+    "barrel",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:models/layer/attention/layer.py",
+   "type": "file",
+   "name": "layer.py",
+   "filePath": "models/layer/attention/layer.py",
+   "summary": "DSAAttention 层封装 DSA 稀疏注意力后端的 impl 选择、KV cache 量化初始化与 MLA KV cache spec 生成。",
+   "tags": [
+    "attention",
+    "data-model",
+    "sparse-attention",
+    "kv-cache"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:models/layer/attention/layer.py:DSAAttention",
+   "type": "class",
+   "name": "DSAAttention",
+   "filePath": "models/layer/attention/layer.py",
+   "lineRange": [
+    31,
+    172
+   ],
+   "summary": "DSA 稀疏注意力层，初始化注意力后端 impl、加载后处理权重并产生 MLA KV cache 规格。",
+   "tags": [
+    "attention",
+    "sparse-attention",
+    "kv-cache",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:ops/__init__.py",
+   "type": "file",
+   "name": "__init__.py",
+   "filePath": "ops/__init__.py",
+   "summary": "ops 包初始化文件，提供 dummyFusionOp 占位类与 register_dummy_fusion_op 注册一组占位融合算子。",
+   "tags": [
+    "entry-point",
+    "operator",
+    "registration",
+    "package-init"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:ops/__init__.py:register_dummy_fusion_op",
+   "type": "function",
+   "name": "register_dummy_fusion_op",
+   "filePath": "ops/__init__.py",
+   "lineRange": [
+    43,
+    51
+   ],
+   "summary": "注册一组占位（dummy）融合算子，用于在不支持时保持接口兼容。",
+   "tags": [
+    "operator",
+    "registration",
+    "fusion"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/activation.py",
+   "type": "file",
+   "name": "activation.py",
+   "filePath": "ops/activation.py",
+   "summary": "Ascend NPU 激活算子实现，覆盖 QuickGELU、SiLU-and-Mul（含 clamp 变体）与 SwiGLU-OAI，调用 torch_npu 融合 kernel 并支持权重预取。",
+   "tags": [
+    "operator",
+    "activation",
+    "npu-kernel"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "class:ops/activation.py:AscendSiluAndMul",
+   "type": "class",
+   "name": "AscendSiluAndMul",
+   "filePath": "ops/activation.py",
+   "lineRange": [
+    31,
+    37
+   ],
+   "summary": "NPU SiLU-and-Mul 激活，调用 npu_swiglu 并集成 MLP 权重预取预处理/后处理。",
+   "tags": [
+    "operator",
+    "activation",
+    "npu-kernel"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/activation.py:AscendSiluAndMulWithClamp",
+   "type": "class",
+   "name": "AscendSiluAndMulWithClamp",
+   "filePath": "ops/activation.py",
+   "lineRange": [
+    40,
+    50
+   ],
+   "summary": "带 clamp 的 NPU SiLU-and-Mul 激活变体，先对门控/输入裁剪再调用 npu_swiglu。",
+   "tags": [
+    "operator",
+    "activation",
+    "npu-kernel"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:ops/bailing_moe_linear_attn.py",
+   "type": "file",
+   "name": "bailing_moe_linear_attn.py",
+   "filePath": "ops/bailing_moe_linear_attn.py",
+   "summary": "AscendBailingMoELinearAttention 实现 Bailing MoE 线性注意力的 NPU 前向，按 prefill/mix 与 decode 分派线性注意力 kernel 并处理 QKV/门控。",
+   "tags": [
+    "operator",
+    "linear-attention",
+    "moe",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/bailing_moe_linear_attn.py:AscendBailingMoELinearAttention",
+   "type": "class",
+   "name": "AscendBailingMoELinearAttention",
+   "filePath": "ops/bailing_moe_linear_attn.py",
+   "lineRange": [
+    42,
+    169
+   ],
+   "summary": "Bailing MoE 线性注意力 NPU 实现，含 prefill/mix 与 decode 推理分支及 QKV 投影、layernorm、RoPE 与门控输出。",
+   "tags": [
+    "operator",
+    "linear-attention",
+    "attention",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:ops/conv.py",
+   "type": "file",
+   "name": "conv.py",
+   "filePath": "ops/conv.py",
+   "summary": "AscendConv3dLayer 提供 NPU 上 3D 卷积层的 forward_oot 重写，转发到内部卷积实现。",
+   "tags": [
+    "operator",
+    "convolution",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "class:ops/conv.py:AscendConv3dLayer",
+   "type": "class",
+   "name": "AscendConv3dLayer",
+   "filePath": "ops/conv.py",
+   "lineRange": [
+    23,
+    26
+   ],
+   "summary": "NPU 3D 卷积层，重写 forward_oot 转发到内部卷积实现。",
+   "tags": [
+    "operator",
+    "convolution",
+    "npu"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:ops/cv_linear.py",
+   "type": "file",
+   "name": "cv_linear.py",
+   "filePath": "ops/cv_linear.py",
+   "summary": "CVLinearWrapper 封装计算/视觉线性层，自动检测 W8A8 动态量化与通信配置，在 NPU 上执行量化矩阵乘。",
+   "tags": [
+    "operator",
+    "linear",
+    "quantization",
+    "npu"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "class:ops/cv_linear.py:CVLinearWrapper",
+   "type": "class",
+   "name": "CVLinearWrapper",
+   "filePath": "ops/cv_linear.py",
+   "lineRange": [
+    10,
+    145
+   ],
+   "summary": "线性层包装器，检测 W8A8 动态量化与通信特性，调用 npu_dynamic_quant 与 npu_quant_matmul 完成量化前向。",
+   "tags": [
+    "operator",
+    "linear",
+    "quantization",
+    "wrapper"
+   ],
+   "complexity": "complex"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:model_loader/rfork/transfer_backend.py",
+   "target": "class:model_loader/rfork/transfer_backend.py:RForkTransferBackend",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/transfer_backend.py",
+   "target": "function:model_loader/rfork/transfer_backend.py:get_remote_instance_transfer_engine_info",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:model_loader/rfork/transfer_backend.py",
+   "target": "class:model_loader/rfork/transfer_backend.py:RForkTransferBackend",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:model_loader/rfork/transfer_backend.py",
+   "target": "function:model_loader/rfork/transfer_backend.py:get_remote_instance_transfer_engine_info",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:model_loader/rfork/transfer_backend.py:RForkTransferBackend",
+   "target": "function:model_loader/rfork/transfer_backend.py:get_remote_instance_transfer_engine_info",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "file:models/deepseek_v4.py",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:SharedHead",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:DeepSeekMultiTokenPredictorLayer",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:DeepSeekMultiTokenPredictor",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:DeepSeekV4MTP",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:SharedHead",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:DeepSeekMultiTokenPredictorLayer",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:DeepSeekMultiTokenPredictor",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4_mtp.py",
+   "target": "class:models/deepseek_v4_mtp.py:DeepSeekV4MTP",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:models/deepseek_v4_mtp.py:DeepSeekMultiTokenPredictorLayer",
+   "target": "class:models/deepseek_v4.py:DeepseekV2DecoderLayer",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "class:models/deepseek_v4_mtp.py:DeepSeekV4MTP",
+   "target": "function:models/deepseek_v4.py:get_spec_layer_idx_from_weight_name",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "function:models/deepseek_v4.py:hadamard_transform_ref",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "function:models/deepseek_v4.py:precompute_freqs_cis_cpu",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "function:models/deepseek_v4.py:apply_rotary_emb",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV2MLP",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV4MoE",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:Indexer",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:Compressor",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV4Attention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV2DecoderLayer",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV4Model",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV2MixtureOfExperts",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:AscendDeepseekV4ForCausalLM",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "function:models/deepseek_v4.py:hadamard_transform_ref",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "function:models/deepseek_v4.py:precompute_freqs_cis_cpu",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "function:models/deepseek_v4.py:apply_rotary_emb",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV2MLP",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV4MoE",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:Indexer",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:Compressor",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV4Attention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV2DecoderLayer",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV4Model",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:DeepseekV2MixtureOfExperts",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:models/deepseek_v4.py",
+   "target": "class:models/deepseek_v4.py:AscendDeepseekV4ForCausalLM",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "class:models/deepseek_v4.py:DeepseekV4Attention",
+   "target": "class:models/deepseek_v4.py:Indexer",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "class:models/deepseek_v4.py:DeepseekV4Attention",
+   "target": "class:models/deepseek_v4.py:Compressor",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "class:models/deepseek_v4.py:DeepseekV2DecoderLayer",
+   "target": "class:models/deepseek_v4.py:DeepseekV4MoE",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "class:models/deepseek_v4.py:DeepseekV4Model",
+   "target": "class:models/deepseek_v4.py:DeepseekV2DecoderLayer",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "class:models/deepseek_v4.py:AscendDeepseekV4ForCausalLM",
+   "target": "class:models/deepseek_v4.py:DeepseekV4Model",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  },
+  {
+   "source": "file:models/layer/attention/layer.py",
+   "target": "class:models/layer/attention/layer.py:DSAAttention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:models/layer/attention/layer.py",
+   "target": "class:models/layer/attention/layer.py:DSAAttention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/__init__.py",
+   "target": "function:ops/__init__.py:register_dummy_fusion_op",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/__init__.py",
+   "target": "function:ops/__init__.py:register_dummy_fusion_op",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/activation.py",
+   "target": "class:ops/activation.py:AscendSiluAndMul",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/activation.py",
+   "target": "class:ops/activation.py:AscendSiluAndMulWithClamp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/activation.py",
+   "target": "class:ops/activation.py:AscendSiluAndMul",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/activation.py",
+   "target": "class:ops/activation.py:AscendSiluAndMulWithClamp",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/bailing_moe_linear_attn.py",
+   "target": "class:ops/bailing_moe_linear_attn.py:AscendBailingMoELinearAttention",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/bailing_moe_linear_attn.py",
+   "target": "class:ops/bailing_moe_linear_attn.py:AscendBailingMoELinearAttention",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:ops/conv.py",
+   "target": "class:ops/conv.py:AscendConv3dLayer",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/cv_linear.py",
+   "target": "class:ops/cv_linear.py:CVLinearWrapper",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:ops/cv_linear.py",
+   "target": "class:ops/cv_linear.py:CVLinearWrapper",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

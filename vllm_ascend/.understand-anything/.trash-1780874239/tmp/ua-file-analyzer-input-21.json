@@ -1,0 +1,182 @@
+{
+  "projectRoot": "d:/57108/Desktop/code/vllm-ascend/vllm_ascend",
+  "batchFiles": [
+    {
+      "path": "worker/pcp_utils.py",
+      "language": "python",
+      "sizeLines": 1358,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/aclgraph_utils.py",
+      "language": "python",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/attn_utils.py",
+      "language": "python",
+      "sizeLines": 464,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/block_table.py",
+      "language": "python",
+      "sizeLines": 178,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/input_batch.py",
+      "language": "python",
+      "sizeLines": 210,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/model_runner.py",
+      "language": "python",
+      "sizeLines": 464,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/model_states/__init__.py",
+      "language": "python",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/model_states/default.py",
+      "language": "python",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/README.md",
+      "language": "markdown",
+      "sizeLines": 39,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "worker/v2/sample/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/bad_words.py",
+      "language": "python",
+      "sizeLines": 183,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/gumbel.py",
+      "language": "python",
+      "sizeLines": 202,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/logprob.py",
+      "language": "python",
+      "sizeLines": 164,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/min_p.py",
+      "language": "python",
+      "sizeLines": 91,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/sample/penalties.py",
+      "language": "python",
+      "sizeLines": 236,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/eagle/__init__.py",
+      "language": "python",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/eagle/aclgraph.py",
+      "language": "python",
+      "sizeLines": 227,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/eagle/speculator.py",
+      "language": "python",
+      "sizeLines": 393,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/spec_decode/rejection_sampler_utils.py",
+      "language": "python",
+      "sizeLines": 482,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/states.py",
+      "language": "python",
+      "sizeLines": 69,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/structured_outputs.py",
+      "language": "python",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/v2/utils.py",
+      "language": "python",
+      "sizeLines": 55,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/worker.py",
+      "language": "python",
+      "sizeLines": 812,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "worker/pcp_utils.py": [],
+    "worker/v2/__init__.py": [],
+    "worker/v2/aclgraph_utils.py": [],
+    "worker/v2/attn_utils.py": [],
+    "worker/v2/block_table.py": [],
+    "worker/v2/input_batch.py": [],
+    "worker/v2/model_runner.py": [],
+    "worker/v2/model_states/__init__.py": [],
+    "worker/v2/model_states/default.py": [],
+    "worker/v2/README.md": [],
+    "worker/v2/sample/__init__.py": [],
+    "worker/v2/sample/bad_words.py": [],
+    "worker/v2/sample/gumbel.py": [],
+    "worker/v2/sample/logprob.py": [],
+    "worker/v2/sample/min_p.py": [],
+    "worker/v2/sample/penalties.py": [],
+    "worker/v2/spec_decode/__init__.py": [],
+    "worker/v2/spec_decode/eagle/__init__.py": [],
+    "worker/v2/spec_decode/eagle/aclgraph.py": [],
+    "worker/v2/spec_decode/eagle/speculator.py": [],
+    "worker/v2/spec_decode/rejection_sampler_utils.py": [],
+    "worker/v2/states.py": [],
+    "worker/v2/structured_outputs.py": [],
+    "worker/v2/utils.py": [],
+    "worker/worker.py": []
+  }
+}

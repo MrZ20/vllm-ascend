@@ -1,0 +1,1061 @@
+{
+  "nodes": [
+    {
+      "id": "file:ops/triton/linearnorm/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "ops/triton/linearnorm/__init__.py",
+      "summary": "ops/triton/linearnorm 线性层融合归一化 kernel 子包的初始化文件。",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/mamba/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "ops/triton/mamba/__init__.py",
+      "summary": "ops/triton/mamba Mamba 状态空间模型 kernel 子包的初始化文件。",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "type": "file",
+      "name": "fused_qkvzba_split_reshape.py",
+      "filePath": "ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "summary": "融合线性注意力 (FLA) 中拆分并重排 QKVZBA 混合张量的 Triton kernel 及封装。",
+      "tags": [
+        "triton",
+        "kernel",
+        "attention",
+        "reshape"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "用于 gated delta rule 路径，将 mixed_qkvz 与 mixed_ba 拆分重排为独立的 q/k/v/z/b/a 张量。"
+    },
+    {
+      "id": "function:ops/triton/fla/fused_qkvzba_split_reshape.py:fused_qkvzba_split_reshape_cat_kernel",
+      "type": "function",
+      "name": "fused_qkvzba_split_reshape_cat_kernel",
+      "filePath": "ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "lineRange": [
+        21,
+        141
+      ],
+      "summary": "Triton kernel：按头维度拆分 mixed_qkvz/mixed_ba 并重排拼接出独立张量。",
+      "tags": [
+        "triton",
+        "kernel",
+        "attention",
+        "reshape"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/fused_qkvzba_split_reshape.py:fused_qkvzba_split_reshape_cat",
+      "type": "function",
+      "name": "fused_qkvzba_split_reshape_cat",
+      "filePath": "ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "lineRange": [
+        144,
+        225
+      ],
+      "summary": "拆分重排 kernel 的 Python 封装，准备输出布局并调度网格。",
+      "tags": [
+        "triton",
+        "attention",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/triton/fla/layernorm_guard.py",
+      "type": "file",
+      "name": "layernorm_guard.py",
+      "filePath": "ops/triton/fla/layernorm_guard.py",
+      "summary": "FLA 路径下带门控的 LayerNorm/RMSNorm 前向 Triton kernel 与 autograd 函数封装。",
+      "tags": [
+        "triton",
+        "kernel",
+        "layernorm",
+        "attention"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "支持 norm-before-gate 与 RMSNorm 两种模式，LayerNormFn 为 torch.autograd.Function。"
+    },
+    {
+      "id": "function:ops/triton/fla/layernorm_guard.py:layer_norm_fwd_kernel",
+      "type": "function",
+      "name": "layer_norm_fwd_kernel",
+      "filePath": "ops/triton/fla/layernorm_guard.py",
+      "lineRange": [
+        22,
+        91
+      ],
+      "summary": "Triton kernel：逐行计算带可选门控/偏置的 LayerNorm 或 RMSNorm 前向。",
+      "tags": [
+        "triton",
+        "kernel",
+        "layernorm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/layernorm_guard.py:_layer_norm_fwd",
+      "type": "function",
+      "name": "_layer_norm_fwd",
+      "filePath": "ops/triton/fla/layernorm_guard.py",
+      "lineRange": [
+        94,
+        156
+      ],
+      "summary": "LayerNorm 前向的内部封装，分配中间量并调度 kernel。",
+      "tags": [
+        "triton",
+        "layernorm",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ops/triton/fla/layernorm_guard.py:LayerNormFn",
+      "type": "class",
+      "name": "LayerNormFn",
+      "filePath": "ops/triton/fla/layernorm_guard.py",
+      "lineRange": [
+        159,
+        198
+      ],
+      "summary": "封装门控 LayerNorm 前向的 autograd.Function，对接 Triton kernel。",
+      "tags": [
+        "triton",
+        "layernorm",
+        "autograd"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/sigmoid_gating.py",
+      "type": "file",
+      "name": "sigmoid_gating.py",
+      "filePath": "ops/triton/fla/sigmoid_gating.py",
+      "summary": "实现 gated delta rule 的 sigmoid 门控融合 Triton kernel，支持变长/连续批/推测解码等场景。",
+      "tags": [
+        "triton",
+        "kernel",
+        "attention",
+        "gated-delta-rule"
+      ],
+      "complexity": "complex",
+      "languageNotes": "fused recurrent gated delta rule，融合 sigmoid 门控与状态更新，处理多种 batching 与 spec-decoding 标志。"
+    },
+    {
+      "id": "function:ops/triton/fla/sigmoid_gating.py:fused_recurrent_gated_delta_rule_fwd_kernel",
+      "type": "function",
+      "name": "fused_recurrent_gated_delta_rule_fwd_kernel",
+      "filePath": "ops/triton/fla/sigmoid_gating.py",
+      "lineRange": [
+        43,
+        170
+      ],
+      "summary": "Triton kernel：融合循环 gated delta rule 前向，逐 token 更新隐藏状态。",
+      "tags": [
+        "triton",
+        "kernel",
+        "attention",
+        "gated-delta-rule"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/sigmoid_gating.py:fused_sigmoid_gating_delta_rule_update_kernel",
+      "type": "function",
+      "name": "fused_sigmoid_gating_delta_rule_update_kernel",
+      "filePath": "ops/triton/fla/sigmoid_gating.py",
+      "lineRange": [
+        180,
+        317
+      ],
+      "summary": "Triton kernel：融合 sigmoid 门控与 delta rule 状态更新计算。",
+      "tags": [
+        "triton",
+        "kernel",
+        "attention",
+        "gated-delta-rule"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/sigmoid_gating.py:fused_sigmoid_gating_delta_rule_update",
+      "type": "function",
+      "name": "fused_sigmoid_gating_delta_rule_update",
+      "filePath": "ops/triton/fla/sigmoid_gating.py",
+      "lineRange": [
+        320,
+        393
+      ],
+      "summary": "sigmoid 门控 delta rule 更新的 Python 封装，准备状态源/索引并调度 kernel。",
+      "tags": [
+        "triton",
+        "attention",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/triton/fused_gdn_gating.py",
+      "type": "file",
+      "name": "fused_gdn_gating.py",
+      "filePath": "ops/triton/fused_gdn_gating.py",
+      "summary": "提供 gated delta net (GDN) 门控融合的 Triton kernel 及 patch 封装，计算门控 g 与 beta 输出。",
+      "tags": [
+        "triton",
+        "kernel",
+        "gated-delta-rule",
+        "attention"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fused_gdn_gating.py:fused_gdn_gating_kernel",
+      "type": "function",
+      "name": "fused_gdn_gating_kernel",
+      "filePath": "ops/triton/fused_gdn_gating.py",
+      "lineRange": [
+        14,
+        56
+      ],
+      "summary": "Triton kernel：融合计算 GDN 门控 g 与 beta，含 softplus 与阈值处理。",
+      "tags": [
+        "triton",
+        "kernel",
+        "gated-delta-rule"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fused_gdn_gating.py:fused_gdn_gating_patch",
+      "type": "function",
+      "name": "fused_gdn_gating_patch",
+      "filePath": "ops/triton/fused_gdn_gating.py",
+      "lineRange": [
+        59,
+        99
+      ],
+      "summary": "GDN 门控 kernel 的 Python 封装，分配输出并调度网格。",
+      "tags": [
+        "triton",
+        "gated-delta-rule",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/gdn_chunk_meta.py",
+      "type": "file",
+      "name": "gdn_chunk_meta.py",
+      "filePath": "ops/triton/gdn_chunk_meta.py",
+      "summary": "为 GDN chunked 计算在设备端构建 chunk 元数据（计数/偏移/索引）的 Triton kernel 与辅助函数集合。",
+      "tags": [
+        "triton",
+        "kernel",
+        "gated-delta-rule",
+        "metadata"
+      ],
+      "complexity": "complex",
+      "languageNotes": "多个小 kernel 配合从 cu_seqlens 推导 chunk 划分元数据，避免主机端同步。"
+    },
+    {
+      "id": "function:ops/triton/gdn_chunk_meta.py:_build_chunk_meta_device_from_seq_lens",
+      "type": "function",
+      "name": "_build_chunk_meta_device_from_seq_lens",
+      "filePath": "ops/triton/gdn_chunk_meta.py",
+      "lineRange": [
+        175,
+        270
+      ],
+      "summary": "在设备端从序列长度构建完整 chunk 元数据集合，串联多个 kernel 调用。",
+      "tags": [
+        "triton",
+        "gated-delta-rule",
+        "metadata"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/gdn_chunk_meta.py:build_chunk_meta_device",
+      "type": "function",
+      "name": "build_chunk_meta_device",
+      "filePath": "ops/triton/gdn_chunk_meta.py",
+      "lineRange": [
+        273,
+        295
+      ],
+      "summary": "对外入口：校验输入并在设备端构建 GDN chunk 元数据。",
+      "tags": [
+        "triton",
+        "gated-delta-rule",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/layernorm_gated.py",
+      "type": "file",
+      "name": "layernorm_gated.py",
+      "filePath": "ops/triton/layernorm_gated.py",
+      "summary": "针对 NPU 优化的单遍带门控 LayerNorm/RMSNorm 前向 Triton kernel 及封装。",
+      "tags": [
+        "triton",
+        "kernel",
+        "layernorm",
+        "npu"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "NPU 专用 1-pass kernel，支持 norm-before-gate 与 RMSNorm 变体。"
+    },
+    {
+      "id": "function:ops/triton/layernorm_gated.py:_layer_norm_fwd_1pass_kernel_npu",
+      "type": "function",
+      "name": "_layer_norm_fwd_1pass_kernel_npu",
+      "filePath": "ops/triton/layernorm_gated.py",
+      "lineRange": [
+        16,
+        100
+      ],
+      "summary": "NPU 单遍 Triton kernel：融合门控的 LayerNorm/RMSNorm 前向计算。",
+      "tags": [
+        "triton",
+        "kernel",
+        "layernorm",
+        "npu"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/layernorm_gated.py:layer_norm_fwd_npu",
+      "type": "function",
+      "name": "layer_norm_fwd_npu",
+      "filePath": "ops/triton/layernorm_gated.py",
+      "lineRange": [
+        103,
+        168
+      ],
+      "summary": "NPU 门控 LayerNorm 前向的 Python 封装，分配输出并调度 kernel。",
+      "tags": [
+        "triton",
+        "layernorm",
+        "api-handler",
+        "npu"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "type": "file",
+      "name": "split_qkv_rmsnorm_mrope.py",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "summary": "融合 QKV 拆分、RMSNorm 与多模态 M-RoPE 的 Triton kernel 及自定义算子注册（含 fake 实现）。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding",
+        "layernorm",
+        "multimodal"
+      ],
+      "complexity": "complex",
+      "languageNotes": "单 kernel 融合 split-qkv、QK RMSNorm、M-RoPE 旋转与可选 gate，附带 torch fake 注册用于编译。"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:split_qkv_rmsnorm_mrope_kernel",
+      "type": "function",
+      "name": "split_qkv_rmsnorm_mrope_kernel",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "lineRange": [
+        29,
+        279
+      ],
+      "summary": "Triton kernel：融合 QKV 拆分、QK RMSNorm 与 M-RoPE 旋转，支持部分旋转与交错布局。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding",
+        "layernorm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:triton_split_qkv_rmsnorm_mrope",
+      "type": "function",
+      "name": "triton_split_qkv_rmsnorm_mrope",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "lineRange": [
+        282,
+        366
+      ],
+      "summary": "融合 split-qkv-rmsnorm-mrope kernel 的 Python 封装，准备输出并调度。",
+      "tags": [
+        "triton",
+        "rotary-embedding",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:triton_split_qkv_rmsnorm_mrope_fake",
+      "type": "function",
+      "name": "triton_split_qkv_rmsnorm_mrope_fake",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "lineRange": [
+        369,
+        418
+      ],
+      "summary": "对应算子的 fake/meta 实现，供 torch 编译期形状推导使用。",
+      "tags": [
+        "triton",
+        "fake-impl",
+        "compilation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "type": "file",
+      "name": "split_qkv_rmsnorm_rope_simt.py",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "summary": "SIMT 风格融合 QKV 拆分、RMSNorm 与 RoPE 的 Triton kernel，含 cos/sin 预计算 kernel 与算子封装。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding",
+        "layernorm",
+        "simt"
+      ],
+      "complexity": "complex",
+      "languageNotes": "SIMT 实现先预计算 RoPE cos/sin，再在主 kernel 内完成 split-qkv、RMSNorm 与旋转。"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:precompute_rope_cos_sin_kernel",
+      "type": "function",
+      "name": "precompute_rope_cos_sin_kernel",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "lineRange": [
+        11,
+        38
+      ],
+      "summary": "Triton kernel：按 positions 预计算 RoPE 的 cos/sin 缓存切片。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_kernel",
+      "type": "function",
+      "name": "split_qkv_rmsnorm_rope_simt_kernel",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "lineRange": [
+        42,
+        264
+      ],
+      "summary": "SIMT Triton kernel：融合 QKV 拆分、QK RMSNorm 与 RoPE 旋转。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding",
+        "layernorm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_impl",
+      "type": "function",
+      "name": "split_qkv_rmsnorm_rope_simt_impl",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "lineRange": [
+        267,
+        357
+      ],
+      "summary": "SIMT 融合算子的 Python 封装，预计算 cos/sin 并调度主 kernel。",
+      "tags": [
+        "triton",
+        "rotary-embedding",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_impl_fake",
+      "type": "function",
+      "name": "split_qkv_rmsnorm_rope_simt_impl_fake",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "lineRange": [
+        360,
+        394
+      ],
+      "summary": "SIMT 融合算子的 fake/meta 实现，供编译期形状推导。",
+      "tags": [
+        "triton",
+        "fake-impl",
+        "compilation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "type": "file",
+      "name": "split_qkv_rmsnorm_rope.py",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "summary": "融合 QKV 拆分、RMSNorm 与 RoPE 的 Triton kernel 及自定义算子封装（含 fake 实现）。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding",
+        "layernorm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_kernel",
+      "type": "function",
+      "name": "split_qkv_rmsnorm_rope_kernel",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "lineRange": [
+        26,
+        261
+      ],
+      "summary": "Triton kernel：融合 QKV 拆分、QK RMSNorm 与 RoPE 旋转，支持部分旋转。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding",
+        "layernorm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_impl",
+      "type": "function",
+      "name": "split_qkv_rmsnorm_rope_impl",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "lineRange": [
+        264,
+        344
+      ],
+      "summary": "融合 split-qkv-rmsnorm-rope kernel 的 Python 封装，准备输出并调度。",
+      "tags": [
+        "triton",
+        "rotary-embedding",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_impl_fake",
+      "type": "function",
+      "name": "split_qkv_rmsnorm_rope_impl_fake",
+      "filePath": "ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "lineRange": [
+        347,
+        381
+      ],
+      "summary": "对应算子的 fake/meta 实现，供 torch 编译期形状推导。",
+      "tags": [
+        "triton",
+        "fake-impl",
+        "compilation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "type": "file",
+      "name": "split_qkv_tp_rmsnorm_rope.py",
+      "filePath": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "summary": "张量并行下融合 QKV 拆分、全局 RMSNorm 与 RoPE 的 Triton kernel 及算子封装（含 fake 实现）。",
+      "tags": [
+        "triton",
+        "kernel",
+        "rotary-embedding",
+        "layernorm",
+        "tensor-parallel"
+      ],
+      "complexity": "complex",
+      "languageNotes": "分两阶段：先计算本地 QK 方差，再跨 TP 聚合后施加全局 RMSNorm 与 RoPE。"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:_split_qkv_and_compute_local_qk_var_kernel",
+      "type": "function",
+      "name": "_split_qkv_and_compute_local_qk_var_kernel",
+      "filePath": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "lineRange": [
+        37,
+        104
+      ],
+      "summary": "Triton kernel：拆分 QKV 并计算本地 QK 平方和方差，用于 TP 聚合。",
+      "tags": [
+        "triton",
+        "kernel",
+        "tensor-parallel"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:_apply_global_rmsnorm_kernel",
+      "type": "function",
+      "name": "_apply_global_rmsnorm_kernel",
+      "filePath": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "lineRange": [
+        108,
+        230
+      ],
+      "summary": "Triton kernel：基于全局方差对 QK 施加 RMSNorm 并应用 RoPE 旋转。",
+      "tags": [
+        "triton",
+        "kernel",
+        "layernorm",
+        "rotary-embedding"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:split_qkv_tp_rmsnorm_rope_impl",
+      "type": "function",
+      "name": "split_qkv_tp_rmsnorm_rope_impl",
+      "filePath": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "lineRange": [
+        233,
+        300
+      ],
+      "summary": "TP 融合算子的 Python 封装，串联本地方差与全局归一化两个 kernel。",
+      "tags": [
+        "triton",
+        "rotary-embedding",
+        "api-handler",
+        "tensor-parallel"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:split_qkv_tp_rmsnorm_rope_impl_fake",
+      "type": "function",
+      "name": "split_qkv_tp_rmsnorm_rope_impl_fake",
+      "filePath": "ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "lineRange": [
+        303,
+        335
+      ],
+      "summary": "TP 融合算子的 fake/meta 实现，供编译期形状推导。",
+      "tags": [
+        "triton",
+        "fake-impl",
+        "compilation"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "target": "function:ops/triton/fla/fused_qkvzba_split_reshape.py:fused_qkvzba_split_reshape_cat_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "target": "function:ops/triton/fla/fused_qkvzba_split_reshape.py:fused_qkvzba_split_reshape_cat_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "target": "function:ops/triton/fla/fused_qkvzba_split_reshape.py:fused_qkvzba_split_reshape_cat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/fused_qkvzba_split_reshape.py",
+      "target": "function:ops/triton/fla/fused_qkvzba_split_reshape.py:fused_qkvzba_split_reshape_cat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fla/layernorm_guard.py",
+      "target": "function:ops/triton/fla/layernorm_guard.py:layer_norm_fwd_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/layernorm_guard.py",
+      "target": "function:ops/triton/fla/layernorm_guard.py:layer_norm_fwd_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fla/layernorm_guard.py",
+      "target": "function:ops/triton/fla/layernorm_guard.py:_layer_norm_fwd",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/layernorm_guard.py",
+      "target": "function:ops/triton/fla/layernorm_guard.py:_layer_norm_fwd",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fla/layernorm_guard.py",
+      "target": "class:ops/triton/fla/layernorm_guard.py:LayerNormFn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/layernorm_guard.py",
+      "target": "class:ops/triton/fla/layernorm_guard.py:LayerNormFn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fla/sigmoid_gating.py",
+      "target": "function:ops/triton/fla/sigmoid_gating.py:fused_recurrent_gated_delta_rule_fwd_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/sigmoid_gating.py",
+      "target": "function:ops/triton/fla/sigmoid_gating.py:fused_recurrent_gated_delta_rule_fwd_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fla/sigmoid_gating.py",
+      "target": "function:ops/triton/fla/sigmoid_gating.py:fused_sigmoid_gating_delta_rule_update_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/sigmoid_gating.py",
+      "target": "function:ops/triton/fla/sigmoid_gating.py:fused_sigmoid_gating_delta_rule_update_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fla/sigmoid_gating.py",
+      "target": "function:ops/triton/fla/sigmoid_gating.py:fused_sigmoid_gating_delta_rule_update",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fla/sigmoid_gating.py",
+      "target": "function:ops/triton/fla/sigmoid_gating.py:fused_sigmoid_gating_delta_rule_update",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fused_gdn_gating.py",
+      "target": "function:ops/triton/fused_gdn_gating.py:fused_gdn_gating_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fused_gdn_gating.py",
+      "target": "function:ops/triton/fused_gdn_gating.py:fused_gdn_gating_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/fused_gdn_gating.py",
+      "target": "function:ops/triton/fused_gdn_gating.py:fused_gdn_gating_patch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/fused_gdn_gating.py",
+      "target": "function:ops/triton/fused_gdn_gating.py:fused_gdn_gating_patch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/gdn_chunk_meta.py",
+      "target": "function:ops/triton/gdn_chunk_meta.py:_build_chunk_meta_device_from_seq_lens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/gdn_chunk_meta.py",
+      "target": "function:ops/triton/gdn_chunk_meta.py:_build_chunk_meta_device_from_seq_lens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/gdn_chunk_meta.py",
+      "target": "function:ops/triton/gdn_chunk_meta.py:build_chunk_meta_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/gdn_chunk_meta.py",
+      "target": "function:ops/triton/gdn_chunk_meta.py:build_chunk_meta_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/layernorm_gated.py",
+      "target": "function:ops/triton/layernorm_gated.py:_layer_norm_fwd_1pass_kernel_npu",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/layernorm_gated.py",
+      "target": "function:ops/triton/layernorm_gated.py:_layer_norm_fwd_1pass_kernel_npu",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/layernorm_gated.py",
+      "target": "function:ops/triton/layernorm_gated.py:layer_norm_fwd_npu",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/layernorm_gated.py",
+      "target": "function:ops/triton/layernorm_gated.py:layer_norm_fwd_npu",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:split_qkv_rmsnorm_mrope_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:split_qkv_rmsnorm_mrope_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:triton_split_qkv_rmsnorm_mrope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:triton_split_qkv_rmsnorm_mrope",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:triton_split_qkv_rmsnorm_mrope_fake",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_mrope.py:triton_split_qkv_rmsnorm_mrope_fake",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:precompute_rope_cos_sin_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:precompute_rope_cos_sin_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_impl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_impl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_impl_fake",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope_simt.py:split_qkv_rmsnorm_rope_simt_impl_fake",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_impl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_impl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_impl_fake",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_rmsnorm_rope.py:split_qkv_rmsnorm_rope_impl_fake",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:_split_qkv_and_compute_local_qk_var_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:_split_qkv_and_compute_local_qk_var_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:_apply_global_rmsnorm_kernel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:_apply_global_rmsnorm_kernel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:split_qkv_tp_rmsnorm_rope_impl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:split_qkv_tp_rmsnorm_rope_impl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:split_qkv_tp_rmsnorm_rope_impl_fake",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py",
+      "target": "function:ops/triton/linearnorm/split_qkv_tp_rmsnorm_rope.py:split_qkv_tp_rmsnorm_rope_impl_fake",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

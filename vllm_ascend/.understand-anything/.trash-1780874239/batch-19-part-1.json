@@ -1,0 +1,750 @@
+{
+  "nodes": [
+    {
+      "id": "file:patch/worker/patch_minimax_m2_linear_attn.py",
+      "type": "file",
+      "name": "patch_minimax_m2_linear_attn.py",
+      "filePath": "patch/worker/patch_minimax_m2_linear_attn.py",
+      "summary": "对 MiniMax M2 线性 attention 的 QK RMSNorm 做 monkey-patch，使其在 tensor parallel 下通过全局/局部 rstd 校正实现跨 rank 的 RMSNorm 等价计算。",
+      "tags": [
+        "monkey-patch",
+        "attention",
+        "tensor-parallel",
+        "rmsnorm",
+        "npu"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "通过保存 _original_qk_method 并替换为 _patched_qk，结合 all-reduce 聚合方差实现 TP 下的 RMSNorm。"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2_linear_attn.py:_patched_qk",
+      "type": "function",
+      "name": "_patched_qk",
+      "filePath": "patch/worker/patch_minimax_m2_linear_attn.py",
+      "lineRange": [
+        60,
+        99
+      ],
+      "summary": "在 TP 场景下重算 q/k 的全局 RMSNorm：先用 npu_rms_norm 算局部统计，再 all-reduce 聚合方差并用全局/局部 rstd 比值校正原始 QK 结果。",
+      "tags": [
+        "attention",
+        "rmsnorm",
+        "tensor-parallel",
+        "npu",
+        "all-reduce"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2_linear_attn.py:_patched_init",
+      "type": "function",
+      "name": "_patched_init",
+      "filePath": "patch/worker/patch_minimax_m2_linear_attn.py",
+      "lineRange": [
+        117,
+        144
+      ],
+      "summary": "替换 RMSNorm 模块的初始化，按 weight shard 切分权重并绑定 TP 相关的 shard world size / rank 参数。",
+      "tags": [
+        "initialization",
+        "tensor-parallel",
+        "weight-sharding",
+        "rmsnorm"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2_linear_attn.py:_patched_weight_loader",
+      "type": "function",
+      "name": "_patched_weight_loader",
+      "filePath": "patch/worker/patch_minimax_m2_linear_attn.py",
+      "lineRange": [
+        102,
+        114
+      ],
+      "summary": "按 TP rank 对加载的权重做切片，将对应分片拷贝到参数张量。",
+      "tags": [
+        "weight-loading",
+        "tensor-parallel",
+        "weight-sharding"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_minimax_m2.py",
+      "type": "file",
+      "name": "patch_minimax_m2.py",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "summary": "对 MiniMax M2 模型的 MoE forward、attention 初始化、FP8 块量化权重反量化及整体 forward 做 monkey-patch，并支持 EAGLE3 辅助隐状态层。",
+      "tags": [
+        "monkey-patch",
+        "moe",
+        "fp8",
+        "quantization",
+        "attention"
+      ],
+      "complexity": "complex",
+      "languageNotes": "包含 FP8 block-wise 反量化（repeat_interleave 扩展 scale）以适配 NPU 的权重加载流程。"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2.py:_patched_moe_forward",
+      "type": "function",
+      "name": "_patched_moe_forward",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "lineRange": [
+        56,
+        68
+      ],
+      "summary": "替换 MoE 层 forward，调用 gate 与 experts 并在 TP 下做 all-reduce 后还原 hidden states 形状。",
+      "tags": [
+        "moe",
+        "forward",
+        "tensor-parallel"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2.py:_patch_forward",
+      "type": "function",
+      "name": "_patch_forward",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "lineRange": [
+        97,
+        119
+      ],
+      "summary": "替换 attention 的 forward，使用融合算子 split_qkv_tp_rmsnorm_rope 完成 QKV 投影、RMSNorm 与 RoPE。",
+      "tags": [
+        "attention",
+        "forward",
+        "rope",
+        "fused-op"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2.py:_dequantize_fp8_block_weight",
+      "type": "function",
+      "name": "_dequantize_fp8_block_weight",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "lineRange": [
+        135,
+        153
+      ],
+      "summary": "将 FP8 block-wise 量化权重按 block size 扩展 scale 并反量化为目标 dtype。",
+      "tags": [
+        "fp8",
+        "quantization",
+        "dequantization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2.py:_fp8_dequant_weight_iter",
+      "type": "function",
+      "name": "_fp8_dequant_weight_iter",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "lineRange": [
+        156,
+        192
+      ],
+      "summary": "遍历权重流，配对 FP8 权重与其 scale_inv 并逐个反量化，处理挂起的权重/scale。",
+      "tags": [
+        "fp8",
+        "quantization",
+        "weight-loading",
+        "iterator"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2.py:_patched_minimax_m2_forward",
+      "type": "function",
+      "name": "_patched_minimax_m2_forward",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "lineRange": [
+        220,
+        255
+      ],
+      "summary": "替换模型整体 forward，处理 PP group 的 embedding、逐层执行与辅助隐状态收集（EAGLE3）。",
+      "tags": [
+        "forward",
+        "pipeline-parallel",
+        "eagle3",
+        "model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2.py:_patched_attention_init",
+      "type": "function",
+      "name": "_patched_attention_init",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "lineRange": [
+        80,
+        91
+      ],
+      "summary": "替换 attention 初始化，绑定 TP 下的 RMSNormTP 模块与 world size / rank。",
+      "tags": [
+        "attention",
+        "initialization",
+        "tensor-parallel"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/worker/patch_minimax_m2.py:_patched_load_weights",
+      "type": "function",
+      "name": "_patched_load_weights",
+      "filePath": "patch/worker/patch_minimax_m2.py",
+      "lineRange": [
+        202,
+        208
+      ],
+      "summary": "替换权重加载入口，在需要时先对 FP8 权重做反量化再走原始加载流程。",
+      "tags": [
+        "weight-loading",
+        "fp8",
+        "quantization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_npugraph_ex_triton.py",
+      "type": "file",
+      "name": "patch_npugraph_ex_triton.py",
+      "filePath": "patch/worker/patch_npugraph_ex_triton.py",
+      "summary": "为 NPU graph 捕获提供 ValuePack 容器及 meta/npu 参数拆包工具，桥接 Triton 风格调用与 NPU graph 的 symint/symlist 解析。",
+      "tags": [
+        "npu-graph",
+        "triton",
+        "utility",
+        "monkey-patch"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_npugraph_ex_triton.py:ValuePack",
+      "type": "class",
+      "name": "ValuePack",
+      "filePath": "patch/worker/patch_npugraph_ex_triton.py",
+      "lineRange": [
+        38,
+        68
+      ],
+      "summary": "同时持有 meta 与 npu 两种值表示的容器，支持按 key 取值与调试 repr。",
+      "tags": [
+        "npu-graph",
+        "container",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_npugraph_ex_triton.py:_unpack_meta",
+      "type": "function",
+      "name": "_unpack_meta",
+      "filePath": "patch/worker/patch_npugraph_ex_triton.py",
+      "lineRange": [
+        71,
+        91
+      ],
+      "summary": "递归拆解 args/kwargs 中的 meta 部分，处理列表、字典等嵌套结构。",
+      "tags": [
+        "npu-graph",
+        "utility",
+        "unpacking"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_npugraph_ex_triton.py:_unpack_npu",
+      "type": "function",
+      "name": "_unpack_npu",
+      "filePath": "patch/worker/patch_npugraph_ex_triton.py",
+      "lineRange": [
+        94,
+        118
+      ],
+      "summary": "递归拆解 args/kwargs 中的 npu 部分，处理 symlist 并通过 graph 解析符号列表。",
+      "tags": [
+        "npu-graph",
+        "utility",
+        "unpacking"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_qwen3_5.py",
+      "type": "file",
+      "name": "patch_qwen3_5.py",
+      "filePath": "patch/worker/patch_qwen3_5.py",
+      "summary": "为 Qwen3.5 提供 Ascend 适配的 attention 与 decoder layer，使用融合 triton 算子完成 QKV 拆分、RMSNorm 与 mrope，并支持线性/标准 attention 混合层。",
+      "tags": [
+        "attention",
+        "decoder-layer",
+        "qwen",
+        "fused-op",
+        "npu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_qwen3_5.py:AscendQwen3NextAttention",
+      "type": "class",
+      "name": "AscendQwen3NextAttention",
+      "filePath": "patch/worker/patch_qwen3_5.py",
+      "lineRange": [
+        39,
+        85
+      ],
+      "summary": "Ascend 版 Qwen3-Next attention，使用融合算子完成 QKV 拆分、QK RMSNorm、RoPE 与门控输出投影。",
+      "tags": [
+        "attention",
+        "qwen",
+        "fused-op",
+        "rope",
+        "npu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_qwen3_5.py:AscendQwen3_5DecoderLayer",
+      "type": "class",
+      "name": "AscendQwen3_5DecoderLayer",
+      "filePath": "patch/worker/patch_qwen3_5.py",
+      "lineRange": [
+        88,
+        146
+      ],
+      "summary": "Ascend 版 Qwen3.5 decoder 层，按层类型在线性 attention 与标准 self-attention 间切换，并应用 layer scale 与 MLP。",
+      "tags": [
+        "decoder-layer",
+        "qwen",
+        "attention",
+        "layer-scale",
+        "npu"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:patch/worker/patch_qwen3_dflash.py",
+      "type": "file",
+      "name": "patch_qwen3_dflash.py",
+      "filePath": "patch/worker/patch_qwen3_dflash.py",
+      "summary": "为 Qwen3 DFlash 提供 precompute_and_store_context_kv，预先计算 context 段的 KV 并通过 RoPE 与归一化写入 KV cache。",
+      "tags": [
+        "kv-cache",
+        "attention",
+        "qwen",
+        "rope",
+        "monkey-patch"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_qwen3_dflash.py:precompute_and_store_context_kv",
+      "type": "function",
+      "name": "precompute_and_store_context_kv",
+      "filePath": "patch/worker/patch_qwen3_dflash.py",
+      "lineRange": [
+        6,
+        59
+      ],
+      "summary": "对 context states 计算 K/V，逐层做 RMSNorm 与 RoPE 后写入 KV cache 以加速后续 attention。",
+      "tags": [
+        "kv-cache",
+        "attention",
+        "rope",
+        "precompute"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:patch/worker/patch_qwen3_next_mtp.py",
+      "type": "file",
+      "name": "patch_qwen3_next_mtp.py",
+      "filePath": "patch/worker/patch_qwen3_next_mtp.py",
+      "summary": "为 Qwen3-Next MTP 替换 bind_kv_cache，按层索引分组 attention 模块并将 KV cache 绑定到 runner 与 forward context。",
+      "tags": [
+        "kv-cache",
+        "mtp",
+        "qwen",
+        "monkey-patch"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_qwen3_next_mtp.py:bind_kv_cache",
+      "type": "function",
+      "name": "bind_kv_cache",
+      "filePath": "patch/worker/patch_qwen3_next_mtp.py",
+      "lineRange": [
+        9,
+        47
+      ],
+      "summary": "按 attention 模块数量提取层索引并分组，将 KV cache 绑定到 runner_kv_caches 与 forward context。",
+      "tags": [
+        "kv-cache",
+        "mtp",
+        "binding"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_qwen3vl.py",
+      "type": "file",
+      "name": "patch_qwen3vl.py",
+      "filePath": "patch/worker/patch_qwen3vl.py",
+      "summary": "为 Qwen3-VL 提供 TP 包装、融合 QKV RMSNorm mrope forward、快速位置嵌入插值以及 MoE pipeline 层范围补丁。",
+      "tags": [
+        "multimodal",
+        "qwen",
+        "attention",
+        "tensor-parallel",
+        "moe"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_qwen3vl.py:tensor_parallel_wrap",
+      "type": "function",
+      "name": "tensor_parallel_wrap",
+      "filePath": "patch/worker/patch_qwen3vl.py",
+      "lineRange": [
+        15,
+        32
+      ],
+      "summary": "装饰器，将函数输出按 TP rank 对 deepstack 嵌入张量切分以适配 tensor parallel。",
+      "tags": [
+        "tensor-parallel",
+        "decorator",
+        "multimodal"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_qwen3vl.py:forward_with_split_qkv_rmsnorm_mrope",
+      "type": "function",
+      "name": "forward_with_split_qkv_rmsnorm_mrope",
+      "filePath": "patch/worker/patch_qwen3vl.py",
+      "lineRange": [
+        35,
+        67
+      ],
+      "summary": "Qwen3-VL attention forward，使用融合 triton 算子完成 QKV 拆分、QK RMSNorm 与 mrope。",
+      "tags": [
+        "attention",
+        "fused-op",
+        "rope",
+        "multimodal"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_qwen3vl.py:_fast_pos_embed_interpolate",
+      "type": "function",
+      "name": "_fast_pos_embed_interpolate",
+      "filePath": "patch/worker/patch_qwen3vl.py",
+      "lineRange": [
+        77,
+        91
+      ],
+      "summary": "按 grid_thw 对视觉位置嵌入做快速插值并拼接输出。",
+      "tags": [
+        "multimodal",
+        "position-embedding",
+        "interpolation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_qwen3vl.py:patch_qwen3_vl_moe_pp_layer_range",
+      "type": "function",
+      "name": "patch_qwen3_vl_moe_pp_layer_range",
+      "filePath": "patch/worker/patch_qwen3vl.py",
+      "lineRange": [
+        97,
+        107
+      ],
+      "summary": "为 Qwen3-VL MoE 模型打补丁，修正 pipeline parallel 下的层范围属性。",
+      "tags": [
+        "pipeline-parallel",
+        "moe",
+        "monkey-patch"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_rejection_sampler.py",
+      "type": "file",
+      "name": "patch_rejection_sampler.py",
+      "filePath": "patch/worker/patch_rejection_sampler.py",
+      "summary": "极简补丁文件，调整 rejection sampler 相关行为（投机解码采样路径）。",
+      "tags": [
+        "monkey-patch",
+        "rejection-sampler",
+        "speculative-decoding"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_routed_experts_capture.py",
+      "type": "file",
+      "name": "patch_routed_experts_capture.py",
+      "filePath": "patch/worker/patch_routed_experts_capture.py",
+      "summary": "提供 MoE 路由专家分布的捕获逻辑，在 DP/TP 下跨 rank 收集 topk_ids 并按层统计专家负载。",
+      "tags": [
+        "moe",
+        "expert-routing",
+        "profiling",
+        "data-parallel",
+        "monkey-patch"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/worker/patch_routed_experts_capture.py:capture",
+      "type": "function",
+      "name": "capture",
+      "filePath": "patch/worker/patch_routed_experts_capture.py",
+      "lineRange": [
+        35,
+        185
+      ],
+      "summary": "按层捕获 MoE 路由的 topk_ids，结合 DP token 计数与 all-gather 跨 rank 聚合专家路由信息。",
+      "tags": [
+        "moe",
+        "expert-routing",
+        "all-gather",
+        "data-parallel"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:patch/worker/patch_triton.py",
+      "type": "file",
+      "name": "patch_triton.py",
+      "filePath": "patch/worker/patch_triton.py",
+      "summary": "提供 triton 内核的 PyTorch 回退实现，包括融合 conv 后处理与 packed recurrent 解码（线性 attention/SSM 风格）的纯 PyTorch 版本。",
+      "tags": [
+        "triton",
+        "fallback",
+        "linear-attention",
+        "ssm",
+        "npu"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "以 einsum 与逐 batch 循环实现 recurrent SSM 解码，作为 triton 内核在 NPU 上的回退路径。"
+    },
+    {
+      "id": "file:patch/worker/patch_v2/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "patch/worker/patch_v2/__init__.py",
+      "summary": "patch_v2 子包的空初始化文件，标识 v2 版 worker 补丁的命名空间。",
+      "tags": [
+        "entry-point",
+        "package-init",
+        "monkey-patch"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_v2/patch_attn_utils.py",
+      "type": "file",
+      "name": "patch_attn_utils.py",
+      "filePath": "patch/worker/patch_v2/patch_attn_utils.py",
+      "summary": "v2 版 attention 工具补丁，提供 KV cache 分配的兼容包装。",
+      "tags": [
+        "attention",
+        "kv-cache",
+        "monkey-patch",
+        "compat"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_v2/patch_block_table.py",
+      "type": "file",
+      "name": "patch_block_table.py",
+      "filePath": "patch/worker/patch_v2/patch_block_table.py",
+      "summary": "v2 版 block table 补丁，调整 KV cache 块表相关行为以适配 Ascend。",
+      "tags": [
+        "block-table",
+        "kv-cache",
+        "monkey-patch"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:patch/worker/patch_minimax_m2_linear_attn.py",
+      "target": "function:patch/worker/patch_minimax_m2_linear_attn.py:_patched_qk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2_linear_attn.py",
+      "target": "function:patch/worker/patch_minimax_m2_linear_attn.py:_patched_init",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2_linear_attn.py",
+      "target": "function:patch/worker/patch_minimax_m2_linear_attn.py:_patched_weight_loader",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2.py",
+      "target": "function:patch/worker/patch_minimax_m2.py:_patched_moe_forward",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2.py",
+      "target": "function:patch/worker/patch_minimax_m2.py:_patch_forward",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2.py",
+      "target": "function:patch/worker/patch_minimax_m2.py:_dequantize_fp8_block_weight",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2.py",
+      "target": "function:patch/worker/patch_minimax_m2.py:_fp8_dequant_weight_iter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2.py",
+      "target": "function:patch/worker/patch_minimax_m2.py:_patched_minimax_m2_forward",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2.py",
+      "target": "function:patch/worker/patch_minimax_m2.py:_patched_attention_init",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_minimax_m2.py",
+      "target": "function:patch/worker/patch_minimax_m2.py:_patched_load_weights",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "function:patch/worker/patch_minimax_m2.py:_patched_load_weights",
+      "target": "function:patch/worker/patch_minimax_m2.py:_fp8_dequant_weight_iter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:patch/worker/patch_minimax_m2.py:_fp8_dequant_weight_iter",
+      "target": "function:patch/worker/patch_minimax_m2.py:_dequantize_fp8_block_weight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:patch/worker/patch_npugraph_ex_triton.py",
+      "target": "class:patch/worker/patch_npugraph_ex_triton.py:ValuePack",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_npugraph_ex_triton.py",
+      "target": "function:patch/worker/patch_npugraph_ex_triton.py:_unpack_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_npugraph_ex_triton.py",
+      "target": "function:patch/worker/patch_npugraph_ex_triton.py:_unpack_npu",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3_5.py",
+      "target": "class:patch/worker/patch_qwen3_5.py:AscendQwen3NextAttention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3_5.py",
+      "target": "class:patch/worker/patch_qwen3_5.py:AscendQwen3_5DecoderLayer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3_dflash.py",
+      "target": "function:patch/worker/patch_qwen3_dflash.py:precompute_and_store_context_kv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3_next_mtp.py",
+      "target": "function:patch/worker/patch_qwen3_next_mtp.py:bind_kv_cache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3vl.py",
+      "target": "function:patch/worker/patch_qwen3vl.py:tensor_parallel_wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3vl.py",
+      "target": "function:patch/worker/patch_qwen3vl.py:forward_with_split_qkv_rmsnorm_mrope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3vl.py",
+      "target": "function:patch/worker/patch_qwen3vl.py:_fast_pos_embed_interpolate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_qwen3vl.py",
+      "target": "function:patch/worker/patch_qwen3vl.py:patch_qwen3_vl_moe_pp_layer_range",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_routed_experts_capture.py",
+      "target": "function:patch/worker/patch_routed_experts_capture.py:capture",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    }
+  ]
+}

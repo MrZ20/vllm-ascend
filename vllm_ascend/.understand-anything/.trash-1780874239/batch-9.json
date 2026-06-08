@@ -1,0 +1,684 @@
+{
+  "nodes": [
+    {
+      "id": "file:__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "__init__.py",
+      "summary": "vllm-ascend 插件的顶层入口，向 vLLM 注册 Ascend NPU 平台、connector、模型加载器、服务画像以及自定义模型，并在注册前确保全局 patch 已应用。",
+      "tags": ["entry-point", "registration", "plugin", "bootstrap"],
+      "complexity": "simple",
+      "languageNotes": "通过一组 register_* 入口函数实现 vLLM 插件的 entry-point 注册机制。"
+    },
+    {
+      "id": "function:__init__.py:register",
+      "type": "function",
+      "name": "register",
+      "filePath": "__init__.py",
+      "lineRange": [38, 41],
+      "summary": "vLLM 平台插件入口，返回 Ascend NPU 平台类的限定名供 vLLM 加载。",
+      "tags": ["registration", "plugin", "platform"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:__init__.py:register_model_loader",
+      "type": "function",
+      "name": "register_model_loader",
+      "filePath": "__init__.py",
+      "lineRange": [52, 59],
+      "summary": "确保全局 patch 后注册 netloader 与 rforkloader 等自定义模型加载器。",
+      "tags": ["registration", "model-loader", "plugin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "_310p/__init__.py",
+      "summary": "_310p 子包的空 package 初始化文件，标识 Ascend 310P 设备相关适配代码的命名空间。",
+      "tags": ["package-init", "barrel", "namespace"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/attention/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "_310p/attention/__init__.py",
+      "summary": "_310p attention 子包的空 package 初始化文件。",
+      "tags": ["package-init", "barrel", "namespace"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/attention/attention_mask.py",
+      "type": "file",
+      "name": "attention_mask.py",
+      "filePath": "_310p/attention/attention_mask.py",
+      "summary": "为 Ascend 310P 构建 attention mask，包含因果 mask、splitfuse chunked-prefill mask 及 ND 到 NZ 格式转换的生成逻辑。",
+      "tags": ["attention", "mask", "npu", "data-model"],
+      "complexity": "moderate",
+      "languageNotes": "使用 torch_npu.npu_format_cast 与 nd_to_nz 将 mask 转为 NPU 专用的 NZ 内存布局。"
+    },
+    {
+      "id": "class:_310p/attention/attention_mask.py:AttentionMaskBuilder310",
+      "type": "class",
+      "name": "AttentionMaskBuilder310",
+      "filePath": "_310p/attention/attention_mask.py",
+      "lineRange": [25, 157],
+      "summary": "310P attention mask 构建器，提供因果 mask、非因果 mask 与 splitfuse mask 的生成，并完成 NPU NZ 格式适配。",
+      "tags": ["attention", "mask", "builder", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_310p/attention/attention_v1.py",
+      "type": "file",
+      "name": "attention_v1.py",
+      "filePath": "_310p/attention/attention_v1.py",
+      "summary": "Ascend 310P 的 attention backend 与实现，封装 encoder attention、paged attention、prefill 与 chunked-prefill 等多种 NPU flash attention 前向路径。",
+      "tags": ["attention", "backend", "npu", "kernel"],
+      "complexity": "complex",
+      "languageNotes": "调用 torch_npu._npu_flash_attention / _npu_paged_attention 等 NPU 专用 attention kernel。"
+    },
+    {
+      "id": "class:_310p/attention/attention_v1.py:AscendAttentionBackend310",
+      "type": "class",
+      "name": "AscendAttentionBackend310",
+      "filePath": "_310p/attention/attention_v1.py",
+      "lineRange": [39, 90],
+      "summary": "310P attention backend，提供 KV cache 形状、实现类、builder 类以及支持的 kernel block size 等元信息。",
+      "tags": ["attention", "backend", "kv-cache", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/attention/attention_v1.py:AscendAttentionBackendImpl310",
+      "type": "class",
+      "name": "AscendAttentionBackendImpl310",
+      "filePath": "_310p/attention/attention_v1.py",
+      "lineRange": [93, 281],
+      "summary": "310P attention 前向实现，按场景分派到 prefill、paged 与 chunked-prefill splitfuse 的 NPU attention kernel。",
+      "tags": ["attention", "forward", "kernel", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:_310p/attention/metadata_builder.py",
+      "type": "file",
+      "name": "metadata_builder.py",
+      "filePath": "_310p/attention/metadata_builder.py",
+      "summary": "构建 310P attention metadata，在初始化时关联 AttentionMaskBuilder310 以提供 mask 生成能力。",
+      "tags": ["attention", "metadata", "builder", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/attention/metadata_builder.py:AscendAttentionMetadataBuilder310",
+      "type": "class",
+      "name": "AscendAttentionMetadataBuilder310",
+      "filePath": "_310p/attention/metadata_builder.py",
+      "lineRange": [28, 58],
+      "summary": "310P attention metadata 构建器，初始化时实例化 mask builder 以支持后续 attention 计算。",
+      "tags": ["attention", "metadata", "builder"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/block_table.py",
+      "type": "file",
+      "name": "block_table.py",
+      "filePath": "_310p/block_table.py",
+      "summary": "KV cache 的 block table 与 slot mapping 计算逻辑，包含单组 BlockTable 与多组 MultiGroupBlockTable 的 numpy 化 slot mapping 实现。",
+      "tags": ["kv-cache", "block-table", "data-model", "slot-mapping"],
+      "complexity": "complex",
+      "languageNotes": "使用 numpy 在 CPU 侧计算 slot mapping 后再 copy_to_gpu，规避 NPU 端逐元素索引开销。"
+    },
+    {
+      "id": "class:_310p/block_table.py:BlockTable",
+      "type": "class",
+      "name": "BlockTable",
+      "filePath": "_310p/block_table.py",
+      "lineRange": [14, 88],
+      "summary": "单组 block table，基于 numpy 计算 token 到 KV cache slot 的映射并规范化输入。",
+      "tags": ["kv-cache", "block-table", "slot-mapping"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/block_table.py:MultiGroupBlockTable",
+      "type": "class",
+      "name": "MultiGroupBlockTable",
+      "filePath": "_310p/block_table.py",
+      "lineRange": [91, 202],
+      "summary": "管理多组 BlockTable，按 KV cache 分组分别计算常规与 draft（投机解码）token 的 slot mapping。",
+      "tags": ["kv-cache", "block-table", "slot-mapping", "speculative-decoding"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:_310p/fused_moe/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "_310p/fused_moe/__init__.py",
+      "summary": "_310p fused_moe 子包的空 package 初始化文件。",
+      "tags": ["package-init", "barrel", "namespace", "moe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/model_runner_310p.py",
+      "type": "file",
+      "name": "model_runner_310p.py",
+      "filePath": "_310p/model_runner_310p.py",
+      "summary": "Ascend 310P 专用的 NPU model runner，负责输入准备、KV cache 分配、批次执行与 padding 决策、dummy run 及模型前向，是 310P 推理执行的核心调度组件。",
+      "tags": ["model-runner", "inference", "kv-cache", "npu", "core"],
+      "complexity": "complex",
+      "languageNotes": "继承基础 NPUModelRunner 并大量 override 输入准备与 KV cache 初始化流程以适配 310P。"
+    },
+    {
+      "id": "class:_310p/model_runner_310p.py:NPUModelRunner310",
+      "type": "class",
+      "name": "NPUModelRunner310",
+      "filePath": "_310p/model_runner_310p.py",
+      "lineRange": [59, 899],
+      "summary": "310P 模型运行器，封装输入构建、slot mapping、投机解码 metadata、KV cache 张量分配与模型前向等推理执行全流程。",
+      "tags": ["model-runner", "inference", "kv-cache", "core", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:_310p/npu_input_batch.py",
+      "type": "file",
+      "name": "npu_input_batch.py",
+      "filePath": "_310p/npu_input_batch.py",
+      "summary": "310P 的输入批次容器，初始化时构建 MultiGroupBlockTable 以管理多组 KV cache 的 block 映射。",
+      "tags": ["input-batch", "data-model", "kv-cache", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/npu_input_batch.py:NPUInputBatch310",
+      "type": "class",
+      "name": "NPUInputBatch310",
+      "filePath": "_310p/npu_input_batch.py",
+      "lineRange": [9, 59],
+      "summary": "310P 输入批次类，构造时初始化多组 block table 并继承基础输入批次的状态管理能力。",
+      "tags": ["input-batch", "data-model", "kv-cache"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/ops/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "_310p/ops/__init__.py",
+      "summary": "_310p ops 子包的空 package 初始化文件。",
+      "tags": ["package-init", "barrel", "namespace", "ops"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/ops/activation.py",
+      "type": "file",
+      "name": "activation.py",
+      "filePath": "_310p/ops/activation.py",
+      "summary": "310P 的 SiLU-and-Mul 激活算子，优先使用 torch_npu.npu_swiglu，回退到 F.silu 实现。",
+      "tags": ["activation", "ops", "npu", "kernel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/ops/activation.py:AscendSiluAndMul310",
+      "type": "class",
+      "name": "AscendSiluAndMul310",
+      "filePath": "_310p/ops/activation.py",
+      "lineRange": [25, 32],
+      "summary": "310P SiLU-and-Mul 激活实现，调用 NPU swiglu kernel 完成门控激活。",
+      "tags": ["activation", "swiglu", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/ops/causal_conv1d.py",
+      "type": "file",
+      "name": "causal_conv1d.py",
+      "filePath": "_310p/ops/causal_conv1d.py",
+      "summary": "310P 的因果 1D 卷积参考实现，提供 ref/fn/update 三个函数支持 Mamba 类模型在变长序列与投机解码场景下的卷积状态更新。",
+      "tags": ["ops", "convolution", "mamba", "reference-impl"],
+      "complexity": "complex",
+      "languageNotes": "以纯 PyTorch 参考实现替代专用 kernel，逐序列处理 query_start_loc 切分的变长批次。"
+    },
+    {
+      "id": "function:_310p/ops/causal_conv1d.py:causal_conv1d_ref",
+      "type": "function",
+      "name": "causal_conv1d_ref",
+      "filePath": "_310p/ops/causal_conv1d.py",
+      "lineRange": [6, 52],
+      "summary": "因果 1D 卷积的纯 PyTorch 参考实现，支持初始状态与最终状态输出及可选激活。",
+      "tags": ["convolution", "reference-impl", "mamba"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:_310p/ops/causal_conv1d.py:causal_conv1d_fn",
+      "type": "function",
+      "name": "causal_conv1d_fn",
+      "filePath": "_310p/ops/causal_conv1d.py",
+      "lineRange": [55, 156],
+      "summary": "按 query_start_loc 切分变长序列并逐段调用参考卷积，维护各请求的卷积缓存状态。",
+      "tags": ["convolution", "mamba", "variable-length"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:_310p/ops/causal_conv1d.py:causal_conv1d_update",
+      "type": "function",
+      "name": "causal_conv1d_update",
+      "filePath": "_310p/ops/causal_conv1d.py",
+      "lineRange": [159, 297],
+      "summary": "解码阶段更新卷积状态，按接受 token 数与索引选取并推进每个请求的卷积缓存，支持投机解码。",
+      "tags": ["convolution", "mamba", "speculative-decoding", "decode"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:_310p/ops/conv.py",
+      "type": "file",
+      "name": "conv.py",
+      "filePath": "_310p/ops/conv.py",
+      "summary": "310P 的 Conv3d 层适配，forward_oot 回退到基类的 native 前向实现。",
+      "tags": ["ops", "convolution", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/ops/fla/gdn_310.py",
+      "type": "file",
+      "name": "gdn_310.py",
+      "filePath": "_310p/ops/fla/gdn_310.py",
+      "summary": "Ascend 310P 的 Gated Delta Net（线性 attention）实现，包含 recurrent gated delta rule kernel 封装、状态索引展平与 prefill/decode/投机解码统一前向核心。",
+      "tags": ["linear-attention", "gated-delta-net", "fla", "npu", "kernel"],
+      "complexity": "complex",
+      "languageNotes": "封装 torch.ops._C_ascend.npu_recurrent_gated_delta_rule_310 与 npu_causal_conv1d_310 自定义 NPU 算子。"
+    },
+    {
+      "id": "function:_310p/ops/fla/gdn_310.py:_flatten_state_indices",
+      "type": "function",
+      "name": "_flatten_state_indices",
+      "filePath": "_310p/ops/fla/gdn_310.py",
+      "lineRange": [45, 61],
+      "summary": "根据 cu_seqlens 将每序列的 SSM 状态索引展平为逐 token 的 int32 索引张量。",
+      "tags": ["fla", "state", "indexing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:_310p/ops/fla/gdn_310.py:npu_recurrent_gated_delta_rule_310",
+      "type": "function",
+      "name": "npu_recurrent_gated_delta_rule_310",
+      "filePath": "_310p/ops/fla/gdn_310.py",
+      "lineRange": [64, 100],
+      "summary": "封装 NPU recurrent gated delta rule 算子，完成 L2 归一化、状态索引展平与数据类型转换后调用底层 kernel。",
+      "tags": ["linear-attention", "gated-delta-net", "kernel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/ops/fla/gdn_310.py:AscendGatedDeltaNetAttention310",
+      "type": "class",
+      "name": "AscendGatedDeltaNetAttention310",
+      "filePath": "_310p/ops/fla/gdn_310.py",
+      "lineRange": [111, 333],
+      "summary": "310P Gated Delta Net attention 模块，统一处理 conv1d 状态更新、门控、prefill 与投机/非投机 decode 路径并写回 KV connector。",
+      "tags": ["linear-attention", "gated-delta-net", "forward", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:_310p/ops/fla/idex.py",
+      "type": "file",
+      "name": "idex.py",
+      "filePath": "_310p/ops/fla/idex.py",
+      "summary": "为 310P 线性 attention 准备 chunk 索引与 chunk 偏移，供分块的 gated delta rule 计算使用。",
+      "tags": ["fla", "chunk", "indexing", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:_310p/ops/fla/idex.py:prepare_chunk_indices_310",
+      "type": "function",
+      "name": "prepare_chunk_indices_310",
+      "filePath": "_310p/ops/fla/idex.py",
+      "lineRange": [24, 33],
+      "summary": "根据 cu_seqlens 与 chunk_size 生成每个 chunk 的批内序号与块内索引对。",
+      "tags": ["fla", "chunk", "indexing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/ops/layernorm.py",
+      "type": "file",
+      "name": "layernorm.py",
+      "filePath": "_310p/ops/layernorm.py",
+      "summary": "310P 的 RMSNorm 系列算子，包含标准 RMSNorm、Gemma 变体与带门控的 RMSNormGated，均基于 torch_npu 的 npu_rms_norm/npu_add_rms_norm kernel。",
+      "tags": ["layernorm", "ops", "npu", "kernel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/ops/layernorm.py:AscendRMSNorm310",
+      "type": "class",
+      "name": "AscendRMSNorm310",
+      "filePath": "_310p/ops/layernorm.py",
+      "lineRange": [9, 24],
+      "summary": "标准 RMSNorm 的 310P 实现，支持带 residual 的 fused add-rms-norm。",
+      "tags": ["layernorm", "rmsnorm", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/ops/layernorm.py:AscendRMSNormGated310",
+      "type": "class",
+      "name": "AscendRMSNormGated310",
+      "filePath": "_310p/ops/layernorm.py",
+      "lineRange": [44, 68],
+      "summary": "带门控激活（sigmoid/silu）的 RMSNorm 实现，用于 gated 归一化场景。",
+      "tags": ["layernorm", "rmsnorm", "gated", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_310p/ops/mm_encoder_attention.py",
+      "type": "file",
+      "name": "mm_encoder_attention.py",
+      "filePath": "_310p/ops/mm_encoder_attention.py",
+      "summary": "310P 多模态 encoder attention 实现，将 QKV reshape 为 3D 并经 padding 后调用 NPU 的 flash attention unpad kernel。",
+      "tags": ["attention", "multimodal", "encoder", "npu"],
+      "complexity": "moderate",
+      "languageNotes": "使用 einops.rearrange 与 torch_npu._npu_flash_attention_unpad 处理变长 encoder 序列。"
+    },
+    {
+      "id": "class:_310p/ops/mm_encoder_attention.py:AscendMMEncoderAttention310",
+      "type": "class",
+      "name": "AscendMMEncoderAttention310",
+      "filePath": "_310p/ops/mm_encoder_attention.py",
+      "lineRange": [38, 142],
+      "summary": "多模态 encoder attention 模块，负责 QKV 重排、padding 与 NPU flash attention unpad 前向。",
+      "tags": ["attention", "multimodal", "encoder", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_310p/ops/rotary_embedding.py",
+      "type": "file",
+      "name": "rotary_embedding.py",
+      "filePath": "_310p/ops/rotary_embedding.py",
+      "summary": "310P 的旋转位置编码（RoPE）实现，涵盖标准 RoPE、多模态 mRoPE 的 cos/sin 合并与切片，以及从 runner 准备 mRoPE 切片的辅助逻辑。",
+      "tags": ["rotary-embedding", "rope", "mrope", "npu"],
+      "complexity": "complex",
+      "languageNotes": "结合 torch_npu.npu_apply_rotary_pos_emb 与纯 torch 路径处理 neox/非 neox 与多模态 section 切分。"
+    },
+    {
+      "id": "function:_310p/ops/rotary_embedding.py:set_mrope_apply_rotary_slices",
+      "type": "function",
+      "name": "set_mrope_apply_rotary_slices",
+      "filePath": "_310p/ops/rotary_embedding.py",
+      "lineRange": [68, 118],
+      "summary": "根据 positions 与 mrope_section 从 cos_sin_cache 计算并缓存 mRoPE 的 cos/sin 切片。",
+      "tags": ["rotary-embedding", "mrope", "cache"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:_310p/ops/rotary_embedding.py:_rope_forward_oot",
+      "type": "function",
+      "name": "_rope_forward_oot",
+      "filePath": "_310p/ops/rotary_embedding.py",
+      "lineRange": [121, 180],
+      "summary": "RoPE 的 out-of-tree 前向核心，按 neox 风格与 rotary_dim 对 query/key 应用 NPU 旋转位置编码。",
+      "tags": ["rotary-embedding", "rope", "forward", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:_310p/ops/rotary_embedding.py:prepare_mrope_cos_sin_slices_from_runner",
+      "type": "function",
+      "name": "prepare_mrope_cos_sin_slices_from_runner",
+      "filePath": "_310p/ops/rotary_embedding.py",
+      "lineRange": [234, 247],
+      "summary": "从 model runner 中定位 mRoPE 模块并据 positions 预计算 cos/sin 切片，供前向复用。",
+      "tags": ["rotary-embedding", "mrope", "runner"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/ops/rotary_embedding.py:AscendMRotaryEmbedding310",
+      "type": "class",
+      "name": "AscendMRotaryEmbedding310",
+      "filePath": "_310p/ops/rotary_embedding.py",
+      "lineRange": [183, 231],
+      "summary": "多模态旋转位置编码（mRoPE）的 310P 实现，按 section 切分对 query/key 应用旋转。",
+      "tags": ["rotary-embedding", "mrope", "multimodal"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/ops/rotary_embedding.py:AscendRotaryEmbedding310",
+      "type": "class",
+      "name": "AscendRotaryEmbedding310",
+      "filePath": "_310p/ops/rotary_embedding.py",
+      "lineRange": [250, 262],
+      "summary": "标准旋转位置编码的 310P 实现，委托 _rope_forward_oot 完成前向。",
+      "tags": ["rotary-embedding", "rope", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/ops/vocab_parallel_embedding.py",
+      "type": "file",
+      "name": "vocab_parallel_embedding.py",
+      "filePath": "_310p/ops/vocab_parallel_embedding.py",
+      "summary": "310P 的词表并行 embedding 与 LM head 实现，提供未量化 embedding 方法及对应的 VocabParallelEmbedding/ParallelLMHead 适配。",
+      "tags": ["embedding", "vocab-parallel", "lm-head", "npu"],
+      "complexity": "moderate",
+      "languageNotes": "process_weights_after_loading 中调用 maybe_trans_nz 转换权重至 NPU NZ 布局。"
+    },
+    {
+      "id": "class:_310p/ops/vocab_parallel_embedding.py:AscendUnquantizedEmbeddingMethod310",
+      "type": "class",
+      "name": "AscendUnquantizedEmbeddingMethod310",
+      "filePath": "_310p/ops/vocab_parallel_embedding.py",
+      "lineRange": [30, 40],
+      "summary": "未量化 embedding 方法，加载后转换权重布局并以 F.linear 实现 embedding apply。",
+      "tags": ["embedding", "unquantized", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/ops/vocab_parallel_embedding.py:AscendVocabParallelEmbedding310",
+      "type": "class",
+      "name": "AscendVocabParallelEmbedding310",
+      "filePath": "_310p/ops/vocab_parallel_embedding.py",
+      "lineRange": [43, 58],
+      "summary": "310P 词表并行 embedding，初始化时绑定未量化 embedding 方法。",
+      "tags": ["embedding", "vocab-parallel", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:_310p/ops/vocab_parallel_embedding.py:AscendParallelLMHead310",
+      "type": "class",
+      "name": "AscendParallelLMHead310",
+      "filePath": "_310p/ops/vocab_parallel_embedding.py",
+      "lineRange": [61, 82],
+      "summary": "310P 并行 LM head，初始化时绑定未量化 embedding 方法用于输出投影。",
+      "tags": ["lm-head", "vocab-parallel", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/quantization/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "_310p/quantization/__init__.py",
+      "summary": "_310p quantization 子包初始化文件，聚合 310P 量化相关导出。",
+      "tags": ["package-init", "barrel", "quantization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/quantization/modelslim_config.py",
+      "type": "file",
+      "name": "modelslim_config.py",
+      "filePath": "_310p/quantization/modelslim_config.py",
+      "summary": "310P 的 ModelSlim 量化配置，依据层类型创建量化 scheme，并为 linear/MoE/embedding 等层分派对应的量化或未量化方法。",
+      "tags": ["quantization", "config", "modelslim", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:_310p/quantization/modelslim_config.py:create_scheme_for_layer",
+      "type": "function",
+      "name": "create_scheme_for_layer",
+      "filePath": "_310p/quantization/modelslim_config.py",
+      "lineRange": [45, 77],
+      "summary": "根据 quant_description 与层类型解析量化类型并实例化对应的量化 scheme。",
+      "tags": ["quantization", "scheme", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/quantization/modelslim_config.py:AscendModelSlimConfig310",
+      "type": "class",
+      "name": "AscendModelSlimConfig310",
+      "filePath": "_310p/quantization/modelslim_config.py",
+      "lineRange": [81, 140],
+      "summary": "310P ModelSlim 量化配置类，get_quant_method 按层类型与跳过规则返回 linear/MoE/embedding 的量化方法。",
+      "tags": ["quantization", "config", "dispatch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_310p/sample/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "_310p/sample/__init__.py",
+      "summary": "_310p sample 子包初始化文件。",
+      "tags": ["package-init", "barrel", "sampling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:_310p/sample/sampler.py",
+      "type": "file",
+      "name": "sampler.py",
+      "filePath": "_310p/sample/sampler.py",
+      "summary": "310P 的采样器实现，提供基于 CPU 指数分布的随机采样以及 top-k/top-p 采样，规避 NPU 端随机数生成的限制。",
+      "tags": ["sampling", "top-k-top-p", "npu", "generator"],
+      "complexity": "moderate",
+      "languageNotes": "在 CPU 上生成 exponential 噪声并缓存 generator 状态，再迁回 NPU 完成 Gumbel-max 风格采样。"
+    },
+    {
+      "id": "function:_310p/sample/sampler.py:_random_sample_310p",
+      "type": "function",
+      "name": "_random_sample_310p",
+      "filePath": "_310p/sample/sampler.py",
+      "lineRange": [32, 58],
+      "summary": "在 CPU 侧按 per-request generator 生成指数噪声并迁回 NPU，以 div+argmax 实现随机采样。",
+      "tags": ["sampling", "generator", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/sample/sampler.py:AscendTopKTopPSampler310",
+      "type": "class",
+      "name": "AscendTopKTopPSampler310",
+      "filePath": "_310p/sample/sampler.py",
+      "lineRange": [61, 87],
+      "summary": "310P top-k/top-p 采样器，应用截断后经 softmax 调用随机采样函数得到 token。",
+      "tags": ["sampling", "top-k-top-p", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:_310p/sharded_state_loader_310p.py",
+      "type": "file",
+      "name": "sharded_state_loader_310p.py",
+      "filePath": "_310p/sharded_state_loader_310p.py",
+      "summary": "310P 的分片状态加载器，负责将模型分片权重保存为 safetensors 文件并生成量化描述（quant_description）JSON。",
+      "tags": ["model-loader", "sharded-state", "serialization", "quantization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:_310p/sharded_state_loader_310p.py:ShardedStateLoader310",
+      "type": "class",
+      "name": "ShardedStateLoader310",
+      "filePath": "_310p/sharded_state_loader_310p.py",
+      "lineRange": [27, 80],
+      "summary": "310P 分片状态加载器，保存分片权重为 safetensors 并按需生成量化描述文件。",
+      "tags": ["model-loader", "sharded-state", "serialization"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:__init__.py", "target": "function:__init__.py:register", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:__init__.py", "target": "function:__init__.py:register_model_loader", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:__init__.py", "target": "function:__init__.py:register", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:__init__.py", "target": "function:__init__.py:register_model_loader", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/attention/attention_mask.py", "target": "class:_310p/attention/attention_mask.py:AttentionMaskBuilder310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/attention/attention_mask.py", "target": "class:_310p/attention/attention_mask.py:AttentionMaskBuilder310", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/attention/attention_v1.py", "target": "class:_310p/attention/attention_v1.py:AscendAttentionBackend310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/attention/attention_v1.py", "target": "class:_310p/attention/attention_v1.py:AscendAttentionBackendImpl310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/attention/attention_v1.py", "target": "class:_310p/attention/attention_v1.py:AscendAttentionBackend310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/attention/attention_v1.py", "target": "class:_310p/attention/attention_v1.py:AscendAttentionBackendImpl310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/attention/attention_v1.py:AscendAttentionBackendImpl310", "target": "class:_310p/attention/attention_mask.py:AttentionMaskBuilder310", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/attention/metadata_builder.py", "target": "class:_310p/attention/metadata_builder.py:AscendAttentionMetadataBuilder310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/attention/metadata_builder.py", "target": "class:_310p/attention/metadata_builder.py:AscendAttentionMetadataBuilder310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/attention/metadata_builder.py:AscendAttentionMetadataBuilder310", "target": "class:_310p/attention/attention_mask.py:AttentionMaskBuilder310", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/block_table.py", "target": "class:_310p/block_table.py:BlockTable", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/block_table.py", "target": "class:_310p/block_table.py:MultiGroupBlockTable", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/block_table.py", "target": "class:_310p/block_table.py:BlockTable", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/block_table.py", "target": "class:_310p/block_table.py:MultiGroupBlockTable", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/block_table.py:MultiGroupBlockTable", "target": "class:_310p/block_table.py:BlockTable", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/model_runner_310p.py", "target": "class:_310p/model_runner_310p.py:NPUModelRunner310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/model_runner_310p.py", "target": "class:_310p/model_runner_310p.py:NPUModelRunner310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/model_runner_310p.py:NPUModelRunner310", "target": "class:_310p/npu_input_batch.py:NPUInputBatch310", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/model_runner_310p.py:NPUModelRunner310", "target": "class:_310p/sample/sampler.py:AscendSampler310", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/model_runner_310p.py:NPUModelRunner310", "target": "function:_310p/ops/rotary_embedding.py:prepare_mrope_cos_sin_slices_from_runner", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/npu_input_batch.py", "target": "class:_310p/npu_input_batch.py:NPUInputBatch310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/npu_input_batch.py", "target": "class:_310p/npu_input_batch.py:NPUInputBatch310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/npu_input_batch.py:NPUInputBatch310", "target": "class:_310p/block_table.py:MultiGroupBlockTable", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/activation.py", "target": "class:_310p/ops/activation.py:AscendSiluAndMul310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/activation.py", "target": "class:_310p/ops/activation.py:AscendSiluAndMul310", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/causal_conv1d.py", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_ref", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/causal_conv1d.py", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_fn", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/causal_conv1d.py", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_update", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/causal_conv1d.py", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_ref", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/causal_conv1d.py", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_fn", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/causal_conv1d.py", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_update", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:_310p/ops/causal_conv1d.py:causal_conv1d_fn", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_ref", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:_310p/ops/causal_conv1d.py:causal_conv1d_update", "target": "function:_310p/ops/causal_conv1d.py:causal_conv1d_ref", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/fla/gdn_310.py", "target": "function:_310p/ops/fla/gdn_310.py:_flatten_state_indices", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/fla/gdn_310.py", "target": "function:_310p/ops/fla/gdn_310.py:npu_recurrent_gated_delta_rule_310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/fla/gdn_310.py", "target": "class:_310p/ops/fla/gdn_310.py:AscendGatedDeltaNetAttention310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/fla/gdn_310.py", "target": "function:_310p/ops/fla/gdn_310.py:_flatten_state_indices", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/fla/gdn_310.py", "target": "function:_310p/ops/fla/gdn_310.py:npu_recurrent_gated_delta_rule_310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/fla/gdn_310.py", "target": "class:_310p/ops/fla/gdn_310.py:AscendGatedDeltaNetAttention310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:_310p/ops/fla/gdn_310.py:npu_recurrent_gated_delta_rule_310", "target": "function:_310p/ops/fla/gdn_310.py:_flatten_state_indices", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/ops/fla/gdn_310.py:AscendGatedDeltaNetAttention310", "target": "function:_310p/ops/fla/gdn_310.py:npu_recurrent_gated_delta_rule_310", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/fla/idex.py", "target": "function:_310p/ops/fla/idex.py:prepare_chunk_indices_310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/fla/idex.py", "target": "function:_310p/ops/fla/idex.py:prepare_chunk_indices_310", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/layernorm.py", "target": "class:_310p/ops/layernorm.py:AscendRMSNorm310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/layernorm.py", "target": "class:_310p/ops/layernorm.py:AscendRMSNormGated310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/layernorm.py", "target": "class:_310p/ops/layernorm.py:AscendRMSNorm310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/layernorm.py", "target": "class:_310p/ops/layernorm.py:AscendRMSNormGated310", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/mm_encoder_attention.py", "target": "class:_310p/ops/mm_encoder_attention.py:AscendMMEncoderAttention310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/mm_encoder_attention.py", "target": "class:_310p/ops/mm_encoder_attention.py:AscendMMEncoderAttention310", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "function:_310p/ops/rotary_embedding.py:set_mrope_apply_rotary_slices", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "function:_310p/ops/rotary_embedding.py:_rope_forward_oot", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "function:_310p/ops/rotary_embedding.py:prepare_mrope_cos_sin_slices_from_runner", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "class:_310p/ops/rotary_embedding.py:AscendMRotaryEmbedding310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "class:_310p/ops/rotary_embedding.py:AscendRotaryEmbedding310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "function:_310p/ops/rotary_embedding.py:_rope_forward_oot", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "function:_310p/ops/rotary_embedding.py:prepare_mrope_cos_sin_slices_from_runner", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "class:_310p/ops/rotary_embedding.py:AscendMRotaryEmbedding310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/rotary_embedding.py", "target": "class:_310p/ops/rotary_embedding.py:AscendRotaryEmbedding310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:_310p/ops/rotary_embedding.py:prepare_mrope_cos_sin_slices_from_runner", "target": "function:_310p/ops/rotary_embedding.py:set_mrope_apply_rotary_slices", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/ops/rotary_embedding.py:AscendRotaryEmbedding310", "target": "function:_310p/ops/rotary_embedding.py:_rope_forward_oot", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/ops/vocab_parallel_embedding.py", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendUnquantizedEmbeddingMethod310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/vocab_parallel_embedding.py", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendVocabParallelEmbedding310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/vocab_parallel_embedding.py", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendParallelLMHead310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/ops/vocab_parallel_embedding.py", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendUnquantizedEmbeddingMethod310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/vocab_parallel_embedding.py", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendVocabParallelEmbedding310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/ops/vocab_parallel_embedding.py", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendParallelLMHead310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/ops/vocab_parallel_embedding.py:AscendVocabParallelEmbedding310", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendUnquantizedEmbeddingMethod310", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/ops/vocab_parallel_embedding.py:AscendParallelLMHead310", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendUnquantizedEmbeddingMethod310", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/quantization/modelslim_config.py", "target": "function:_310p/quantization/modelslim_config.py:create_scheme_for_layer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/quantization/modelslim_config.py", "target": "class:_310p/quantization/modelslim_config.py:AscendModelSlimConfig310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/quantization/modelslim_config.py", "target": "function:_310p/quantization/modelslim_config.py:create_scheme_for_layer", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/quantization/modelslim_config.py", "target": "class:_310p/quantization/modelslim_config.py:AscendModelSlimConfig310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/quantization/modelslim_config.py:AscendModelSlimConfig310", "target": "function:_310p/quantization/modelslim_config.py:create_scheme_for_layer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/quantization/modelslim_config.py:AscendModelSlimConfig310", "target": "class:_310p/ops/vocab_parallel_embedding.py:AscendUnquantizedEmbeddingMethod310", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/sample/sampler.py", "target": "function:_310p/sample/sampler.py:_random_sample_310p", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/sample/sampler.py", "target": "class:_310p/sample/sampler.py:AscendTopKTopPSampler310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/sample/sampler.py", "target": "function:_310p/sample/sampler.py:_random_sample_310p", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:_310p/sample/sampler.py", "target": "class:_310p/sample/sampler.py:AscendTopKTopPSampler310", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:_310p/sample/sampler.py:AscendTopKTopPSampler310", "target": "function:_310p/sample/sampler.py:_random_sample_310p", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:_310p/sharded_state_loader_310p.py", "target": "class:_310p/sharded_state_loader_310p.py:ShardedStateLoader310", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:_310p/sharded_state_loader_310p.py", "target": "class:_310p/sharded_state_loader_310p.py:ShardedStateLoader310", "type": "exports", "direction": "forward", "weight": 0.8}
+  ]
+}

@@ -1,0 +1,182 @@
+{
+ "projectRoot": "d:/57108/Desktop/code/vllm-ascend/vllm_ascend",
+ "batchFiles": [
+  {
+   "path": "sample/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "sample/penalties.py",
+   "language": "python",
+   "sizeLines": 45,
+   "fileCategory": "code"
+  },
+  {
+   "path": "sample/rejection_sampler.py",
+   "language": "python",
+   "sizeLines": 1348,
+   "fileCategory": "code"
+  },
+  {
+   "path": "sample/sampler.py",
+   "language": "python",
+   "sizeLines": 274,
+   "fileCategory": "code"
+  },
+  {
+   "path": "simple_kv_offload/__init__.py",
+   "language": "python",
+   "sizeLines": 1,
+   "fileCategory": "code"
+  },
+  {
+   "path": "simple_kv_offload/copy_backend.py",
+   "language": "python",
+   "sizeLines": 124,
+   "fileCategory": "code"
+  },
+  {
+   "path": "simple_kv_offload/npu_mem_ops.py",
+   "language": "python",
+   "sizeLines": 99,
+   "fileCategory": "code"
+  },
+  {
+   "path": "simple_kv_offload/worker.py",
+   "language": "python",
+   "sizeLines": 224,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/__init__.py",
+   "language": "python",
+   "sizeLines": 51,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/dflash_proposer.py",
+   "language": "python",
+   "sizeLines": 267,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/draft_proposer.py",
+   "language": "python",
+   "sizeLines": 17,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/eagle_proposer.py",
+   "language": "python",
+   "sizeLines": 19,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/extract_hidden_states_proposer.py",
+   "language": "python",
+   "sizeLines": 116,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/llm_base_proposer.py",
+   "language": "python",
+   "sizeLines": 2009,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/medusa_proposer.py",
+   "language": "python",
+   "sizeLines": 70,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/ngram_proposer_npu.py",
+   "language": "python",
+   "sizeLines": 35,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/ngram_proposer.py",
+   "language": "python",
+   "sizeLines": 64,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/suffix_proposer.py",
+   "language": "python",
+   "sizeLines": 24,
+   "fileCategory": "code"
+  },
+  {
+   "path": "spec_decode/utils.py",
+   "language": "python",
+   "sizeLines": 31,
+   "fileCategory": "code"
+  },
+  {
+   "path": "utils.py",
+   "language": "python",
+   "sizeLines": 1673,
+   "fileCategory": "code"
+  },
+  {
+   "path": "worker/__init__.py",
+   "language": "python",
+   "sizeLines": 0,
+   "fileCategory": "code"
+  },
+  {
+   "path": "worker/block_table.py",
+   "language": "python",
+   "sizeLines": 406,
+   "fileCategory": "code"
+  },
+  {
+   "path": "worker/kvcomp_utils.py",
+   "language": "python",
+   "sizeLines": 666,
+   "fileCategory": "code"
+  },
+  {
+   "path": "worker/model_runner_v1.py",
+   "language": "python",
+   "sizeLines": 4609,
+   "fileCategory": "code"
+  },
+  {
+   "path": "worker/npu_input_batch.py",
+   "language": "python",
+   "sizeLines": 239,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "sample/__init__.py": [],
+  "sample/penalties.py": [],
+  "sample/rejection_sampler.py": [],
+  "sample/sampler.py": [],
+  "simple_kv_offload/__init__.py": [],
+  "simple_kv_offload/copy_backend.py": [],
+  "simple_kv_offload/npu_mem_ops.py": [],
+  "simple_kv_offload/worker.py": [],
+  "spec_decode/__init__.py": [],
+  "spec_decode/dflash_proposer.py": [],
+  "spec_decode/draft_proposer.py": [],
+  "spec_decode/eagle_proposer.py": [],
+  "spec_decode/extract_hidden_states_proposer.py": [],
+  "spec_decode/llm_base_proposer.py": [],
+  "spec_decode/medusa_proposer.py": [],
+  "spec_decode/ngram_proposer_npu.py": [],
+  "spec_decode/ngram_proposer.py": [],
+  "spec_decode/suffix_proposer.py": [],
+  "spec_decode/utils.py": [],
+  "utils.py": [],
+  "worker/__init__.py": [],
+  "worker/block_table.py": [],
+  "worker/kvcomp_utils.py": [],
+  "worker/model_runner_v1.py": [],
+  "worker/npu_input_batch.py": []
+ }
+}

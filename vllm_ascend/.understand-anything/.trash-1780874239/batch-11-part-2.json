@@ -1,0 +1,349 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "core/__init__.py",
+      "summary": "core 子包的空初始化文件，用于将调度核心目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "scheduler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/profiling_chunk_predictor.py",
+      "type": "file",
+      "name": "profiling_chunk_predictor.py",
+      "filePath": "core/profiling_chunk_predictor.py",
+      "summary": "基于性能采样数据拟合二次/线性模型预测最优 chunk 大小与执行耗时，为 profiling-chunk 调度提供时延感知的分块决策。",
+      "tags": ["scheduler", "profiling", "prediction", "performance"],
+      "complexity": "complex",
+      "languageNotes": "使用 numpy 最小二乘与多项式拟合建立耗时-chunk 关系模型，对负系数做截断保护。"
+    },
+    {
+      "id": "class:core/profiling_chunk_predictor.py:ChunkSizePredictor",
+      "type": "class",
+      "name": "ChunkSizePredictor",
+      "filePath": "core/profiling_chunk_predictor.py",
+      "lineRange": [36, 301],
+      "summary": "以采样的 (chunk 大小, 耗时) 数据拟合二次与线性回归模型，根据目标时延预测推荐 chunk 大小并支持带历史的预测。",
+      "tags": ["prediction", "profiling", "performance", "regression"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/profiling_chunk_predictor.py:ProfilingChunkManager",
+      "type": "class",
+      "name": "ProfilingChunkManager",
+      "filePath": "core/profiling_chunk_predictor.py",
+      "lineRange": [304, 385],
+      "summary": "封装 ChunkSizePredictor 的管理器，维护采样历史、判断模型就绪状态并对外提供 chunk 大小与耗时预测接口。",
+      "tags": ["scheduler", "profiling", "manager", "prediction"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/recompute_scheduler.py",
+      "type": "file",
+      "name": "recompute_scheduler.py",
+      "filePath": "core/recompute_scheduler.py",
+      "summary": "支持抢占重计算的自定义调度器，在 KV cache 不足时抢占运行请求、释放其 block 并标记为可重计算，覆盖请求增删、调度与输出更新的完整调度循环。",
+      "tags": ["scheduler", "kv-cache", "preemption", "recompute"],
+      "complexity": "complex",
+      "languageNotes": "继承 vLLM 基础 Scheduler 并大幅重写 schedule/update_from_output，schedule 方法逾 500 行处理 running/waiting 队列与连接器交互。"
+    },
+    {
+      "id": "class:core/recompute_scheduler.py:RecomputeSchedulerConfig",
+      "type": "class",
+      "name": "RecomputeSchedulerConfig",
+      "filePath": "core/recompute_scheduler.py",
+      "lineRange": [75, 92],
+      "summary": "重计算调度器的配置数据类，从 vLLM 配置初始化并指定 scheduler_cls。",
+      "tags": ["scheduler", "configuration", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/recompute_scheduler.py:RecomputeScheduler",
+      "type": "class",
+      "name": "RecomputeScheduler",
+      "filePath": "core/recompute_scheduler.py",
+      "lineRange": [107, 1035],
+      "summary": "核心重计算调度器，重写 add_request/schedule/update_from_output，在 KV cache 紧张时抢占请求并释放 block，输出被抢占需重计算的请求信息。",
+      "tags": ["scheduler", "kv-cache", "preemption", "recompute"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/recompute_scheduler.py:AsyncRecomputeScheduler",
+      "type": "class",
+      "name": "AsyncRecomputeScheduler",
+      "filePath": "core/recompute_scheduler.py",
+      "lineRange": [1038, 1042],
+      "summary": "RecomputeScheduler 的异步变体，复用同步调度逻辑以适配异步引擎核心。",
+      "tags": ["scheduler", "async", "recompute"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/recompute_scheduler.py:register_ascend_mla_spec_in_manager",
+      "type": "function",
+      "name": "register_ascend_mla_spec_in_manager",
+      "filePath": "core/recompute_scheduler.py",
+      "lineRange": [63, 71],
+      "summary": "向 KV cache manager 注册 Ascend MLA 的 KV cache spec，使重计算调度器能正确管理 MLA 缓存。",
+      "tags": ["registration", "kv-cache", "mla", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/scheduler_dynamic_batch.py",
+      "type": "file",
+      "name": "scheduler_dynamic_batch.py",
+      "filePath": "core/scheduler_dynamic_batch.py",
+      "summary": "动态批调度器，借助预先生成的查找表按序列长度精炼 token 预算上限，从而在调度时动态调整批大小以平衡吞吐与时延。",
+      "tags": ["scheduler", "dynamic-batching", "performance"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/scheduler_dynamic_batch.py:BudgetRefiner",
+      "type": "class",
+      "name": "BudgetRefiner",
+      "filePath": "core/scheduler_dynamic_batch.py",
+      "lineRange": [35, 119],
+      "summary": "从 CSV 查找表读取最优 chunk 配置，按序列长度对齐并精炼 token 预算上限的辅助类。",
+      "tags": ["dynamic-batching", "lookup-table", "scheduler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/scheduler_dynamic_batch.py:SchedulerDynamicBatch",
+      "type": "class",
+      "name": "SchedulerDynamicBatch",
+      "filePath": "core/scheduler_dynamic_batch.py",
+      "lineRange": [122, 574],
+      "summary": "重写 schedule 的动态批调度器，结合 BudgetRefiner 精炼后的预算动态决定每步调度的请求与 token 数。",
+      "tags": ["scheduler", "dynamic-batching", "performance"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/scheduler_profiling_chunk.py",
+      "type": "file",
+      "name": "scheduler_profiling_chunk.py",
+      "filePath": "core/scheduler_profiling_chunk.py",
+      "summary": "基于在线性能采样的 profiling-chunk 调度器，通过 RPC 触发预热采样、提取执行时延并由 ProfilingChunkManager 预测最优 chunk 大小用于调度。",
+      "tags": ["scheduler", "profiling", "dynamic-batching", "performance"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/scheduler_profiling_chunk.py:ProfilingChunkScheduler",
+      "type": "class",
+      "name": "ProfilingChunkScheduler",
+      "filePath": "core/scheduler_profiling_chunk.py",
+      "lineRange": [47, 746],
+      "summary": "继承基础调度器并集成性能采样的调度器，运行预热采样、构造 RPC 参数、提取时延并据预测 chunk 大小调度请求。",
+      "tags": ["scheduler", "profiling", "performance", "rpc"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/single_type_kv_cache_manager.py",
+      "type": "file",
+      "name": "single_type_kv_cache_manager.py",
+      "filePath": "core/single_type_kv_cache_manager.py",
+      "summary": "压缩注意力的单类型 KV cache 管理器，处理块分配、跳过 token 计算与最长前缀缓存命中，并提供按 KV cache spec 选择管理器的工厂函数。",
+      "tags": ["kv-cache", "memory-management", "factory", "attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/single_type_kv_cache_manager.py:CompressAttentionManager",
+      "type": "class",
+      "name": "CompressAttentionManager",
+      "filePath": "core/single_type_kv_cache_manager.py",
+      "lineRange": [26, 226],
+      "summary": "面向压缩注意力的单类型 KV cache 管理器，重写块分配与最长缓存命中逻辑以适配压缩比下的 token 跳过。",
+      "tags": ["kv-cache", "memory-management", "attention", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/single_type_kv_cache_manager.py:get_manager_for_kv_cache_spec",
+      "type": "function",
+      "name": "get_manager_for_kv_cache_spec",
+      "filePath": "core/single_type_kv_cache_manager.py",
+      "lineRange": [229, 275],
+      "summary": "工厂函数，根据 KV cache spec 类型选择并实例化合适的单类型 KV cache 管理器。",
+      "tags": ["factory", "kv-cache", "dispatch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:device/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "device/__init__.py",
+      "summary": "device 子包的空初始化文件，用于将设备适配目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "device"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:device/device_op.py",
+      "type": "file",
+      "name": "device_op.py",
+      "filePath": "device/device_op.py",
+      "summary": "设备算子适配层，BaseDeviceAdaptor 统一封装 NPU 上的 reshape-and-cache、MoE routing、动态量化、grouped matmul、MLA/SFA/DSA 稀疏注意力预处理、RMSNorm 与 RoPE 等底层算子调用，A5DeviceAdaptor 针对 A5 设备做特化重载。",
+      "tags": ["device-adaptor", "npu", "operator", "abstraction", "attention"],
+      "complexity": "complex",
+      "languageNotes": "通过基类+设备特化子类的适配器模式统一不同 Ascend 设备的算子实现，A5DeviceAdaptor 重载约 40 个算子方法。"
+    },
+    {
+      "id": "class:device/device_op.py:BaseDeviceAdaptor",
+      "type": "class",
+      "name": "BaseDeviceAdaptor",
+      "filePath": "device/device_op.py",
+      "lineRange": [36, 755],
+      "summary": "设备算子基类，定义并实现约 40 个 NPU 算子接口（量化、MoE、DSA/MLA/SFA 稀疏注意力预处理、RMSNorm、RoPE 等）作为默认实现供子类继承或重载。",
+      "tags": ["device-adaptor", "base-class", "npu", "operator"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:device/device_op.py:A5DeviceAdaptor",
+      "type": "class",
+      "name": "A5DeviceAdaptor",
+      "filePath": "device/device_op.py",
+      "lineRange": [758, 1625],
+      "summary": "针对 Ascend A5 设备特化的算子适配器，继承 BaseDeviceAdaptor 并重载稀疏 flash attention、DSA 索引器、量化等算子以使用 A5 专用 kernel。",
+      "tags": ["device-adaptor", "npu", "operator", "a5"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:device/device_op.py:get_device_adaptor",
+      "type": "function",
+      "name": "get_device_adaptor",
+      "filePath": "device/device_op.py",
+      "lineRange": [1628, 1632],
+      "summary": "工厂函数，根据当前 Ascend 设备类型返回对应的设备算子适配器实例。",
+      "tags": ["factory", "device-adaptor", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:device/mxfp_compat.py",
+      "type": "file",
+      "name": "mxfp_compat.py",
+      "filePath": "device/mxfp_compat.py",
+      "summary": "MXFP4/MXFP8 量化特性的兼容性检查模块，逐项校验底层 torch-npu 是否提供所需符号，缺失时抛出带明确特性名的运行时错误。",
+      "tags": ["quantization", "validation", "compatibility", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:device/mxfp_compat.py:_ensure_symbols_available",
+      "type": "function",
+      "name": "_ensure_symbols_available",
+      "filePath": "device/mxfp_compat.py",
+      "lineRange": [23, 31],
+      "summary": "检查指定符号集合在 torch-npu 中是否全部可用，缺失时为对应 MXFP 特性抛出带缺失符号列表的 RuntimeError。",
+      "tags": ["validation", "compatibility", "quantization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:device_allocator/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "device_allocator/__init__.py",
+      "summary": "device_allocator 子包的空初始化文件，用于将设备内存分配器目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "memory-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:device_allocator/camem.py",
+      "type": "file",
+      "name": "camem.py",
+      "filePath": "device_allocator/camem.py",
+      "summary": "基于 CANN 可插拔分配器的设备内存管理器，支持显存睡眠/唤醒（卸载到 CPU 备份再恢复）与自定义内存池上下文，用于在多模型场景下复用 NPU 显存。",
+      "tags": ["memory-management", "allocator", "npu", "offload"],
+      "complexity": "moderate",
+      "languageNotes": "通过 ctypes 加载已载入的 CANN 库符号并注册 Python malloc/free 回调实现可插拔分配器。"
+    },
+    {
+      "id": "function:device_allocator/camem.py:find_loaded_library",
+      "type": "function",
+      "name": "find_loaded_library",
+      "filePath": "device_allocator/camem.py",
+      "lineRange": [31, 53],
+      "summary": "解析 /proc/self/maps 查找已加载共享库的路径，用于定位 CANN 内存分配相关动态库。",
+      "tags": ["utility", "memory-management", "ctypes"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:device_allocator/camem.py:use_memory_pool_with_allocator",
+      "type": "function",
+      "name": "use_memory_pool_with_allocator",
+      "filePath": "device_allocator/camem.py",
+      "lineRange": [103, 110],
+      "summary": "上下文管理器，使用给定的 malloc/free 回调构建可插拔分配器并在作用域内切换内存池。",
+      "tags": ["memory-management", "allocator", "context-manager", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:device_allocator/camem.py:CaMemAllocator",
+      "type": "class",
+      "name": "CaMemAllocator",
+      "filePath": "device_allocator/camem.py",
+      "lineRange": [113, 273],
+      "summary": "单例设备内存分配器，注册 Python malloc/free 回调并实现显存睡眠/唤醒（卸载到 CPU 备份与恢复）及自定义内存池管理。",
+      "tags": ["memory-management", "allocator", "singleton", "npu", "offload"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:distributed/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "distributed/__init__.py",
+      "summary": "distributed 子包的空初始化文件，用于将分布式通信目录标记为 Python 包。",
+      "tags": ["entry-point", "package-init", "distributed"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {"source": "file:core/profiling_chunk_predictor.py", "target": "class:core/profiling_chunk_predictor.py:ChunkSizePredictor", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/profiling_chunk_predictor.py", "target": "class:core/profiling_chunk_predictor.py:ChunkSizePredictor", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:core/profiling_chunk_predictor.py", "target": "class:core/profiling_chunk_predictor.py:ProfilingChunkManager", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/profiling_chunk_predictor.py", "target": "class:core/profiling_chunk_predictor.py:ProfilingChunkManager", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:core/profiling_chunk_predictor.py:ProfilingChunkManager", "target": "class:core/profiling_chunk_predictor.py:ChunkSizePredictor", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:core/recompute_scheduler.py", "target": "function:core/recompute_scheduler.py:register_ascend_mla_spec_in_manager", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/recompute_scheduler.py", "target": "function:core/recompute_scheduler.py:register_ascend_mla_spec_in_manager", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:core/recompute_scheduler.py", "target": "class:core/recompute_scheduler.py:RecomputeSchedulerConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/recompute_scheduler.py", "target": "class:core/recompute_scheduler.py:RecomputeSchedulerConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:core/recompute_scheduler.py", "target": "class:core/recompute_scheduler.py:RecomputeScheduler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/recompute_scheduler.py", "target": "class:core/recompute_scheduler.py:RecomputeScheduler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:core/recompute_scheduler.py", "target": "class:core/recompute_scheduler.py:AsyncRecomputeScheduler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/recompute_scheduler.py", "target": "class:core/recompute_scheduler.py:AsyncRecomputeScheduler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:core/recompute_scheduler.py:RecomputeScheduler", "target": "function:core/recompute_scheduler.py:register_ascend_mla_spec_in_manager", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:core/recompute_scheduler.py:AsyncRecomputeScheduler", "target": "class:core/recompute_scheduler.py:RecomputeScheduler", "type": "inherits", "direction": "forward", "weight": 0.9},
+
+    {"source": "file:core/scheduler_dynamic_batch.py", "target": "class:core/scheduler_dynamic_batch.py:BudgetRefiner", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/scheduler_dynamic_batch.py", "target": "class:core/scheduler_dynamic_batch.py:BudgetRefiner", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:core/scheduler_dynamic_batch.py", "target": "class:core/scheduler_dynamic_batch.py:SchedulerDynamicBatch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/scheduler_dynamic_batch.py", "target": "class:core/scheduler_dynamic_batch.py:SchedulerDynamicBatch", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:core/scheduler_dynamic_batch.py:SchedulerDynamicBatch", "target": "class:core/scheduler_dynamic_batch.py:BudgetRefiner", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:core/scheduler_profiling_chunk.py", "target": "class:core/scheduler_profiling_chunk.py:ProfilingChunkScheduler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/scheduler_profiling_chunk.py", "target": "class:core/scheduler_profiling_chunk.py:ProfilingChunkScheduler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:core/scheduler_profiling_chunk.py:ProfilingChunkScheduler", "target": "class:core/profiling_chunk_predictor.py:ProfilingChunkManager", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:core/single_type_kv_cache_manager.py", "target": "class:core/single_type_kv_cache_manager.py:CompressAttentionManager", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/single_type_kv_cache_manager.py", "target": "class:core/single_type_kv_cache_manager.py:CompressAttentionManager", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:core/single_type_kv_cache_manager.py", "target": "function:core/single_type_kv_cache_manager.py:get_manager_for_kv_cache_spec", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:core/single_type_kv_cache_manager.py", "target": "function:core/single_type_kv_cache_manager.py:get_manager_for_kv_cache_spec", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:core/single_type_kv_cache_manager.py:get_manager_for_kv_cache_spec", "target": "class:core/single_type_kv_cache_manager.py:CompressAttentionManager", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:device/device_op.py", "target": "class:device/device_op.py:BaseDeviceAdaptor", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:device/device_op.py", "target": "class:device/device_op.py:BaseDeviceAdaptor", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:device/device_op.py", "target": "class:device/device_op.py:A5DeviceAdaptor", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:device/device_op.py", "target": "class:device/device_op.py:A5DeviceAdaptor", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:device/device_op.py", "target": "function:device/device_op.py:get_device_adaptor", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:device/device_op.py", "target": "function:device/device_op.py:get_device_adaptor", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "class:device/device_op.py:A5DeviceAdaptor", "target": "class:device/device_op.py:BaseDeviceAdaptor", "type": "inherits", "direction": "forward", "weight": 0.9},
+    {"source": "function:device/device_op.py:get_device_adaptor", "target": "class:device/device_op.py:A5DeviceAdaptor", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "function:device/device_op.py:get_device_adaptor", "target": "class:device/device_op.py:BaseDeviceAdaptor", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:device/mxfp_compat.py", "target": "function:device/mxfp_compat.py:_ensure_symbols_available", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:device_allocator/camem.py", "target": "function:device_allocator/camem.py:find_loaded_library", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:device_allocator/camem.py", "target": "function:device_allocator/camem.py:find_loaded_library", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:device_allocator/camem.py", "target": "function:device_allocator/camem.py:use_memory_pool_with_allocator", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:device_allocator/camem.py", "target": "function:device_allocator/camem.py:use_memory_pool_with_allocator", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:device_allocator/camem.py", "target": "class:device_allocator/camem.py:CaMemAllocator", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:device_allocator/camem.py", "target": "class:device_allocator/camem.py:CaMemAllocator", "type": "exports", "direction": "forward", "weight": 0.8}
+  ]
+}

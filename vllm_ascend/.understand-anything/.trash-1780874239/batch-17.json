@@ -1,0 +1,875 @@
+{
+  "nodes": [
+    {
+      "id": "file:ops/triton/mamba/causal_conv1d.py",
+      "type": "file",
+      "name": "causal_conv1d.py",
+      "filePath": "ops/triton/mamba/causal_conv1d.py",
+      "summary": "为 Mamba 类模型提供因果 1D 卷积的 NPU 实现，包含参考实现、前向函数以及基于 Triton 的分块更新 kernel。",
+      "tags": ["triton-kernel", "mamba", "convolution", "npu", "utility"],
+      "complexity": "complex",
+      "languageNotes": "使用 Triton 在 NPU 上手写 tiled kernel，配合 PyTorch 参考实现做数值对齐。"
+    },
+    {
+      "id": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_ref",
+      "type": "function",
+      "name": "causal_conv1d_ref",
+      "filePath": "ops/triton/mamba/causal_conv1d.py",
+      "lineRange": [27, 65],
+      "summary": "因果 1D 卷积的纯 PyTorch 参考实现，用于与 Triton kernel 做数值校验。",
+      "tags": ["reference-impl", "convolution", "mamba"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_fn",
+      "type": "function",
+      "name": "causal_conv1d_fn",
+      "filePath": "ops/triton/mamba/causal_conv1d.py",
+      "lineRange": [68, 155],
+      "summary": "因果 1D 卷积的前向入口函数，处理权重、偏置与激活并调度底层计算。",
+      "tags": ["convolution", "mamba", "forward"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/mamba/causal_conv1d.py:_causal_conv1d_update_kernel_npu_tiled",
+      "type": "function",
+      "name": "_causal_conv1d_update_kernel_npu_tiled",
+      "filePath": "ops/triton/mamba/causal_conv1d.py",
+      "lineRange": [179, 531],
+      "summary": "针对 NPU 优化的分块 Triton kernel，实现卷积状态的增量更新。",
+      "tags": ["triton-kernel", "convolution", "npu", "tiling"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_update_npu",
+      "type": "function",
+      "name": "causal_conv1d_update_npu",
+      "filePath": "ops/triton/mamba/causal_conv1d.py",
+      "lineRange": [534, 724],
+      "summary": "因果卷积状态更新的 NPU 入口，准备张量布局并启动分块更新 kernel。",
+      "tags": ["convolution", "npu", "state-update"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/triton/mamba/lightning_attn.py",
+      "type": "file",
+      "name": "lightning_attn.py",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "summary": "在 NPU 上以 Triton 实现 Lightning Attention（线性注意力），包含对角/非对角块及 KV 并行归约的多个 kernel 与自定义 autograd Function。",
+      "tags": ["triton-kernel", "attention", "linear-attention", "npu"],
+      "complexity": "complex",
+      "languageNotes": "将注意力拆分为多个 Triton kernel（对角、KV 并行、KV reduce），并通过 torch.autograd.Function 封装前向。"
+    },
+    {
+      "id": "function:ops/triton/mamba/lightning_attn.py:_fwd_diag_kernel",
+      "type": "function",
+      "name": "_fwd_diag_kernel",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "lineRange": [32, 131],
+      "summary": "计算 Lightning Attention 块内（对角）注意力贡献的 Triton kernel。",
+      "tags": ["triton-kernel", "attention", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/mamba/lightning_attn.py:_fwd_kv_parallel",
+      "type": "function",
+      "name": "_fwd_kv_parallel",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "lineRange": [135, 237],
+      "summary": "并行计算各块 KV 状态的 Triton kernel，用于线性注意力的跨块累积。",
+      "tags": ["triton-kernel", "attention", "kv-state"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/mamba/lightning_attn.py:_fwd_kv_reduce",
+      "type": "function",
+      "name": "_fwd_kv_reduce",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "lineRange": [241, 301],
+      "summary": "对各块 KV 状态做前缀归约的 Triton kernel，生成累积状态供非对角项使用。",
+      "tags": ["triton-kernel", "attention", "reduction"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/mamba/lightning_attn.py:_fwd_none_diag_kernel",
+      "type": "function",
+      "name": "_fwd_none_diag_kernel",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "lineRange": [305, 372],
+      "summary": "计算块间（非对角）注意力贡献的 Triton kernel。",
+      "tags": ["triton-kernel", "attention", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/mamba/lightning_attn.py:lightning_attention_npu",
+      "type": "function",
+      "name": "lightning_attention_npu",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "lineRange": [538, 575],
+      "summary": "Lightning Attention 的 NPU 对外入口，组织各 Triton kernel 完成线性注意力前向。",
+      "tags": ["attention", "linear-attention", "npu", "entry-point"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:ops/triton/mamba/lightning_attn.py:_attention",
+      "type": "class",
+      "name": "_attention",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "lineRange": [375, 532],
+      "summary": "封装 Lightning Attention 前向计算的 torch.autograd.Function，调度多个 Triton kernel。",
+      "tags": ["autograd-function", "attention", "triton-kernel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ops/triton/mamba/lightning_attn.py:AscendLightningAttentionKernel",
+      "type": "class",
+      "name": "AscendLightningAttentionKernel",
+      "filePath": "ops/triton/mamba/lightning_attn.py",
+      "lineRange": [578, 615],
+      "summary": "Ascend 平台的 Lightning Attention kernel 包装类，对外暴露统一调用接口。",
+      "tags": ["attention", "npu", "wrapper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/mul_add.py",
+      "type": "file",
+      "name": "mul_add.py",
+      "filePath": "ops/triton/mul_add.py",
+      "summary": "提供基于 Triton 的标量乘加（muls_add）逐元素算子及其 NPU 调用封装。",
+      "tags": ["triton-kernel", "elementwise", "utility", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:ops/triton/mul_add.py:muls_add_triton",
+      "type": "function",
+      "name": "muls_add_triton",
+      "filePath": "ops/triton/mul_add.py",
+      "lineRange": [29, 57],
+      "summary": "标量乘加 Triton kernel 的对外封装，配置 grid 并启动 kernel。",
+      "tags": ["triton-kernel", "elementwise", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/muls_add.py",
+      "type": "file",
+      "name": "muls_add.py",
+      "filePath": "ops/triton/muls_add.py",
+      "summary": "标量乘加逐元素算子的 Triton 实现（与 mul_add.py 内容一致），提供 kernel 与 NPU 调用封装。",
+      "tags": ["triton-kernel", "elementwise", "utility", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:ops/triton/muls_add.py:muls_add_triton",
+      "type": "function",
+      "name": "muls_add_triton",
+      "filePath": "ops/triton/muls_add.py",
+      "lineRange": [29, 57],
+      "summary": "标量乘加 Triton kernel 的对外封装，配置 grid 并启动 kernel。",
+      "tags": ["triton-kernel", "elementwise", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/penalty.py",
+      "type": "file",
+      "name": "penalty.py",
+      "filePath": "ops/triton/penalty.py",
+      "summary": "以 Triton 实现采样时的重复/存在/频率惩罚逻辑，对 logits 批量施加惩罚因子。",
+      "tags": ["triton-kernel", "sampling", "penalty", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/penalty.py:apply_all_penalties_kernel",
+      "type": "function",
+      "name": "apply_all_penalties_kernel",
+      "filePath": "ops/triton/penalty.py",
+      "lineRange": [31, 93],
+      "summary": "对 logits 同时施加重复、存在和频率惩罚的 Triton kernel。",
+      "tags": ["triton-kernel", "sampling", "penalty"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/penalty.py:apply_penalties_triton",
+      "type": "function",
+      "name": "apply_penalties_triton",
+      "filePath": "ops/triton/penalty.py",
+      "lineRange": [96, 123],
+      "summary": "惩罚施加的对外封装，准备张量并启动惩罚 kernel。",
+      "tags": ["sampling", "penalty", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/penalty.py:_apply_all_penalties_triton",
+      "type": "function",
+      "name": "_apply_all_penalties_triton",
+      "filePath": "ops/triton/penalty.py",
+      "lineRange": [126, 158],
+      "summary": "内部辅助函数，组织 bin_counts 等输入并调用惩罚 kernel。",
+      "tags": ["sampling", "penalty", "internal"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/reject_sample.py",
+      "type": "file",
+      "name": "reject_sample.py",
+      "filePath": "ops/triton/reject_sample.py",
+      "summary": "投机解码的拒绝采样 Triton 实现，包含贪心/随机拒绝采样、bonus token 续接、恢复 token 采样及块校验等多个 kernel。",
+      "tags": ["triton-kernel", "speculative-decoding", "sampling", "npu"],
+      "complexity": "complex",
+      "languageNotes": "围绕投机解码的 rejection sampling 拆分为多个 Triton kernel，覆盖贪心与随机两种路径。"
+    },
+    {
+      "id": "function:ops/triton/reject_sample.py:rejection_greedy_sample_triton",
+      "type": "function",
+      "name": "rejection_greedy_sample_triton",
+      "filePath": "ops/triton/reject_sample.py",
+      "lineRange": [89, 139],
+      "summary": "贪心场景下投机解码的拒绝采样 Triton kernel。",
+      "tags": ["triton-kernel", "speculative-decoding", "greedy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/reject_sample.py:rejection_random_sample_kernel",
+      "type": "function",
+      "name": "rejection_random_sample_kernel",
+      "filePath": "ops/triton/reject_sample.py",
+      "lineRange": [143, 257],
+      "summary": "随机采样场景下投机解码的拒绝采样核心 Triton kernel。",
+      "tags": ["triton-kernel", "speculative-decoding", "sampling"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/reject_sample.py:sample_recovered_tokens_kernel",
+      "type": "function",
+      "name": "sample_recovered_tokens_kernel",
+      "filePath": "ops/triton/reject_sample.py",
+      "lineRange": [291, 415],
+      "summary": "在 token 被拒绝后从调整分布中采样恢复 token 的 Triton kernel。",
+      "tags": ["triton-kernel", "speculative-decoding", "sampling"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/reject_sample.py:rejection_greedy_sample_with_triton",
+      "type": "function",
+      "name": "rejection_greedy_sample_with_triton",
+      "filePath": "ops/triton/reject_sample.py",
+      "lineRange": [418, 452],
+      "summary": "贪心拒绝采样的对外封装，组织输入并启动相应 kernel。",
+      "tags": ["speculative-decoding", "greedy", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/reject_sample.py:rejection_random_sample_block_verify_kernel",
+      "type": "function",
+      "name": "rejection_random_sample_block_verify_kernel",
+      "filePath": "ops/triton/reject_sample.py",
+      "lineRange": [472, 652],
+      "summary": "按块校验的随机拒绝采样 Triton kernel，用于多 token 投机校验。",
+      "tags": ["triton-kernel", "speculative-decoding", "block-verify"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/triton/rms_norm.py",
+      "type": "file",
+      "name": "rms_norm.py",
+      "filePath": "ops/triton/rms_norm.py",
+      "summary": "提供基于 Triton 的量化 RMSNorm 算子及其 NPU 调用封装。",
+      "tags": ["triton-kernel", "layernorm", "quantization", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:ops/triton/rms_norm.py:triton_q_rms",
+      "type": "function",
+      "name": "triton_q_rms",
+      "filePath": "ops/triton/rms_norm.py",
+      "lineRange": [36, 66],
+      "summary": "量化 RMSNorm 的对外封装，准备张量并启动 RMSNorm Triton kernel。",
+      "tags": ["layernorm", "quantization", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/rope.py",
+      "type": "file",
+      "name": "rope.py",
+      "filePath": "ops/triton/rope.py",
+      "summary": "以 Triton 实现旋转位置编码（RoPE），含单输入/双输入两种前向 kernel 及其 NPU 封装。",
+      "tags": ["triton-kernel", "rope", "position-embedding", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/rope.py:_triton_rope",
+      "type": "function",
+      "name": "_triton_rope",
+      "filePath": "ops/triton/rope.py",
+      "lineRange": [24, 177],
+      "summary": "对 query/key 同时施加旋转位置编码的核心 Triton kernel。",
+      "tags": ["triton-kernel", "rope", "position-embedding"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/rope.py:_triton_rope_siso",
+      "type": "function",
+      "name": "_triton_rope_siso",
+      "filePath": "ops/triton/rope.py",
+      "lineRange": [181, 253],
+      "summary": "单输入单输出（SISO）形式的 RoPE Triton kernel。",
+      "tags": ["triton-kernel", "rope", "position-embedding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/rope.py:rope_forward_triton",
+      "type": "function",
+      "name": "rope_forward_triton",
+      "filePath": "ops/triton/rope.py",
+      "lineRange": [256, 346],
+      "summary": "RoPE 前向的对外封装，准备 cos/sin 并启动旋转位置编码 kernel。",
+      "tags": ["rope", "position-embedding", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/rope.py:rope_forward_triton_siso",
+      "type": "function",
+      "name": "rope_forward_triton_siso",
+      "filePath": "ops/triton/rope.py",
+      "lineRange": [349, 426],
+      "summary": "SISO 形式 RoPE 前向的对外封装。",
+      "tags": ["rope", "position-embedding", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/spec_decode/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "ops/triton/spec_decode/__init__.py",
+      "summary": "投机解码 Triton 算子子包的空包初始化文件。",
+      "tags": ["package-init", "speculative-decoding", "barrel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/spec_decode/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "ops/triton/spec_decode/utils.py",
+      "summary": "投机解码的输入预处理工具，提供以 Triton 实现的 padding 准备与 dflash 输入拷贝扩展 kernel。",
+      "tags": ["triton-kernel", "speculative-decoding", "utility", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/spec_decode/utils.py:prepare_inputs_padded_kernel",
+      "type": "function",
+      "name": "prepare_inputs_padded_kernel",
+      "filePath": "ops/triton/spec_decode/utils.py",
+      "lineRange": [22, 65],
+      "summary": "为投机解码准备 padding 后输入的 Triton kernel。",
+      "tags": ["triton-kernel", "speculative-decoding", "padding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/spec_decode/utils.py:copy_and_expand_dflash_inputs_kernel_single_grid",
+      "type": "function",
+      "name": "copy_and_expand_dflash_inputs_kernel_single_grid",
+      "filePath": "ops/triton/spec_decode/utils.py",
+      "lineRange": [69, 136],
+      "summary": "在单 grid 内拷贝并扩展 dflash 输入的 Triton kernel。",
+      "tags": ["triton-kernel", "speculative-decoding", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/triton_utils.py",
+      "type": "file",
+      "name": "triton_utils.py",
+      "filePath": "ops/triton/triton_utils.py",
+      "summary": "Triton-Ascend 通用辅助工具，提供算子解析、设备属性初始化及 AI Core/Vector Core 数量查询。",
+      "tags": ["utility", "triton", "device-properties", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/vocab_parallel_embedding.py",
+      "type": "file",
+      "name": "vocab_parallel_embedding.py",
+      "filePath": "ops/vocab_parallel_embedding.py",
+      "summary": "Ascend 平台的词表并行嵌入、并行 LM Head 与 logits 处理实现，适配 NPU 的张量并行布局。",
+      "tags": ["data-model", "embedding", "tensor-parallel", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ops/vocab_parallel_embedding.py:AscendVocabParallelEmbedding",
+      "type": "class",
+      "name": "AscendVocabParallelEmbedding",
+      "filePath": "ops/vocab_parallel_embedding.py",
+      "lineRange": [44, 206],
+      "summary": "Ascend NPU 上的词表并行嵌入层，按张量并行切分词表并处理跨 rank 通信。",
+      "tags": ["embedding", "tensor-parallel", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:ops/vocab_parallel_embedding.py:AscendParallelLMHead",
+      "type": "class",
+      "name": "AscendParallelLMHead",
+      "filePath": "ops/vocab_parallel_embedding.py",
+      "lineRange": [209, 239],
+      "summary": "继承词表并行嵌入的并行 LM Head，用于输出层投影。",
+      "tags": ["lm-head", "tensor-parallel", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:ops/vocab_parallel_embedding.py:AscendLogitsProcessor",
+      "type": "class",
+      "name": "AscendLogitsProcessor",
+      "filePath": "ops/vocab_parallel_embedding.py",
+      "lineRange": [242, 298],
+      "summary": "Ascend 平台的 logits 处理器，负责并行收集和处理输出 logits。",
+      "tags": ["logits", "tensor-parallel", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/weight_prefetch.py",
+      "type": "file",
+      "name": "weight_prefetch.py",
+      "filePath": "ops/weight_prefetch.py",
+      "summary": "权重预取机制实现，提供预取配置与方法类，在前向计算前将权重预取到 NPU 以降低访存延迟。",
+      "tags": ["performance", "prefetch", "npu", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:ops/weight_prefetch.py:ModuleWeightPrefetchConfig",
+      "type": "class",
+      "name": "ModuleWeightPrefetchConfig",
+      "filePath": "ops/weight_prefetch.py",
+      "lineRange": [19, 34],
+      "summary": "权重预取的配置数据类，描述按模块进行预取的参数。",
+      "tags": ["config", "prefetch", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:ops/weight_prefetch.py:WeightPrefetchMethod",
+      "type": "class",
+      "name": "WeightPrefetchMethod",
+      "filePath": "ops/weight_prefetch.py",
+      "lineRange": [37, 203],
+      "summary": "封装权重预取核心逻辑的方法类，管理预取触发与 NPU 预取调用。",
+      "tags": ["prefetch", "performance", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/weight_prefetch.py:maybe_npu_prefetch",
+      "type": "function",
+      "name": "maybe_npu_prefetch",
+      "filePath": "ops/weight_prefetch.py",
+      "lineRange": [206, 214],
+      "summary": "条件性触发 NPU 权重预取的辅助函数。",
+      "tags": ["prefetch", "npu", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "patch/__init__.py",
+      "summary": "vllm-ascend 补丁体系的总说明与包入口，集中记录 platform 与 worker 两类对 vLLM 的猴子补丁及其原因。",
+      "tags": ["package-init", "monkey-patch", "documentation", "entry-point"],
+      "complexity": "complex",
+      "languageNotes": "文件主体为补丁清单注释，约定每新增一个 patch 都要在此登记其作用与对应 PR。"
+    },
+    {
+      "id": "file:patch/platform/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "patch/platform/__init__.py",
+      "summary": "platform 补丁子包入口，在 worker 启动前导入并应用各平台级猴子补丁。",
+      "tags": ["package-init", "monkey-patch", "barrel", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/platform/patch_balance_schedule.py",
+      "type": "file",
+      "name": "patch_balance_schedule.py",
+      "filePath": "patch/platform/patch_balance_schedule.py",
+      "summary": "为 vLLM 引擎注入负载均衡调度补丁，提供 BalanceScheduler 与数据并行引擎核心进程的均衡调度实现。",
+      "tags": ["monkey-patch", "scheduler", "data-parallel", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:patch/platform/patch_balance_schedule.py:BalanceScheduler",
+      "type": "class",
+      "name": "BalanceScheduler",
+      "filePath": "patch/platform/patch_balance_schedule.py",
+      "lineRange": [36, 619],
+      "summary": "实现请求在数据并行 rank 间均衡分配的调度器，替换 vLLM 默认调度逻辑。",
+      "tags": ["scheduler", "data-parallel", "load-balancing"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:patch/platform/patch_balance_schedule.py:BalanceDPEngineCoreProc",
+      "type": "class",
+      "name": "BalanceDPEngineCoreProc",
+      "filePath": "patch/platform/patch_balance_schedule.py",
+      "lineRange": [622, 665],
+      "summary": "带均衡调度能力的数据并行引擎核心进程，整合 BalanceScheduler。",
+      "tags": ["data-parallel", "engine-core", "scheduler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_balance_schedule.py:run_engine_core",
+      "type": "function",
+      "name": "run_engine_core",
+      "filePath": "patch/platform/patch_balance_schedule.py",
+      "lineRange": [668, 721],
+      "summary": "均衡调度场景下引擎核心进程的运行入口。",
+      "tags": ["engine-core", "data-parallel", "entry-point"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_camem_allocator.py",
+      "type": "file",
+      "name": "patch_camem_allocator.py",
+      "filePath": "patch/platform/patch_camem_allocator.py",
+      "summary": "猴子补丁，修正 vLLM 中 cumem allocator 可用性的判断逻辑以适配 NPU。",
+      "tags": ["monkey-patch", "memory-allocator", "npu"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/platform/patch_deepseek_v4_thinking.py",
+      "type": "file",
+      "name": "patch_deepseek_v4_thinking.py",
+      "filePath": "patch/platform/patch_deepseek_v4_thinking.py",
+      "summary": "针对 DeepSeek V4 thinking 模式的补丁，定制对话参数构建与 tokenizer 加载逻辑。",
+      "tags": ["monkey-patch", "deepseek", "tokenizer", "chat"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_deepseek_v4_thinking.py:_patched_build_chat_params",
+      "type": "function",
+      "name": "_patched_build_chat_params",
+      "filePath": "patch/platform/patch_deepseek_v4_thinking.py",
+      "lineRange": [48, 70],
+      "summary": "补丁版对话参数构建函数，适配 DeepSeek V4 thinking 模式。",
+      "tags": ["deepseek", "chat", "monkey-patch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_deepseek_v4_thinking.py:_patched_get_deepseek_v4_tokenizer",
+      "type": "function",
+      "name": "_patched_get_deepseek_v4_tokenizer",
+      "filePath": "patch/platform/patch_deepseek_v4_thinking.py",
+      "lineRange": [76, 144],
+      "summary": "补丁版 DeepSeek V4 tokenizer 获取函数，处理 thinking 模式所需的特殊配置。",
+      "tags": ["deepseek", "tokenizer", "monkey-patch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "type": "file",
+      "name": "patch_deepseek_v4_tool_call_parser.py",
+      "filePath": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "summary": "为 DeepSeek V4 提供工具调用解析补丁，支持流式/非流式工具调用抽取、参数类型校验与逐步增量输出。",
+      "tags": ["monkey-patch", "tool-call", "deepseek", "streaming"],
+      "complexity": "complex",
+      "languageNotes": "围绕工具调用解析拆出大量小函数，分别处理 schema 类型推断、参数转换与流式 buffer 状态机。"
+    },
+    {
+      "id": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_extract_types_from_schema",
+      "type": "function",
+      "name": "_extract_types_from_schema",
+      "filePath": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "lineRange": [116, 151],
+      "summary": "从工具的 JSON schema 中提取各参数的类型信息。",
+      "tags": ["tool-call", "schema", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_coerce_to_schema_type",
+      "type": "function",
+      "name": "_coerce_to_schema_type",
+      "filePath": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "lineRange": [181, 224],
+      "summary": "将解析出的参数值按 schema 类型进行强制类型转换。",
+      "tags": ["tool-call", "type-coercion", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_patched_extract_tool_calls",
+      "type": "function",
+      "name": "_patched_extract_tool_calls",
+      "filePath": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "lineRange": [345, 380],
+      "summary": "补丁版非流式工具调用抽取入口，从模型输出中解析完整工具调用。",
+      "tags": ["tool-call", "deepseek", "monkey-patch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_process_streaming_buffer",
+      "type": "function",
+      "name": "_process_streaming_buffer",
+      "filePath": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "lineRange": [627, 742],
+      "summary": "流式工具调用解析的核心状态机，处理增量 buffer 并产出工具名/参数增量。",
+      "tags": ["tool-call", "streaming", "state-machine"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_patched_extract_tool_calls_streaming",
+      "type": "function",
+      "name": "_patched_extract_tool_calls_streaming",
+      "filePath": "patch/platform/patch_deepseek_v4_tool_call_parser.py",
+      "lineRange": [745, 769],
+      "summary": "补丁版流式工具调用抽取入口，驱动流式 buffer 处理逻辑。",
+      "tags": ["tool-call", "streaming", "deepseek", "monkey-patch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_distributed.py",
+      "type": "file",
+      "name": "patch_distributed.py",
+      "filePath": "patch/platform/patch_distributed.py",
+      "summary": "分布式通信补丁，为 310p 设备改写 all_reduce/broadcast 等通信操作以满足张量对齐要求。",
+      "tags": ["monkey-patch", "distributed", "communication", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_distributed.py:communication_adaptation_310p",
+      "type": "function",
+      "name": "communication_adaptation_310p",
+      "filePath": "patch/platform/patch_distributed.py",
+      "lineRange": [33, 85],
+      "summary": "为 310p 设备适配分布式通信操作，处理张量对齐与通信改写。",
+      "tags": ["distributed", "communication", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_glm_tool_call_streaming.py",
+      "type": "file",
+      "name": "patch_glm_tool_call_streaming.py",
+      "filePath": "patch/platform/patch_glm_tool_call_streaming.py",
+      "summary": "GLM 模型工具调用流式输出补丁，处理剩余参数增量与终止 chunk 的切分。",
+      "tags": ["monkey-patch", "tool-call", "glm", "streaming"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_glm_tool_call_streaming.py:_split_terminal_tool_arg_chunk",
+      "type": "function",
+      "name": "_split_terminal_tool_arg_chunk",
+      "filePath": "patch/platform/patch_glm_tool_call_streaming.py",
+      "lineRange": [69, 102],
+      "summary": "切分 GLM 工具调用流式输出中终止参数 chunk 的辅助函数。",
+      "tags": ["tool-call", "glm", "streaming"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_glm47_tool_call_parser.py",
+      "type": "file",
+      "name": "patch_glm47_tool_call_parser.py",
+      "filePath": "patch/platform/patch_glm47_tool_call_parser.py",
+      "summary": "GLM-4.7 工具调用解析补丁，定制工具调用区域的正则抽取逻辑。",
+      "tags": ["monkey-patch", "tool-call", "glm"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/platform/patch_kv_cache_coordinator.py",
+      "type": "file",
+      "name": "patch_kv_cache_coordinator.py",
+      "filePath": "patch/platform/patch_kv_cache_coordinator.py",
+      "summary": "KV cache 协调器补丁，提供 Ascend 混合 KV cache 协调器并替换默认协调器获取逻辑。",
+      "tags": ["monkey-patch", "kv-cache", "coordinator", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:patch/platform/patch_kv_cache_coordinator.py:AscendHybridKVCacheCoordinator",
+      "type": "class",
+      "name": "AscendHybridKVCacheCoordinator",
+      "filePath": "patch/platform/patch_kv_cache_coordinator.py",
+      "lineRange": [30, 264],
+      "summary": "Ascend 混合 KV cache 协调器，管理多种 KV cache group 的分配与协调。",
+      "tags": ["kv-cache", "coordinator", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_kv_cache_coordinator.py:get_kv_cache_coordinator",
+      "type": "function",
+      "name": "get_kv_cache_coordinator",
+      "filePath": "patch/platform/patch_kv_cache_coordinator.py",
+      "lineRange": [267, 324],
+      "summary": "补丁版 KV cache 协调器工厂函数，按配置返回 Ascend 协调器实例。",
+      "tags": ["kv-cache", "factory", "monkey-patch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_kv_cache_interface.py",
+      "type": "file",
+      "name": "patch_kv_cache_interface.py",
+      "filePath": "patch/platform/patch_kv_cache_interface.py",
+      "summary": "KV cache 接口补丁，定义 Ascend MLA 与滑动窗口 MLA 的 KV cache spec，支持 C8 量化缓存 dtype。",
+      "tags": ["monkey-patch", "kv-cache", "mla", "quantization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:patch/platform/patch_kv_cache_interface.py:AscendMLAAttentionSpec",
+      "type": "class",
+      "name": "AscendMLAAttentionSpec",
+      "filePath": "patch/platform/patch_kv_cache_interface.py",
+      "lineRange": [30, 195],
+      "summary": "Ascend MLA 注意力的 KV cache 规格定义，描述缓存布局与量化 dtype。",
+      "tags": ["kv-cache", "mla", "attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:patch/platform/patch_kv_cache_interface.py:AscendSlidingWindowMLASpec",
+      "type": "class",
+      "name": "AscendSlidingWindowMLASpec",
+      "filePath": "patch/platform/patch_kv_cache_interface.py",
+      "lineRange": [215, 261],
+      "summary": "滑动窗口场景下的 Ascend MLA KV cache 规格定义。",
+      "tags": ["kv-cache", "mla", "sliding-window"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_kv_cache_utils.py",
+      "type": "file",
+      "name": "patch_kv_cache_utils.py",
+      "filePath": "patch/platform/patch_kv_cache_utils.py",
+      "summary": "KV cache 工具补丁，提供 Ascend 的块大小解析、cache spec 分组统一及 DeepSeek V4 专用 KV cache 配置生成。",
+      "tags": ["monkey-patch", "kv-cache", "utility", "npu"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_kv_cache_utils.py:_ascend_resolve_kv_cache_block_sizes",
+      "type": "function",
+      "name": "_ascend_resolve_kv_cache_block_sizes",
+      "filePath": "patch/platform/patch_kv_cache_utils.py",
+      "lineRange": [23, 58],
+      "summary": "为 Ascend 解析 KV cache 块大小的补丁函数。",
+      "tags": ["kv-cache", "block-size", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_kv_cache_utils.py:group_and_unify_kv_cache_specs",
+      "type": "function",
+      "name": "group_and_unify_kv_cache_specs",
+      "filePath": "patch/platform/patch_kv_cache_utils.py",
+      "lineRange": [61, 92],
+      "summary": "对 KV cache spec 进行分组并统一的补丁函数。",
+      "tags": ["kv-cache", "grouping", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_kv_cache_utils.py:_get_kv_cache_groups_uniform_groups",
+      "type": "function",
+      "name": "_get_kv_cache_groups_uniform_groups",
+      "filePath": "patch/platform/patch_kv_cache_utils.py",
+      "lineRange": [95, 184],
+      "summary": "生成统一分组 KV cache group 的内部函数。",
+      "tags": ["kv-cache", "grouping", "internal"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_kv_cache_utils.py:_get_kv_cache_config_deepseek_v4",
+      "type": "function",
+      "name": "_get_kv_cache_config_deepseek_v4",
+      "filePath": "patch/platform/patch_kv_cache_utils.py",
+      "lineRange": [187, 247],
+      "summary": "为 DeepSeek V4 生成专用 KV cache 配置的内部函数。",
+      "tags": ["kv-cache", "deepseek", "config"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:ops/triton/mamba/causal_conv1d.py", "target": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_ref", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/causal_conv1d.py", "target": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_ref", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/mamba/causal_conv1d.py", "target": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_fn", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/causal_conv1d.py", "target": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_fn", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/mamba/causal_conv1d.py", "target": "function:ops/triton/mamba/causal_conv1d.py:_causal_conv1d_update_kernel_npu_tiled", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/causal_conv1d.py", "target": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_update_npu", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/causal_conv1d.py", "target": "function:ops/triton/mamba/causal_conv1d.py:causal_conv1d_update_npu", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "function:ops/triton/mamba/lightning_attn.py:_fwd_diag_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "function:ops/triton/mamba/lightning_attn.py:_fwd_kv_parallel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "function:ops/triton/mamba/lightning_attn.py:_fwd_kv_reduce", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "function:ops/triton/mamba/lightning_attn.py:_fwd_none_diag_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "function:ops/triton/mamba/lightning_attn.py:lightning_attention_npu", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "function:ops/triton/mamba/lightning_attn.py:lightning_attention_npu", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "class:ops/triton/mamba/lightning_attn.py:_attention", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "class:ops/triton/mamba/lightning_attn.py:AscendLightningAttentionKernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mamba/lightning_attn.py", "target": "class:ops/triton/mamba/lightning_attn.py:AscendLightningAttentionKernel", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/mul_add.py", "target": "function:ops/triton/mul_add.py:muls_add_triton", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/mul_add.py", "target": "function:ops/triton/mul_add.py:muls_add_triton", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/muls_add.py", "target": "function:ops/triton/muls_add.py:muls_add_triton", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/muls_add.py", "target": "function:ops/triton/muls_add.py:muls_add_triton", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/penalty.py", "target": "function:ops/triton/penalty.py:apply_all_penalties_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/penalty.py", "target": "function:ops/triton/penalty.py:apply_penalties_triton", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/penalty.py", "target": "function:ops/triton/penalty.py:apply_penalties_triton", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/penalty.py", "target": "function:ops/triton/penalty.py:_apply_all_penalties_triton", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:ops/triton/reject_sample.py", "target": "function:ops/triton/reject_sample.py:rejection_greedy_sample_triton", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/reject_sample.py", "target": "function:ops/triton/reject_sample.py:rejection_random_sample_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/reject_sample.py", "target": "function:ops/triton/reject_sample.py:sample_recovered_tokens_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/reject_sample.py", "target": "function:ops/triton/reject_sample.py:rejection_greedy_sample_with_triton", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/reject_sample.py", "target": "function:ops/triton/reject_sample.py:rejection_greedy_sample_with_triton", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/reject_sample.py", "target": "function:ops/triton/reject_sample.py:rejection_random_sample_block_verify_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:ops/triton/rms_norm.py", "target": "function:ops/triton/rms_norm.py:triton_q_rms", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/rms_norm.py", "target": "function:ops/triton/rms_norm.py:triton_q_rms", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/rope.py", "target": "function:ops/triton/rope.py:_triton_rope", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/rope.py", "target": "function:ops/triton/rope.py:_triton_rope_siso", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/rope.py", "target": "function:ops/triton/rope.py:rope_forward_triton", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/rope.py", "target": "function:ops/triton/rope.py:rope_forward_triton", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/rope.py", "target": "function:ops/triton/rope.py:rope_forward_triton_siso", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/rope.py", "target": "function:ops/triton/rope.py:rope_forward_triton_siso", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/spec_decode/utils.py", "target": "function:ops/triton/spec_decode/utils.py:prepare_inputs_padded_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/spec_decode/utils.py", "target": "function:ops/triton/spec_decode/utils.py:copy_and_expand_dflash_inputs_kernel_single_grid", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:ops/vocab_parallel_embedding.py", "target": "class:ops/vocab_parallel_embedding.py:AscendVocabParallelEmbedding", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/vocab_parallel_embedding.py", "target": "class:ops/vocab_parallel_embedding.py:AscendVocabParallelEmbedding", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/vocab_parallel_embedding.py", "target": "class:ops/vocab_parallel_embedding.py:AscendParallelLMHead", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/vocab_parallel_embedding.py", "target": "class:ops/vocab_parallel_embedding.py:AscendParallelLMHead", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/vocab_parallel_embedding.py", "target": "class:ops/vocab_parallel_embedding.py:AscendLogitsProcessor", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/vocab_parallel_embedding.py", "target": "class:ops/vocab_parallel_embedding.py:AscendLogitsProcessor", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/weight_prefetch.py", "target": "class:ops/weight_prefetch.py:ModuleWeightPrefetchConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/weight_prefetch.py", "target": "class:ops/weight_prefetch.py:ModuleWeightPrefetchConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/weight_prefetch.py", "target": "class:ops/weight_prefetch.py:WeightPrefetchMethod", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/weight_prefetch.py", "target": "class:ops/weight_prefetch.py:WeightPrefetchMethod", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/weight_prefetch.py", "target": "function:ops/weight_prefetch.py:maybe_npu_prefetch", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/weight_prefetch.py", "target": "function:ops/weight_prefetch.py:maybe_npu_prefetch", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:patch/platform/patch_balance_schedule.py", "target": "class:patch/platform/patch_balance_schedule.py:BalanceScheduler", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_balance_schedule.py", "target": "class:patch/platform/patch_balance_schedule.py:BalanceScheduler", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:patch/platform/patch_balance_schedule.py", "target": "class:patch/platform/patch_balance_schedule.py:BalanceDPEngineCoreProc", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_balance_schedule.py", "target": "class:patch/platform/patch_balance_schedule.py:BalanceDPEngineCoreProc", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:patch/platform/patch_balance_schedule.py", "target": "function:patch/platform/patch_balance_schedule.py:run_engine_core", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_balance_schedule.py", "target": "function:patch/platform/patch_balance_schedule.py:run_engine_core", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:patch/platform/patch_deepseek_v4_thinking.py", "target": "function:patch/platform/patch_deepseek_v4_thinking.py:_patched_build_chat_params", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_deepseek_v4_thinking.py", "target": "function:patch/platform/patch_deepseek_v4_thinking.py:_patched_get_deepseek_v4_tokenizer", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:patch/platform/patch_deepseek_v4_tool_call_parser.py", "target": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_extract_types_from_schema", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_deepseek_v4_tool_call_parser.py", "target": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_coerce_to_schema_type", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_deepseek_v4_tool_call_parser.py", "target": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_patched_extract_tool_calls", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_deepseek_v4_tool_call_parser.py", "target": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_process_streaming_buffer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_deepseek_v4_tool_call_parser.py", "target": "function:patch/platform/patch_deepseek_v4_tool_call_parser.py:_patched_extract_tool_calls_streaming", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:patch/platform/patch_distributed.py", "target": "function:patch/platform/patch_distributed.py:communication_adaptation_310p", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_distributed.py", "target": "function:patch/platform/patch_distributed.py:communication_adaptation_310p", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:patch/platform/patch_glm_tool_call_streaming.py", "target": "function:patch/platform/patch_glm_tool_call_streaming.py:_split_terminal_tool_arg_chunk", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:patch/platform/patch_kv_cache_coordinator.py", "target": "class:patch/platform/patch_kv_cache_coordinator.py:AscendHybridKVCacheCoordinator", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_kv_cache_coordinator.py", "target": "class:patch/platform/patch_kv_cache_coordinator.py:AscendHybridKVCacheCoordinator", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:patch/platform/patch_kv_cache_coordinator.py", "target": "function:patch/platform/patch_kv_cache_coordinator.py:get_kv_cache_coordinator", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_kv_cache_coordinator.py", "target": "function:patch/platform/patch_kv_cache_coordinator.py:get_kv_cache_coordinator", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:patch/platform/patch_kv_cache_interface.py", "target": "class:patch/platform/patch_kv_cache_interface.py:AscendMLAAttentionSpec", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_kv_cache_interface.py", "target": "class:patch/platform/patch_kv_cache_interface.py:AscendMLAAttentionSpec", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:patch/platform/patch_kv_cache_interface.py", "target": "class:patch/platform/patch_kv_cache_interface.py:AscendSlidingWindowMLASpec", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_kv_cache_interface.py", "target": "class:patch/platform/patch_kv_cache_interface.py:AscendSlidingWindowMLASpec", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:patch/platform/patch_kv_cache_utils.py", "target": "function:patch/platform/patch_kv_cache_utils.py:_ascend_resolve_kv_cache_block_sizes", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_kv_cache_utils.py", "target": "function:patch/platform/patch_kv_cache_utils.py:group_and_unify_kv_cache_specs", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_kv_cache_utils.py", "target": "function:patch/platform/patch_kv_cache_utils.py:group_and_unify_kv_cache_specs", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:patch/platform/patch_kv_cache_utils.py", "target": "function:patch/platform/patch_kv_cache_utils.py:_get_kv_cache_groups_uniform_groups", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:patch/platform/patch_kv_cache_utils.py", "target": "function:patch/platform/patch_kv_cache_utils.py:_get_kv_cache_config_deepseek_v4", "type": "contains", "direction": "forward", "weight": 1.0}
+  ]
+}

@@ -1,0 +1,263 @@
+{
+  "nodes": [
+    {
+      "id": "file:cpu_binding.py",
+      "type": "file",
+      "name": "cpu_binding.py",
+      "filePath": "cpu_binding.py",
+      "summary": "为 Ascend NPU 工作进程实现 CPU 亲和性绑定，依据 NPU 拓扑与 NUMA 节点信息将线程、内存和 NPU 中断（IRQ）分配到合适的 CPU 核心上，以优化推理性能。",
+      "tags": ["utility", "cpu-binding", "numa", "performance", "device-affinity"],
+      "complexity": "complex",
+      "languageNotes": "通过解析 npu-smi、lscpu、/proc 等系统命令输出构建 NPU 与 CPU/NUMA 的映射关系，使用 taskset、numactl 等工具完成绑核。"
+    },
+    {
+      "id": "class:cpu_binding.py:DeviceInfo",
+      "type": "class",
+      "name": "DeviceInfo",
+      "filePath": "cpu_binding.py",
+      "lineRange": [54, 153],
+      "summary": "采集并解析 NPU 设备拓扑信息，包括逻辑 NPU 编号、允许使用的 CPU 列表、正在运行的 NPU 以及 NPU 的 CPU 亲和性映射。",
+      "tags": ["data-model", "device-info", "npu-topology", "parsing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:cpu_binding.py:CpuAlloc",
+      "type": "class",
+      "name": "CpuAlloc",
+      "filePath": "cpu_binding.py",
+      "lineRange": [156, 529],
+      "summary": "核心绑核分配器，构建 CPU 资源池并按 NUMA 节点为每个 NPU 划分 CPU，随后执行线程绑定、内存绑定与 NPU IRQ 绑定的完整流程。",
+      "tags": ["service", "cpu-allocation", "numa", "irq-binding", "scheduling"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:cpu_binding.py:bind_cpus",
+      "type": "function",
+      "name": "bind_cpus",
+      "filePath": "cpu_binding.py",
+      "lineRange": [532, 537],
+      "summary": "对外暴露的入口函数，在 ARM CPU 上为指定 rank 创建 CpuAlloc 实例并执行完整的绑核流程。",
+      "tags": ["entry-point", "cpu-binding", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "type": "file",
+      "name": "pyhccl_wrapper.py",
+      "filePath": "distributed/device_communicators/pyhccl_wrapper.py",
+      "summary": "通过 ctypes 封装 HCCL（华为集合通信库）C 接口的 Python 绑定，提供 AllReduce、Broadcast、通信域初始化与销毁等分布式集合通信原语。",
+      "tags": ["service", "hccl", "collective-communication", "ctypes-binding", "distributed"],
+      "complexity": "moderate",
+      "languageNotes": "使用 ctypes.CDLL 动态加载 HCCL 共享库，并将 torch dtype 与归约算子映射到 HCCL 枚举值。"
+    },
+    {
+      "id": "class:distributed/device_communicators/pyhccl_wrapper.py:hcclDataTypeEnum",
+      "type": "class",
+      "name": "hcclDataTypeEnum",
+      "filePath": "distributed/device_communicators/pyhccl_wrapper.py",
+      "lineRange": [48, 81],
+      "summary": "定义 HCCL 数据类型枚举常量，并提供从 torch dtype 到 HCCL 数据类型的转换方法。",
+      "tags": ["type-definition", "hccl", "enum", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:distributed/device_communicators/pyhccl_wrapper.py:hcclRedOpTypeEnum",
+      "type": "class",
+      "name": "hcclRedOpTypeEnum",
+      "filePath": "distributed/device_communicators/pyhccl_wrapper.py",
+      "lineRange": [87, 103],
+      "summary": "定义 HCCL 归约算子枚举常量（sum/prod/max/min），并提供从 torch ReduceOp 到 HCCL 算子的转换方法。",
+      "tags": ["type-definition", "hccl", "enum", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:distributed/device_communicators/pyhccl_wrapper.py:HCCLLibrary",
+      "type": "class",
+      "name": "HCCLLibrary",
+      "filePath": "distributed/device_communicators/pyhccl_wrapper.py",
+      "lineRange": [113, 252],
+      "summary": "加载并封装 HCCL 动态库，暴露 hcclGetUniqueId、hcclCommInitRank、hcclAllReduce、hcclBroadcast、hcclCommDestroy 等集合通信 API，并统一进行错误检查。",
+      "tags": ["service", "hccl", "ctypes-binding", "collective-communication", "distributed"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:platform.py",
+      "type": "file",
+      "name": "platform.py",
+      "filePath": "platform.py",
+      "summary": "定义 vLLM 的 Ascend NPU 平台插件入口，注册 NPUPlatform 并负责设备能力查询、配置校验与修正、attention 后端选择、通信器与图模式等平台级集成逻辑。",
+      "tags": ["entry-point", "platform", "npu", "config-validation", "vllm-plugin"],
+      "complexity": "complex",
+      "languageNotes": "NPUPlatform 继承 vLLM 核心的 Platform 基类（PlatformEnum.OOT 树外插件），通过类方法 check_and_update_config 集中处理 NPU 特定的配置适配。"
+    },
+    {
+      "id": "function:platform.py:config_deprecated_logging",
+      "type": "function",
+      "name": "config_deprecated_logging",
+      "filePath": "platform.py",
+      "lineRange": [76, 103],
+      "summary": "配置废弃警告的日志捕获，将 Python warnings 重定向到统一的日志处理器以便集中输出。",
+      "tags": ["utility", "logging", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:platform.py:NPUPlatform",
+      "type": "class",
+      "name": "NPUPlatform",
+      "filePath": "platform.py",
+      "lineRange": [106, 1138],
+      "summary": "Ascend NPU 平台类，提供设备名称/能力/UUID 查询、推理模式、设备设置以及大量配置校验与修正方法，是 vLLM 在 NPU 上运行的核心平台抽象。",
+      "tags": ["platform", "npu", "config-validation", "vllm-plugin", "service"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:cpu_binding.py",
+      "target": "file:platform.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "target": "file:platform.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:cpu_binding.py",
+      "target": "class:cpu_binding.py:DeviceInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:cpu_binding.py",
+      "target": "class:cpu_binding.py:CpuAlloc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:cpu_binding.py",
+      "target": "function:cpu_binding.py:bind_cpus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:cpu_binding.py",
+      "target": "class:cpu_binding.py:DeviceInfo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:cpu_binding.py",
+      "target": "class:cpu_binding.py:CpuAlloc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:cpu_binding.py",
+      "target": "function:cpu_binding.py:bind_cpus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:cpu_binding.py:CpuAlloc",
+      "target": "class:cpu_binding.py:DeviceInfo",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:cpu_binding.py:bind_cpus",
+      "target": "class:cpu_binding.py:CpuAlloc",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "target": "class:distributed/device_communicators/pyhccl_wrapper.py:hcclDataTypeEnum",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "target": "class:distributed/device_communicators/pyhccl_wrapper.py:hcclRedOpTypeEnum",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "target": "class:distributed/device_communicators/pyhccl_wrapper.py:HCCLLibrary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "target": "class:distributed/device_communicators/pyhccl_wrapper.py:hcclDataTypeEnum",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "target": "class:distributed/device_communicators/pyhccl_wrapper.py:hcclRedOpTypeEnum",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:distributed/device_communicators/pyhccl_wrapper.py",
+      "target": "class:distributed/device_communicators/pyhccl_wrapper.py:HCCLLibrary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:platform.py",
+      "target": "function:platform.py:config_deprecated_logging",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:platform.py",
+      "target": "class:platform.py:NPUPlatform",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:platform.py",
+      "target": "function:platform.py:config_deprecated_logging",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:platform.py",
+      "target": "class:platform.py:NPUPlatform",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:platform.py:NPUPlatform",
+      "target": "function:platform.py:config_deprecated_logging",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

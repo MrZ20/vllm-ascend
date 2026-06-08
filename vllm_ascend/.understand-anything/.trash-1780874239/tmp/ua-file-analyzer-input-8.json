@@ -1,0 +1,13 @@
+{
+  "projectRoot": "d:/57108/Desktop/code/vllm-ascend/vllm_ascend",
+  "batchFiles": [
+    {"path": "cpu_binding.py", "language": "python", "sizeLines": 537, "fileCategory": "code"},
+    {"path": "distributed/device_communicators/pyhccl_wrapper.py", "language": "python", "sizeLines": 263, "fileCategory": "code"},
+    {"path": "platform.py", "language": "python", "sizeLines": 1138, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "cpu_binding.py": ["platform.py"],
+    "distributed/device_communicators/pyhccl_wrapper.py": ["platform.py"],
+    "platform.py": []
+  }
+}

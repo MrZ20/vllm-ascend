@@ -1,0 +1,1160 @@
+{
+  "nodes": [
+    {
+      "id": "file:patch/platform/patch_mamba_config_310.py",
+      "type": "file",
+      "name": "patch_mamba_config_310.py",
+      "filePath": "patch/platform/patch_mamba_config_310.py",
+      "summary": "针对 310P 设备的 Mamba 配置补丁，重写 verify_and_update_config 以按 NPU 对齐方式调整 mamba block 大小并校验配置。",
+      "tags": ["monkey-patch", "config", "mamba", "ascend-310p"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_mamba_config_310.py:verify_and_update_config",
+      "type": "function",
+      "name": "verify_and_update_config",
+      "filePath": "patch/platform/patch_mamba_config_310.py",
+      "lineRange": [16, 100],
+      "summary": "校验并按 310P NPU 约束更新 Mamba 模型配置（如 block 对齐、缓存维度），替换 vLLM 原始实现。",
+      "tags": ["config", "validation", "mamba", "ascend-310p"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_mamba_config.py",
+      "type": "file",
+      "name": "patch_mamba_config.py",
+      "filePath": "patch/platform/patch_mamba_config.py",
+      "summary": "通用 Mamba 配置补丁，重写 verify_and_update_config 以适配 Ascend NPU 上的 Mamba 模型缓存与块对齐配置。",
+      "tags": ["monkey-patch", "config", "mamba", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_mamba_config.py:verify_and_update_config",
+      "type": "function",
+      "name": "verify_and_update_config",
+      "filePath": "patch/platform/patch_mamba_config.py",
+      "lineRange": [13, 116],
+      "summary": "校验并更新 Mamba 模型配置以适配 NPU，调整状态缓存维度与块大小对齐策略。",
+      "tags": ["config", "validation", "mamba"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_mamba_manager.py",
+      "type": "file",
+      "name": "patch_mamba_manager.py",
+      "filePath": "patch/platform/patch_mamba_manager.py",
+      "summary": "提供 AscendMambaManager，覆盖 vLLM 的 Mamba 状态管理器以适配 NPU 的 KV/状态缓存分配。",
+      "tags": ["monkey-patch", "mamba", "cache-manager", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:patch/platform/patch_mamba_manager.py:AscendMambaManager",
+      "type": "class",
+      "name": "AscendMambaManager",
+      "filePath": "patch/platform/patch_mamba_manager.py",
+      "lineRange": [18, 49],
+      "summary": "Ascend 版 Mamba 状态管理器，覆盖原始 Manager 以适配 NPU 状态缓存的分配与布局。",
+      "tags": ["mamba", "cache-manager", "ascend", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/platform/patch_minimax_m2_config.py",
+      "type": "file",
+      "name": "patch_minimax_m2_config.py",
+      "filePath": "patch/platform/patch_minimax_m2_config.py",
+      "summary": "MiniMax-M2 模型配置补丁，修补量化校验、CUDA graph 校验，并将 MiniMax 注入投机解码白名单与 Eagle3 注册别名。",
+      "tags": ["monkey-patch", "config", "minimax", "speculative-decoding"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_config.py:_get_model_type",
+      "type": "function",
+      "name": "_get_model_type",
+      "filePath": "patch/platform/patch_minimax_m2_config.py",
+      "lineRange": [38, 58],
+      "summary": "从 HF 配置中解析并返回模型类型，用于判定是否为 MiniMax-M2 模型。",
+      "tags": ["config", "minimax", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_config.py:_patched_verify_quantization",
+      "type": "function",
+      "name": "_patched_verify_quantization",
+      "filePath": "patch/platform/patch_minimax_m2_config.py",
+      "lineRange": [74, 107],
+      "summary": "替换的量化校验逻辑，放宽 MiniMax-M2 在 NPU 上的量化兼容性检查。",
+      "tags": ["validation", "quantization", "minimax"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_config.py:_patched_verify_cuda_graph",
+      "type": "function",
+      "name": "_patched_verify_cuda_graph",
+      "filePath": "patch/platform/patch_minimax_m2_config.py",
+      "lineRange": [110, 129],
+      "summary": "替换的 CUDA graph 校验逻辑，适配 MiniMax-M2 在 NPU graph 模式下的兼容性。",
+      "tags": ["validation", "minimax", "ascend"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_config.py:_patch_speculative_minimax_whitelist",
+      "type": "function",
+      "name": "_patch_speculative_minimax_whitelist",
+      "filePath": "patch/platform/patch_minimax_m2_config.py",
+      "lineRange": [142, 253],
+      "summary": "将 MiniMax 模型类型注入投机解码白名单，使其可作为 draft/target 模型参与投机解码。",
+      "tags": ["speculative-decoding", "minimax", "config"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_config.py:_patch_eagle3_registry_alias",
+      "type": "function",
+      "name": "_patch_eagle3_registry_alias",
+      "filePath": "patch/platform/patch_minimax_m2_config.py",
+      "lineRange": [256, 278],
+      "summary": "为 MiniMax-M2 在 Eagle3 投机解码注册表中注册模型别名。",
+      "tags": ["speculative-decoding", "minimax", "registry"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "type": "file",
+      "name": "patch_minimax_m2_tool_call_parser.py",
+      "filePath": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "summary": "重写 MiniMax-M2 的工具调用解析器，支持流式与非流式下从模型输出中提取工具调用、参数强制类型转换与部分参数增量构建。",
+      "tags": ["monkey-patch", "tool-call", "minimax", "streaming"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_extract_types_from_schema_fallback",
+      "type": "function",
+      "name": "_extract_types_from_schema_fallback",
+      "filePath": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "lineRange": [63, 98],
+      "summary": "从工具 JSON schema 中回退式提取参数类型映射，用于参数值的类型推断。",
+      "tags": ["tool-call", "schema", "minimax"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_coerce_param_value_fallback",
+      "type": "function",
+      "name": "_coerce_param_value_fallback",
+      "filePath": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "lineRange": [107, 156],
+      "summary": "按推断的参数类型将工具调用参数字符串强制转换为对应的 Python 类型。",
+      "tags": ["tool-call", "type-coercion", "minimax"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_build_partial_arguments",
+      "type": "function",
+      "name": "_build_partial_arguments",
+      "filePath": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "lineRange": [269, 323],
+      "summary": "在流式解析过程中增量构建工具调用的部分参数 JSON 字符串。",
+      "tags": ["tool-call", "streaming", "minimax"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_get_invoke_states",
+      "type": "function",
+      "name": "_get_invoke_states",
+      "filePath": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "lineRange": [326, 386],
+      "summary": "解析模型输出中的工具调用片段，维护并返回各 invoke 的解析状态。",
+      "tags": ["tool-call", "streaming", "minimax", "parser"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_extract_delta_tool_call",
+      "type": "function",
+      "name": "_extract_delta_tool_call",
+      "filePath": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "lineRange": [409, 457],
+      "summary": "从流式增量文本中提取工具调用的 delta（名称/参数增量片段）。",
+      "tags": ["tool-call", "streaming", "minimax"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_patched_extract_tool_calls_streaming",
+      "type": "function",
+      "name": "_patched_extract_tool_calls_streaming",
+      "filePath": "patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "lineRange": [460, 507],
+      "summary": "替换 MiniMax-M2 解析器的流式工具调用提取入口，逐 token 输出工具调用增量。",
+      "tags": ["tool-call", "streaming", "minimax", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_minimax_usage_accounting.py",
+      "type": "file",
+      "name": "patch_minimax_usage_accounting.py",
+      "filePath": "patch/platform/patch_minimax_usage_accounting.py",
+      "summary": "为 MiniMax 模型补丁 usage 统计，包装聊天补全的流式/非流式生成器以注入 reasoning token 计数等用量明细。",
+      "tags": ["monkey-patch", "minimax", "usage-tracking", "streaming"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_usage_accounting.py:_inject_stream_usage_details",
+      "type": "function",
+      "name": "_inject_stream_usage_details",
+      "filePath": "patch/platform/patch_minimax_usage_accounting.py",
+      "lineRange": [248, 293],
+      "summary": "向流式响应 chunk 注入用量明细（含 reasoning token），补全 MiniMax 的 usage 字段。",
+      "tags": ["usage-tracking", "streaming", "minimax"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_usage_accounting.py:_wrapped_chat_completion_stream_generator",
+      "type": "function",
+      "name": "_wrapped_chat_completion_stream_generator",
+      "filePath": "patch/platform/patch_minimax_usage_accounting.py",
+      "lineRange": [305, 340],
+      "summary": "包装聊天补全流式生成器，在产出 chunk 时维护并注入 MiniMax 用量统计状态。",
+      "tags": ["usage-tracking", "streaming", "minimax", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_minimax_usage_accounting.py:_wrapped_chat_completion_full_generator",
+      "type": "function",
+      "name": "_wrapped_chat_completion_full_generator",
+      "filePath": "patch/platform/patch_minimax_usage_accounting.py",
+      "lineRange": [343, 382],
+      "summary": "包装非流式聊天补全生成器，在完整响应中补全 MiniMax 的用量统计信息。",
+      "tags": ["usage-tracking", "minimax", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_mla_prefill_backend.py",
+      "type": "file",
+      "name": "patch_mla_prefill_backend.py",
+      "filePath": "patch/platform/patch_mla_prefill_backend.py",
+      "summary": "在模块导入时打补丁切换 MLA（Multi-head Latent Attention）prefill 后端，使其使用 NPU 适配的实现。",
+      "tags": ["monkey-patch", "attention", "mla", "ascend"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/platform/patch_multiproc_executor.py",
+      "type": "file",
+      "name": "patch_multiproc_executor.py",
+      "filePath": "patch/platform/patch_multiproc_executor.py",
+      "summary": "提供 AscendMultiprocExecutor 与 AscendWorkerProc，覆盖 vLLM 多进程执行器以适配 NPU 的进程/设备初始化。",
+      "tags": ["monkey-patch", "executor", "multiprocessing", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/platform/patch_multiproc_executor.py:AscendMultiprocExecutor",
+      "type": "class",
+      "name": "AscendMultiprocExecutor",
+      "filePath": "patch/platform/patch_multiproc_executor.py",
+      "lineRange": [24, 158],
+      "summary": "Ascend 版多进程执行器，覆盖原始执行器以适配 NPU 设备的 worker 进程创建与生命周期管理。",
+      "tags": ["executor", "multiprocessing", "ascend"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:patch/platform/patch_multiproc_executor.py:AscendWorkerProc",
+      "type": "class",
+      "name": "AscendWorkerProc",
+      "filePath": "patch/platform/patch_multiproc_executor.py",
+      "lineRange": [161, 208],
+      "summary": "Ascend 版 worker 进程封装，处理 NPU 设备的进程初始化与执行循环。",
+      "tags": ["executor", "multiprocessing", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_profiling_chunk.py",
+      "type": "file",
+      "name": "patch_profiling_chunk.py",
+      "filePath": "patch/platform/patch_profiling_chunk.py",
+      "summary": "为分块执行注入 profiling 补丁，记录调度与输出更新阶段的执行耗时以便性能分析。",
+      "tags": ["monkey-patch", "profiling", "scheduler", "performance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_profiling_chunk.py:_record_execution_timing",
+      "type": "function",
+      "name": "_record_execution_timing",
+      "filePath": "patch/platform/patch_profiling_chunk.py",
+      "lineRange": [45, 127],
+      "summary": "记录单次分块执行的各阶段耗时，输出 profiling 计时数据。",
+      "tags": ["profiling", "performance", "timing"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/platform/patch_profiling_chunk.py:_apply_profiling_patches",
+      "type": "function",
+      "name": "_apply_profiling_patches",
+      "filePath": "patch/platform/patch_profiling_chunk.py",
+      "lineRange": [184, 207],
+      "summary": "应用 profiling 补丁，包装调度与输出更新函数以收集分块执行计时。",
+      "tags": ["profiling", "monkey-patch", "performance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_scheduler.py",
+      "type": "file",
+      "name": "patch_scheduler.py",
+      "filePath": "patch/platform/patch_scheduler.py",
+      "summary": "调度器补丁，提供 mamba block 对齐的 token 切分逻辑以适配 NPU 上的 Mamba 缓存约束。",
+      "tags": ["monkey-patch", "scheduler", "mamba", "ascend"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/platform/patch_scheduler.py:_mamba_block_aligned_split",
+      "type": "function",
+      "name": "_mamba_block_aligned_split",
+      "filePath": "patch/platform/patch_scheduler.py",
+      "lineRange": [5, 42],
+      "summary": "按 Mamba block 边界对齐切分待调度 token，避免跨 block 的状态缓存错位。",
+      "tags": ["scheduler", "mamba", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_speculative_config.py",
+      "type": "file",
+      "name": "patch_speculative_config.py",
+      "filePath": "patch/platform/patch_speculative_config.py",
+      "summary": "投机解码配置补丁，重写 hf_config_override 以为 NPU 上的 draft 模型配置应用 HF 配置覆盖。",
+      "tags": ["monkey-patch", "config", "speculative-decoding", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_speculative_config.py:hf_config_override",
+      "type": "function",
+      "name": "hf_config_override",
+      "filePath": "patch/platform/patch_speculative_config.py",
+      "lineRange": [15, 127],
+      "summary": "为投机解码 draft 模型生成 HF 配置覆盖，处理层数、词表与模型类型等参数映射。",
+      "tags": ["config", "speculative-decoding", "validation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:patch/platform/patch_tool_choice_none_content.py",
+      "type": "file",
+      "name": "patch_tool_choice_none_content.py",
+      "filePath": "patch/platform/patch_tool_choice_none_content.py",
+      "summary": "工具调用补丁，处理 tool_choice 为 none 时的内容解析，并修补命名工具选择与内容中工具调用的解析逻辑。",
+      "tags": ["monkey-patch", "tool-call", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/platform/patch_tool_choice_none_content.py:_omit_empty_tool_calls",
+      "type": "function",
+      "name": "_omit_empty_tool_calls",
+      "filePath": "patch/platform/patch_tool_choice_none_content.py",
+      "lineRange": [40, 56],
+      "summary": "过滤掉空的工具调用条目，避免在响应中返回无效的 tool_calls。",
+      "tags": ["tool-call", "validation", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/platform/patch_tool_choice_none_content.py:_patched_parse_tool_calls_from_content",
+      "type": "function",
+      "name": "_patched_parse_tool_calls_from_content",
+      "filePath": "patch/platform/patch_tool_choice_none_content.py",
+      "lineRange": [118, 136],
+      "summary": "替换的从内容中解析工具调用的逻辑，处理 tool_choice=none 场景下的内容回退。",
+      "tags": ["tool-call", "parser", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/platform/patch_torch_accelerator.py",
+      "type": "file",
+      "name": "patch_torch_accelerator.py",
+      "filePath": "patch/platform/patch_torch_accelerator.py",
+      "summary": "小型补丁，调整 torch accelerator 相关行为以适配 NPU 加速器后端。",
+      "tags": ["monkey-patch", "torch", "ascend", "accelerator"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "patch/worker/__init__.py",
+      "summary": "worker 补丁包入口，按 NPU 设备类型与 vLLM 版本条件性导入并应用一系列 worker 层 monkey-patch 模块。",
+      "tags": ["entry-point", "barrel", "monkey-patch", "worker"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/_hccl_pg_registry.py",
+      "type": "file",
+      "name": "_hccl_pg_registry.py",
+      "filePath": "patch/worker/_hccl_pg_registry.py",
+      "summary": "HCCL 进程组注册表，按 rank 集合与通信选项缓存并复用 HCCL process group，避免重复创建分布式通信组。",
+      "tags": ["distributed", "hccl", "registry", "process-group"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:patch/worker/_hccl_pg_registry.py:HcclPgRegistry",
+      "type": "class",
+      "name": "HcclPgRegistry",
+      "filePath": "patch/worker/_hccl_pg_registry.py",
+      "lineRange": [94, 158],
+      "summary": "HCCL 进程组注册表类，以 rank 集合与归一化选项为键缓存并复用已创建的 process group。",
+      "tags": ["distributed", "hccl", "registry", "cache"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/_hccl_pg_registry.py:make_hccl_pg_key",
+      "type": "function",
+      "name": "make_hccl_pg_key",
+      "filePath": "patch/worker/_hccl_pg_registry.py",
+      "lineRange": [65, 91],
+      "summary": "根据 rank 列表与通信选项构造可哈希的 HCCL 进程组缓存键。",
+      "tags": ["distributed", "hccl", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/_hccl_pg_registry.py:_has_unknown_non_default_fields",
+      "type": "function",
+      "name": "_has_unknown_non_default_fields",
+      "filePath": "patch/worker/_hccl_pg_registry.py",
+      "lineRange": [183, 216],
+      "summary": "检测进程组选项中是否存在未知的非默认字段，用于判定能否安全复用缓存的 process group。",
+      "tags": ["distributed", "hccl", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_cudagraph.py",
+      "type": "file",
+      "name": "patch_cudagraph.py",
+      "filePath": "patch/worker/patch_cudagraph.py",
+      "summary": "CUDA/NPU graph 补丁，重写 padded batch descriptor 创建逻辑以适配 NPU graph 捕获。",
+      "tags": ["monkey-patch", "cudagraph", "ascend"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/worker/patch_cudagraph.py:_create_padded_batch_descriptor",
+      "type": "function",
+      "name": "_create_padded_batch_descriptor",
+      "filePath": "patch/worker/patch_cudagraph.py",
+      "lineRange": [6, 35],
+      "summary": "创建用于 graph 捕获的 padded batch descriptor，按 NPU 约束对 batch 维度进行 padding。",
+      "tags": ["cudagraph", "ascend", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_deepseek_compressor.py",
+      "type": "file",
+      "name": "patch_deepseek_compressor.py",
+      "filePath": "patch/worker/patch_deepseek_compressor.py",
+      "summary": "提供 DeepSeek 压缩器状态缓存的 Ascend 实现（compressor / indexer / SWA 缓存），适配 NPU 上的稀疏注意力缓存。",
+      "tags": ["monkey-patch", "deepseek", "cache", "attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_deepseek_compressor.py:AscendCompressorStateCache",
+      "type": "class",
+      "name": "AscendCompressorStateCache",
+      "filePath": "patch/worker/patch_deepseek_compressor.py",
+      "lineRange": [29, 75],
+      "summary": "DeepSeek 压缩器状态缓存的 Ascend 实现，管理 NPU 上压缩注意力的状态张量。",
+      "tags": ["deepseek", "cache", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_deepseek_compressor.py:AscendDeepseekV4IndexerCache",
+      "type": "class",
+      "name": "AscendDeepseekV4IndexerCache",
+      "filePath": "patch/worker/patch_deepseek_compressor.py",
+      "lineRange": [78, 109],
+      "summary": "DeepSeek V4 indexer 缓存的 Ascend 实现，管理稀疏注意力索引在 NPU 上的缓存。",
+      "tags": ["deepseek", "cache", "ascend", "attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_deepseek_compressor.py:AscendDeepseekV4SWACache",
+      "type": "class",
+      "name": "AscendDeepseekV4SWACache",
+      "filePath": "patch/worker/patch_deepseek_compressor.py",
+      "lineRange": [112, 151],
+      "summary": "DeepSeek V4 滑动窗口注意力（SWA）缓存的 Ascend 实现。",
+      "tags": ["deepseek", "cache", "ascend", "attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_deepseek_mtp.py",
+      "type": "file",
+      "name": "patch_deepseek_mtp.py",
+      "filePath": "patch/worker/patch_deepseek_mtp.py",
+      "summary": "DeepSeek 多 token 预测（MTP）补丁，提供 Ascend 版 MTP 预测层与模型以适配 NPU 上的投机解码。",
+      "tags": ["monkey-patch", "deepseek", "mtp", "speculative-decoding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_deepseek_mtp.py:AscendDeepSeekMultiTokenPredictorLayer",
+      "type": "class",
+      "name": "AscendDeepSeekMultiTokenPredictorLayer",
+      "filePath": "patch/worker/patch_deepseek_mtp.py",
+      "lineRange": [37, 66],
+      "summary": "DeepSeek 多 token 预测层的 Ascend 实现，适配 NPU 上的 MTP 前向计算。",
+      "tags": ["deepseek", "mtp", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_distributed.py",
+      "type": "file",
+      "name": "patch_distributed.py",
+      "filePath": "patch/worker/patch_distributed.py",
+      "summary": "分布式通信补丁，提供 GroupCoordinatorPatch 与基于 HCCL 注册表的设备通信组创建/复用逻辑。",
+      "tags": ["monkey-patch", "distributed", "hccl", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_distributed.py:GroupCoordinatorPatch",
+      "type": "class",
+      "name": "GroupCoordinatorPatch",
+      "filePath": "patch/worker/patch_distributed.py",
+      "lineRange": [100, 229],
+      "summary": "GroupCoordinator 的补丁类，覆盖通信组协调逻辑以使用 HCCL 设备通信组与缓存复用。",
+      "tags": ["distributed", "hccl", "ascend", "coordinator"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/worker/patch_distributed.py:_acquire_hccl_group",
+      "type": "function",
+      "name": "_acquire_hccl_group",
+      "filePath": "patch/worker/patch_distributed.py",
+      "lineRange": [58, 76],
+      "summary": "从 HCCL 注册表获取或创建指定 rank 集合的通信组，复用已存在的 process group。",
+      "tags": ["distributed", "hccl", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_draft_quarot.py",
+      "type": "file",
+      "name": "patch_draft_quarot.py",
+      "filePath": "patch/worker/patch_draft_quarot.py",
+      "summary": "QuaRot 旋转量化 draft 模型补丁，提供旋转矩阵加载与权重加载逻辑以支持投机解码的量化 draft 模型。",
+      "tags": ["monkey-patch", "quantization", "quarot", "speculative-decoding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_draft_quarot.py:make_load_weights",
+      "type": "function",
+      "name": "make_load_weights",
+      "filePath": "patch/worker/patch_draft_quarot.py",
+      "lineRange": [91, 145],
+      "summary": "构造 QuaRot draft 模型的权重加载函数，加载并应用旋转矩阵到模型权重。",
+      "tags": ["quantization", "quarot", "weight-loading"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/worker/patch_draft_quarot.py:get_rotataion_matrix",
+      "type": "function",
+      "name": "get_rotataion_matrix",
+      "filePath": "patch/worker/patch_draft_quarot.py",
+      "lineRange": [56, 70],
+      "summary": "加载并返回 QuaRot 旋转矩阵，用于权重的正交旋转量化。",
+      "tags": ["quantization", "quarot", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_gdn_attn.py",
+      "type": "file",
+      "name": "patch_gdn_attn.py",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "summary": "GDN（Gated Delta Net）线性注意力元数据构建补丁，为分块 prefill、causal conv1d 与投机解码构建 NPU 上的注意力元数据与 pinned host 缓冲区。",
+      "tags": ["monkey-patch", "attention", "gdn", "metadata"],
+      "complexity": "complex",
+      "languageNotes": "大量使用 dataclass 描述固定布局的元数据/缓冲槽，并通过 pinned CPU 张量在 host 与 NPU 间复制 metadata。"
+    },
+    {
+      "id": "class:patch/worker/patch_gdn_attn.py:GDNChunkedPrefillMetadata",
+      "type": "class",
+      "name": "GDNChunkedPrefillMetadata",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "lineRange": [40, 47],
+      "summary": "描述 GDN 分块 prefill 注意力元数据布局的 dataclass。",
+      "tags": ["attention", "gdn", "metadata", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/worker/patch_gdn_attn.py:_fill_chunk_meta_device_tensors",
+      "type": "function",
+      "name": "_fill_chunk_meta_device_tensors",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "lineRange": [301, 337],
+      "summary": "将分块注意力元数据从 host 缓冲填充到 NPU 设备张量。",
+      "tags": ["attention", "gdn", "metadata", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_gdn_attn.py:_build_non_spec_causal_conv1d_host_meta",
+      "type": "function",
+      "name": "_build_non_spec_causal_conv1d_host_meta",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "lineRange": [589, 623],
+      "summary": "为非投机路径构建 causal conv1d 的 host 端元数据缓冲。",
+      "tags": ["attention", "gdn", "conv1d", "metadata"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_gdn_attn.py:_patched_build",
+      "type": "function",
+      "name": "_patched_build",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "lineRange": [709, 744],
+      "summary": "替换的 GDN 注意力元数据构建入口，根据请求类型分派到 prefill/decode/spec 构建逻辑。",
+      "tags": ["attention", "gdn", "metadata", "dispatch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_gdn_attn.py:_patched_build_prefill",
+      "type": "function",
+      "name": "_patched_build_prefill",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "lineRange": [747, 780],
+      "summary": "构建 prefill 阶段的 GDN 注意力元数据，含分块与 causal conv1d host 元数据。",
+      "tags": ["attention", "gdn", "prefill", "metadata"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_gdn_attn.py:_patched_build_spec",
+      "type": "function",
+      "name": "_patched_build_spec",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "lineRange": [806, 832],
+      "summary": "构建投机解码路径的 GDN 注意力元数据。",
+      "tags": ["attention", "gdn", "speculative-decoding", "metadata"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_gdn_attn.py:_patched_build_decode",
+      "type": "function",
+      "name": "_patched_build_decode",
+      "filePath": "patch/worker/patch_gdn_attn.py",
+      "lineRange": [835, 860],
+      "summary": "构建 decode 阶段的 GDN 注意力元数据。",
+      "tags": ["attention", "gdn", "decode", "metadata"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_gqa_c8.py",
+      "type": "file",
+      "name": "patch_gqa_c8.py",
+      "filePath": "patch/worker/patch_gqa_c8.py",
+      "summary": "GQA C8（int8 KV cache）补丁，替换 causal LM 的权重加载以支持 NPU 上的 C8 量化分组查询注意力。",
+      "tags": ["monkey-patch", "gqa", "quantization", "weight-loading"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:patch/worker/patch_gqa_c8.py:_patched_causal_lm_load_weights",
+      "type": "function",
+      "name": "_patched_causal_lm_load_weights",
+      "filePath": "patch/worker/patch_gqa_c8.py",
+      "lineRange": [32, 65],
+      "summary": "替换的 causal LM 权重加载逻辑，适配 GQA C8 量化的 KV cache 权重布局。",
+      "tags": ["gqa", "quantization", "weight-loading"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_idex_310.py",
+      "type": "file",
+      "name": "patch_idex_310.py",
+      "filePath": "patch/worker/patch_idex_310.py",
+      "summary": "针对 310P 设备的 index 相关补丁，应用 310P 专用的算子/索引处理替换。",
+      "tags": ["monkey-patch", "ascend-310p", "indexing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_kimi_k25.py",
+      "type": "file",
+      "name": "patch_kimi_k25.py",
+      "filePath": "patch/worker/patch_kimi_k25.py",
+      "summary": "Kimi K2.5 模型补丁，提供可学习 2D 插值位置编码的 Ascend 修正实现与 RoPE 形状计算。",
+      "tags": ["monkey-patch", "kimi", "position-embedding", "rope"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:patch/worker/patch_kimi_k25.py:AscendLearnable2DInterpPosEmbDivided_fixed",
+      "type": "class",
+      "name": "AscendLearnable2DInterpPosEmbDivided_fixed",
+      "filePath": "patch/worker/patch_kimi_k25.py",
+      "lineRange": [44, 68],
+      "summary": "Kimi K2.5 可学习 2D 插值位置编码的 Ascend 修正实现，适配 NPU 上的位置编码计算。",
+      "tags": ["kimi", "position-embedding", "ascend"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_mamba_utils.py",
+      "type": "file",
+      "name": "patch_mamba_utils.py",
+      "filePath": "patch/worker/patch_mamba_utils.py",
+      "summary": "Mamba 工具函数补丁，提供 NPU 上 Mamba 状态块复制与预处理的张量级实现。",
+      "tags": ["monkey-patch", "mamba", "utility", "ascend"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_mamba_utils.py:preprocess_mamba",
+      "type": "function",
+      "name": "preprocess_mamba",
+      "filePath": "patch/worker/patch_mamba_utils.py",
+      "lineRange": [122, 185],
+      "summary": "Mamba 状态预处理主流程，组织块复制元数据并执行 NPU 上的状态块拷贝。",
+      "tags": ["mamba", "preprocessing", "ascend"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:patch/worker/patch_mamba_utils.py:_collect_mamba_copy_meta_torch",
+      "type": "function",
+      "name": "_collect_mamba_copy_meta_torch",
+      "filePath": "patch/worker/patch_mamba_utils.py",
+      "lineRange": [54, 87],
+      "summary": "收集 Mamba 状态块复制所需的源/目标元数据，供后续块拷贝使用。",
+      "tags": ["mamba", "metadata", "utility"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:patch/platform/patch_mamba_config_310.py",
+      "target": "function:patch/platform/patch_mamba_config_310.py:verify_and_update_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_mamba_config_310.py",
+      "target": "function:patch/platform/patch_mamba_config_310.py:verify_and_update_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:patch/platform/patch_mamba_config.py",
+      "target": "function:patch/platform/patch_mamba_config.py:verify_and_update_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_mamba_config.py",
+      "target": "function:patch/platform/patch_mamba_config.py:verify_and_update_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:patch/platform/patch_mamba_manager.py",
+      "target": "class:patch/platform/patch_mamba_manager.py:AscendMambaManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_mamba_manager.py",
+      "target": "class:patch/platform/patch_mamba_manager.py:AscendMambaManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_config.py",
+      "target": "function:patch/platform/patch_minimax_m2_config.py:_get_model_type",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_config.py",
+      "target": "function:patch/platform/patch_minimax_m2_config.py:_patched_verify_quantization",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_config.py",
+      "target": "function:patch/platform/patch_minimax_m2_config.py:_patched_verify_cuda_graph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_config.py",
+      "target": "function:patch/platform/patch_minimax_m2_config.py:_patch_speculative_minimax_whitelist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_config.py",
+      "target": "function:patch/platform/patch_minimax_m2_config.py:_patch_eagle3_registry_alias",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "target": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_extract_types_from_schema_fallback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "target": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_coerce_param_value_fallback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "target": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_build_partial_arguments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "target": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_get_invoke_states",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "target": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_extract_delta_tool_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_m2_tool_call_parser.py",
+      "target": "function:patch/platform/patch_minimax_m2_tool_call_parser.py:_patched_extract_tool_calls_streaming",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_usage_accounting.py",
+      "target": "function:patch/platform/patch_minimax_usage_accounting.py:_inject_stream_usage_details",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_usage_accounting.py",
+      "target": "function:patch/platform/patch_minimax_usage_accounting.py:_wrapped_chat_completion_stream_generator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_minimax_usage_accounting.py",
+      "target": "function:patch/platform/patch_minimax_usage_accounting.py:_wrapped_chat_completion_full_generator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_multiproc_executor.py",
+      "target": "class:patch/platform/patch_multiproc_executor.py:AscendMultiprocExecutor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_multiproc_executor.py",
+      "target": "class:patch/platform/patch_multiproc_executor.py:AscendWorkerProc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_multiproc_executor.py",
+      "target": "class:patch/platform/patch_multiproc_executor.py:AscendMultiprocExecutor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:patch/platform/patch_profiling_chunk.py",
+      "target": "function:patch/platform/patch_profiling_chunk.py:_record_execution_timing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_profiling_chunk.py",
+      "target": "function:patch/platform/patch_profiling_chunk.py:_apply_profiling_patches",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_scheduler.py",
+      "target": "function:patch/platform/patch_scheduler.py:_mamba_block_aligned_split",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_speculative_config.py",
+      "target": "function:patch/platform/patch_speculative_config.py:hf_config_override",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_tool_choice_none_content.py",
+      "target": "function:patch/platform/patch_tool_choice_none_content.py:_omit_empty_tool_calls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/platform/patch_tool_choice_none_content.py",
+      "target": "function:patch/platform/patch_tool_choice_none_content.py:_patched_parse_tool_calls_from_content",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/_hccl_pg_registry.py",
+      "target": "class:patch/worker/_hccl_pg_registry.py:HcclPgRegistry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/_hccl_pg_registry.py",
+      "target": "function:patch/worker/_hccl_pg_registry.py:make_hccl_pg_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/_hccl_pg_registry.py",
+      "target": "function:patch/worker/_hccl_pg_registry.py:_has_unknown_non_default_fields",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/_hccl_pg_registry.py",
+      "target": "class:patch/worker/_hccl_pg_registry.py:HcclPgRegistry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:patch/worker/patch_cudagraph.py",
+      "target": "function:patch/worker/patch_cudagraph.py:_create_padded_batch_descriptor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_deepseek_compressor.py",
+      "target": "class:patch/worker/patch_deepseek_compressor.py:AscendCompressorStateCache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_deepseek_compressor.py",
+      "target": "class:patch/worker/patch_deepseek_compressor.py:AscendDeepseekV4IndexerCache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_deepseek_compressor.py",
+      "target": "class:patch/worker/patch_deepseek_compressor.py:AscendDeepseekV4SWACache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_deepseek_mtp.py",
+      "target": "class:patch/worker/patch_deepseek_mtp.py:AscendDeepSeekMultiTokenPredictorLayer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_distributed.py",
+      "target": "class:patch/worker/patch_distributed.py:GroupCoordinatorPatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_distributed.py",
+      "target": "function:patch/worker/patch_distributed.py:_acquire_hccl_group",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_distributed.py",
+      "target": "file:patch/worker/_hccl_pg_registry.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:patch/worker/patch_draft_quarot.py",
+      "target": "function:patch/worker/patch_draft_quarot.py:make_load_weights",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_draft_quarot.py",
+      "target": "function:patch/worker/patch_draft_quarot.py:get_rotataion_matrix",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gdn_attn.py",
+      "target": "class:patch/worker/patch_gdn_attn.py:GDNChunkedPrefillMetadata",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gdn_attn.py",
+      "target": "function:patch/worker/patch_gdn_attn.py:_fill_chunk_meta_device_tensors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gdn_attn.py",
+      "target": "function:patch/worker/patch_gdn_attn.py:_build_non_spec_causal_conv1d_host_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gdn_attn.py",
+      "target": "function:patch/worker/patch_gdn_attn.py:_patched_build",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gdn_attn.py",
+      "target": "function:patch/worker/patch_gdn_attn.py:_patched_build_prefill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gdn_attn.py",
+      "target": "function:patch/worker/patch_gdn_attn.py:_patched_build_spec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gdn_attn.py",
+      "target": "function:patch/worker/patch_gdn_attn.py:_patched_build_decode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_gqa_c8.py",
+      "target": "function:patch/worker/patch_gqa_c8.py:_patched_causal_lm_load_weights",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_kimi_k25.py",
+      "target": "class:patch/worker/patch_kimi_k25.py:AscendLearnable2DInterpPosEmbDivided_fixed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_mamba_utils.py",
+      "target": "function:patch/worker/patch_mamba_utils.py:preprocess_mamba",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/patch_mamba_utils.py",
+      "target": "function:patch/worker/patch_mamba_utils.py:_collect_mamba_copy_meta_torch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_distributed.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_mamba_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_deepseek_compressor.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_gdn_attn.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_idex_310.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_kimi_k25.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_draft_quarot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_cudagraph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_deepseek_mtp.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:patch/worker/__init__.py",
+      "target": "file:patch/worker/patch_gqa_c8.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

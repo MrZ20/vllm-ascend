@@ -1,0 +1,455 @@
+{
+  "nodes": [
+    {
+      "id": "file:ops/triton/fla/chunk.py",
+      "type": "file",
+      "name": "chunk.py",
+      "filePath": "ops/triton/fla/chunk.py",
+      "summary": "门控 delta rule（gated delta rule）线性注意力的分块（chunked）前向编排入口，串联 cumsum、KKT、求逆、w/u 重算、状态扫描与输出计算等多个 Triton/AscendC kernel，并通过 torch.autograd.Function 暴露 chunk_gated_delta_rule 接口。",
+      "tags": ["linear-attention", "triton-kernel", "entry-point", "gated-delta-rule", "npu"],
+      "complexity": "complex",
+      "languageNotes": "通过 ChunkGatedDeltaRuleFunction(torch.autograd.Function) 封装前向，并支持 PCP（prefill context parallel）下的 all_gather 状态合并。"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd",
+      "type": "function",
+      "name": "chunk_gated_delta_rule_fwd",
+      "filePath": "ops/triton/fla/chunk.py",
+      "lineRange": [30, 185],
+      "summary": "门控 delta rule 分块前向的核心实现，依次调用局部 cumsum、scaled-dot KKT、下三角求逆、w/u 重算、状态扫描（chunk_gated_delta_rule_fwd_h）以及输出计算（chunk_fwd_o），并在 context parallel 场景下合并跨 rank 的最终状态。",
+      "tags": ["linear-attention", "forward-pass", "gated-delta-rule", "context-parallel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule",
+      "type": "function",
+      "name": "chunk_gated_delta_rule",
+      "filePath": "ops/triton/fla/chunk.py",
+      "lineRange": [226, 353],
+      "summary": "对外公开的门控 delta rule 算子入口，负责参数校验、head_first 重排与弃用告警，并通过 ChunkGatedDeltaRuleFunction.apply 触发分块前向计算。",
+      "tags": ["linear-attention", "public-api", "gated-delta-rule", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:ops/triton/fla/chunk.py:ChunkGatedDeltaRuleFunction",
+      "type": "class",
+      "name": "ChunkGatedDeltaRuleFunction",
+      "filePath": "ops/triton/fla/chunk.py",
+      "lineRange": [188, 222],
+      "summary": "torch.autograd.Function 封装，在 forward 中按需做 q/k 的 L2 归一化并调用 chunk_gated_delta_rule_fwd 完成分块前向。",
+      "tags": ["autograd-function", "linear-attention", "forward-pass"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:ops/triton/fla/chunk_delta_h.py",
+      "type": "file",
+      "name": "chunk_delta_h.py",
+      "filePath": "ops/triton/fla/chunk_delta_h.py",
+      "summary": "门控 delta rule 的逐块隐藏状态扫描 kernel（blockdim64），按 chunk 递推更新状态矩阵 h 并可选输出新值 v_new 与最终状态 ht。",
+      "tags": ["triton-kernel", "linear-attention", "state-update", "gated-delta-rule"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_delta_h.py:chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+      "type": "function",
+      "name": "chunk_gated_delta_rule_fwd_kernel_h_blockdim64",
+      "filePath": "ops/triton/fla/chunk_delta_h.py",
+      "lineRange": [30, 176],
+      "summary": "Triton kernel：以 blockdim=64 在 K/V 维度上分块递推门控 delta rule 的状态矩阵 h，支持初始状态、最终状态保存与变长（varlen）序列。",
+      "tags": ["triton-kernel", "state-scan", "linear-attention", "blockdim64"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_delta_h.py:chunk_gated_delta_rule_fwd_h",
+      "type": "function",
+      "name": "chunk_gated_delta_rule_fwd_h",
+      "filePath": "ops/triton/fla/chunk_delta_h.py",
+      "lineRange": [179, 244],
+      "summary": "状态扫描 kernel 的 Python 包装层，负责准备 chunk indices/offsets、分配输出张量并按 grid 启动 chunk_gated_delta_rule_fwd_kernel_h_blockdim64。",
+      "tags": ["kernel-launcher", "linear-attention", "state-scan"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/chunk_delta_hupdate.py",
+      "type": "file",
+      "name": "chunk_delta_hupdate.py",
+      "filePath": "ops/triton/fla/chunk_delta_hupdate.py",
+      "summary": "门控 delta rule 在 context parallel 场景下的隐藏状态增量更新 kernel，计算各 chunk 的局部状态修正量 h_update 以供跨 rank 合并。",
+      "tags": ["triton-kernel", "linear-attention", "state-update", "context-parallel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_delta_hupdate.py:chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+      "type": "function",
+      "name": "chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64",
+      "filePath": "ops/triton/fla/chunk_delta_hupdate.py",
+      "lineRange": [27, 156],
+      "summary": "Triton kernel：以 blockdim=64 计算门控 delta rule 状态扫描所需的逐块 h_update 修正矩阵，供 context parallel 下的状态对齐使用。",
+      "tags": ["triton-kernel", "state-update", "linear-attention", "blockdim64"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_delta_hupdate.py:chunk_gated_delta_rule_fwd_hupdate",
+      "type": "function",
+      "name": "chunk_gated_delta_rule_fwd_hupdate",
+      "filePath": "ops/triton/fla/chunk_delta_hupdate.py",
+      "lineRange": [159, 219],
+      "summary": "h_update kernel 的 Python 包装层，准备 chunk indices/offsets 与 update offsets 并启动 hupdate kernel 生成跨 chunk 的状态修正量。",
+      "tags": ["kernel-launcher", "state-update", "linear-attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/chunk_o.py",
+      "type": "file",
+      "name": "chunk_o.py",
+      "filePath": "ops/triton/fla/chunk_o.py",
+      "summary": "门控 delta rule 分块前向的输出计算 kernel，结合 query、隐藏状态 h 与块内注意力矩阵 A 计算最终注意力输出 o。",
+      "tags": ["triton-kernel", "linear-attention", "output-projection", "gated-delta-rule"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_o.py:chunk_fwd_kernel_o",
+      "type": "function",
+      "name": "chunk_fwd_kernel_o",
+      "filePath": "ops/triton/fla/chunk_o.py",
+      "lineRange": [26, 109],
+      "summary": "Triton kernel：分块计算注意力输出 o = (q·h) 加上块内因果掩码下的 (q·kᵀ)·v 贡献，支持门控衰减与变长序列。",
+      "tags": ["triton-kernel", "output-compute", "linear-attention", "causal-mask"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_o.py:chunk_fwd_o",
+      "type": "function",
+      "name": "chunk_fwd_o",
+      "filePath": "ops/triton/fla/chunk_o.py",
+      "lineRange": [112, 163],
+      "summary": "输出计算 kernel 的 Python 包装层，分配输出张量、准备 chunk offsets 并按 grid 启动 chunk_fwd_kernel_o。",
+      "tags": ["kernel-launcher", "output-compute", "linear-attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/chunk_o_update.py",
+      "type": "file",
+      "name": "chunk_o_update.py",
+      "filePath": "ops/triton/fla/chunk_o_update.py",
+      "summary": "context parallel 场景下基于 h_update 修正隐藏状态后重新累加输出贡献的 kernel，输出更新后的状态 updated_h_state。",
+      "tags": ["triton-kernel", "linear-attention", "state-update", "context-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_o_update.py:chunk_fwd_kernel_o_update",
+      "type": "function",
+      "name": "chunk_fwd_kernel_o_update",
+      "filePath": "ops/triton/fla/chunk_o_update.py",
+      "lineRange": [25, 77],
+      "summary": "Triton kernel：将逐块 h_update 修正量累加到隐藏状态 h 上，生成 context parallel 对齐后的 updated_h_state。",
+      "tags": ["triton-kernel", "state-update", "linear-attention", "context-parallel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_o_update.py:chunk_fwd_o_update",
+      "type": "function",
+      "name": "chunk_fwd_o_update",
+      "filePath": "ops/triton/fla/chunk_o_update.py",
+      "lineRange": [80, 121],
+      "summary": "状态修正 kernel 的 Python 包装层，准备 chunk offsets 并启动 chunk_fwd_kernel_o_update 生成更新后的隐藏状态。",
+      "tags": ["kernel-launcher", "state-update", "linear-attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/chunk_scaled_dot_kkt.py",
+      "type": "file",
+      "name": "chunk_scaled_dot_kkt.py",
+      "filePath": "ops/triton/fla/chunk_scaled_dot_kkt.py",
+      "summary": "门控 delta rule 前向中计算块内 beta 加权的下三角 K·Kᵀ 矩阵 A 的 kernel，为后续下三角求逆与 w/u 重算提供输入。",
+      "tags": ["triton-kernel", "linear-attention", "matmul", "gated-delta-rule"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_scaled_dot_kkt.py:chunk_scaled_dot_kkt_fwd_kernel",
+      "type": "function",
+      "name": "chunk_scaled_dot_kkt_fwd_kernel",
+      "filePath": "ops/triton/fla/chunk_scaled_dot_kkt.py",
+      "lineRange": [25, 80],
+      "summary": "Triton kernel：计算块内 beta 加权的严格下三角矩阵 A = tril(beta·(k·kᵀ)·gate)，含门控衰减项与因果掩码。",
+      "tags": ["triton-kernel", "matmul", "linear-attention", "lower-triangular"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/chunk_scaled_dot_kkt.py:chunk_scaled_dot_kkt_fwd",
+      "type": "function",
+      "name": "chunk_scaled_dot_kkt_fwd",
+      "filePath": "ops/triton/fla/chunk_scaled_dot_kkt.py",
+      "lineRange": [83, 142],
+      "summary": "KKT kernel 的 Python 包装层，准备 chunk indices、分配输出并通过 DeviceOperator 启动 AscendC/Triton 实现计算下三角矩阵 A。",
+      "tags": ["kernel-launcher", "matmul", "linear-attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/cumsum.py",
+      "type": "file",
+      "name": "cumsum.py",
+      "filePath": "ops/triton/fla/cumsum.py",
+      "summary": "门控 delta rule 所需的块内局部累积和（cumsum）工具，对门控对数衰减 g 做按 chunk 的标量 cumsum，支持反向累加与缩放。",
+      "tags": ["triton-kernel", "linear-attention", "cumsum", "gated-delta-rule"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum_scalar_kernel",
+      "type": "function",
+      "name": "chunk_local_cumsum_scalar_kernel",
+      "filePath": "ops/triton/fla/cumsum.py",
+      "lineRange": [22, 74],
+      "summary": "Triton kernel：在每个 chunk 内对标量门控序列做（可反向、可缩放的）局部累积和。",
+      "tags": ["triton-kernel", "cumsum", "linear-attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum_scalar",
+      "type": "function",
+      "name": "chunk_local_cumsum_scalar",
+      "filePath": "ops/triton/fla/cumsum.py",
+      "lineRange": [77, 113],
+      "summary": "标量局部 cumsum kernel 的 Python 包装层，准备 chunk indices 与 block size 并启动 chunk_local_cumsum_scalar_kernel。",
+      "tags": ["kernel-launcher", "cumsum", "linear-attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum",
+      "type": "function",
+      "name": "chunk_local_cumsum",
+      "filePath": "ops/triton/fla/cumsum.py",
+      "lineRange": [116, 144],
+      "summary": "对外的局部 cumsum 分发入口，依据输入维度选择标量实现并校验参数后调用 chunk_local_cumsum_scalar。",
+      "tags": ["dispatcher", "cumsum", "linear-attention"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/l2norm.py",
+      "type": "file",
+      "name": "l2norm.py",
+      "filePath": "ops/triton/fla/l2norm.py",
+      "summary": "针对 NPU 优化的 L2 归一化前向 kernel，对 q/k 在最后一维做循环分块的 L2 norm，供门控 delta rule 前向中 use_qk_l2norm_in_kernel 路径使用。",
+      "tags": ["triton-kernel", "normalization", "l2norm", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/l2norm.py:l2norm_fwd_kernel2_loop",
+      "type": "function",
+      "name": "l2norm_fwd_kernel2_loop",
+      "filePath": "ops/triton/fla/l2norm.py",
+      "lineRange": [18, 31],
+      "summary": "Triton kernel：以循环分块方式累积每行平方和并用 rsqrt 完成 L2 归一化。",
+      "tags": ["triton-kernel", "l2norm", "normalization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:ops/triton/fla/l2norm.py:l2norm_fwd",
+      "type": "function",
+      "name": "l2norm_fwd",
+      "filePath": "ops/triton/fla/l2norm.py",
+      "lineRange": [34, 66],
+      "summary": "L2 归一化 kernel 的 Python 包装层，依据向量核数与元素大小推导分块参数并启动 l2norm_fwd_kernel2_loop。",
+      "tags": ["kernel-launcher", "l2norm", "normalization", "npu"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/solve_tril.py",
+      "type": "file",
+      "name": "solve_tril.py",
+      "filePath": "ops/triton/fla/solve_tril.py",
+      "summary": "门控 delta rule 前向中下三角矩阵 (I+A) 求逆的 kernel 集合，采用分块策略：先求 16x16 子块逆，再分层合并到 32x32、64x64 得到完整逆矩阵。",
+      "tags": ["triton-kernel", "linear-attention", "matrix-inverse", "lower-triangular"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/solve_tril.py:solve_tril_16x16_kernel",
+      "type": "function",
+      "name": "solve_tril_16x16_kernel",
+      "filePath": "ops/triton/fla/solve_tril.py",
+      "lineRange": [22, 134],
+      "summary": "Triton kernel：以前向替换法（forward substitution）逐列求解 16x16 下三角块的逆矩阵 Ad。",
+      "tags": ["triton-kernel", "matrix-inverse", "forward-substitution"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/solve_tril.py:merge_16x16_to_32x32_inverse_kernel",
+      "type": "function",
+      "name": "merge_16x16_to_32x32_inverse_kernel",
+      "filePath": "ops/triton/fla/solve_tril.py",
+      "lineRange": [139, 198],
+      "summary": "Triton kernel：基于分块矩阵求逆公式将两个 16x16 子块逆合并为 32x32 下三角逆。",
+      "tags": ["triton-kernel", "matrix-inverse", "block-merge"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/solve_tril.py:merge_16x16_to_64x64_inverse_kernel",
+      "type": "function",
+      "name": "merge_16x16_to_64x64_inverse_kernel",
+      "filePath": "ops/triton/fla/solve_tril.py",
+      "lineRange": [203, 328],
+      "summary": "Triton kernel：将 16x16 子块逆分层合并为 64x64 下三角逆矩阵，是 BT=64 分块的核心求逆步骤。",
+      "tags": ["triton-kernel", "matrix-inverse", "block-merge"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/solve_tril.py:solve_tril",
+      "type": "function",
+      "name": "solve_tril",
+      "filePath": "ops/triton/fla/solve_tril.py",
+      "lineRange": [331, 404],
+      "summary": "下三角求逆的 Python 编排入口，先调用 16x16 求逆 kernel，再按块大小选择 32x32 或 64x64 合并 kernel 输出完整逆矩阵。",
+      "tags": ["kernel-launcher", "matrix-inverse", "linear-attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:ops/triton/fla/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "ops/triton/fla/utils.py",
+      "summary": "FLA 分块 kernel 的共享工具模块，提供 chunk indices/offsets 准备、input_guard 连续性装饰器、safe_exp 以及 SSM 状态清零等被多个 kernel 复用的辅助函数。",
+      "tags": ["utility", "linear-attention", "helpers", "triton-kernel"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/utils.py:input_guard",
+      "type": "function",
+      "name": "input_guard",
+      "filePath": "ops/triton/fla/utils.py",
+      "lineRange": [40, 69],
+      "summary": "装饰器：在调用 kernel 包装函数前强制张量参数连续化，并在对应 NPU 设备上下文中执行，保证 Triton kernel 输入合法。",
+      "tags": ["decorator", "utility", "input-validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/utils.py:clear_ssm_states",
+      "type": "function",
+      "name": "clear_ssm_states",
+      "filePath": "ops/triton/fla/utils.py",
+      "lineRange": [98, 132],
+      "summary": "依据 has_initial_state 掩码批量清零没有初始状态的 SSM 状态张量，内部启动 _clear_ssm_states_kernel。",
+      "tags": ["utility", "state-management", "kernel-launcher"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:ops/triton/fla/wy_fast.py",
+      "type": "file",
+      "name": "wy_fast.py",
+      "filePath": "ops/triton/fla/wy_fast.py",
+      "summary": "门控 delta rule 前向中基于下三角逆矩阵 A 重算 WY 表示中的 w 与 u 张量的 kernel，是 delta rule 增量更新的关键中间量。",
+      "tags": ["triton-kernel", "linear-attention", "wy-representation", "gated-delta-rule"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:ops/triton/fla/wy_fast.py:recompute_w_u_fwd_kernel",
+      "type": "function",
+      "name": "recompute_w_u_fwd_kernel",
+      "filePath": "ops/triton/fla/wy_fast.py",
+      "lineRange": [21, 95],
+      "summary": "Triton kernel：利用下三角逆矩阵 A、beta 与门控衰减重算 WY 表示的 w=A·(beta·k) 与 u=A·(beta·v) 张量。",
+      "tags": ["triton-kernel", "wy-representation", "linear-attention"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:ops/triton/fla/wy_fast.py:recompute_w_u_fwd",
+      "type": "function",
+      "name": "recompute_w_u_fwd",
+      "filePath": "ops/triton/fla/wy_fast.py",
+      "lineRange": [98, 143],
+      "summary": "w/u 重算 kernel 的 Python 包装层，准备 chunk indices、分配输出并按 grid 启动 recompute_w_u_fwd_kernel。",
+      "tags": ["kernel-launcher", "wy-representation", "linear-attention"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:ops/triton/fla/chunk.py", "target": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "class:ops/triton/fla/chunk.py:ChunkGatedDeltaRuleFunction", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "class:ops/triton/fla/chunk.py:ChunkGatedDeltaRuleFunction", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/chunk_delta_h.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/chunk_delta_hupdate.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/chunk_o.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/chunk_scaled_dot_kkt.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/cumsum.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/l2norm.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/solve_tril.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk.py", "target": "file:ops/triton/fla/wy_fast.py", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:ops/triton/fla/chunk_delta_h.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk_delta_hupdate.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk_o.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk_o_update.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/chunk_scaled_dot_kkt.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/cumsum.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/solve_tril.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:ops/triton/fla/wy_fast.py", "target": "file:ops/triton/fla/utils.py", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:ops/triton/fla/chunk_delta_h.py", "target": "function:ops/triton/fla/chunk_delta_h.py:chunk_gated_delta_rule_fwd_kernel_h_blockdim64", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_delta_h.py", "target": "function:ops/triton/fla/chunk_delta_h.py:chunk_gated_delta_rule_fwd_h", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_delta_h.py", "target": "function:ops/triton/fla/chunk_delta_h.py:chunk_gated_delta_rule_fwd_h", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/chunk_delta_hupdate.py", "target": "function:ops/triton/fla/chunk_delta_hupdate.py:chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_delta_hupdate.py", "target": "function:ops/triton/fla/chunk_delta_hupdate.py:chunk_gated_delta_rule_fwd_hupdate", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_delta_hupdate.py", "target": "function:ops/triton/fla/chunk_delta_hupdate.py:chunk_gated_delta_rule_fwd_hupdate", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/chunk_o.py", "target": "function:ops/triton/fla/chunk_o.py:chunk_fwd_kernel_o", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_o.py", "target": "function:ops/triton/fla/chunk_o.py:chunk_fwd_o", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_o.py", "target": "function:ops/triton/fla/chunk_o.py:chunk_fwd_o", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/chunk_o_update.py", "target": "function:ops/triton/fla/chunk_o_update.py:chunk_fwd_kernel_o_update", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_o_update.py", "target": "function:ops/triton/fla/chunk_o_update.py:chunk_fwd_o_update", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_o_update.py", "target": "function:ops/triton/fla/chunk_o_update.py:chunk_fwd_o_update", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/chunk_scaled_dot_kkt.py", "target": "function:ops/triton/fla/chunk_scaled_dot_kkt.py:chunk_scaled_dot_kkt_fwd_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_scaled_dot_kkt.py", "target": "function:ops/triton/fla/chunk_scaled_dot_kkt.py:chunk_scaled_dot_kkt_fwd", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/chunk_scaled_dot_kkt.py", "target": "function:ops/triton/fla/chunk_scaled_dot_kkt.py:chunk_scaled_dot_kkt_fwd", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/cumsum.py", "target": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum_scalar_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/cumsum.py", "target": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum_scalar", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/cumsum.py", "target": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/cumsum.py", "target": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/l2norm.py", "target": "function:ops/triton/fla/l2norm.py:l2norm_fwd_kernel2_loop", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/l2norm.py", "target": "function:ops/triton/fla/l2norm.py:l2norm_fwd", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/l2norm.py", "target": "function:ops/triton/fla/l2norm.py:l2norm_fwd", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/solve_tril.py", "target": "function:ops/triton/fla/solve_tril.py:solve_tril_16x16_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/solve_tril.py", "target": "function:ops/triton/fla/solve_tril.py:merge_16x16_to_32x32_inverse_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/solve_tril.py", "target": "function:ops/triton/fla/solve_tril.py:merge_16x16_to_64x64_inverse_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/solve_tril.py", "target": "function:ops/triton/fla/solve_tril.py:solve_tril", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/solve_tril.py", "target": "function:ops/triton/fla/solve_tril.py:solve_tril", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/utils.py", "target": "function:ops/triton/fla/utils.py:input_guard", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/utils.py", "target": "function:ops/triton/fla/utils.py:clear_ssm_states", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/utils.py", "target": "function:ops/triton/fla/utils.py:input_guard", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:ops/triton/fla/utils.py", "target": "function:ops/triton/fla/utils.py:clear_ssm_states", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:ops/triton/fla/wy_fast.py", "target": "function:ops/triton/fla/wy_fast.py:recompute_w_u_fwd_kernel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/wy_fast.py", "target": "function:ops/triton/fla/wy_fast.py:recompute_w_u_fwd", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:ops/triton/fla/wy_fast.py", "target": "function:ops/triton/fla/wy_fast.py:recompute_w_u_fwd", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "target": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "target": "function:ops/triton/fla/chunk_scaled_dot_kkt.py:chunk_scaled_dot_kkt_fwd", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "target": "function:ops/triton/fla/solve_tril.py:solve_tril", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "target": "function:ops/triton/fla/wy_fast.py:recompute_w_u_fwd", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "target": "function:ops/triton/fla/chunk_delta_h.py:chunk_gated_delta_rule_fwd_h", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "target": "function:ops/triton/fla/chunk_delta_hupdate.py:chunk_gated_delta_rule_fwd_hupdate", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "target": "function:ops/triton/fla/chunk_o.py:chunk_fwd_o", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:ops/triton/fla/chunk.py:ChunkGatedDeltaRuleFunction", "target": "function:ops/triton/fla/l2norm.py:l2norm_fwd", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "class:ops/triton/fla/chunk.py:ChunkGatedDeltaRuleFunction", "target": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule_fwd", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk.py:chunk_gated_delta_rule", "target": "class:ops/triton/fla/chunk.py:ChunkGatedDeltaRuleFunction", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "function:ops/triton/fla/chunk_delta_h.py:chunk_gated_delta_rule_fwd_kernel_h_blockdim64", "target": "function:ops/triton/fla/utils.py:safe_exp", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk_delta_hupdate.py:chunk_gated_delta_rule_fwd_kernel_hupdate_blockdim64", "target": "function:ops/triton/fla/utils.py:safe_exp", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk_o.py:chunk_fwd_kernel_o", "target": "function:ops/triton/fla/utils.py:safe_exp", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/chunk_scaled_dot_kkt.py:chunk_scaled_dot_kkt_fwd_kernel", "target": "function:ops/triton/fla/utils.py:safe_exp", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum", "target": "function:ops/triton/fla/cumsum.py:chunk_local_cumsum_scalar", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/solve_tril.py:solve_tril", "target": "function:ops/triton/fla/solve_tril.py:solve_tril_16x16_kernel", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:ops/triton/fla/solve_tril.py:solve_tril", "target": "function:ops/triton/fla/solve_tril.py:merge_16x16_to_64x64_inverse_kernel", "type": "calls", "direction": "forward", "weight": 0.8}
+  ]
+}

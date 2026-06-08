@@ -1,0 +1,4429 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "distributed/kv_transfer/kv_pool/lmcache_ascend_connector.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 5,
+      "nonEmptyLines": 4,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/simple_cpu_offload/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/simple_cpu_offload/simple_cpu_offload_connector.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 60,
+      "nonEmptyLines": 49,
+      "classes": [
+        {
+          "name": "AscendSimpleCPUOffloadConnector",
+          "startLine": 24,
+          "endLine": 60,
+          "methods": [
+            "__init__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AscendSimpleCPUOffloadConnector",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 48
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 48
+        },
+        {
+          "caller": "__init__",
+          "callee": "SimpleCPUOffloadNPUWorker",
+          "lineNumber": 54
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 57
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "distributed/kv_transfer/kv_pool/ucm_connector.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 324,
+      "nonEmptyLines": 268,
+      "classes": [
+        {
+          "name": "UCMConnectorV1",
+          "startLine": 37,
+          "endLine": 324,
+          "methods": [
+            "__init__",
+            "_get_ucm_delegate_for",
+            "_call_ucm_reserved_hook",
+            "shutdown",
+            "has_connector_metadata",
+            "register_kv_caches",
+            "set_host_xfer_buffer_ops",
+            "handle_preemptions",
+            "start_load_kv",
+            "wait_for_layer_load",
+            "save_kv_layer",
+            "wait_for_save",
+            "clear_connector_metadata",
+            "bind_connector_metadata",
+            "get_block_ids_with_load_errors",
+            "get_num_new_matched_tokens",
+            "update_state_after_alloc",
+            "build_connector_meta",
+            "request_finished",
+            "request_finished_all_groups",
+            "get_finished",
+            "build_connector_worker_meta",
+            "update_connector_output",
+            "take_events",
+            "get_kv_connector_stats",
+            "get_kv_connector_kv_cache_events",
+            "get_handshake_metadata",
+            "set_xfer_handshake_metadata",
+            "get_finished_count",
+            "reset_cache",
+            "build_kv_connector_stats",
+            "build_prom_metrics"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "UCMConnectorV1",
+          "line": 37,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 44
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 44
+        },
+        {
+          "caller": "__init__",
+          "callee": "ImplCls",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_get_ucm_delegate_for",
+          "callee": "type",
+          "lineNumber": 59
+        },
+        {
+          "caller": "_get_ucm_delegate_for",
+          "callee": "getattr",
+          "lineNumber": 60
+        },
+        {
+          "caller": "_call_ucm_reserved_hook",
+          "callee": "getattr",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_call_ucm_reserved_hook",
+          "callee": "self._get_ucm_delegate_for",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_call_ucm_reserved_hook",
+          "callee": "callable",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_call_ucm_reserved_hook",
+          "callee": "hook",
+          "lineNumber": 68
+        },
+        {
+          "caller": "shutdown",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 75
+        },
+        {
+          "caller": "has_connector_metadata",
+          "callee": "self._ucm_engine.has_connector_metadata",
+          "lineNumber": 83
+        },
+        {
+          "caller": "register_kv_caches",
+          "callee": "self._ucm_engine.register_kv_caches",
+          "lineNumber": 92
+        },
+        {
+          "caller": "set_host_xfer_buffer_ops",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 95
+        },
+        {
+          "caller": "handle_preemptions",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 98
+        },
+        {
+          "caller": "start_load_kv",
+          "callee": "self._ucm_engine.start_load_kv",
+          "lineNumber": 115
+        },
+        {
+          "caller": "wait_for_layer_load",
+          "callee": "self._ucm_engine.wait_for_layer_load",
+          "lineNumber": 128
+        },
+        {
+          "caller": "save_kv_layer",
+          "callee": "self._ucm_engine.save_kv_layer",
+          "lineNumber": 149
+        },
+        {
+          "caller": "wait_for_save",
+          "callee": "self._ucm_engine.wait_for_save",
+          "lineNumber": 159
+        },
+        {
+          "caller": "clear_connector_metadata",
+          "callee": "self._ucm_engine.clear_connector_metadata",
+          "lineNumber": 167
+        },
+        {
+          "caller": "bind_connector_metadata",
+          "callee": "self._ucm_engine.bind_connector_metadata",
+          "lineNumber": 179
+        },
+        {
+          "caller": "get_block_ids_with_load_errors",
+          "callee": "self._ucm_engine.get_block_ids_with_load_errors",
+          "lineNumber": 189
+        },
+        {
+          "caller": "get_num_new_matched_tokens",
+          "callee": "self._ucm_engine.get_num_new_matched_tokens",
+          "lineNumber": 212
+        },
+        {
+          "caller": "update_state_after_alloc",
+          "callee": "self._ucm_engine.update_state_after_alloc",
+          "lineNumber": 218
+        },
+        {
+          "caller": "build_connector_meta",
+          "callee": "self._ucm_engine.build_connector_meta",
+          "lineNumber": 230
+        },
+        {
+          "caller": "request_finished",
+          "callee": "self._ucm_engine.request_finished",
+          "lineNumber": 247
+        },
+        {
+          "caller": "request_finished_all_groups",
+          "callee": "self._ucm_engine.request_finished_all_groups",
+          "lineNumber": 254
+        },
+        {
+          "caller": "get_finished",
+          "callee": "self._ucm_engine.get_finished",
+          "lineNumber": 260
+        },
+        {
+          "caller": "build_connector_worker_meta",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 263
+        },
+        {
+          "caller": "update_connector_output",
+          "callee": "self._ucm_engine.update_connector_output",
+          "lineNumber": 266
+        },
+        {
+          "caller": "take_events",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 269
+        },
+        {
+          "caller": "get_kv_connector_stats",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 273
+        },
+        {
+          "caller": "get_kv_connector_kv_cache_events",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 276
+        },
+        {
+          "caller": "get_handshake_metadata",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 279
+        },
+        {
+          "caller": "set_xfer_handshake_metadata",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 282
+        },
+        {
+          "caller": "get_finished_count",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 285
+        },
+        {
+          "caller": "reset_cache",
+          "callee": "self._call_ucm_reserved_hook",
+          "lineNumber": 288
+        },
+        {
+          "caller": "build_kv_connector_stats",
+          "callee": "UCMConnector.build_kv_connector_stats",
+          "lineNumber": 301
+        },
+        {
+          "caller": "build_prom_metrics",
+          "callee": "UCMConnector.build_prom_metrics",
+          "lineNumber": 319
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "distributed/kv_transfer/utils/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "distributed/kv_transfer/utils/mooncake_transfer_engine.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 37,
+      "classes": [
+        {
+          "name": "GlobalTE",
+          "startLine": 4,
+          "endLine": 40,
+          "methods": [
+            "__init__",
+            "get_transfer_engine",
+            "register_buffer"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "GlobalTE",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "threading.Lock",
+          "lineNumber": 8
+        },
+        {
+          "caller": "__init__",
+          "callee": "threading.Lock",
+          "lineNumber": 9
+        },
+        {
+          "caller": "get_transfer_engine",
+          "callee": "ImportError",
+          "lineNumber": 19
+        },
+        {
+          "caller": "get_transfer_engine",
+          "callee": "TransferEngine",
+          "lineNumber": 24
+        },
+        {
+          "caller": "get_transfer_engine",
+          "callee": "self.transfer_engine.initialize",
+          "lineNumber": 26
+        },
+        {
+          "caller": "get_transfer_engine",
+          "callee": "RuntimeError",
+          "lineNumber": 28
+        },
+        {
+          "caller": "register_buffer",
+          "callee": "zip",
+          "lineNumber": 36
+        },
+        {
+          "caller": "register_buffer",
+          "callee": "self.transfer_engine.register_memory",
+          "lineNumber": 37
+        },
+        {
+          "caller": "register_buffer",
+          "callee": "RuntimeError",
+          "lineNumber": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "distributed/kv_transfer/utils/utils.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 302,
+      "nonEmptyLines": 268,
+      "functions": [
+        {
+          "name": "kv_alltoall_and_rearrange",
+          "startLine": 14,
+          "endLine": 21,
+          "params": [
+            "pd_tp_ratio",
+            "key",
+            "value"
+          ]
+        },
+        {
+          "name": "alltoall_and_rearrange",
+          "startLine": 24,
+          "endLine": 31,
+          "params": [
+            "tp_ratio",
+            "input_tensor"
+          ]
+        },
+        {
+          "name": "rearrange_output",
+          "startLine": 34,
+          "endLine": 41,
+          "params": [
+            "base_output",
+            "cut_num",
+            "num_kv_heads"
+          ]
+        },
+        {
+          "name": "align_memory",
+          "startLine": 44,
+          "endLine": 48,
+          "params": [
+            "tensor",
+            "alignment"
+          ]
+        },
+        {
+          "name": "get_transfer_timeout_value",
+          "startLine": 51,
+          "endLine": 57,
+          "params": []
+        },
+        {
+          "name": "get_cp_group",
+          "startLine": 69,
+          "endLine": 81,
+          "params": [
+            "tp",
+            "heads",
+            "dcp"
+          ]
+        },
+        {
+          "name": "context_parallel_parameters_check",
+          "startLine": 84,
+          "endLine": 96,
+          "params": [
+            "remote_pcp_size",
+            "remote_dcp_size",
+            "p_parallel_info",
+            "d_parallel_info",
+            "total_num_kv_heads"
+          ]
+        },
+        {
+          "name": "get_tp_rank_head_mapping",
+          "startLine": 99,
+          "endLine": 119,
+          "params": [
+            "num_key_value_heads",
+            "tp_size"
+          ]
+        },
+        {
+          "name": "get_head_group_mapping",
+          "startLine": 122,
+          "endLine": 140,
+          "params": [
+            "num_key_value_heads",
+            "tp_size",
+            "num_groups",
+            "select_cp_group"
+          ]
+        },
+        {
+          "name": "get_local_remote_block_port_mappings",
+          "startLine": 143,
+          "endLine": 259,
+          "params": [
+            "to_trans_idx",
+            "p_parallel_info",
+            "d_parallel_info",
+            "d_hosts",
+            "d_port",
+            "selected_p_cp_group",
+            "selected_d_cp_group",
+            "prompt_len",
+            "block_size",
+            "req_meta",
+            "total_num_kv_heads",
+            "req_id"
+          ]
+        },
+        {
+          "name": "get_transfer_mappings",
+          "startLine": 262,
+          "endLine": 302,
+          "params": [
+            "p_rank_block_mapping",
+            "d_block_rank_mapping",
+            "pd_head_mapping",
+            "d_trans_count_mapping",
+            "req_meta",
+            "block_group_idx",
+            "p_parallel_info",
+            "req_id",
+            "transed_idx",
+            "to_trans_idx",
+            "tp_rank",
+            "pcp_rank",
+            "dcp_rank"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "parallel_info",
+          "startLine": 61,
+          "endLine": 66,
+          "methods": [],
+          "properties": [
+            "tp_size",
+            "pcp_size",
+            "dcp_size",
+            "use_mla",
+            "pd_head_ratio"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "kv_alltoall_and_rearrange",
+          "line": 14,
+          "isDefault": false
+        },
+        {
+          "name": "alltoall_and_rearrange",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "rearrange_output",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "align_memory",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "get_transfer_timeout_value",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "parallel_info",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "get_cp_group",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "context_parallel_parameters_check",
+          "line": 84,
+          "isDefault": false
+        },
+        {
+          "name": "get_tp_rank_head_mapping",
+          "line": 99,
+          "isDefault": false
+        },
+        {
+          "name": "get_head_group_mapping",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "get_local_remote_block_port_mappings",
+          "line": 143,
+          "isDefault": false
+        },
+        {
+          "name": "get_transfer_mappings",
+          "line": 262,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "kv_alltoall_and_rearrange",
+          "callee": "ValueError",
+          "lineNumber": 18
+        },
+        {
+          "caller": "kv_alltoall_and_rearrange",
+          "callee": "alltoall_and_rearrange",
+          "lineNumber": 19
+        },
+        {
+          "caller": "kv_alltoall_and_rearrange",
+          "callee": "alltoall_and_rearrange",
+          "lineNumber": 20
+        },
+        {
+          "caller": "alltoall_and_rearrange",
+          "callee": "input_tensor.size",
+          "lineNumber": 25
+        },
+        {
+          "caller": "alltoall_and_rearrange",
+          "callee": "torch.zeros_like",
+          "lineNumber": 26
+        },
+        {
+          "caller": "alltoall_and_rearrange",
+          "callee": "dist.all_to_all_single",
+          "lineNumber": 27
+        },
+        {
+          "caller": "alltoall_and_rearrange",
+          "callee": "get_p_tp_group",
+          "lineNumber": 27
+        },
+        {
+          "caller": "alltoall_and_rearrange",
+          "callee": "rearrange_output",
+          "lineNumber": 29
+        },
+        {
+          "caller": "rearrange_output",
+          "callee": "base_output.size",
+          "lineNumber": 35
+        },
+        {
+          "caller": "rearrange_output",
+          "callee": "ValueError",
+          "lineNumber": 37
+        },
+        {
+          "caller": "rearrange_output",
+          "callee": "base_output.view",
+          "lineNumber": 39
+        },
+        {
+          "caller": "rearrange_output",
+          "callee": "reshaped.transpose",
+          "lineNumber": 40
+        },
+        {
+          "caller": "rearrange_output",
+          "callee": "transposed.contiguous().view",
+          "lineNumber": 41
+        },
+        {
+          "caller": "rearrange_output",
+          "callee": "transposed.contiguous",
+          "lineNumber": 41
+        },
+        {
+          "caller": "align_memory",
+          "callee": "tensor.data_ptr",
+          "lineNumber": 45
+        },
+        {
+          "caller": "align_memory",
+          "callee": "tensor.element_size",
+          "lineNumber": 47
+        },
+        {
+          "caller": "align_memory",
+          "callee": "int",
+          "lineNumber": 48
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "os.getenv",
+          "lineNumber": 52
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "len",
+          "lineNumber": 53
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "int",
+          "lineNumber": 54
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "int",
+          "lineNumber": 55
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "os.getenv",
+          "lineNumber": 55
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "int",
+          "lineNumber": 56
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "os.getenv",
+          "lineNumber": 56
+        },
+        {
+          "caller": "get_transfer_timeout_value",
+          "callee": "int",
+          "lineNumber": 57
+        },
+        {
+          "caller": "get_cp_group",
+          "callee": "range",
+          "lineNumber": 76
+        },
+        {
+          "caller": "get_cp_group",
+          "callee": "set",
+          "lineNumber": 79
+        },
+        {
+          "caller": "get_cp_group",
+          "callee": "range",
+          "lineNumber": 79
+        },
+        {
+          "caller": "get_cp_group",
+          "callee": "range",
+          "lineNumber": 79
+        },
+        {
+          "caller": "get_cp_group",
+          "callee": "range",
+          "lineNumber": 80
+        },
+        {
+          "caller": "context_parallel_parameters_check",
+          "callee": "math.ceil",
+          "lineNumber": 94
+        },
+        {
+          "caller": "context_parallel_parameters_check",
+          "callee": "math.ceil",
+          "lineNumber": 95
+        },
+        {
+          "caller": "get_tp_rank_head_mapping",
+          "callee": "ValueError",
+          "lineNumber": 104
+        },
+        {
+          "caller": "get_tp_rank_head_mapping",
+          "callee": "range",
+          "lineNumber": 108
+        },
+        {
+          "caller": "get_tp_rank_head_mapping",
+          "callee": "list",
+          "lineNumber": 111
+        },
+        {
+          "caller": "get_tp_rank_head_mapping",
+          "callee": "range",
+          "lineNumber": 111
+        },
+        {
+          "caller": "get_tp_rank_head_mapping",
+          "callee": "ValueError",
+          "lineNumber": 114
+        },
+        {
+          "caller": "get_tp_rank_head_mapping",
+          "callee": "range",
+          "lineNumber": 116
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "ValueError",
+          "lineNumber": 125
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "get_tp_rank_head_mapping",
+          "lineNumber": 129
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "range",
+          "lineNumber": 131
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "set",
+          "lineNumber": 135
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "range",
+          "lineNumber": 137
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "heads_set.update",
+          "lineNumber": 138
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "sorted",
+          "lineNumber": 139
+        },
+        {
+          "caller": "get_head_group_mapping",
+          "callee": "list",
+          "lineNumber": 139
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 162
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 162
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 163
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 165
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 168
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "p_rank_block_mapping[pcp_rank][p_head_group_rank][dcp_rank].append",
+          "lineNumber": 170
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "defaultdict",
+          "lineNumber": 173
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "defaultdict",
+          "lineNumber": 173
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 174
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 176
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "len",
+          "lineNumber": 185
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "math.ceil",
+          "lineNumber": 199
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "math.ceil",
+          "lineNumber": 200
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 202
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 203
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "range",
+          "lineNumber": 204
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "len",
+          "lineNumber": 225
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "get_head_group_mapping",
+          "lineNumber": 230
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "get_head_group_mapping",
+          "lineNumber": 233
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "defaultdict",
+          "lineNumber": 236
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "d_tp_rank_head_mapping.items",
+          "lineNumber": 237
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "head_to_d_groups[head].add",
+          "lineNumber": 239
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "p_tp_rank_head_mapping.items",
+          "lineNumber": 241
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "set",
+          "lineNumber": 242
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "target_d_ranks.update",
+          "lineNumber": 245
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "logger.info",
+          "lineNumber": 247
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "sorted",
+          "lineNumber": 248
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "list",
+          "lineNumber": 248
+        },
+        {
+          "caller": "get_local_remote_block_port_mappings",
+          "callee": "logger.debug",
+          "lineNumber": 249
+        },
+        {
+          "caller": "get_transfer_mappings",
+          "callee": "enumerate",
+          "lineNumber": 282
+        },
+        {
+          "caller": "get_transfer_mappings",
+          "callee": "transfer_mappings[(remote_host, remote_port)][\"local_block_ids\"].append",
+          "lineNumber": 297
+        },
+        {
+          "caller": "get_transfer_mappings",
+          "callee": "transfer_mappings[(remote_host, remote_port)][\"remote_block_ids\"].append",
+          "lineNumber": 298
+        },
+        {
+          "caller": "get_transfer_mappings",
+          "callee": "transfer_mappings.items",
+          "lineNumber": 299
+        },
+        {
+          "caller": "get_transfer_mappings",
+          "callee": "logger.debug",
+          "lineNumber": 301
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 12,
+        "functionCount": 11,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "distributed/parallel_state.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 341,
+      "nonEmptyLines": 276,
+      "functions": [
+        {
+          "name": "init_ascend_model_parallel",
+          "startLine": 30,
+          "endLine": 226,
+          "params": [
+            "parallel_config"
+          ]
+        },
+        {
+          "name": "model_parallel_initialized",
+          "startLine": 229,
+          "endLine": 230,
+          "params": []
+        },
+        {
+          "name": "get_mc2_group",
+          "startLine": 233,
+          "endLine": 235,
+          "params": []
+        },
+        {
+          "name": "get_mlp_tp_group",
+          "startLine": 238,
+          "endLine": 240,
+          "params": []
+        },
+        {
+          "name": "get_otp_group",
+          "startLine": 243,
+          "endLine": 245,
+          "params": []
+        },
+        {
+          "name": "get_lmhead_tp_group",
+          "startLine": 248,
+          "endLine": 250,
+          "params": []
+        },
+        {
+          "name": "get_embed_tp_group",
+          "startLine": 253,
+          "endLine": 255,
+          "params": []
+        },
+        {
+          "name": "get_flashcomm2_otp_group",
+          "startLine": 258,
+          "endLine": 259,
+          "params": []
+        },
+        {
+          "name": "get_flashcomm2_odp_group",
+          "startLine": 262,
+          "endLine": 264,
+          "params": []
+        },
+        {
+          "name": "get_shard_weight_group",
+          "startLine": 267,
+          "endLine": 269,
+          "params": []
+        },
+        {
+          "name": "get_p_tp_group",
+          "startLine": 272,
+          "endLine": 274,
+          "params": []
+        },
+        {
+          "name": "get_fc3_quant_x_group",
+          "startLine": 277,
+          "endLine": 279,
+          "params": []
+        },
+        {
+          "name": "get_dynamic_eplb_group",
+          "startLine": 282,
+          "endLine": 284,
+          "params": []
+        },
+        {
+          "name": "destroy_ascend_model_parallel",
+          "startLine": 287,
+          "endLine": 341,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "init_ascend_model_parallel",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "model_parallel_initialized",
+          "line": 229,
+          "isDefault": false
+        },
+        {
+          "name": "get_mc2_group",
+          "line": 233,
+          "isDefault": false
+        },
+        {
+          "name": "get_mlp_tp_group",
+          "line": 238,
+          "isDefault": false
+        },
+        {
+          "name": "get_otp_group",
+          "line": 243,
+          "isDefault": false
+        },
+        {
+          "name": "get_lmhead_tp_group",
+          "line": 248,
+          "isDefault": false
+        },
+        {
+          "name": "get_embed_tp_group",
+          "line": 253,
+          "isDefault": false
+        },
+        {
+          "name": "get_flashcomm2_otp_group",
+          "line": 258,
+          "isDefault": false
+        },
+        {
+          "name": "get_flashcomm2_odp_group",
+          "line": 262,
+          "isDefault": false
+        },
+        {
+          "name": "get_shard_weight_group",
+          "line": 267,
+          "isDefault": false
+        },
+        {
+          "name": "get_p_tp_group",
+          "line": 272,
+          "isDefault": false
+        },
+        {
+          "name": "get_fc3_quant_x_group",
+          "line": 277,
+          "isDefault": false
+        },
+        {
+          "name": "get_dynamic_eplb_group",
+          "line": 282,
+          "isDefault": false
+        },
+        {
+          "name": "destroy_ascend_model_parallel",
+          "line": 287,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "model_parallel_initialized",
+          "lineNumber": 33
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "torch.distributed.is_initialized",
+          "lineNumber": 35
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "torch.distributed.get_world_size",
+          "lineNumber": 36
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "torch.distributed.get_backend",
+          "lineNumber": 37
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 37
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "torch.arange(world_size).reshape",
+          "lineNumber": 46
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "torch.arange",
+          "lineNumber": 46
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 54
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 55
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_current_vllm_config",
+          "lineNumber": 60
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 61
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.view(-1, prefill_tensor_model_parallel_size).unbind",
+          "lineNumber": 64
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.view",
+          "lineNumber": 64
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.clone().view",
+          "lineNumber": 66
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.clone",
+          "lineNumber": 66
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.permute",
+          "lineNumber": 69
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.reshape",
+          "lineNumber": 70
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.size",
+          "lineNumber": 70
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.size",
+          "lineNumber": 71
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.unsqueeze(-1).view",
+          "lineNumber": 72
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.unsqueeze",
+          "lineNumber": 72
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.reshape(-1, alltoall_group_size).unbind",
+          "lineNumber": 78
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "group_ranks.reshape",
+          "lineNumber": 78
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "x.tolist",
+          "lineNumber": 79
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 80
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "next",
+          "lineNumber": 81
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "enumerate",
+          "lineNumber": 81
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 82
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 82
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.transpose(1, 2)\n        .reshape(\n            -1,\n            global_dp_size * global_pcp_size * global_tp_size,\n        )\n        .unbind",
+          "lineNumber": 86
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.transpose(1, 2)\n        .reshape",
+          "lineNumber": 86
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.transpose",
+          "lineNumber": 86
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "x.tolist",
+          "lineNumber": 93
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 96
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 96
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 98
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 100
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 101
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 104
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 106
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 107
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "torch.arange(world_size).reshape",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "torch.arange",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "range",
+          "lineNumber": 124
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "range",
+          "lineNumber": 126
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "range",
+          "lineNumber": 127
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "stage_ranks[chunk * group_size : (chunk + 1) * group_size, tp_idx].tolist",
+          "lineNumber": 128
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "group_ranks.append",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 130
+        },
+        {
+          "caller": "_create_or_get_group",
+          "callee": "get_world_group",
+          "lineNumber": 130
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 135
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 136
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 137
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 138
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "_create_or_get_group",
+          "lineNumber": 143
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "_create_or_get_group",
+          "lineNumber": 145
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "_create_or_get_group",
+          "lineNumber": 147
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "_create_or_get_group",
+          "lineNumber": 149
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "flashcomm2_enable",
+          "lineNumber": 153
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 154
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_tp_group",
+          "lineNumber": 160
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "range",
+          "lineNumber": 164
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "range",
+          "lineNumber": 166
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "range",
+          "lineNumber": 167
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "range",
+          "lineNumber": 172
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "range",
+          "lineNumber": 174
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "ranks.append",
+          "lineNumber": 178
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "odp_group_ranks[odp_group_index].append",
+          "lineNumber": 181
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "flashcomm2_otp_group_ranks.append",
+          "lineNumber": 182
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 184
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 185
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 187
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_world_group",
+          "lineNumber": 188
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "all_ranks.transpose(2, 4).reshape",
+          "lineNumber": 198
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "all_ranks.transpose",
+          "lineNumber": 198
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "pp_group_ranks.transpose(0, 1).unbind",
+          "lineNumber": 201
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "pp_group_ranks.transpose",
+          "lineNumber": 201
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "x.tolist",
+          "lineNumber": 202
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "module_tp_group_ranks.transpose",
+          "lineNumber": 205
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "module_tp_group_ranks.size",
+          "lineNumber": 206
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "torch.stack",
+          "lineNumber": 207
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "t.view",
+          "lineNumber": 207
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "shard_weight_group_ranks.view(-1, G).tolist",
+          "lineNumber": 208
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "shard_weight_group_ranks.view",
+          "lineNumber": 208
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "init_model_parallel_group",
+          "lineNumber": 209
+        },
+        {
+          "caller": "create_shard_weight_group",
+          "callee": "get_world_group",
+          "lineNumber": 209
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 212
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "flashcomm2_enable",
+          "lineNumber": 214
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "len",
+          "lineNumber": 215
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "torch.tensor(flashcomm2_otp_group_ranks).squeeze",
+          "lineNumber": 218
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "torch.tensor",
+          "lineNumber": 218
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "create_shard_weight_group",
+          "lineNumber": 219
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "enable_dsa_cp_with_layer_shard",
+          "lineNumber": 220
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "create_shard_weight_group",
+          "lineNumber": 222
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "all_ranks.view",
+          "lineNumber": 225
+        },
+        {
+          "caller": "init_ascend_model_parallel",
+          "callee": "create_shard_weight_group",
+          "lineNumber": 226
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_MC2.destroy",
+          "lineNumber": 290
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_MLP_TP.destroy",
+          "lineNumber": 295
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_LMTP.destroy",
+          "lineNumber": 300
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_EMBED_TP.destroy",
+          "lineNumber": 305
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_OTP.destroy",
+          "lineNumber": 310
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_P_TP.destroy",
+          "lineNumber": 315
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 319
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_FLASHCOMM2_OTP.destroy",
+          "lineNumber": 320
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "get_ascend_config",
+          "lineNumber": 324
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_FLASHCOMM2_ODP.destroy",
+          "lineNumber": 325
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_SHARD_WEIGHT.destroy",
+          "lineNumber": 330
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_FC3_QUANT_X.destroy",
+          "lineNumber": 335
+        },
+        {
+          "caller": "destroy_ascend_model_parallel",
+          "callee": "_DYNAMIC_EPLB.destroy",
+          "lineNumber": 340
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 14,
+        "functionCount": 14,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "distributed/utils.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 77,
+      "nonEmptyLines": 65,
+      "functions": [
+        {
+          "name": "fc3_all_gather_and_maybe_unpad_impl",
+          "startLine": 10,
+          "endLine": 36,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "all_gather_async",
+          "startLine": 39,
+          "endLine": 48,
+          "params": [
+            "input",
+            "group",
+            "output",
+            "async_op"
+          ]
+        },
+        {
+          "name": "split_tensor_along_first_dim",
+          "startLine": 51,
+          "endLine": 77,
+          "params": [
+            "tensor",
+            "num_partitions",
+            "contiguous_split_chunks"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "fc3_all_gather_and_maybe_unpad_impl",
+          "line": 10,
+          "isDefault": false
+        },
+        {
+          "name": "all_gather_async",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "split_tensor_along_first_dim",
+          "line": 51,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "get_forward_context",
+          "lineNumber": 14
+        },
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "get_fc3_quant_x_group().all_gather",
+          "lineNumber": 17
+        },
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "get_fc3_quant_x_group",
+          "lineNumber": 17
+        },
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "torch.empty",
+          "lineNumber": 26
+        },
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "num_tokens_across_dp_cpu.sum",
+          "lineNumber": 26
+        },
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "get_dp_group",
+          "lineNumber": 27
+        },
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "x.view",
+          "lineNumber": 28
+        },
+        {
+          "caller": "fc3_all_gather_and_maybe_unpad_impl",
+          "callee": "range",
+          "lineNumber": 30
+        },
+        {
+          "caller": "all_gather_async",
+          "callee": "input.size",
+          "lineNumber": 45
+        },
+        {
+          "caller": "all_gather_async",
+          "callee": "torch.empty",
+          "lineNumber": 47
+        },
+        {
+          "caller": "all_gather_async",
+          "callee": "dist.all_gather_into_tensor",
+          "lineNumber": 48
+        },
+        {
+          "caller": "split_tensor_along_first_dim",
+          "callee": "divide",
+          "lineNumber": 70
+        },
+        {
+          "caller": "split_tensor_along_first_dim",
+          "callee": "tensor.size",
+          "lineNumber": 70
+        },
+        {
+          "caller": "split_tensor_along_first_dim",
+          "callee": "torch.split",
+          "lineNumber": 72
+        },
+        {
+          "caller": "split_tensor_along_first_dim",
+          "callee": "tuple",
+          "lineNumber": 75
+        },
+        {
+          "caller": "split_tensor_along_first_dim",
+          "callee": "chunk.contiguous",
+          "lineNumber": 75
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "envs.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 128,
+      "nonEmptyLines": 119,
+      "functions": [
+        {
+          "name": "__getattr__",
+          "startLine": 120,
+          "endLine": 124,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "__dir__",
+          "startLine": 127,
+          "endLine": 128,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "__getattr__",
+          "line": 120,
+          "isDefault": false
+        },
+        {
+          "name": "__dir__",
+          "line": 127,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__getattr__",
+          "callee": "AttributeError",
+          "lineNumber": 124
+        },
+        {
+          "caller": "__dir__",
+          "callee": "list",
+          "lineNumber": 128
+        },
+        {
+          "caller": "__dir__",
+          "callee": "env_variables.keys",
+          "lineNumber": 128
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "eplb/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "eplb/adaptor/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "eplb/adaptor/vllm_adaptor.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 169,
+      "nonEmptyLines": 144,
+      "classes": [
+        {
+          "name": "VllmEplbAdaptor",
+          "startLine": 29,
+          "endLine": 169,
+          "methods": [
+            "__init__",
+            "init_buffer_tensor",
+            "init_expert_param_per_layer",
+            "get_rank_expert_workload",
+            "_export_tensor_to_file",
+            "do_update_expert_map",
+            "do_update_expert_weight",
+            "do_update_log2phy_map",
+            "get_global_expert_map"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "VllmEplbAdaptor",
+          "line": 29,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 31
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 31
+        },
+        {
+          "caller": "__init__",
+          "callee": "hasattr",
+          "lineNumber": 32
+        },
+        {
+          "caller": "__init__",
+          "callee": "dist.get_rank",
+          "lineNumber": 38
+        },
+        {
+          "caller": "__init__",
+          "callee": "dist.get_world_size",
+          "lineNumber": 39
+        },
+        {
+          "caller": "__init__",
+          "callee": "getattr",
+          "lineNumber": 40
+        },
+        {
+          "caller": "__init__",
+          "callee": "dict",
+          "lineNumber": 43
+        },
+        {
+          "caller": "__init__",
+          "callee": "dict",
+          "lineNumber": 46
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.init_expert_param_per_layer",
+          "lineNumber": 47
+        },
+        {
+          "caller": "__init__",
+          "callee": "range",
+          "lineNumber": 50
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.init_buffer_tensor",
+          "lineNumber": 51
+        },
+        {
+          "caller": "__init__",
+          "callee": "dict",
+          "lineNumber": 53
+        },
+        {
+          "caller": "__init__",
+          "callee": "range",
+          "lineNumber": 54
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.model.get_log2phy_map",
+          "lineNumber": 55
+        },
+        {
+          "caller": "init_buffer_tensor",
+          "callee": "range",
+          "lineNumber": 60
+        },
+        {
+          "caller": "init_buffer_tensor",
+          "callee": "str",
+          "lineNumber": 62
+        },
+        {
+          "caller": "init_buffer_tensor",
+          "callee": "torch.empty_like",
+          "lineNumber": 64
+        },
+        {
+          "caller": "init_buffer_tensor",
+          "callee": "self.buffer_tensor_list[buffer_id].append",
+          "lineNumber": 65
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "dict",
+          "lineNumber": 68
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "get_ascend_config",
+          "lineNumber": 78
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "self.expert_weight_names.append",
+          "lineNumber": 79
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "self.expert_weight_names.append",
+          "lineNumber": 80
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "get_ascend_config",
+          "lineNumber": 83
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "ValueError",
+          "lineNumber": 84
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "ValueError",
+          "lineNumber": 102
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "range",
+          "lineNumber": 106
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "list",
+          "lineNumber": 107
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "getattr",
+          "lineNumber": 110
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "range",
+          "lineNumber": 112
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "list",
+          "lineNumber": 113
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "per_expert_param.append",
+          "lineNumber": 115
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "str",
+          "lineNumber": 116
+        },
+        {
+          "caller": "init_expert_param_per_layer",
+          "callee": "self.expert_param_per_layer[layer_idx].append",
+          "lineNumber": 118
+        },
+        {
+          "caller": "get_rank_expert_workload",
+          "callee": "self.model.get_all_moe_loads",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "expert_maps.max",
+          "lineNumber": 126
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "expert_maps.tolist",
+          "lineNumber": 128
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "len",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "enumerate",
+          "lineNumber": 131
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "len",
+          "lineNumber": 134
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "enumerate",
+          "lineNumber": 138
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "experts.index",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "range",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "layer_record[\"device_list\"].append",
+          "lineNumber": 141
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "record[\"layer_list\"].append",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "open",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_export_tensor_to_file",
+          "callee": "json.dump",
+          "lineNumber": 146
+        },
+        {
+          "caller": "do_update_expert_map",
+          "callee": "self.expert_map_per_layer_cpu[layer_id].copy_",
+          "lineNumber": 149
+        },
+        {
+          "caller": "do_update_expert_weight",
+          "callee": "zip",
+          "lineNumber": 152
+        },
+        {
+          "caller": "do_update_expert_weight",
+          "callee": "expert_tensor.copy_",
+          "lineNumber": 155
+        },
+        {
+          "caller": "do_update_expert_weight",
+          "callee": "logger.debug",
+          "lineNumber": 156
+        },
+        {
+          "caller": "do_update_log2phy_map",
+          "callee": "self.log2phy_map_per_layer[layer_id].copy_",
+          "lineNumber": 160
+        },
+        {
+          "caller": "get_global_expert_map",
+          "callee": "range",
+          "lineNumber": 164
+        },
+        {
+          "caller": "get_global_expert_map",
+          "callee": "self.model.model.layers[self.num_dense_layers + layer_id].mlp.experts.global_expert_map.cpu",
+          "lineNumber": 165
+        },
+        {
+          "caller": "get_global_expert_map",
+          "callee": "all_layer_global_expert_map.append",
+          "lineNumber": 166
+        },
+        {
+          "caller": "get_global_expert_map",
+          "callee": "torch.stack",
+          "lineNumber": 169
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "eplb/core/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "eplb/core/eplb_device_transfer_loader.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 122,
+      "nonEmptyLines": 98,
+      "classes": [
+        {
+          "name": "ExpertWeightUpdateState",
+          "startLine": 26,
+          "endLine": 29,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "D2DExpertWeightLoader",
+          "startLine": 32,
+          "endLine": 122,
+          "methods": [
+            "__init__",
+            "set_adator",
+            "generate_expert_d2d_transfer_task",
+            "set_log2phy_map",
+            "asyn_expert_weight_transfer",
+            "update_expert_map_and_weight"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ExpertWeightUpdateState",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "D2DExpertWeightLoader",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "get_dynamic_eplb_group",
+          "lineNumber": 41
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "logger.warning_once",
+          "lineNumber": 49
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "self.eplb_adaptor.expert_map_per_layer_cpu[layer_id][global_expert_id_to_send].item",
+          "lineNumber": 58
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "self.comm_op_list.append",
+          "lineNumber": 60
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "dist.P2POp",
+          "lineNumber": 61
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "enumerate",
+          "lineNumber": 64
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "self.comm_op_list.append",
+          "lineNumber": 67
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "dist.P2POp",
+          "lineNumber": 68
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "self.updated_expert_map[global_expert_id_to_recv].item",
+          "lineNumber": 70
+        },
+        {
+          "caller": "generate_expert_d2d_transfer_task",
+          "callee": "self.recv_expert_list.append",
+          "lineNumber": 71
+        },
+        {
+          "caller": "asyn_expert_weight_transfer",
+          "callee": "dist.batch_isend_irecv",
+          "lineNumber": 85
+        },
+        {
+          "caller": "asyn_expert_weight_transfer",
+          "callee": "reqs.extend",
+          "lineNumber": 86
+        },
+        {
+          "caller": "update_expert_map_and_weight",
+          "callee": "record_function_or_nullcontext",
+          "lineNumber": 97
+        },
+        {
+          "caller": "update_expert_map_and_weight",
+          "callee": "req.wait",
+          "lineNumber": 99
+        },
+        {
+          "caller": "update_expert_map_and_weight",
+          "callee": "self.eplb_adaptor.do_update_expert_map",
+          "lineNumber": 105
+        },
+        {
+          "caller": "update_expert_map_and_weight",
+          "callee": "self.eplb_adaptor.do_update_log2phy_map",
+          "lineNumber": 108
+        },
+        {
+          "caller": "update_expert_map_and_weight",
+          "callee": "self.eplb_adaptor.do_update_expert_weight",
+          "lineNumber": 114
+        },
+        {
+          "caller": "update_expert_map_and_weight",
+          "callee": "logger.info",
+          "lineNumber": 117
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "eplb/core/eplb_utils.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 128,
+      "nonEmptyLines": 110,
+      "functions": [
+        {
+          "name": "expert_file_to_tensor",
+          "startLine": 33,
+          "endLine": 49,
+          "params": [
+            "expert_map_path",
+            "layer_id"
+          ]
+        },
+        {
+          "name": "generate_global_placement",
+          "startLine": 52,
+          "endLine": 67,
+          "params": [
+            "n_expert",
+            "ep_size",
+            "n_redundant",
+            "num_shared_experts"
+          ]
+        },
+        {
+          "name": "init_eplb_config",
+          "startLine": 70,
+          "endLine": 105,
+          "params": [
+            "eplb_config",
+            "layer_id",
+            "moe_config",
+            "mix_placement",
+            "num_shared_experts"
+          ]
+        },
+        {
+          "name": "generate_log2phy_map",
+          "startLine": 108,
+          "endLine": 128,
+          "params": [
+            "global_expert_map",
+            "ep_rank"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "expert_file_to_tensor",
+          "line": 33,
+          "isDefault": false
+        },
+        {
+          "name": "generate_global_placement",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "init_eplb_config",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "generate_log2phy_map",
+          "line": 108,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "open",
+          "lineNumber": 34
+        },
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "json.load",
+          "lineNumber": 35
+        },
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "ValueError",
+          "lineNumber": 39
+        },
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "logger.warning",
+          "lineNumber": 41
+        },
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "len",
+          "lineNumber": 43
+        },
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "len",
+          "lineNumber": 46
+        },
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "device_data.append",
+          "lineNumber": 47
+        },
+        {
+          "caller": "expert_file_to_tensor",
+          "callee": "torch.tensor",
+          "lineNumber": 48
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "ValueError",
+          "lineNumber": 55
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "np.arange",
+          "lineNumber": 56
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "np.array_split",
+          "lineNumber": 57
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "range",
+          "lineNumber": 58
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "len",
+          "lineNumber": 60
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "np.append",
+          "lineNumber": 61
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "np.append",
+          "lineNumber": 63
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "enumerate",
+          "lineNumber": 65
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "np.append",
+          "lineNumber": 66
+        },
+        {
+          "caller": "generate_global_placement",
+          "callee": "torch.tensor",
+          "lineNumber": 67
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "expert_file_to_tensor",
+          "lineNumber": 85
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "determine_expert_map",
+          "lineNumber": 88
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "generate_global_placement",
+          "lineNumber": 92
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "range",
+          "lineNumber": 96
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "torch.full",
+          "lineNumber": 97
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "torch.arange",
+          "lineNumber": 99
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "global_expert_map.append",
+          "lineNumber": 100
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "generate_log2phy_map(global_expert_map, moe_config.ep_rank).npu",
+          "lineNumber": 103
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "generate_log2phy_map",
+          "lineNumber": 103
+        },
+        {
+          "caller": "init_eplb_config",
+          "callee": "torch.stack",
+          "lineNumber": 105
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "defaultdict",
+          "lineNumber": 109
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "torch.sum",
+          "lineNumber": 110
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "enumerate",
+          "lineNumber": 111
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "enumerate",
+          "lineNumber": 112
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "val.item",
+          "lineNumber": 113
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "log2phy_map[idx].append",
+          "lineNumber": 115
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "len",
+          "lineNumber": 118
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "torch.scatter",
+          "lineNumber": 121
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "torch.zeros",
+          "lineNumber": 122
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "len",
+          "lineNumber": 122
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "torch.tensor",
+          "lineNumber": 124
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "list",
+          "lineNumber": 124
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "torch.tensor",
+          "lineNumber": 125
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "list",
+          "lineNumber": 125
+        },
+        {
+          "caller": "generate_log2phy_map",
+          "callee": "log2phy_map.values",
+          "lineNumber": 125
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "eplb/core/eplb_worker.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 385,
+      "nonEmptyLines": 315,
+      "classes": [
+        {
+          "name": "EplbWorker",
+          "startLine": 29,
+          "endLine": 320,
+          "methods": [
+            "__init__",
+            "do_update",
+            "check_expert_placement",
+            "compose_expert_update_info_greedy",
+            "calculate_rebalance_experts",
+            "get_init_expert_maps",
+            "fetch_and_sum_load_info",
+            "update_expert_map",
+            "global2local",
+            "local2global",
+            "pack_update_info",
+            "_compute_imbalance",
+            "_calculate_hotness"
+          ],
+          "properties": []
+        },
+        {
+          "name": "EplbProcess",
+          "startLine": 323,
+          "endLine": 385,
+          "methods": [
+            "__init__",
+            "worker_process",
+            "_launch_process"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "EplbWorker",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "EplbProcess",
+          "line": 323,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "PolicyFactory.generate_policy",
+          "lineNumber": 32
+        },
+        {
+          "caller": "__init__",
+          "callee": "dist.get_rank",
+          "lineNumber": 36
+        },
+        {
+          "caller": "do_update",
+          "callee": "torch.set_num_threads",
+          "lineNumber": 48
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.get_init_expert_maps",
+          "lineNumber": 50
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.old_expert_maps.max",
+          "lineNumber": 52
+        },
+        {
+          "caller": "do_update",
+          "callee": "ValueError",
+          "lineNumber": 54
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.fetch_and_sum_load_info",
+          "lineNumber": 57
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.global2local",
+          "lineNumber": 62
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.calculate_rebalance_experts",
+          "lineNumber": 63
+        },
+        {
+          "caller": "do_update",
+          "callee": "self._calculate_hotness",
+          "lineNumber": 67
+        },
+        {
+          "caller": "do_update",
+          "callee": "load_info.sum",
+          "lineNumber": 67
+        },
+        {
+          "caller": "do_update",
+          "callee": "self._calculate_hotness",
+          "lineNumber": 69
+        },
+        {
+          "caller": "do_update",
+          "callee": "self._compute_imbalance",
+          "lineNumber": 71
+        },
+        {
+          "caller": "do_update",
+          "callee": "self._compute_imbalance",
+          "lineNumber": 74
+        },
+        {
+          "caller": "do_update",
+          "callee": "logger.info",
+          "lineNumber": 86
+        },
+        {
+          "caller": "do_update",
+          "callee": "torch.is_tensor",
+          "lineNumber": 94
+        },
+        {
+          "caller": "do_update",
+          "callee": "torch.tensor",
+          "lineNumber": 95
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.check_expert_placement",
+          "lineNumber": 96
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.local2global",
+          "lineNumber": 97
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.update_expert_map",
+          "lineNumber": 98
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.compose_expert_update_info_greedy",
+          "lineNumber": 100
+        },
+        {
+          "caller": "do_update",
+          "callee": "logger.debug",
+          "lineNumber": 102
+        },
+        {
+          "caller": "do_update",
+          "callee": "self.pack_update_info",
+          "lineNumber": 104
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "range",
+          "lineNumber": 112
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.unique(new_placement[layer_id]).numel",
+          "lineNumber": 114
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.unique",
+          "lineNumber": 114
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.unique(old_placement[layer_id]).numel",
+          "lineNumber": 114
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.unique",
+          "lineNumber": 114
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "logger.error",
+          "lineNumber": 115
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "range",
+          "lineNumber": 119
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "new_placement_check.numel",
+          "lineNumber": 124
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.unique(new_placement_check).numel",
+          "lineNumber": 124
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.unique",
+          "lineNumber": 124
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "logger.error",
+          "lineNumber": 125
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.isin",
+          "lineNumber": 135
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "torch.equal",
+          "lineNumber": 136
+        },
+        {
+          "caller": "check_expert_placement",
+          "callee": "logger.error",
+          "lineNumber": 137
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "range",
+          "lineNumber": 148
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "torch.equal",
+          "lineNumber": 156
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "torch.where",
+          "lineNumber": 165
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "torch.where",
+          "lineNumber": 170
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "range",
+          "lineNumber": 174
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "len",
+          "lineNumber": 174
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "dst_rank_indices[idx].item",
+          "lineNumber": 175
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "experts_to_recv[idx].item",
+          "lineNumber": 176
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "torch.isin(torch.tensor(expert_id), experts_to_send).any",
+          "lineNumber": 180
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "torch.isin",
+          "lineNumber": 180
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "torch.tensor",
+          "lineNumber": 180
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "torch.where",
+          "lineNumber": 182
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "candidate_src_rank_indices[0].item",
+          "lineNumber": 188
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "expert_send_info_this_layer[src_rank_id].append",
+          "lineNumber": 192
+        },
+        {
+          "caller": "compose_expert_update_info_greedy",
+          "callee": "expert_recv_info_this_layer[dst_rank_id].append",
+          "lineNumber": 193
+        },
+        {
+          "caller": "calculate_rebalance_experts",
+          "callee": "self.policy.rebalance_experts",
+          "lineNumber": 209
+        },
+        {
+          "caller": "get_init_expert_maps",
+          "callee": "self.shared_dict.get",
+          "lineNumber": 216
+        },
+        {
+          "caller": "fetch_and_sum_load_info",
+          "callee": "self.shared_dict.get",
+          "lineNumber": 223
+        },
+        {
+          "caller": "global2local",
+          "callee": "torch.full",
+          "lineNumber": 232
+        },
+        {
+          "caller": "global2local",
+          "callee": "valid.nonzero",
+          "lineNumber": 235
+        },
+        {
+          "caller": "local2global",
+          "callee": "torch.max",
+          "lineNumber": 247
+        },
+        {
+          "caller": "local2global",
+          "callee": "(max_id + 1).item",
+          "lineNumber": 248
+        },
+        {
+          "caller": "local2global",
+          "callee": "torch.empty",
+          "lineNumber": 251
+        },
+        {
+          "caller": "local2global",
+          "callee": "torch.full",
+          "lineNumber": 253
+        },
+        {
+          "caller": "local2global",
+          "callee": "valid.nonzero",
+          "lineNumber": 256
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "send_info.get",
+          "lineNumber": 274
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "recv_info.get",
+          "lineNumber": 275
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "send_all.append",
+          "lineNumber": 276
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "recv_all.append",
+          "lineNumber": 277
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "maps.append",
+          "lineNumber": 279
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "new_expert_map[self.rank_id].numpy().tolist",
+          "lineNumber": 279
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "new_expert_map[self.rank_id].numpy",
+          "lineNumber": 279
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "generate_log2phy_map",
+          "lineNumber": 281
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "log2phy_all.append",
+          "lineNumber": 282
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "log2phy_map.numpy().tolist",
+          "lineNumber": 282
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "log2phy_map.numpy",
+          "lineNumber": 282
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "layer_ids.append",
+          "lineNumber": 284
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "list",
+          "lineNumber": 286
+        },
+        {
+          "caller": "pack_update_info",
+          "callee": "zip",
+          "lineNumber": 286
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "np.array",
+          "lineNumber": 291
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "zip",
+          "lineNumber": 292
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "np.bincount",
+          "lineNumber": 293
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "deployment.reshape",
+          "lineNumber": 293
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "np.divide",
+          "lineNumber": 295
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "np.zeros_like",
+          "lineNumber": 295
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "unit_hotness[deployment].sum",
+          "lineNumber": 297
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "stage_load.max",
+          "lineNumber": 298
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "stage_load.mean",
+          "lineNumber": 298
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "imbalance_list.append",
+          "lineNumber": 299
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "max",
+          "lineNumber": 301
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "sum",
+          "lineNumber": 302
+        },
+        {
+          "caller": "_compute_imbalance",
+          "callee": "len",
+          "lineNumber": 302
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "zip",
+          "lineNumber": 313
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "moe_load_all_layer.numpy",
+          "lineNumber": 313
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "np.zeros",
+          "lineNumber": 314
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "deployment.ravel",
+          "lineNumber": 315
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "rank_load.ravel",
+          "lineNumber": 316
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "np.add.at",
+          "lineNumber": 317
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "hotnesses.append",
+          "lineNumber": 318
+        },
+        {
+          "caller": "_calculate_hotness",
+          "callee": "np.array",
+          "lineNumber": 320
+        },
+        {
+          "caller": "__init__",
+          "callee": "Queue",
+          "lineNumber": 334
+        },
+        {
+          "caller": "__init__",
+          "callee": "Queue",
+          "lineNumber": 335
+        },
+        {
+          "caller": "__init__",
+          "callee": "EplbWorker",
+          "lineNumber": 338
+        },
+        {
+          "caller": "worker_process",
+          "callee": "initialize_vllm_metric",
+          "lineNumber": 348
+        },
+        {
+          "caller": "worker_process",
+          "callee": "get_vllm_adapter",
+          "lineNumber": 349
+        },
+        {
+          "caller": "worker_process",
+          "callee": "logger.info",
+          "lineNumber": 350
+        },
+        {
+          "caller": "worker_process",
+          "callee": "adapter.is_initialized",
+          "lineNumber": 350
+        },
+        {
+          "caller": "worker_process",
+          "callee": "logger.warning",
+          "lineNumber": 352
+        },
+        {
+          "caller": "worker_process",
+          "callee": "warm_up",
+          "lineNumber": 357
+        },
+        {
+          "caller": "worker_process",
+          "callee": "planner_q.get",
+          "lineNumber": 360
+        },
+        {
+          "caller": "worker_process",
+          "callee": "self.worker.do_update",
+          "lineNumber": 362
+        },
+        {
+          "caller": "worker_process",
+          "callee": "block_update_q.empty",
+          "lineNumber": 365
+        },
+        {
+          "caller": "worker_process",
+          "callee": "block_update_q.put",
+          "lineNumber": 367
+        },
+        {
+          "caller": "worker_process",
+          "callee": "logger.warning",
+          "lineNumber": 371
+        },
+        {
+          "caller": "_launch_process",
+          "callee": "Process",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_launch_process",
+          "callee": "proc.start",
+          "lineNumber": 384
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "eplb/core/policy/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "eplb/eplb_updator.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 178,
+      "nonEmptyLines": 145,
+      "classes": [
+        {
+          "name": "EplbUpdator",
+          "startLine": 31,
+          "endLine": 178,
+          "methods": [
+            "__init__",
+            "set_adaptor",
+            "init_eplb",
+            "update_iteration",
+            "get_update_info_flag",
+            "wakeup_eplb_worker_flag",
+            "update_expert_weight_flag",
+            "wakeup_eplb_worker",
+            "forward_before",
+            "forward_end",
+            "compute_and_set_moe_load",
+            "warm_up_eplb",
+            "shutdown"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "EplbUpdator",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "self.init_eplb",
+          "lineNumber": 35
+        },
+        {
+          "caller": "__init__",
+          "callee": "get_dynamic_eplb_group",
+          "lineNumber": 39
+        },
+        {
+          "caller": "set_adaptor",
+          "callee": "self.adaptor.get_rank_expert_workload",
+          "lineNumber": 44
+        },
+        {
+          "caller": "set_adaptor",
+          "callee": "dist.get_world_size",
+          "lineNumber": 45
+        },
+        {
+          "caller": "init_eplb",
+          "callee": "dist.get_rank",
+          "lineNumber": 50
+        },
+        {
+          "caller": "init_eplb",
+          "callee": "logger.info",
+          "lineNumber": 74
+        },
+        {
+          "caller": "update_iteration",
+          "callee": "self.adaptor._export_tensor_to_file",
+          "lineNumber": 82
+        },
+        {
+          "caller": "update_iteration",
+          "callee": "self.adaptor.model.clear_all_moe_loads",
+          "lineNumber": 84
+        },
+        {
+          "caller": "wakeup_eplb_worker",
+          "callee": "self.eplb_process.planner_q.put",
+          "lineNumber": 100
+        },
+        {
+          "caller": "forward_before",
+          "callee": "self.get_update_info_flag",
+          "lineNumber": 104
+        },
+        {
+          "caller": "forward_before",
+          "callee": "self.eplb_process.block_update_q.get",
+          "lineNumber": 105
+        },
+        {
+          "caller": "forward_before",
+          "callee": "self.update_expert_weight_flag",
+          "lineNumber": 106
+        },
+        {
+          "caller": "forward_before",
+          "callee": "record_function_or_nullcontext",
+          "lineNumber": 107
+        },
+        {
+          "caller": "forward_before",
+          "callee": "self.update_info_all.pop",
+          "lineNumber": 109
+        },
+        {
+          "caller": "forward_before",
+          "callee": "torch.from_numpy",
+          "lineNumber": 111
+        },
+        {
+          "caller": "forward_before",
+          "callee": "numpy.array",
+          "lineNumber": 111
+        },
+        {
+          "caller": "forward_before",
+          "callee": "self.eplb_loader.set_log2phy_map",
+          "lineNumber": 112
+        },
+        {
+          "caller": "forward_before",
+          "callee": "torch.from_numpy",
+          "lineNumber": 113
+        },
+        {
+          "caller": "forward_before",
+          "callee": "numpy.array",
+          "lineNumber": 113
+        },
+        {
+          "caller": "forward_before",
+          "callee": "self.eplb_loader.generate_expert_d2d_transfer_task",
+          "lineNumber": 114
+        },
+        {
+          "caller": "forward_before",
+          "callee": "self.eplb_loader.asyn_expert_weight_transfer",
+          "lineNumber": 123
+        },
+        {
+          "caller": "forward_end",
+          "callee": "self.wakeup_eplb_worker_flag",
+          "lineNumber": 126
+        },
+        {
+          "caller": "forward_end",
+          "callee": "record_function_or_nullcontext",
+          "lineNumber": 127
+        },
+        {
+          "caller": "forward_end",
+          "callee": "self.compute_and_set_moe_load",
+          "lineNumber": 128
+        },
+        {
+          "caller": "forward_end",
+          "callee": "self.wakeup_eplb_worker",
+          "lineNumber": 129
+        },
+        {
+          "caller": "forward_end",
+          "callee": "self.update_expert_weight_flag",
+          "lineNumber": 131
+        },
+        {
+          "caller": "forward_end",
+          "callee": "self.eplb_loader.update_expert_map_and_weight",
+          "lineNumber": 132
+        },
+        {
+          "caller": "forward_end",
+          "callee": "self.update_iteration",
+          "lineNumber": 134
+        },
+        {
+          "caller": "compute_and_set_moe_load",
+          "callee": "self.adaptor.get_rank_expert_workload().unsqueeze",
+          "lineNumber": 137
+        },
+        {
+          "caller": "compute_and_set_moe_load",
+          "callee": "self.adaptor.get_rank_expert_workload",
+          "lineNumber": 137
+        },
+        {
+          "caller": "compute_and_set_moe_load",
+          "callee": "self.comm_group.all_gather(local_load, dim=1).cpu",
+          "lineNumber": 138
+        },
+        {
+          "caller": "compute_and_set_moe_load",
+          "callee": "self.comm_group.all_gather",
+          "lineNumber": 138
+        },
+        {
+          "caller": "compute_and_set_moe_load",
+          "callee": "moe_load.permute",
+          "lineNumber": 141
+        },
+        {
+          "caller": "compute_and_set_moe_load",
+          "callee": "logger.debug",
+          "lineNumber": 144
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "self.adaptor.get_global_expert_map",
+          "lineNumber": 149
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "self.compute_and_set_moe_load",
+          "lineNumber": 150
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "torch.empty",
+          "lineNumber": 152
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "range",
+          "lineNumber": 156
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "comm_op_list.append",
+          "lineNumber": 159
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "dist.P2POp",
+          "lineNumber": 159
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "range",
+          "lineNumber": 161
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "comm_op_list.append",
+          "lineNumber": 164
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "dist.P2POp",
+          "lineNumber": 164
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "dist.batch_isend_irecv",
+          "lineNumber": 166
+        },
+        {
+          "caller": "warm_up_eplb",
+          "callee": "req.wait",
+          "lineNumber": 169
+        },
+        {
+          "caller": "shutdown",
+          "callee": "self.process.is_alive",
+          "lineNumber": 175
+        },
+        {
+          "caller": "shutdown",
+          "callee": "self.process.terminate",
+          "lineNumber": 176
+        },
+        {
+          "caller": "shutdown",
+          "callee": "self.process.join",
+          "lineNumber": 177
+        },
+        {
+          "caller": "shutdown",
+          "callee": "logger.info",
+          "lineNumber": 178
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "eplb/utils.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 43,
+      "functions": [
+        {
+          "name": "get_expert_map",
+          "startLine": 23,
+          "endLine": 24,
+          "params": [
+            "layer_id"
+          ]
+        },
+        {
+          "name": "get_log2phy_map",
+          "startLine": 27,
+          "endLine": 28,
+          "params": [
+            "layer_id"
+          ]
+        },
+        {
+          "name": "get_all_moe_loads",
+          "startLine": 31,
+          "endLine": 38,
+          "params": []
+        },
+        {
+          "name": "clear_all_moe_loads",
+          "startLine": 41,
+          "endLine": 45,
+          "params": []
+        },
+        {
+          "name": "model_register",
+          "startLine": 48,
+          "endLine": 54,
+          "params": [
+            "model"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_expert_map",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "get_log2phy_map",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "get_all_moe_loads",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "clear_all_moe_loads",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "model_register",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_log2phy_map",
+          "callee": "self.model.layers[layer_id].mlp.experts.get_log2phy_map",
+          "lineNumber": 28
+        },
+        {
+          "caller": "get_all_moe_loads",
+          "callee": "getattr",
+          "lineNumber": 32
+        },
+        {
+          "caller": "get_all_moe_loads",
+          "callee": "torch.stack",
+          "lineNumber": 34
+        },
+        {
+          "caller": "get_all_moe_loads",
+          "callee": "range",
+          "lineNumber": 35
+        },
+        {
+          "caller": "clear_all_moe_loads",
+          "callee": "getattr",
+          "lineNumber": 42
+        },
+        {
+          "caller": "clear_all_moe_loads",
+          "callee": "range",
+          "lineNumber": 44
+        },
+        {
+          "caller": "clear_all_moe_loads",
+          "callee": "self.model.layers[layer_id].mlp.experts.clear_moe_load",
+          "lineNumber": 45
+        },
+        {
+          "caller": "model_register",
+          "callee": "hasattr",
+          "lineNumber": 49
+        },
+        {
+          "caller": "model_register",
+          "callee": "types.MethodType",
+          "lineNumber": 51
+        },
+        {
+          "caller": "model_register",
+          "callee": "types.MethodType",
+          "lineNumber": 52
+        },
+        {
+          "caller": "model_register",
+          "callee": "types.MethodType",
+          "lineNumber": 53
+        },
+        {
+          "caller": "model_register",
+          "callee": "types.MethodType",
+          "lineNumber": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "flash_common3_context.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 31,
+      "functions": [
+        {
+          "name": "get_flash_common3_context",
+          "startLine": 20,
+          "endLine": 21,
+          "params": []
+        },
+        {
+          "name": "set_flash_common3_context",
+          "startLine": 24,
+          "endLine": 41,
+          "params": [
+            "topk_weights",
+            "topk_ids",
+            "shared_experts",
+            "shared_out"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "FlashCommon3Context",
+          "startLine": 8,
+          "endLine": 14,
+          "methods": [],
+          "properties": [
+            "gate",
+            "topk_weights",
+            "topk_ids",
+            "row_idx",
+            "shared_experts",
+            "shared_out"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FlashCommon3Context",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "get_flash_common3_context",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "set_flash_common3_context",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "set_flash_common3_context",
+          "callee": "FlashCommon3Context",
+          "lineNumber": 32
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "kv_offload/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "kv_offload/cpu_npu.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 261,
+      "nonEmptyLines": 224,
+      "functions": [
+        {
+          "name": "expand_block_ids",
+          "startLine": 22,
+          "endLine": 51,
+          "params": [
+            "block_ids",
+            "block_size_factor",
+            "output",
+            "skip_count"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Transfer",
+          "startLine": 14,
+          "endLine": 19,
+          "methods": [],
+          "properties": [
+            "job_id",
+            "stream",
+            "start_event",
+            "end_event",
+            "num_bytes"
+          ]
+        },
+        {
+          "name": "CpuNpuOffloadingHandler",
+          "startLine": 54,
+          "endLine": 261,
+          "methods": [
+            "__init__",
+            "_get_event",
+            "_recycle_event",
+            "transfer_async",
+            "get_finished",
+            "wait"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Transfer",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "expand_block_ids",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "CpuNpuOffloadingHandler",
+          "line": 54,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "expand_block_ids",
+          "callee": "np.arange",
+          "lineNumber": 45
+        },
+        {
+          "caller": "expand_block_ids",
+          "callee": "(bases[:, None] + offsets[None, :]).ravel",
+          "lineNumber": 47
+        },
+        {
+          "caller": "expand_block_ids",
+          "callee": "len",
+          "lineNumber": 51
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.npu.Stream",
+          "lineNumber": 67
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.npu.Stream",
+          "lineNumber": 68
+        },
+        {
+          "caller": "__init__",
+          "callee": "deque",
+          "lineNumber": 71
+        },
+        {
+          "caller": "__init__",
+          "callee": "deque",
+          "lineNumber": 72
+        },
+        {
+          "caller": "__init__",
+          "callee": "is_pin_memory_available",
+          "lineNumber": 77
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.info",
+          "lineNumber": 80
+        },
+        {
+          "caller": "__init__",
+          "callee": "len",
+          "lineNumber": 80
+        },
+        {
+          "caller": "__init__",
+          "callee": "gpu_caches.items",
+          "lineNumber": 83
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.npu_tensors.append",
+          "lineNumber": 84
+        },
+        {
+          "caller": "__init__",
+          "callee": "list",
+          "lineNumber": 89
+        },
+        {
+          "caller": "__init__",
+          "callee": "logger.debug",
+          "lineNumber": 92
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.cpu_tensors.append",
+          "lineNumber": 93
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.zeros",
+          "lineNumber": 95
+        },
+        {
+          "caller": "__init__",
+          "callee": "torch.zeros",
+          "lineNumber": 101
+        },
+        {
+          "caller": "__init__",
+          "callee": "zip",
+          "lineNumber": 119
+        },
+        {
+          "caller": "__init__",
+          "callee": "range",
+          "lineNumber": 120
+        },
+        {
+          "caller": "__init__",
+          "callee": "npu_base_ptrs.append",
+          "lineNumber": 123
+        },
+        {
+          "caller": "__init__",
+          "callee": "npu_t.data_ptr",
+          "lineNumber": 123
+        },
+        {
+          "caller": "__init__",
+          "callee": "cpu_base_ptrs.append",
+          "lineNumber": 124
+        },
+        {
+          "caller": "__init__",
+          "callee": "cpu_t.data_ptr",
+          "lineNumber": 124
+        },
+        {
+          "caller": "__init__",
+          "callee": "block_sizes_in_bytes.append",
+          "lineNumber": 126
+        },
+        {
+          "caller": "__init__",
+          "callee": "npu_t.stride",
+          "lineNumber": 126
+        },
+        {
+          "caller": "__init__",
+          "callee": "npu_t.element_size",
+          "lineNumber": 126
+        },
+        {
+          "caller": "__init__",
+          "callee": "np.array",
+          "lineNumber": 128
+        },
+        {
+          "caller": "__init__",
+          "callee": "np.array",
+          "lineNumber": 129
+        },
+        {
+          "caller": "__init__",
+          "callee": "np.array",
+          "lineNumber": 130
+        },
+        {
+          "caller": "__init__",
+          "callee": "int",
+          "lineNumber": 132
+        },
+        {
+          "caller": "__init__",
+          "callee": "self._block_size_in_bytes_arr.sum",
+          "lineNumber": 132
+        },
+        {
+          "caller": "_get_event",
+          "callee": "self._event_pool.pop",
+          "lineNumber": 136
+        },
+        {
+          "caller": "_get_event",
+          "callee": "torch.npu.Event",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_recycle_event",
+          "callee": "self._event_pool.append",
+          "lineNumber": 140
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "isinstance",
+          "lineNumber": 144
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "isinstance",
+          "lineNumber": 145
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "isinstance",
+          "lineNumber": 154
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "isinstance",
+          "lineNumber": 155
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "np.empty",
+          "lineNumber": 175
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "np.empty",
+          "lineNumber": 176
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "expand_block_ids",
+          "lineNumber": 177
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "expand_block_ids",
+          "lineNumber": 178
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "len",
+          "lineNumber": 189
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "(src_base_ptrs[:, None] + src_block_ids[None, :] * bsz_col).ravel",
+          "lineNumber": 194
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "(dst_base_ptrs[:, None] + dst_block_ids[None, :] * bsz_col).ravel",
+          "lineNumber": 195
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "np.broadcast_to(bsz_col, (num_sub_tensors, num_pairs)).ravel().copy",
+          "lineNumber": 196
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "np.broadcast_to(bsz_col, (num_sub_tensors, num_pairs)).ravel",
+          "lineNumber": 196
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "np.broadcast_to",
+          "lineNumber": 196
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "torch.from_numpy",
+          "lineNumber": 198
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "torch.from_numpy",
+          "lineNumber": 199
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "torch.from_numpy",
+          "lineNumber": 200
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "self._get_event",
+          "lineNumber": 202
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "self._get_event",
+          "lineNumber": 203
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "stream.wait_stream",
+          "lineNumber": 207
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "torch.npu.current_stream",
+          "lineNumber": 207
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "stream.wait_event",
+          "lineNumber": 211
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "torch.npu.stream",
+          "lineNumber": 213
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "start_event.record",
+          "lineNumber": 214
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "torch.ops._C_ascend.swap_blocks_batch",
+          "lineNumber": 217
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "end_event.record",
+          "lineNumber": 218
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "transfers.append",
+          "lineNumber": 220
+        },
+        {
+          "caller": "transfer_async",
+          "callee": "Transfer",
+          "lineNumber": 221
+        },
+        {
+          "caller": "get_finished",
+          "callee": "transfers[0].end_event.query",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_finished",
+          "callee": "transfers.popleft",
+          "lineNumber": 239
+        },
+        {
+          "caller": "get_finished",
+          "callee": "transfer.start_event.elapsed_time",
+          "lineNumber": 240
+        },
+        {
+          "caller": "get_finished",
+          "callee": "results.append",
+          "lineNumber": 241
+        },
+        {
+          "caller": "get_finished",
+          "callee": "TransferResult",
+          "lineNumber": 242
+        },
+        {
+          "caller": "get_finished",
+          "callee": "self._recycle_event",
+          "lineNumber": 250
+        },
+        {
+          "caller": "get_finished",
+          "callee": "self._recycle_event",
+          "lineNumber": 251
+        },
+        {
+          "caller": "wait",
+          "callee": "transfer.end_event.synchronize",
+          "lineNumber": 261
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "kv_offload/npu.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 63,
+      "nonEmptyLines": 53,
+      "classes": [
+        {
+          "name": "NPUOffloadingSpec",
+          "startLine": 16,
+          "endLine": 63,
+          "methods": [
+            "__init__",
+            "get_manager",
+            "get_handlers"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "NPUOffloadingSpec",
+          "line": 16,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "__init__",
+          "callee": "super().__init__",
+          "lineNumber": 18
+        },
+        {
+          "caller": "__init__",
+          "callee": "super",
+          "lineNumber": 18
+        },
+        {
+          "caller": "__init__",
+          "callee": "self.extra_config.get",
+          "lineNumber": 20
+        },
+        {
+          "caller": "__init__",
+          "callee": "Exception",
+          "lineNumber": 22
+        },
+        {
+          "caller": "get_manager",
+          "callee": "len",
+          "lineNumber": 35
+        },
+        {
+          "caller": "get_manager",
+          "callee": "CPUOffloadingManager",
+          "lineNumber": 38
+        },
+        {
+          "caller": "get_handlers",
+          "callee": "len",
+          "lineNumber": 51
+        },
+        {
+          "caller": "get_handlers",
+          "callee": "CpuNpuOffloadingHandler",
+          "lineNumber": 53
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "lora/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

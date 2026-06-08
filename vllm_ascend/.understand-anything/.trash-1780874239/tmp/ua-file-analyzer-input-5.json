@@ -1,0 +1,19 @@
+{
+  "projectRoot": "d:/57108/Desktop/code/vllm-ascend/vllm_ascend",
+  "batchFiles": [
+    {"path": "model_loader/netloader/executor/elastic_load.py", "language": "python", "sizeLines": 161, "fileCategory": "code"},
+    {"path": "model_loader/netloader/executor/netloader_pg.py", "language": "python", "sizeLines": 180, "fileCategory": "code"},
+    {"path": "model_loader/netloader/interaction/elastic.py", "language": "python", "sizeLines": 422, "fileCategory": "code"},
+    {"path": "model_loader/netloader/load.py", "language": "python", "sizeLines": 77, "fileCategory": "code"},
+    {"path": "model_loader/netloader/netloader.py", "language": "python", "sizeLines": 367, "fileCategory": "code"},
+    {"path": "model_loader/netloader/utils.py", "language": "python", "sizeLines": 63, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "model_loader/netloader/executor/elastic_load.py": ["model_loader/netloader/executor/netloader_pg.py"],
+    "model_loader/netloader/executor/netloader_pg.py": [],
+    "model_loader/netloader/interaction/elastic.py": ["model_loader/netloader/executor/elastic_load.py", "model_loader/netloader/utils.py"],
+    "model_loader/netloader/load.py": ["model_loader/netloader/executor/elastic_load.py", "model_loader/netloader/interaction/elastic.py"],
+    "model_loader/netloader/netloader.py": ["model_loader/netloader/interaction/elastic.py", "model_loader/netloader/load.py", "model_loader/netloader/utils.py"],
+    "model_loader/netloader/utils.py": []
+  }
+}

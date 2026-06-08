@@ -1,0 +1,625 @@
+{
+  "nodes": [
+    {
+      "id": "file:patch/worker/patch_v2/patch_input_batch.py",
+      "type": "file",
+      "name": "patch_input_batch.py",
+      "filePath": "patch/worker/patch_v2/patch_input_batch.py",
+      "summary": "v2 版 input batch 补丁，调整请求输入批次的构建逻辑以适配 Ascend worker。",
+      "tags": [
+        "input-batch",
+        "worker",
+        "monkey-patch"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_v2/patch_model_state.py",
+      "type": "file",
+      "name": "patch_model_state.py",
+      "filePath": "patch/worker/patch_v2/patch_model_state.py",
+      "summary": "v2 版 model state 补丁，调整模型运行状态管理以适配 Ascend。",
+      "tags": [
+        "model-state",
+        "worker",
+        "monkey-patch"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_v2/patch_triton.py",
+      "type": "file",
+      "name": "patch_triton.py",
+      "filePath": "patch/worker/patch_v2/patch_triton.py",
+      "summary": "v2 版 triton 补丁，为 v2 worker 路径提供 triton 相关的 NPU 适配。",
+      "tags": [
+        "triton",
+        "monkey-patch",
+        "npu"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:patch/worker/patch_v2/patch_uva.py",
+      "type": "file",
+      "name": "patch_uva.py",
+      "filePath": "patch/worker/patch_v2/patch_uva.py",
+      "summary": "v2 版 UVA（统一虚拟寻址）缓冲补丁，提供受监控的 NumPy/Tensor 包装与脏行追踪，按需将 CPU 修改同步到 UVA 设备缓冲。",
+      "tags": [
+        "uva",
+        "memory",
+        "buffer",
+        "monkey-patch",
+        "npu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_v2/patch_uva.py:get_row_indices_from_key",
+      "type": "function",
+      "name": "get_row_indices_from_key",
+      "filePath": "patch/worker/patch_v2/patch_uva.py",
+      "lineRange": [
+        26,
+        46
+      ],
+      "summary": "从索引 key（int/slice/tuple 等）解析出受影响的行索引集合，用于脏行追踪。",
+      "tags": [
+        "uva",
+        "indexing",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_v2/patch_uva.py:UvaBufferWrapper",
+      "type": "class",
+      "name": "UvaBufferWrapper",
+      "filePath": "patch/worker/patch_v2/patch_uva.py",
+      "lineRange": [
+        91,
+        122
+      ],
+      "summary": "UVA 缓冲包装器，统一管理 CPU/NumPy/UVA 三视图并按脏行将 CPU 修改增量同步到设备。",
+      "tags": [
+        "uva",
+        "buffer",
+        "memory",
+        "synchronization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_v2/patch_uva.py:MonitoredNumPyArray",
+      "type": "class",
+      "name": "MonitoredNumPyArray",
+      "filePath": "patch/worker/patch_v2/patch_uva.py",
+      "lineRange": [
+        49,
+        67
+      ],
+      "summary": "受监控的 NumPy 数组包装，在 __setitem__ 时记录被修改的行索引并回调。",
+      "tags": [
+        "uva",
+        "numpy",
+        "monitoring",
+        "proxy"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_v2/patch_uva.py:MonitoredTorchTensor",
+      "type": "class",
+      "name": "MonitoredTorchTensor",
+      "filePath": "patch/worker/patch_v2/patch_uva.py",
+      "lineRange": [
+        70,
+        88
+      ],
+      "summary": "受监控的 Torch 张量包装，在 __setitem__ 时记录脏行并回调以触发同步。",
+      "tags": [
+        "uva",
+        "tensor",
+        "monitoring",
+        "proxy"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:patch/worker/patch_weight_utils.py",
+      "type": "file",
+      "name": "patch_weight_utils.py",
+      "filePath": "patch/worker/patch_weight_utils.py",
+      "summary": "提供基于 import hook 的权重工具补丁机制，注册并应用针对 DeepSeek 等模型的 KV scale 名称重映射等补丁。",
+      "tags": [
+        "weight-loading",
+        "import-hook",
+        "monkey-patch",
+        "quantization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:patch/worker/patch_weight_utils.py:ImportPatchDecorator",
+      "type": "class",
+      "name": "ImportPatchDecorator",
+      "filePath": "patch/worker/patch_weight_utils.py",
+      "lineRange": [
+        8,
+        32
+      ],
+      "summary": "装饰器式补丁注册器，按目标模块收集补丁并在导入时统一应用。",
+      "tags": [
+        "import-hook",
+        "decorator",
+        "registry",
+        "monkey-patch"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_weight_utils.py:patch_deepseek",
+      "type": "function",
+      "name": "patch_deepseek",
+      "filePath": "patch/worker/patch_weight_utils.py",
+      "lineRange": [
+        36,
+        65
+      ],
+      "summary": "为 DeepSeek 模块替换 maybe_remap_kv_scale_name，处理 KV scale 权重名称的重映射。",
+      "tags": [
+        "weight-loading",
+        "kv-cache",
+        "remapping",
+        "deepseek"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:patch/worker/patch_weight_utils.py:patched_import",
+      "type": "function",
+      "name": "patched_import",
+      "filePath": "patch/worker/patch_weight_utils.py",
+      "lineRange": [
+        79,
+        88
+      ],
+      "summary": "替换内建 import，在目标模块导入后应用已注册的补丁。",
+      "tags": [
+        "import-hook",
+        "monkey-patch"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:profiler/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "profiler/__init__.py",
+      "summary": "profiler 子包初始化文件，导出 NPU profiler 相关入口。",
+      "tags": [
+        "entry-point",
+        "package-init",
+        "profiling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:profiler/torch_npu_profiler.py",
+      "type": "file",
+      "name": "torch_npu_profiler.py",
+      "filePath": "profiler/torch_npu_profiler.py",
+      "summary": "封装 torch_npu.profiler，提供创建、启动、停止与步进的 NPU 性能分析包装器。",
+      "tags": [
+        "profiling",
+        "npu",
+        "wrapper",
+        "torch-npu"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:profiler/torch_npu_profiler.py:TorchNPUProfilerWrapper",
+      "type": "class",
+      "name": "TorchNPUProfilerWrapper",
+      "filePath": "profiler/torch_npu_profiler.py",
+      "lineRange": [
+        30,
+        85
+      ],
+      "summary": "torch_npu profiler 的封装类，基于 Ascend 配置创建 profiler 并管理 start/stop/step 生命周期。",
+      "tags": [
+        "profiling",
+        "npu",
+        "wrapper",
+        "lifecycle"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:profiling_config.py",
+      "type": "file",
+      "name": "profiling_config.py",
+      "filePath": "profiling_config.py",
+      "summary": "生成并管理服务级 profiling 配置文件，提供配置目录解析、临时文件清理与原子写入的配置生成逻辑。",
+      "tags": [
+        "profiling",
+        "configuration",
+        "file-io"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:profiling_config.py:generate_service_profiling_config",
+      "type": "function",
+      "name": "generate_service_profiling_config",
+      "filePath": "profiling_config.py",
+      "lineRange": [
+        168,
+        217
+      ],
+      "summary": "生成服务 profiling 配置文件，通过临时文件 + 原子替换写入，失败时清理临时文件。",
+      "tags": [
+        "profiling",
+        "configuration",
+        "atomic-write"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:profiling_config.py:get_config_dir",
+      "type": "function",
+      "name": "get_config_dir",
+      "filePath": "profiling_config.py",
+      "lineRange": [
+        144,
+        153
+      ],
+      "summary": "解析 profiling 配置文件的存放目录（基于用户主目录）。",
+      "tags": [
+        "profiling",
+        "configuration",
+        "path"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:quantization/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "quantization/__init__.py",
+      "summary": "quantization 子包初始化文件，通过 __getattr__ 实现量化相关符号的惰性导入。",
+      "tags": [
+        "entry-point",
+        "package-init",
+        "quantization",
+        "lazy-import"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:quantization/quant_parser.py",
+      "type": "file",
+      "name": "quant_parser.py",
+      "filePath": "quantization/quant_parser.py",
+      "summary": "解析量化配置，提供量化类型映射、回退量化类型推断及 MXFP/MoE down-proj 量化参数解析。",
+      "tags": [
+        "quantization",
+        "parser",
+        "mxfp",
+        "moe"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:quantization/quant_parser.py:QuantTypeMapping",
+      "type": "class",
+      "name": "QuantTypeMapping",
+      "filePath": "quantization/quant_parser.py",
+      "lineRange": [
+        11,
+        35
+      ],
+      "summary": "量化类型到具体量化设置的映射，提供 get_quant_settings 查询。",
+      "tags": [
+        "quantization",
+        "mapping",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:quantization/quant_parser.py:parse_quant_moe_down_proj_params",
+      "type": "function",
+      "name": "parse_quant_moe_down_proj_params",
+      "filePath": "quantization/quant_parser.py",
+      "lineRange": [
+        55,
+        73
+      ],
+      "summary": "解析 MoE down-proj 的量化参数，确保 MXFP4/MXFP8 dtype 可用并查询量化设置。",
+      "tags": [
+        "quantization",
+        "moe",
+        "mxfp",
+        "parser"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:quantization/quant_type.py",
+      "type": "file",
+      "name": "quant_type.py",
+      "filePath": "quantization/quant_type.py",
+      "summary": "定义量化类型枚举常量，供量化解析与配置识别使用。",
+      "tags": [
+        "quantization",
+        "type-definition",
+        "enum"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:quantization/quant_type.py:QuantType",
+      "type": "class",
+      "name": "QuantType",
+      "filePath": "quantization/quant_type.py",
+      "lineRange": [
+        26,
+        35
+      ],
+      "summary": "量化类型常量集合，枚举受支持的量化方法标识。",
+      "tags": [
+        "quantization",
+        "type-definition",
+        "enum"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:quantization/utils.py",
+      "type": "file",
+      "name": "utils.py",
+      "filePath": "quantization/utils.py",
+      "summary": "量化工具集：下载模型配置文件、自动探测量化方法、按需注入量化配置并控制 FA quant 启用。",
+      "tags": [
+        "quantization",
+        "utility",
+        "auto-detection",
+        "model-loading"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:quantization/utils.py:get_model_file",
+      "type": "function",
+      "name": "get_model_file",
+      "filePath": "quantization/utils.py",
+      "lineRange": [
+        33,
+        80
+      ],
+      "summary": "从本地路径或 HF Hub 获取模型指定文件（如 config），处理本地存在性与下载回退。",
+      "tags": [
+        "quantization",
+        "model-loading",
+        "huggingface"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:quantization/utils.py:detect_quantization_method",
+      "type": "function",
+      "name": "detect_quantization_method",
+      "filePath": "quantization/utils.py",
+      "lineRange": [
+        83,
+        138
+      ],
+      "summary": "读取模型 config 探测其量化方法（如 FP8、MXFP 等），返回识别到的量化标识。",
+      "tags": [
+        "quantization",
+        "auto-detection",
+        "config-parsing"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:quantization/utils.py:maybe_auto_detect_quantization",
+      "type": "function",
+      "name": "maybe_auto_detect_quantization",
+      "filePath": "quantization/utils.py",
+      "lineRange": [
+        141,
+        214
+      ],
+      "summary": "在 vllm_config 上按需自动探测并注入量化配置，必要时重建 quantization config。",
+      "tags": [
+        "quantization",
+        "auto-detection",
+        "config-injection"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:quantization/utils.py:enable_fa_quant",
+      "type": "function",
+      "name": "enable_fa_quant",
+      "filePath": "quantization/utils.py",
+      "lineRange": [
+        217,
+        226
+      ],
+      "summary": "根据 Ascend 设备类型与层名决定是否对该层启用 FA（flash attention）量化。",
+      "tags": [
+        "quantization",
+        "attention",
+        "device-specific"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:patch/worker/patch_v2/patch_uva.py",
+      "target": "function:patch/worker/patch_v2/patch_uva.py:get_row_indices_from_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_v2/patch_uva.py",
+      "target": "class:patch/worker/patch_v2/patch_uva.py:UvaBufferWrapper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_v2/patch_uva.py",
+      "target": "class:patch/worker/patch_v2/patch_uva.py:MonitoredNumPyArray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_v2/patch_uva.py",
+      "target": "class:patch/worker/patch_v2/patch_uva.py:MonitoredTorchTensor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "class:patch/worker/patch_v2/patch_uva.py:MonitoredNumPyArray",
+      "target": "function:patch/worker/patch_v2/patch_uva.py:get_row_indices_from_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:patch/worker/patch_v2/patch_uva.py:MonitoredTorchTensor",
+      "target": "function:patch/worker/patch_v2/patch_uva.py:get_row_indices_from_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:patch/worker/patch_weight_utils.py",
+      "target": "class:patch/worker/patch_weight_utils.py:ImportPatchDecorator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_weight_utils.py",
+      "target": "function:patch/worker/patch_weight_utils.py:patch_deepseek",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:patch/worker/patch_weight_utils.py",
+      "target": "function:patch/worker/patch_weight_utils.py:patched_import",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:profiler/torch_npu_profiler.py",
+      "target": "class:profiler/torch_npu_profiler.py:TorchNPUProfilerWrapper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:profiling_config.py",
+      "target": "function:profiling_config.py:generate_service_profiling_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:profiling_config.py",
+      "target": "function:profiling_config.py:get_config_dir",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "function:profiling_config.py:generate_service_profiling_config",
+      "target": "function:profiling_config.py:get_config_dir",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:quantization/quant_parser.py",
+      "target": "class:quantization/quant_parser.py:QuantTypeMapping",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:quantization/quant_parser.py",
+      "target": "function:quantization/quant_parser.py:parse_quant_moe_down_proj_params",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "function:quantization/quant_parser.py:parse_quant_moe_down_proj_params",
+      "target": "class:quantization/quant_parser.py:QuantTypeMapping",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:quantization/quant_type.py",
+      "target": "class:quantization/quant_type.py:QuantType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:quantization/utils.py",
+      "target": "function:quantization/utils.py:get_model_file",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:quantization/utils.py",
+      "target": "function:quantization/utils.py:detect_quantization_method",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:quantization/utils.py",
+      "target": "function:quantization/utils.py:maybe_auto_detect_quantization",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:quantization/utils.py",
+      "target": "function:quantization/utils.py:enable_fa_quant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "function:quantization/utils.py:detect_quantization_method",
+      "target": "function:quantization/utils.py:get_model_file",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:quantization/utils.py:maybe_auto_detect_quantization",
+      "target": "function:quantization/utils.py:detect_quantization_method",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}
