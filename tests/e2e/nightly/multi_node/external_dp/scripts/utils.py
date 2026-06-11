@@ -3,10 +3,13 @@ import os
 import shlex
 import signal
 import subprocess
+import sys
 import tarfile
+import threading
 import time
 import urllib.error
 import urllib.request
+from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -30,12 +33,23 @@ if TYPE_CHECKING:
 
 SENSITIVE_ENV_TOKENS = ("TOKEN", "SECRET", "PASSWORD", "ACCESS_KEY")
 
-# Health-probe tuning shared by the readiness/liveness waits. These are kept as
-# internal constants (not env knobs) so the only user-facing timeouts stay the two
-# startup/total budgets resolved in runtime.py.
+# Health-probe tuning. These are kept as internal constants (not env knobs) so the
+# only user-facing timeouts stay the two startup/total budgets resolved in runtime.py.
+#
+# Readiness (startup) phase: probe fast so startup failures surface quickly.
 HEALTH_PROBE_TIMEOUT_S = 5.0
 HEALTH_POLL_INTERVAL_S = 5.0
 UNHEALTHY_FAILURE_THRESHOLD = 3
+
+# Liveness phase (a worker hanging until the master rank stops): the master rank is
+# serving benchmark traffic, so /health can stay slow for tens of seconds. A false
+# "master stopped" verdict makes the worker tear its ranks down mid-benchmark and
+# breaks the DP/PD group, while shutdown-detection latency costs nothing -- so this
+# debounce is deliberately much more tolerant than the readiness one (~1-2 min of
+# sustained unreachability).
+LIVENESS_PROBE_TIMEOUT_S = 10.0
+LIVENESS_POLL_INTERVAL_S = 10.0
+LIVENESS_FAILURE_THRESHOLD = 6
 
 
 def format_server_cmd(cmd: list[str], env: dict[str, str] | None = None) -> str:
@@ -125,6 +139,7 @@ def wait_http_unready(
     timeout: int,
     interval: float = HEALTH_POLL_INTERVAL_S,
     failure_threshold: int = UNHEALTHY_FAILURE_THRESHOLD,
+    probe_timeout: float = HEALTH_PROBE_TIMEOUT_S,
 ) -> None:
     """Return once ``url`` has been unreachable ``failure_threshold`` times in a row.
 
@@ -136,7 +151,7 @@ def wait_http_unready(
     deadline = time.monotonic() + timeout
     consecutive_failures = 0
     while time.monotonic() < deadline:
-        if is_http_ready(url, timeout=HEALTH_PROBE_TIMEOUT_S):
+        if is_http_ready(url, timeout=probe_timeout):
             consecutive_failures = 0
         else:
             consecutive_failures += 1
@@ -144,6 +159,64 @@ def wait_http_unready(
                 return
         time.sleep(interval)
     raise TimeoutError(f"Timed out waiting for HTTP unready: {url}")
+
+
+def tail_text(path: Path, max_lines: int = 50, max_bytes: int = 8192) -> str:
+    """Best-effort tail of a local log file, for embedding into error messages.
+
+    Failure messages must stay useful even when the log cannot be read (already
+    rotated, never created, permission issue), so this never raises.
+    """
+    try:
+        with Path(path).open("rb") as f:
+            f.seek(0, os.SEEK_END)
+            size = f.tell()
+            f.seek(max(size - max_bytes, 0))
+            data = f.read()
+    except OSError:
+        return f"<log unavailable: {path}>"
+    lines = data.decode("utf-8", errors="replace").splitlines()
+    return "\n".join(lines[-max_lines:])
+
+
+def install_special_dependencies(special_dependencies: dict[str, str]) -> None:
+    """Pip-install per-config dependency pins, failing fast on any error.
+
+    A silently failed install would otherwise only surface an hour later as an
+    inscrutable model-load error inside vLLM.
+    """
+    for package, version in special_dependencies.items():
+        spec = f"{package}=={version}"
+        command = [sys.executable, "-m", "pip", "install", spec]
+        logger.info("Installing special dependency: %s", spec)
+        result = subprocess.run(command, check=False)
+        if result.returncode != 0:
+            raise RuntimeError(f"Failed to install special dependency {spec}: pip exited with {result.returncode}")
+
+
+def run_with_timeout(fn: Callable[[], Any], timeout_s: float, task_name: str) -> Any:
+    """Run ``fn`` and raise TimeoutError if it does not finish within ``timeout_s``.
+
+    The watchdog thread is a daemon: on timeout the underlying work cannot be
+    cancelled, only abandoned -- the caller is expected to tear the serving stack
+    down right after, which unblocks or orphans whatever ``fn`` was waiting on.
+    """
+    outcome: dict[str, Any] = {}
+
+    def target() -> None:
+        try:
+            outcome["result"] = fn()
+        except BaseException as exc:  # noqa: BLE001 - propagated to the caller below
+            outcome["error"] = exc
+
+    thread = threading.Thread(target=target, daemon=True, name=f"watchdog-{task_name}")
+    thread.start()
+    thread.join(max(timeout_s, 0))
+    if thread.is_alive():
+        raise TimeoutError(f"{task_name} did not finish within the {timeout_s:.0f}s budget")
+    if "error" in outcome:
+        raise outcome["error"]
+    return outcome["result"]
 
 
 def collect_logs(src_dir: Path, output_tar: Path) -> None:

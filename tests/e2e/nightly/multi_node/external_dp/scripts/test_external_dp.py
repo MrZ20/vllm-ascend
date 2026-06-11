@@ -1,7 +1,5 @@
 import logging
 import os
-import subprocess
-import sys
 import threading
 import time
 from collections.abc import Callable
@@ -15,19 +13,21 @@ from tests.e2e.nightly.multi_node.external_dp.scripts.external_dp_config import 
     resolve_current_node_index,
 )
 from tests.e2e.nightly.multi_node.external_dp.scripts.runtime import (
+    GLOBAL_TIMEOUT_S,
+    SERVICE_STARTUP_TIMEOUT_S,
     ExternalDPProxyLauncher,
     ExternalDPServerManager,
     build_all_server_commands,
     format_http_status,
     master_rank_health_url,
     proxy_server_health_url,
-    resolve_startup_timeout,
-    resolve_total_timeout,
     wait_master_rank_stopped,
     wait_ranks_ready,
 )
 from tests.e2e.nightly.multi_node.external_dp.scripts.utils import (
     collect_logs,
+    install_special_dependencies,
+    run_with_timeout,
     write_benchmark_results_json,
 )
 from tools.aisbench import run_aisbench_cases
@@ -40,18 +40,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 DEFAULT_LOG_ROOT = Path("/tmp/external_dp_logs")
-
-
-def _install_special_dependencies(config: ExternalDPConfig) -> None:
-    for package, version in config.special_dependencies.items():
-        command = [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            f"{package}=={version}",
-        ]
-        subprocess.call(command)
 
 
 @contextmanager
@@ -102,18 +90,16 @@ def _archive_rank_logs(log_root: Path, current_node_index: int) -> None:
 
 
 def test_external_dp() -> None:
+    run_start = time.monotonic()
     config = ExternalDPConfigLoader.from_yaml()
-    _install_special_dependencies(config)
+    install_special_dependencies(config.special_dependencies)
     ranks = RankResolver(config).resolve()
     current_node_index = resolve_current_node_index(config)
     log_root = Path(os.environ.get("EXTERNAL_DP_LOG_DIR", str(DEFAULT_LOG_ROOT)))
-    startup_timeout = resolve_startup_timeout(config)
-    total_timeout = resolve_total_timeout(config)
     logger.info(
-        "External DP timeouts: startup=%ds total=%ds (engine_ready=%ds)",
-        startup_timeout,
-        total_timeout,
-        config.engine_ready_timeout_s,
+        "External DP timeouts: global=%ds service_startup=%ds",
+        GLOBAL_TIMEOUT_S,
+        SERVICE_STARTUP_TIMEOUT_S,
     )
     is_master = current_node_index == 0
 
@@ -122,7 +108,6 @@ def test_external_dp() -> None:
         ranks=ranks,
         current_node_index=current_node_index,
         log_root=log_root,
-        startup_timeout=startup_timeout,
     )
     proxy_launcher = ExternalDPProxyLauncher(
         config=config,
@@ -134,8 +119,12 @@ def test_external_dp() -> None:
     try:
         with server_manager, proxy_launcher:
             if is_master:
-                wait_ranks_ready(ranks, timeout=startup_timeout)
-                proxy_launcher.wait_ready(timeout=startup_timeout)
+                wait_ranks_ready(
+                    ranks,
+                    timeout=SERVICE_STARTUP_TIMEOUT_S,
+                    rank_processes=server_manager.rank_processes,
+                )
+                proxy_launcher.wait_ready()
                 target = f"http://{config.routing.proxy_host}:{config.routing.proxy_port}"
                 logger.info(
                     "Running AISBench cases: model=%s target=%s cases=[%s]",
@@ -143,15 +132,26 @@ def test_external_dp() -> None:
                     target,
                     _format_benchmark_cases(config),
                 )
+                # Enforce the global budget here: without a master-side deadline a
+                # stuck benchmark hangs forever while the workers' backstop fires
+                # first and tears the DP group down mid-run.
+                remaining_budget = GLOBAL_TIMEOUT_S - (time.monotonic() - run_start)
                 with _heartbeat(
                     "Running AISBench",
                     status_fn=lambda: format_http_status("proxy", proxy_server_health_url(config)),
                 ):
-                    results = run_aisbench_cases(
-                        model=config.model,
-                        port=config.routing.proxy_port,
-                        aisbench_cases=config.benchmark_cases,
-                        host_ip=config.routing.proxy_host,
+                    results = run_with_timeout(
+                        lambda: run_aisbench_cases(
+                            model=config.model,
+                            port=config.routing.proxy_port,
+                            aisbench_cases=config.benchmark_cases,
+                            host_ip=config.routing.proxy_host,
+                        ),
+                        timeout_s=remaining_budget,
+                        task_name=(
+                            "AISBench (the serving stack was healthy when the benchmark started; "
+                            "check proxy.log and the rank logs in the node archives for stuck requests)"
+                        ),
                     )
                 logger.info("AISBench completed: results=%d", len(results or []))
                 all_commands = build_all_server_commands(config, ranks)
@@ -167,10 +167,6 @@ def test_external_dp() -> None:
                     "Waiting for master external DP rank to stop",
                     status_fn=lambda: format_http_status("master", master_url),
                 ):
-                    wait_master_rank_stopped(
-                        ranks,
-                        startup_timeout=startup_timeout,
-                        total_timeout=total_timeout,
-                    )
+                    wait_master_rank_stopped(ranks)
     finally:
         _archive_rank_logs(log_root, current_node_index)

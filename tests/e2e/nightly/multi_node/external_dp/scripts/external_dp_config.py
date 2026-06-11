@@ -112,28 +112,6 @@ class ExternalDPConfig:
     def is_disaggregated_prefill(self) -> bool:
         return self.routing.type == ROUTING_DISAGGREGATED_PREFILL
 
-    @property
-    def engine_ready_timeout_s(self) -> int:
-        """Largest ``VLLM_ENGINE_READY_TIMEOUT_S`` configured for the ranks.
-
-        Rank subprocesses receive this via the YAML template envs (e.g. 7200),
-        which is typically far larger than the value in the framework process's own
-        environment (the run.sh export). The startup wait budget is derived from
-        this so the framework never gives up before vLLM itself would.
-        """
-        values: list[int] = []
-        for template in self.launch_templates:
-            raw = template.envs.get("VLLM_ENGINE_READY_TIMEOUT_S")
-            if raw in (None, ""):
-                continue
-            try:
-                values.append(int(raw))
-            except (TypeError, ValueError):
-                continue
-        if values:
-            return max(values)
-        return int(os.environ.get("VLLM_ENGINE_READY_TIMEOUT_S", "3600"))
-
 
 def replace_cluster_placeholders(
     value: Any,

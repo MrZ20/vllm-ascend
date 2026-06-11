@@ -1,8 +1,8 @@
 """Unit tests for the external_dp start/stop synchronization logic.
 
-These cover the readiness/liveness debouncing and the two-timeout resolution that
-caused the nightly run to time out half-way and tear ranks down on a transient
-network blip. They mock the HTTP probes, so they need no NPU/cluster.
+These cover the readiness/liveness debouncing and the fixed timeout budgets used
+by the external DP framework. They mock the HTTP probes, so they need no
+NPU/cluster.
 """
 
 import itertools
@@ -12,12 +12,7 @@ import pytest
 
 from tests.e2e.nightly.multi_node.external_dp.scripts import runtime, utils
 from tests.e2e.nightly.multi_node.external_dp.scripts.external_dp_config import (
-    ROUTING_GENERIC_DP,
-    ExternalDPConfig,
-    NodeInfo,
-    NodeTemplate,
     RankInfo,
-    RoutingConfig,
 )
 
 
@@ -39,40 +34,6 @@ def _rank(local_rank: int = 0, port: int = 8000) -> RankInfo:
         dp_address="127.0.0.1",
         dp_rpc_port=12321,
         port_start=8000,
-    )
-
-
-def _config(engine_timeout: str | None = "7200") -> ExternalDPConfig:
-    envs = {} if engine_timeout is None else {"VLLM_ENGINE_READY_TIMEOUT_S": engine_timeout}
-    template = NodeTemplate(envs=envs, server_cmd_template=["--host", "0.0.0.0"])
-    routing = RoutingConfig(
-        type=ROUTING_GENERIC_DP,
-        proxy_node_index=0,
-        proxy_host="127.0.0.1",
-        proxy_port=1999,
-        proxy_script="proxy.py",
-        groups={"worker": [0]},
-    )
-    node = NodeInfo(
-        ip="127.0.0.1",
-        port_start=7100,
-        dp_rpc_port=12321,
-        dp_size=1,
-        dp_size_local=1,
-        dp_rank_start=0,
-        tp_size=1,
-        dp_address="127.0.0.1",
-    )
-    return ExternalDPConfig(
-        test_name="t",
-        model="m",
-        num_nodes=1,
-        npu_per_node=8,
-        cluster_hosts=None,
-        cluster_ips=["127.0.0.1"],
-        routing=routing,
-        nodes=[node],
-        launch_templates=[template],
     )
 
 
@@ -152,49 +113,195 @@ def test_wait_ranks_ready_raises_after_sustained_unhealthy(monkeypatch):
         runtime.wait_ranks_ready([a, b], timeout=100)
 
 
+class _FakeProc:
+    def __init__(self, returncode=None, pid=4321):
+        self.pid = pid
+        self._returncode = returncode
+
+    def poll(self):
+        return self._returncode
+
+
 def test_wait_ranks_ready_detects_local_process_exit(monkeypatch):
     a = _rank()
-
-    class _Proc:
-        pid = 4321
-
-        def poll(self):
-            return 1
-
     monkeypatch.setattr(runtime, "is_http_ready", lambda url, timeout=None: False)
     with pytest.raises(RuntimeError, match="exited before ready"):
-        runtime.wait_ranks_ready([a], timeout=100, rank_processes=[(_Proc(), a, Path("rank.log"))])
+        runtime.wait_ranks_ready([a], timeout=100, rank_processes=[(_FakeProc(returncode=1), a, Path("rank.log"))])
 
 
-# --- two-timeout resolution ---
+# --- failure messages carry pinpointing detail ---
 
 
-def test_engine_ready_timeout_from_templates():
-    assert _config("7200").engine_ready_timeout_s == 7200
+def test_rank_process_exit_message_includes_log_tail(monkeypatch, tmp_path):
+    a = _rank()
+    log = tmp_path / "rank.log"
+    log.write_text("RuntimeError: HCCL init failed\n")
+    monkeypatch.setattr(runtime, "is_http_ready", lambda url, timeout=None: False)
+    with pytest.raises(RuntimeError, match="HCCL init failed"):
+        runtime.wait_ranks_ready([a], timeout=100, rank_processes=[(_FakeProc(returncode=1), a, log)])
 
 
-def test_engine_ready_timeout_env_fallback(monkeypatch):
-    monkeypatch.setenv("VLLM_ENGINE_READY_TIMEOUT_S", "999")
-    assert _config(engine_timeout=None).engine_ready_timeout_s == 999
+def test_ready_timeout_hints_remote_node_archive(monkeypatch):
+    # Without a local process entry the rank is remote: the error must point at
+    # that node's log archive instead of a nonexistent local log file.
+    monkeypatch.setattr(runtime, "is_http_ready", lambda url, timeout=None: False)
+    with pytest.raises(TimeoutError, match="node_0_external_dp_logs"):
+        runtime.wait_ranks_ready([_rank()], timeout=0)
 
 
-def test_resolve_startup_timeout_derives(monkeypatch):
-    monkeypatch.delenv("EXTERNAL_DP_STARTUP_TIMEOUT_S", raising=False)
-    assert runtime.resolve_startup_timeout(_config("7200")) == 7200 + runtime.STARTUP_MARGIN_S
+def test_sustained_unhealthy_message_includes_local_log_tail(monkeypatch, tmp_path):
+    a = _rank(local_rank=0, port=8000)
+    b = _rank(local_rank=1, port=8001)
+    log = tmp_path / "rank.log"
+    log.write_text("npu out of memory\n")
+    counts = {"a": 0}
+
+    def fake(url, timeout=None):
+        if url.endswith(":8000/health"):
+            counts["a"] += 1
+            return counts["a"] == 1  # ready once, then permanently down
+        return False  # b never ready -> keeps the loop running
+
+    monkeypatch.setattr(runtime, "is_http_ready", fake)
+    with pytest.raises(RuntimeError, match="npu out of memory"):
+        runtime.wait_ranks_ready([a, b], timeout=100, rank_processes=[(_FakeProc(), a, log)])
 
 
-def test_resolve_startup_timeout_env_override(monkeypatch):
-    monkeypatch.setenv("EXTERNAL_DP_STARTUP_TIMEOUT_S", "1234")
-    assert runtime.resolve_startup_timeout(_config("7200")) == 1234
+# --- proxy readiness (process-aware wait) ---
 
 
-def test_resolve_total_timeout_derives(monkeypatch):
-    monkeypatch.delenv("EXTERNAL_DP_TOTAL_TIMEOUT_S", raising=False)
-    monkeypatch.delenv("EXTERNAL_DP_STARTUP_TIMEOUT_S", raising=False)
-    expected = 7200 + runtime.STARTUP_MARGIN_S + runtime.BENCHMARK_ALLOWANCE_S
-    assert runtime.resolve_total_timeout(_config("7200")) == expected
+def test_wait_proxy_ready_returns_when_ready(monkeypatch, tmp_path):
+    monkeypatch.setattr(runtime, "is_http_ready", lambda url, timeout=None: True)
+    runtime.wait_proxy_ready(_FakeProc(), "http://x/healthcheck", tmp_path / "proxy.log", timeout=5)
 
 
-def test_resolve_total_timeout_env_override(monkeypatch):
-    monkeypatch.setenv("EXTERNAL_DP_TOTAL_TIMEOUT_S", "555")
-    assert runtime.resolve_total_timeout(_config("7200")) == 555
+def test_wait_proxy_ready_raises_on_process_exit(monkeypatch, tmp_path):
+    log = tmp_path / "proxy.log"
+    log.write_text("ModuleNotFoundError: No module named 'fastapi'\n")
+    monkeypatch.setattr(runtime, "is_http_ready", lambda url, timeout=None: False)
+    with pytest.raises(RuntimeError, match=r"(?s)proxy exited before ready.*fastapi"):
+        runtime.wait_proxy_ready(_FakeProc(returncode=2), "http://x/healthcheck", log, timeout=100)
+
+
+def test_wait_proxy_ready_times_out_with_log_tail(monkeypatch, tmp_path):
+    log = tmp_path / "proxy.log"
+    log.write_text("still starting\n")
+    monkeypatch.setattr(runtime, "is_http_ready", lambda url, timeout=None: False)
+    with pytest.raises(TimeoutError, match="still starting"):
+        runtime.wait_proxy_ready(_FakeProc(), "http://x/healthcheck", log, timeout=0)
+
+
+# --- worker liveness wait (master/worker budget coordination) ---
+
+
+def test_wait_master_rank_stopped_uses_liveness_debounce(monkeypatch):
+    captured = {}
+    monkeypatch.setattr(runtime, "wait_http_ready", lambda url, timeout: None)
+
+    def fake_unready(url, timeout, interval, failure_threshold, probe_timeout):
+        captured.update(
+            timeout=timeout,
+            interval=interval,
+            failure_threshold=failure_threshold,
+            probe_timeout=probe_timeout,
+        )
+
+    monkeypatch.setattr(runtime, "wait_http_unready", fake_unready)
+    runtime.wait_master_rank_stopped([_rank()])
+    # The worker deadline is a backstop: it must fire strictly after the master's
+    # own global deadline, never before.
+    assert captured["timeout"] > runtime.GLOBAL_TIMEOUT_S
+    assert captured["failure_threshold"] == utils.LIVENESS_FAILURE_THRESHOLD
+    assert captured["probe_timeout"] == utils.LIVENESS_PROBE_TIMEOUT_S
+    assert captured["interval"] == utils.LIVENESS_POLL_INTERVAL_S
+
+
+def test_wait_master_rank_stopped_timeout_points_at_master_node(monkeypatch):
+    monkeypatch.setattr(runtime, "wait_http_ready", lambda url, timeout: None)
+
+    def fake_unready(*args, **kwargs):
+        raise TimeoutError("unready timeout")
+
+    monkeypatch.setattr(runtime, "wait_http_unready", fake_unready)
+    with pytest.raises(TimeoutError, match="master node"):
+        runtime.wait_master_rank_stopped([_rank()])
+
+
+# --- tail_text ---
+
+
+def test_tail_text_missing_file():
+    assert "log unavailable" in utils.tail_text(Path("/nonexistent/file.log"))
+
+
+def test_tail_text_keeps_only_last_lines(tmp_path):
+    log = tmp_path / "x.log"
+    log.write_text("\n".join(f"line-{i}" for i in range(100)) + "\n")
+    assert utils.tail_text(log, max_lines=5).splitlines() == [f"line-{i}" for i in range(95, 100)]
+
+
+# --- special dependency install ---
+
+
+def test_install_special_dependencies_raises_on_pip_failure(monkeypatch):
+    class _Result:
+        returncode = 1
+
+    monkeypatch.setattr(utils.subprocess, "run", lambda *a, **k: _Result())
+    with pytest.raises(RuntimeError, match=r"transformers==5\.2\.0"):
+        utils.install_special_dependencies({"transformers": "5.2.0"})
+
+
+def test_install_special_dependencies_ok(monkeypatch):
+    class _Result:
+        returncode = 0
+
+    calls = []
+
+    def fake_run(cmd, **kwargs):
+        calls.append(cmd)
+        return _Result()
+
+    monkeypatch.setattr(utils.subprocess, "run", fake_run)
+    utils.install_special_dependencies({"transformers": "5.2.0"})
+    assert any("transformers==5.2.0" in part for cmd in calls for part in cmd)
+
+
+# --- run_with_timeout (master-side global budget watchdog) ---
+
+
+def test_run_with_timeout_returns_result():
+    assert utils.run_with_timeout(lambda: 42, timeout_s=5, task_name="t") == 42
+
+
+def test_run_with_timeout_propagates_error():
+    def boom():
+        raise ValueError("inner failure")
+
+    with pytest.raises(ValueError, match="inner failure"):
+        utils.run_with_timeout(boom, timeout_s=5, task_name="t")
+
+
+def test_run_with_timeout_raises_on_deadline():
+    import threading
+
+    release = threading.Event()
+    try:
+        with pytest.raises(TimeoutError, match="did not finish"):
+            utils.run_with_timeout(release.wait, timeout_s=0.05, task_name="hang")
+    finally:
+        release.set()
+
+
+# --- fixed timeout budgets ---
+
+
+def test_external_dp_timeout_budgets():
+    assert runtime.GLOBAL_TIMEOUT_S == 7200
+    assert runtime.SERVICE_STARTUP_TIMEOUT_S == 3600
+    assert runtime.WORKER_BACKSTOP_GRACE_S > 0
+    # The liveness debounce (worker watching the loaded master) must be materially
+    # more tolerant than the startup readiness debounce.
+    liveness_window = utils.LIVENESS_FAILURE_THRESHOLD * utils.LIVENESS_POLL_INTERVAL_S
+    readiness_window = utils.UNHEALTHY_FAILURE_THRESHOLD * utils.HEALTH_POLL_INTERVAL_S
+    assert liveness_window >= 2 * readiness_window

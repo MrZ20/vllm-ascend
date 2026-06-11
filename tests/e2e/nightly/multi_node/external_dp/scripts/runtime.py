@@ -1,9 +1,11 @@
 import logging
 import os
+import shutil
 import subprocess
 import sys
 import time
 from collections.abc import Iterable
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -21,10 +23,14 @@ from tests.e2e.nightly.multi_node.external_dp.scripts.external_dp_config import 
 from tests.e2e.nightly.multi_node.external_dp.scripts.utils import (
     HEALTH_POLL_INTERVAL_S,
     HEALTH_PROBE_TIMEOUT_S,
+    LIVENESS_FAILURE_THRESHOLD,
+    LIVENESS_POLL_INTERVAL_S,
+    LIVENESS_PROBE_TIMEOUT_S,
     UNHEALTHY_FAILURE_THRESHOLD,
     format_server_cmd,
     is_http_ready,
     start_logged_process,
+    tail_text,
     terminate_process_tree,
     wait_http_ready,
     wait_http_unready,
@@ -36,39 +42,15 @@ logger = logging.getLogger(__name__)
 TEMPLATE_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 ENV_VAR_RE = re.compile(r"(?<!\$)\$([A-Za-z_][A-Za-z0-9_]*)")
 
-# Defaults backing the two user-facing timeouts (see resolve_*_timeout below).
-# STARTUP covers "service launch -> all ranks ready"; the margin on top of vLLM's
-# own engine-ready timeout absorbs weight download, process spawn and cross-node DP
-# rendezvous. TOTAL covers the whole run; the allowance on top of STARTUP is the
-# worker's safety net while it hangs for the master to finish the benchmark.
-STARTUP_MARGIN_S = 1800
-BENCHMARK_ALLOWANCE_S = 3600
-
-
-def resolve_startup_timeout(config: ExternalDPConfig) -> int:
-    """Seconds to wait for every rank (and the proxy) to become ready.
-
-    Overridable via ``EXTERNAL_DP_STARTUP_TIMEOUT_S``; otherwise derived from the
-    rank-level ``VLLM_ENGINE_READY_TIMEOUT_S`` plus a margin, so the framework never
-    gives up before vLLM itself would.
-    """
-    explicit = os.environ.get("EXTERNAL_DP_STARTUP_TIMEOUT_S")
-    if explicit:
-        return int(explicit)
-    return config.engine_ready_timeout_s + STARTUP_MARGIN_S
-
-
-def resolve_total_timeout(config: ExternalDPConfig) -> int:
-    """Seconds for the whole run (startup -> benchmark end).
-
-    Overridable via ``EXTERNAL_DP_TOTAL_TIMEOUT_S``; otherwise the startup budget
-    plus an allowance for the benchmark. Used as the worker's safety net while it
-    hangs for the master to stop (the normal exit is the master's health dropping).
-    """
-    explicit = os.environ.get("EXTERNAL_DP_TOTAL_TIMEOUT_S")
-    if explicit:
-        return int(explicit)
-    return resolve_startup_timeout(config) + BENCHMARK_ALLOWANCE_S
+# External DP keeps one global run budget. Service readiness uses a shorter fixed
+# budget so startup failures surface quickly without stretching the whole run.
+# The master enforces GLOBAL_TIMEOUT_S on the benchmark itself (see
+# test_external_dp.py); workers add WORKER_BACKSTOP_GRACE_S on top so their own
+# deadline fires strictly after the master's -- a worker must never tear its ranks
+# down while the master is still benchmarking.
+GLOBAL_TIMEOUT_S = 7200
+SERVICE_STARTUP_TIMEOUT_S = 3600
+WORKER_BACKSTOP_GRACE_S = 600
 
 
 @dataclass(frozen=True)
@@ -214,13 +196,11 @@ class ExternalDPServerManager:
         ranks: list[RankInfo],
         current_node_index: int,
         log_root: Path,
-        startup_timeout: int,
     ):
         self.config = config
         self.ranks = ranks
         self.current_node_index = current_node_index
         self.log_root = log_root
-        self.startup_timeout = startup_timeout
         self.command_builder = ServerCommandBuilder(config)
         self.dist_envs = build_dist_envs(
             config.cluster_ips[current_node_index],
@@ -231,6 +211,9 @@ class ExternalDPServerManager:
     def start_current_node(self) -> None:
         local_ranks = [rank for rank in self.ranks if rank.node_index == self.current_node_index]
         logger.info("Starting %d external DP ranks on node %d", len(local_ranks), self.current_node_index)
+        # Logs are opened in append mode under a fixed root; wipe this node's dir
+        # first so the archived tar never mixes in a previous run's output.
+        shutil.rmtree(self.log_root / f"node-{self.current_node_index}", ignore_errors=True)
         try:
             for rank in local_ranks:
                 template = self.config.launch_templates[rank.node_index]
@@ -245,7 +228,7 @@ class ExternalDPServerManager:
 
             wait_ranks_ready(
                 local_ranks,
-                timeout=self.startup_timeout,
+                timeout=SERVICE_STARTUP_TIMEOUT_S,
                 rank_processes=self.rank_processes,
             )
         except Exception:
@@ -289,7 +272,8 @@ class ExternalDPProxyLauncher:
         self.ranks = ranks
         self.current_node_index = current_node_index
         self.log_root = log_root
-        self.pid: int | None = None
+        self.process: subprocess.Popen | None = None
+        self.log_file = log_root / f"node-{current_node_index}" / "proxy.log"
 
     def start(self) -> None:
         if self.current_node_index != self.config.routing.proxy_node_index:
@@ -297,14 +281,17 @@ class ExternalDPProxyLauncher:
             return
 
         cmd = build_proxy_server_cmd(self.config, self.ranks)
-        log_file = self.log_root / f"node-{self.current_node_index}" / "proxy.log"
-        process = start_logged_process(cmd, {}, log_file)
-        self.pid = process.pid
+        self.process = start_logged_process(cmd, {}, self.log_file)
         logger.info("External DP proxy launched: %s", proxy_server_health_url(self.config))
 
-    def wait_ready(self, timeout: int = 300) -> None:
-        wait_http_ready(proxy_server_health_url(self.config), timeout=timeout)
-        logger.info("External DP proxy ready: %s", proxy_server_health_url(self.config))
+    def wait_ready(self) -> None:
+        url = proxy_server_health_url(self.config)
+        if self.process is None:
+            # The proxy runs on another node; readiness is only observable over HTTP.
+            wait_http_ready(url, timeout=SERVICE_STARTUP_TIMEOUT_S)
+        else:
+            wait_proxy_ready(self.process, url, self.log_file, timeout=SERVICE_STARTUP_TIMEOUT_S)
+        logger.info("External DP proxy ready: %s", url)
 
     def __enter__(self):
         self.start()
@@ -314,11 +301,11 @@ class ExternalDPProxyLauncher:
         self.cleanup()
 
     def cleanup(self) -> None:
-        if self.pid is None:
+        if self.process is None:
             return
-        logger.info("Stopping external DP proxy pid=%d", self.pid)
-        terminate_process_tree(self.pid)
-        self.pid = None
+        logger.info("Stopping external DP proxy pid=%d", self.process.pid)
+        terminate_process_tree(self.process.pid)
+        self.process = None
 
 
 def build_all_server_commands(config: ExternalDPConfig, ranks: list[RankInfo]) -> list[ServerCommand]:
@@ -368,6 +355,32 @@ def proxy_server_health_url(config: ExternalDPConfig) -> str:
     return f"http://{config.routing.proxy_host}:{config.routing.proxy_port}/healthcheck"
 
 
+def wait_proxy_ready(process: subprocess.Popen, url: str, log_file: Path, timeout: int) -> None:
+    """Wait for the local proxy's healthcheck, failing fast if its process dies.
+
+    Without the process check, a proxy that crashes at launch (missing dependency,
+    bad argument) would silently burn the whole startup budget before surfacing a
+    generic HTTP timeout.
+    """
+    deadline = time.monotonic() + timeout
+    while True:
+        returncode = process.poll()
+        if returncode is not None:
+            raise RuntimeError(
+                f"External DP proxy exited before ready: pid={process.pid} "
+                f"returncode={returncode} log={log_file}\n"
+                f"--- tail of {log_file} ---\n{tail_text(log_file)}"
+            )
+        if is_http_ready(url, timeout=HEALTH_PROBE_TIMEOUT_S):
+            return
+        if time.monotonic() >= deadline:
+            raise TimeoutError(
+                f"Timed out waiting for external DP proxy ready: {url}\n"
+                f"--- tail of {log_file} ---\n{tail_text(log_file)}"
+            )
+        time.sleep(HEALTH_POLL_INTERVAL_S)
+
+
 def rank_health_url(rank: RankInfo) -> str:
     return f"http://{rank.host}:{rank.port}/health"
 
@@ -384,7 +397,11 @@ def rank_label(rank: RankInfo) -> str:
 
 
 def format_http_status(label: str, url: str) -> str:
-    status = "ready" if is_http_ready(url, timeout=1.0) else "waiting"
+    # Heartbeat-only status. A loaded server can legitimately miss the probe
+    # window, so report "no-response" rather than "waiting" -- this line must not
+    # read as "the service is down" to someone scanning the logs.
+    ready = is_http_ready(url, timeout=HEALTH_PROBE_TIMEOUT_S)
+    status = "ready" if ready else f"no-response(>{HEALTH_PROBE_TIMEOUT_S:g}s)"
     return f"{label}={status} url={url}"
 
 
@@ -399,6 +416,29 @@ def _format_rank_statuses(
     return "\n".join(parts)
 
 
+def _rank_log_path(rank: RankInfo, rank_processes: list[RankProcess] | None) -> Path | None:
+    for _process, proc_rank, log_file in rank_processes or []:
+        if proc_rank == rank:
+            return log_file
+    return None
+
+
+def _describe_rank_failure(rank: RankInfo, rank_processes: list[RankProcess] | None) -> str:
+    """Label a failed rank with everything needed to pinpoint the root cause.
+
+    Local ranks get their log tail inlined so the master's pytest output is
+    self-contained; remote ranks get an explicit pointer to that node's archive,
+    because a rank stuck here is usually the victim of a failure on its DP peer.
+    """
+    log_file = _rank_log_path(rank, rank_processes)
+    if log_file is None:
+        return (
+            f"{rank_label(rank)} (runs on node {rank.node_index}; root cause may be on that node -- "
+            f"see node_{rank.node_index}_external_dp_logs.tar.gz in the job artifacts)"
+        )
+    return f"{rank_label(rank)} log={log_file}\n--- tail of {log_file} ---\n{tail_text(log_file)}"
+
+
 def _raise_if_rank_process_exited(rank_processes: list[RankProcess] | None) -> None:
     if not rank_processes:
         return
@@ -407,10 +447,17 @@ def _raise_if_rank_process_exited(rank_processes: list[RankProcess] | None) -> N
     for process, rank, log_file in rank_processes:
         returncode = process.poll()
         if returncode is not None:
-            exited.append(f"{rank_label(rank)} pid={process.pid} returncode={returncode} log={log_file}")
+            exited.append(
+                f"{rank_label(rank)} pid={process.pid} returncode={returncode} log={log_file}\n"
+                f"--- tail of {log_file} ---\n{tail_text(log_file)}"
+            )
 
     if exited:
-        raise RuntimeError("External DP rank process exited before ready: " + "; ".join(exited))
+        raise RuntimeError("External DP rank process exited before ready:\n" + "\n".join(exited))
+
+
+def _probe_rank_ready(rank: RankInfo) -> bool:
+    return is_http_ready(rank_health_url(rank), timeout=HEALTH_PROBE_TIMEOUT_S)
 
 
 def wait_ranks_ready(
@@ -419,77 +466,90 @@ def wait_ranks_ready(
     rank_processes: list[RankProcess] | None = None,
 ) -> None:
     ranks = list(ranks)
+    if not ranks:
+        return
     rank_ready = {rank: False for rank in ranks}
     consecutive_unhealthy = {rank: 0 for rank in ranks}
     deadline = time.monotonic() + timeout
     last_log_time = 0.0
 
-    while True:
-        _raise_if_rank_process_exited(rank_processes)
+    # Probe concurrently: serial probes of N ranks take up to N * probe-timeout per
+    # iteration, which both delays failure detection and distorts the
+    # consecutive-failure debounce below.
+    with ThreadPoolExecutor(max_workers=min(len(ranks), 16)) as probe_pool:
+        while True:
+            _raise_if_rank_process_exited(rank_processes)
 
-        all_ready = True
+            probe_results = dict(zip(ranks, probe_pool.map(_probe_rank_ready, ranks)))
+            for rank, is_ready in probe_results.items():
+                if is_ready:
+                    if not rank_ready[rank]:
+                        logger.info("[READY] External DP rank %s", rank_label(rank))
+                    rank_ready[rank] = True
+                    consecutive_unhealthy[rank] = 0
+                elif rank_ready[rank]:
+                    consecutive_unhealthy[rank] += 1
 
-        for rank in ranks:
-            is_ready = is_http_ready(rank_health_url(rank), timeout=HEALTH_PROBE_TIMEOUT_S)
-            if is_ready:
-                if not rank_ready[rank]:
-                    logger.info("[READY] External DP rank %s", rank_label(rank))
-                rank_ready[rank] = True
-                consecutive_unhealthy[rank] = 0
-                continue
+            # Only treat an already-ready rank as crashed once it has failed several
+            # probes in a row; a single transient failure (slow /health under load, a
+            # network blip) must not abort an otherwise-healthy run.
+            flapping = [
+                rank
+                for rank in ranks
+                if rank_ready[rank] and consecutive_unhealthy[rank] >= UNHEALTHY_FAILURE_THRESHOLD
+            ]
+            if flapping:
+                failed = "\n".join(_describe_rank_failure(rank, rank_processes) for rank in flapping)
+                raise RuntimeError(f"External DP rank became unhealthy after ready:\n{failed}")
 
-            all_ready = False
-            if rank_ready[rank]:
-                consecutive_unhealthy[rank] += 1
+            if all(probe_results.values()):
+                return
 
-        # Only treat an already-ready rank as crashed once it has failed several
-        # probes in a row; a single transient failure (slow /health under load, a
-        # network blip) must not abort an otherwise-healthy run.
-        flapping = [
-            rank for rank in ranks if rank_ready[rank] and consecutive_unhealthy[rank] >= UNHEALTHY_FAILURE_THRESHOLD
-        ]
-        if flapping:
-            failed = "; ".join(rank_label(rank) for rank in flapping)
-            raise RuntimeError(f"External DP rank became unhealthy after ready: {failed}")
+            now = time.monotonic()
+            if now - last_log_time >= 30:
+                logger.info(
+                    "Polling external DP ranks: ready=%d/%d\n%s",
+                    sum(rank_ready.values()),
+                    len(ranks),
+                    _format_rank_statuses(ranks, rank_ready),
+                )
+                last_log_time = now
 
-        if all_ready:
-            return
+            if now >= deadline:
+                pending = [rank for rank in ranks if not rank_ready[rank]]
+                details = "\n".join(_describe_rank_failure(rank, rank_processes) for rank in pending)
+                raise TimeoutError(f"Timed out waiting for external DP ranks ready:\n{details}")
 
-        now = time.monotonic()
-        if now - last_log_time >= 30:
-            logger.info(
-                "Polling external DP ranks: ready=%d/%d\n%s",
-                sum(rank_ready.values()),
-                len(ranks),
-                _format_rank_statuses(ranks, rank_ready),
-            )
-            last_log_time = now
-
-        if now >= deadline:
-            pending = [rank for rank in ranks if not rank_ready[rank]]
-            pending_labels = "; ".join(rank_label(rank) for rank in pending)
-            raise TimeoutError(f"Timed out waiting for external DP ranks ready: {pending_labels}")
-
-        time.sleep(HEALTH_POLL_INTERVAL_S)
+            time.sleep(HEALTH_POLL_INTERVAL_S)
 
 
-def wait_master_rank_stopped(
-    ranks: list[RankInfo],
-    *,
-    startup_timeout: int,
-    total_timeout: int,
-) -> None:
+def wait_master_rank_stopped(ranks: list[RankInfo]) -> None:
     """Block a worker until the master rank has come up and then stopped.
 
-    Phase 1 waits for the master to become ready, bounded by ``startup_timeout``.
-    Phase 2 hangs (debounced) until the master's health drops, bounded by the
-    *remaining* portion of ``total_timeout`` -- so the worker keeps its ranks alive
-    for the whole benchmark and tears down only when the master truly finishes,
-    never because the per-run budget was set shorter than the benchmark.
+    Phase 1 waits for the master to become ready, bounded by the service startup
+    budget. Phase 2 hangs until the master's health drops, using the tolerant
+    liveness debounce (the master is under benchmark load, and a false "stopped"
+    verdict would tear this worker's ranks down mid-run). Its deadline is the
+    global budget plus a grace margin: the master enforces the global budget on
+    the benchmark itself, so this timeout is a backstop that must only fire if
+    the master failed to act on its own deadline.
     """
     url = master_rank_health_url(ranks)
     start = time.monotonic()
-    wait_http_ready(url, timeout=startup_timeout)
+    wait_http_ready(url, timeout=SERVICE_STARTUP_TIMEOUT_S)
     logger.info("Hanging until master external DP rank stops: %s", url)
-    remaining = max(int(total_timeout - (time.monotonic() - start)), 0)
-    wait_http_unready(url, timeout=remaining)
+    remaining = max(int(GLOBAL_TIMEOUT_S - (time.monotonic() - start)), 0) + WORKER_BACKSTOP_GRACE_S
+    try:
+        wait_http_unready(
+            url,
+            timeout=remaining,
+            interval=LIVENESS_POLL_INTERVAL_S,
+            failure_threshold=LIVENESS_FAILURE_THRESHOLD,
+            probe_timeout=LIVENESS_PROBE_TIMEOUT_S,
+        )
+    except TimeoutError as exc:
+        raise TimeoutError(
+            "Master external DP rank never stopped within the global budget; the root "
+            f"cause is on the master node (node 0), not this worker -- check the master "
+            f"node's pytest output and node_0_external_dp_logs.tar.gz. url={url}"
+        ) from exc
