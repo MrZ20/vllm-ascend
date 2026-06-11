@@ -2,6 +2,7 @@
 set -euo pipefail
 
 enable_coverage=false
+positional_args=()
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -10,11 +11,13 @@ while [ "$#" -gt 0 ]; do
       shift
       ;;
     *)
-      break
+      positional_args+=("$1")
+      shift
       ;;
   esac
 done
 
+set -- "${positional_args[@]}"
 
 if [ "$#" -lt 4 ]; then
   echo "Usage: $0 [--enable-coverage] <npu_type> <num_npus> <with-device|without-device> <test> [test ...]"

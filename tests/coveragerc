@@ -2,8 +2,8 @@
 branch = True
 # 指定覆盖数据中文件路径采用绝对路径，便于后续分析时路径匹配
 relative_files = False
-# 指定产生的覆盖数据文件基础名称，可采用绝对路径
-data_file = /mnt/share/s00837289/covdata/coverage
+# 指定产生的覆盖数据文件基础名称。CI 中会通过 COVERAGE_FILE 覆盖到每个测试目标独立目录。
+data_file = .coverage
 # 对覆盖数据文件增加进程ID等标识
 parallel = True
 # 项目使用的并发库，默认thread。若代码采用了multiprocessing, gevent, greenlet, 或eventlet等并发库，则需显示指定。如任务调度框架celery可采用单进程模式，使用了multiprocessing库，则此选项需追加multiprocessing
@@ -18,8 +18,6 @@ disable_warnings=no-data-collected,module-not-python
 # 配置可采集覆盖数据的源码文件列表，支持通配符*匹配，支持通过逗号分隔多个值。根据实际调整
 include = 
     */vllm_ascend/*
-    # 目录usr下任何格式python代码
-    /vllm_ascend/*
 # 配置需排除覆盖数据采集的文件列表，作用于include配置处理之后。语法同include
 omit = */.local/*
     /usr/*

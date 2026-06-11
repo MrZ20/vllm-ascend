@@ -232,8 +232,10 @@ jobs:
 # ─── Schedule/Dispatch path: full tests ────────────────────────────────────────
 
   select-full-tests:
-    if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     runs-on: linux-amd64-cpu-8-hk
+    container:
+      image: quay.io/ascend-ci/vllm-ascend:lint
     outputs:
       has_tests: ${{ steps.full-scope.outputs.has_tests }}
       test_groups: ${{ steps.full-scope.outputs.test_groups }}
@@ -244,13 +246,13 @@ jobs:
       - name: Checkout vllm-project/vllm-ascend repo
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.vllm_ascend_ref || 'main' }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || inputs.vllm_ascend_ref || 'main' }}
           fetch-depth: 0
 
       - name: Resolve refs
         id: resolve-refs
         run: |
-          echo "vllm_ascend_ref=${{ inputs.vllm_ascend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
+          echo "vllm_ascend_ref=${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || inputs.vllm_ascend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
           echo "vllm_version=${{ inputs.vllm_version || 'v0.20.2' }}" >> "$GITHUB_OUTPUT"
 
       - name: Select all tests
