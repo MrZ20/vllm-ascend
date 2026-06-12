@@ -125,12 +125,6 @@ jobs:
           fi
           echo "base_branch=$base_branch" >> "$GITHUB_OUTPUT"
 
-      - name: Get current cache time
-        id: get_cache_time
-        run: |
-          cache_time=$(date -u +'%Y%m%d%H%M%S')
-          echo "cache_time=$cache_time" >> "$GITHUB_OUTPUT"
-
       - name: Get csrc build cache arch
         id: get_csrc_build_cache_arch
         shell: bash
@@ -149,6 +143,24 @@ jobs:
           esac
           echo "cache_arch=$cache_arch" >> "$GITHUB_OUTPUT"
 
+      - name: Compute csrc build cache key
+        id: cache_key
+        shell: bash
+        run: |
+          # Hash of every input that affects the csrc build output, captured on the
+          # clean tree right after the rebase onto main: an unmodified PR therefore
+          # hashes identically to the producer's build of main. The pinned native
+          # deps (torch/torch-npu/triton-ascend) live in requirements.txt and are
+          # covered by the hash.
+          csrc_hash="${{ hashFiles('csrc/**', 'cmake/**', 'CMakeLists.txt', 'setup.py', 'pyproject.toml', 'requirements.txt', 'requirements-dev.txt') }}"
+          if [ -z "$csrc_hash" ]; then
+            echo "::warning::hashFiles produced an empty csrc hash; the build cache will not match"
+          fi
+
+          cann_fp=$(bash .github/workflows/scripts/cann_fingerprint.sh)
+
+          echo "key=vllm-ascend-build-ninja-v2-${{ steps.get_csrc_build_cache_base_branch.outputs.base_branch }}-${{ runner.os }}-${{ steps.get_csrc_build_cache_arch.outputs.cache_arch }}-${{ env.CSRC_BUILD_CACHE_IMAGE }}-cann${cann_fp}-${csrc_hash}" >> "$GITHUB_OUTPUT"
+
       - name: Restore vllm-ascend csrc build cache
         id: restore-csrc-build-cache
         if: ${{ steps.check_npu.outputs.has_npu == 'true' }}
@@ -157,9 +169,11 @@ jobs:
           path: |
             csrc/build
             csrc/third_party
-          key: vllm-ascend-build-ninja-v1-${{ steps.get_csrc_build_cache_base_branch.outputs.base_branch }}-${{ runner.os }}-${{ steps.get_csrc_build_cache_arch.outputs.cache_arch }}-${{ env.CSRC_BUILD_CACHE_IMAGE }}-${{ steps.get_cache_time.outputs.cache_time }}
-          restore-keys: |
-            vllm-ascend-build-ninja-v1-${{ steps.get_csrc_build_cache_base_branch.outputs.base_branch }}-${{ runner.os }}-${{ steps.get_csrc_build_cache_arch.outputs.cache_arch }}-${{ env.CSRC_BUILD_CACHE_IMAGE }}-
+          # Exact-match only (deliberately no restore-keys): a hit certifies the
+          # build inputs are byte-identical to the clean producer build of the base
+          # branch, so silently stale objects are impossible. On a miss the job
+          # clean-builds exactly as it did before caching existed.
+          key: ${{ steps.cache_key.outputs.key }}
 
       - name: Install Mooncake wheel
         if: ${{ matrix.group.npu_type != 'cpu' }}
@@ -187,7 +201,11 @@ jobs:
           pip install uc-manager
           uv pip install -r requirements-dev.txt
           uv pip install --force-reinstall --no-deps triton-ascend==3.2.1
-          uv pip install -e . --no-build-isolation
+          if ! uv pip install -e . --no-build-isolation; then
+            echo "Build with restored csrc cache failed, falling back to clean build"
+            rm -rf csrc/build csrc/third_party
+            uv pip install -e . --no-build-isolation
+          fi
 
       - name: Install vllm-project/vllm-ascend no device
         if: ${{ matrix.group.npu_type == 'cpu' }}

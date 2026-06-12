@@ -17,8 +17,31 @@
 
 name: 'Cache csrc Build Directory'
 
+# Caches are readable by PRs only when created on the default branch, so this
+# workflow must run on refs/heads/main (push/schedule/dispatch). Never add a
+# pull_request trigger: caches saved from a PR merge ref are invisible to every
+# other PR and only consume the shared 10GB quota.
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'csrc/**'
+      - 'cmake/**'
+      - 'CMakeLists.txt'
+      - 'setup.py'
+      - 'pyproject.toml'
+      - 'requirements.txt'
+      - 'requirements-dev.txt'
+  schedule:
+    # UTC+8: 2am every day
+    - cron: '0 18 * * *'
   workflow_dispatch:
+
+# actions: write is required by the prune step to delete superseded caches.
+permissions:
+  contents: read
+  actions: write
 
 defaults:
   run:
@@ -108,8 +131,39 @@ jobs:
           yum install -y git zstd
           git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
 
+      - name: Compute csrc build cache key
+        id: cache_key
+        shell: bash
+        run: |
+          # Hash of every input that affects the csrc build output, captured once
+          # here on the clean checkout: csrc/build and csrc/third_party are
+          # populated by the build, so re-evaluating hashFiles at save time would
+          # poison the key. The pinned native deps (torch/torch-npu/triton-ascend)
+          # live in requirements.txt and are covered by the hash.
+          csrc_hash="${{ hashFiles('csrc/**', 'cmake/**', 'CMakeLists.txt', 'setup.py', 'pyproject.toml', 'requirements.txt', 'requirements-dev.txt') }}"
+          if [ -z "$csrc_hash" ]; then
+            echo "::error::hashFiles produced an empty csrc hash"
+            exit 1
+          fi
+
+          cann_fp=$(bash .github/workflows/scripts/cann_fingerprint.sh)
+
+          prefix="vllm-ascend-build-ninja-v2-${{ matrix.branch_normalized }}-${{ runner.os }}-${{ matrix.arch }}-${{ env.IMAGE_REGISTRY }}:${{ matrix.image_tag }}-"
+          echo "prefix=$prefix" >> "$GITHUB_OUTPUT"
+          echo "key=${prefix}cann${cann_fp}-${csrc_hash}" >> "$GITHUB_OUTPUT"
+
+      - name: Check for existing csrc build cache
+        id: lookup-csrc-build-cache
+        uses: runs-on/cache/restore@v5
+        with:
+          path: |
+            csrc/build
+            csrc/third_party
+          key: ${{ steps.cache_key.outputs.key }}
+          lookup-only: true
+
       - name: Install system dependencies (ubuntu)
-        if: matrix.os_type == 'ubuntu'
+        if: matrix.os_type == 'ubuntu' && steps.lookup-csrc-build-cache.outputs.cache-hit != 'true'
         run: |
           apt-get -y install `cat packages.txt`
           apt-get -y install gcc g++ cmake libnuma-dev zstd clang-15 ninja-build
@@ -118,29 +172,13 @@ jobs:
           pip install uv
 
       - name: Install system dependencies (openeuler)
-        if: matrix.os_type == 'openeuler'
+        if: matrix.os_type == 'openeuler' && steps.lookup-csrc-build-cache.outputs.cache-hit != 'true'
         run: |
           yum install -y python3-pip git vim wget net-tools gcc gcc-c++ make cmake numactl numactl-devel jemalloc patch
           pip install uv
 
-      - name: Get current cache time
-        id: get_cache_time
-        run: |
-          cache_time=$(date -u +'%Y%m%d%H%M%S')
-          echo "cache_time=$cache_time" >> "$GITHUB_OUTPUT"
-
-      - name: Restore vllm-ascend csrc build cache
-        id: restore-csrc-build-cache
-        uses: runs-on/cache/restore@v5
-        with:
-          path: |
-            csrc/build
-            csrc/third_party
-          key: vllm-ascend-build-ninja-v1-${{ matrix.branch_normalized }}-${{ runner.os }}-${{ matrix.arch }}-${{ env.IMAGE_REGISTRY }}:${{ matrix.image_tag }}-${{ steps.get_cache_time.outputs.cache_time }}
-          restore-keys: |
-            vllm-ascend-build-ninja-v1-${{ matrix.branch_normalized }}-${{ runner.os }}-${{ matrix.arch }}-${{ env.IMAGE_REGISTRY }}:${{ matrix.image_tag }}-
-
-      - name: Install vllm-ascend
+      - name: Install vllm-ascend (clean build)
+        if: steps.lookup-csrc-build-cache.outputs.cache-hit != 'true'
         env:
           SOC_VERSION: ${{ matrix.soc_version }}
           MAX_JOBS: "16"
@@ -157,20 +195,31 @@ jobs:
           # (does not append to) the env var and would drop the ascend repo.
           uv pip install -r requirements-dev.txt
           uv pip install --force-reinstall --no-deps triton-ascend==3.2.1
-          if uv pip install -e . --no-build-isolation; then
-            echo "vllm-ascend installed successfully"
-          else
-            echo "Failed to install vllm-ascend with incremental build, falling back to clean build"
-            rm -rf csrc/build
-            rm -rf csrc/third_party
-            uv pip install -e . --no-build-isolation
-          fi
-          
+          # Published caches must be ground-truth builds: never build incrementally
+          # on top of an older tree, or consumers inherit any stale objects it hides.
+          rm -rf csrc/build csrc/third_party
+          uv pip install -e . --no-build-isolation
+
       - name: Save vllm-ascend csrc build cache
-        if: success() && steps.restore-csrc-build-cache.outputs.cache-hit != 'true'
+        if: success() && steps.lookup-csrc-build-cache.outputs.cache-hit != 'true'
         uses: runs-on/cache/save@v5
         with:
           path: |
             csrc/build
             csrc/third_party
-          key: vllm-ascend-build-ninja-v1-${{ matrix.branch_normalized }}-${{ runner.os }}-${{ matrix.arch }}-${{ env.IMAGE_REGISTRY }}:${{ matrix.image_tag }}-${{ steps.get_cache_time.outputs.cache_time }}
+          key: ${{ steps.cache_key.outputs.key }}
+
+      - name: Prune superseded csrc build caches
+        if: success() && steps.lookup-csrc-build-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CACHE_KEY_PREFIX: ${{ steps.cache_key.outputs.prefix }}
+          CACHE_KEY_CURRENT: ${{ steps.cache_key.outputs.key }}
+        run: |
+          PY=$(command -v python3 || command -v python || true)
+          if [ -z "$PY" ]; then
+            echo "python not available in this image; skipping cache prune"
+            exit 0
+          fi
+          "$PY" .github/workflows/scripts/prune_csrc_caches.py
