@@ -47,12 +47,17 @@ Usage:
 Flags:
     --run-all-modules   Run tests for all configured modules regardless of
                         changed files
+    --skip-default-cpu-ut
+                        Skip the always-on default CPU UT module
+    --enable-time-sharding
+                        Split non-CPU runner groups by estimated time
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import subprocess
 import sys
@@ -67,6 +72,9 @@ import yaml
 _SCRIPT_DIR = Path(__file__).parent
 _CONFIG_PATH = _SCRIPT_DIR / "test_config.yaml"
 _RUNNER_LABEL_PATH = _SCRIPT_DIR / "runner_label.json"
+_DEFAULT_TEST_TIME_MAP_PATH = _SCRIPT_DIR / "pr_e2e_test_times.yaml"
+_DEFAULT_CPU_UT_MODULE = "default_cpu_ut"
+_DEFAULT_ESTIMATED_TIME = 600.0
 
 
 class NpuType(str, Enum):
@@ -82,6 +90,12 @@ class RunnerInfo:
     npu_type: NpuType
     label: str
     image_tag: str = ""
+
+
+@dataclass
+class TestTimeMap:
+    default_estimated_time: float
+    tests: dict[str, float]
 
 
 RunnerKey = tuple[int, NpuType]
@@ -136,6 +150,48 @@ def _load_runners() -> list[RunnerInfo]:
         )
         for label, info in raw.items()
     ]
+
+
+def _load_test_time_map(path: Path) -> TestTimeMap:
+    if not path.exists():
+        print(
+            f"Warning: test time map {path} does not exist; using default estimates.",
+            file=sys.stderr,
+        )
+        return TestTimeMap(default_estimated_time=_DEFAULT_ESTIMATED_TIME, tests={})
+
+    data = yaml.safe_load(path.read_text()) or {}
+    if not isinstance(data, dict):
+        raise SystemExit(f"Test time map must be a YAML mapping: {path}")
+
+    default_estimated_time = float(data.get("default_estimated_time", _DEFAULT_ESTIMATED_TIME))
+    if default_estimated_time <= 0:
+        raise SystemExit("default_estimated_time must be greater than 0")
+
+    raw_tests = data.get("tests", {}) or {}
+    if not isinstance(raw_tests, dict):
+        raise SystemExit("tests in test time map must be a mapping of pytest target to seconds")
+
+    tests: dict[str, float] = {}
+    for target, estimated_time in raw_tests.items():
+        value = float(estimated_time)
+        if value <= 0:
+            raise SystemExit(f"Estimated time for {target} must be greater than 0")
+        tests[str(target).rstrip("/")] = value
+
+    return TestTimeMap(default_estimated_time=default_estimated_time, tests=tests)
+
+
+def _estimated_time_for_target(target: str, test_time_map: TestTimeMap) -> float:
+    normalized = target.rstrip("/")
+    if normalized in test_time_map.tests:
+        return test_time_map.tests[normalized]
+
+    file_path = _pytest_node_file_path(normalized).rstrip("/")
+    if file_path in test_time_map.tests:
+        return test_time_map.tests[file_path]
+
+    return test_time_map.default_estimated_time
 
 
 def _get_changed_files(base_ref: str) -> list[str]:
@@ -310,6 +366,30 @@ def _is_e2e_path(path: str) -> bool:
     return path == "tests/e2e" or path.startswith("tests/e2e/")
 
 
+def _collect_explicit_test_targets(changed_files: list[str]) -> list[str]:
+    """Return test paths passed directly via --changed-files.
+
+    Git diffs normally list files, but the temporary CI override passes pytest
+    paths by hand. Support files, directories and nodeids so those targets can
+    be routed without needing a source-file module match.
+    """
+    targets: list[str] = []
+    for changed_file in changed_files:
+        if not (_is_ut_path(changed_file) or _is_e2e_path(changed_file)):
+            continue
+
+        path = Path(_pytest_node_file_path(changed_file))
+        if "::" in changed_file:
+            if path.exists():
+                targets.append(changed_file.rstrip("/"))
+            continue
+
+        if path.is_dir() or (path.is_file() and path.name.startswith("test_")):
+            targets.append(changed_file.rstrip("/"))
+
+    return targets
+
+
 def _scan_ut_test_dir(
     dir_path: str,
     groups: dict[RunnerKey, list[str]],
@@ -418,9 +498,89 @@ def _find_runner(
     return candidates[0] if candidates else None
 
 
+def _partition_by_estimated_time(
+    targets: list[str],
+    test_time_map: TestTimeMap,
+    max_group_seconds: float,
+) -> list[tuple[list[str], float]]:
+    if not targets:
+        return []
+    if max_group_seconds <= 0:
+        raise SystemExit("--max-group-seconds must be greater than 0")
+
+    weighted_targets = [(target, _estimated_time_for_target(target, test_time_map)) for target in targets]
+    for target, estimated_time in weighted_targets:
+        if estimated_time > max_group_seconds:
+            print(
+                f"Warning: {target} estimated time {estimated_time:.1f}s exceeds "
+                f"the shard threshold {max_group_seconds:.1f}s and cannot be split further.",
+                file=sys.stderr,
+            )
+
+    total_estimated_time = sum(estimated_time for _, estimated_time in weighted_targets)
+    min_shard_count = max(1, math.ceil(total_estimated_time / max_group_seconds))
+    max_shard_count = len(weighted_targets)
+
+    indexed = list(enumerate(weighted_targets))
+    indexed.sort(key=lambda item: (-item[1][1], item[0]))
+
+    best_buckets: list[list[int]] = []
+    best_sums: list[float] = []
+    for shard_count in range(min(min_shard_count, max_shard_count), max_shard_count + 1):
+        buckets: list[list[int]] = [[] for _ in range(shard_count)]
+        sums = [0.0] * shard_count
+        for original_index, (_, estimated_time) in indexed:
+            lightest = sums.index(min(sums))
+            buckets[lightest].append(original_index)
+            sums[lightest] += estimated_time
+
+        best_buckets = buckets
+        best_sums = sums
+        if max(sums) <= max_group_seconds or shard_count == max_shard_count:
+            break
+
+    partitions: list[tuple[list[str], float]] = []
+    for bucket, estimated_time in zip(best_buckets, best_sums):
+        if not bucket:
+            continue
+        bucket_targets = [weighted_targets[index][0] for index in sorted(bucket)]
+        partitions.append((bucket_targets, estimated_time))
+    return partitions
+
+
+def _runner_group(
+    num_npus: int,
+    npu_type: NpuType,
+    runner: RunnerInfo,
+    tests: list[str],
+    shard_id: int = 0,
+    shard_count: int = 1,
+    estimated_time: float | None = None,
+) -> dict:
+    shard_label = f"{shard_id + 1}of{shard_count}"
+    group: dict = {
+        "num_npus": num_npus,
+        "npu_type": npu_type.value,
+        "runner": runner.label,
+        "tests": " ".join(tests),
+        "shard_id": shard_id,
+        "shard_count": shard_count,
+        "shard_label": shard_label,
+        "shard_suffix": f"-shard-{shard_label}" if shard_count > 1 else "",
+    }
+    if estimated_time is not None:
+        group["estimated_time"] = round(estimated_time, 1)
+    if runner.image_tag:
+        group["image_tag"] = runner.image_tag
+    return group
+
+
 def _resolve_to_runners(
     all_groups: dict[RunnerKey, list[str]],
     runners: list[RunnerInfo],
+    enable_time_sharding: bool = False,
+    test_time_map: TestTimeMap | None = None,
+    max_group_seconds: float = 3600.0,
 ) -> list[dict]:
     result: list[dict] = []
     errors: list[str] = []
@@ -441,15 +601,27 @@ def _resolve_to_runners(
             errors.append(header + runners_line + tests_line)
             continue
 
-        group: dict = {
-            "num_npus": num_npus,
-            "npu_type": npu_type.value,
-            "runner": runner.label,
-            "tests": " ".join(sorted(tests)),
-        }
-        if runner.image_tag:
-            group["image_tag"] = runner.image_tag
-        result.append(group)
+        sorted_tests = sorted(tests)
+        if enable_time_sharding and npu_type != NpuType.CPU:
+            if test_time_map is None:
+                raise SystemExit("--enable-time-sharding requires --test-time-map")
+            partitions = _partition_by_estimated_time(sorted_tests, test_time_map, max_group_seconds)
+            shard_count = len(partitions)
+            for shard_id, (partition_tests, estimated_time) in enumerate(partitions):
+                result.append(
+                    _runner_group(
+                        num_npus,
+                        npu_type,
+                        runner,
+                        partition_tests,
+                        shard_id=shard_id,
+                        shard_count=shard_count,
+                        estimated_time=estimated_time,
+                    )
+                )
+            continue
+
+        result.append(_runner_group(num_npus, npu_type, runner, sorted_tests))
 
     if errors:
         print(
@@ -505,10 +677,15 @@ def _print_summary(
         num_npus = group["num_npus"]
         runner = group["runner"]
         tests = group["tests"].split()
+        shard_suffix = group.get("shard_suffix", "")
+        estimated_time = group.get("estimated_time")
+        estimate_text = f", est {estimated_time:.1f}s" if isinstance(estimated_time, (float, int)) else ""
         if npu_type == "cpu":
-            header = f"### CPU ({len(tests)} tests) -> `{runner}`"
+            header = f"### CPU{shard_suffix} ({len(tests)} tests{estimate_text}) -> `{runner}`"
         else:
-            header = f"### {npu_type.upper()} x{num_npus} ({len(tests)} tests) -> `{runner}`"
+            header = (
+                f"### {npu_type.upper()} x{num_npus}{shard_suffix} ({len(tests)} tests{estimate_text}) -> `{runner}`"
+            )
         print(f"\n  {header}", file=sys.stderr)
         for t in tests:
             print(f"    - {t}", file=sys.stderr)
@@ -542,6 +719,28 @@ def main():
         action="store_true",
         help="Run tests for all configured modules regardless of changed files",
     )
+    parser.add_argument(
+        "--skip-default-cpu-ut",
+        action="store_true",
+        help="Skip the always-on default_cpu_ut module.",
+    )
+    parser.add_argument(
+        "--enable-time-sharding",
+        action="store_true",
+        help="Split non-CPU runner groups by estimated runtime.",
+    )
+    parser.add_argument(
+        "--test-time-map",
+        type=Path,
+        default=_DEFAULT_TEST_TIME_MAP_PATH,
+        help="YAML map of pytest target to estimated seconds.",
+    )
+    parser.add_argument(
+        "--max-group-seconds",
+        type=float,
+        default=3600.0,
+        help="Maximum target seconds for each time-sharded group.",
+    )
 
     args = parser.parse_args()
     config = _resolve_config_inheritance(yaml.safe_load(args.config.read_text()))
@@ -550,6 +749,8 @@ def main():
     matched_modules = (
         [module["name"] for module in config] if args.run_all_modules else _match_modules(changed_files, config)
     )
+    if args.skip_default_cpu_ut:
+        matched_modules = [name for name in matched_modules if name != _DEFAULT_CPU_UT_MODULE]
     test_dirs, cpu_only_dirs = _collect_test_dirs(matched_modules, config)
 
     skip_tests: set[str] = set()
@@ -557,13 +758,7 @@ def main():
         for s in module.get("skip_tests", []):
             skip_tests.add(s.rstrip("/"))
 
-    changed_test_files = [
-        f
-        for f in changed_files
-        if (_is_ut_path(f) or _is_e2e_path(f))
-        and Path(_pytest_node_file_path(f)).name.startswith("test_")
-        and Path(_pytest_node_file_path(f)).exists()
-    ]
+    explicit_test_targets = _collect_explicit_test_targets(changed_files)
 
     ut_dirs = [d for d in test_dirs if _is_ut_path(d)]
     cpu_only_ut_dirs = [d for d in cpu_only_dirs if _is_ut_path(d)]
@@ -590,21 +785,26 @@ def main():
     for dir_path in e2e_dirs:
         _scan_e2e_test_dir(dir_path, all_groups)
 
-    for changed_test_file in changed_test_files:
-        if "::" in changed_test_file:
-            changed_targets = [changed_test_file]
+    for explicit_test_target in explicit_test_targets:
+        target_path = Path(_pytest_node_file_path(explicit_test_target))
+        if "::" in explicit_test_target or target_path.is_dir():
+            changed_targets = [explicit_test_target]
         else:
-            changed_targets = _configured_nodeid_targets_for_file(changed_test_file, config) or [changed_test_file]
+            changed_targets = _configured_nodeid_targets_for_file(explicit_test_target, config) or [
+                explicit_test_target
+            ]
         for f in changed_targets:
             if _is_skipped_test_target(f, skip_tests):
                 continue
             if _is_ut_path(f):
-                key = _route_ut_dir(f)
-                all_groups[key].append(f)
-            elif _is_e2e_path(f):
-                key = _route_e2e_file(f)
-                if key is not None:
+                p = Path(_pytest_node_file_path(f))
+                if p.is_dir():
+                    _scan_ut_test_dir(f, all_groups)
+                else:
+                    key = _route_ut_dir(f)
                     all_groups[key].append(f)
+            elif _is_e2e_path(f):
+                _scan_e2e_test_dir(f, all_groups)
 
     _dedup_groups(all_groups)
 
@@ -627,7 +827,14 @@ def main():
         _dedup_groups(all_groups)
 
     runners = _load_runners()
-    test_groups = _resolve_to_runners(all_groups, runners)
+    test_time_map = _load_test_time_map(args.test_time_map) if args.enable_time_sharding else None
+    test_groups = _resolve_to_runners(
+        all_groups,
+        runners,
+        enable_time_sharding=args.enable_time_sharding,
+        test_time_map=test_time_map,
+        max_group_seconds=args.max_group_seconds,
+    )
 
     _write_output(test_groups, matched_modules)
 

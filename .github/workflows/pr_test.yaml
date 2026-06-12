@@ -40,6 +40,16 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Temporary PR CI override for targeted E2E validation.
+  # Empty: select tests from the PR diff.
+  # "all": run all configured modules.
+  # Otherwise: whitespace/newline-separated pytest paths or nodeids.
+  TEMP_E2E_TESTS: ''
+  TEMP_SKIP_DEFAULT_CPU_UT: 'false'
+  TEMP_ENABLE_E2E_TIME_SHARDING: 'false'
+  TEMP_E2E_MAX_GROUP_SECONDS: '3600'
+
 jobs:
   lint-and-select-tests:
     if: ${{ github.event.action != 'labeled' || github.event.label.name == 'ready' }}
@@ -182,17 +192,44 @@ jobs:
 
       - name: Select tests based on changed files
         id: scope
-        if: steps.filter.outputs.src == 'true'
+        if: steps.filter.outputs.src == 'true' || env.TEMP_E2E_TESTS != ''
         run: |
           git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
           git fetch origin ${{ github.base_ref }}
           pip install regex
-          python3 .github/workflows/scripts/select_tests.py \
-            --diff-base origin/${{ github.base_ref }}
+
+          SELECT_ARGS=()
+          if [ "${TEMP_SKIP_DEFAULT_CPU_UT}" = "true" ]; then
+            SELECT_ARGS+=(--skip-default-cpu-ut)
+          fi
+          if [ "${TEMP_ENABLE_E2E_TIME_SHARDING}" = "true" ]; then
+            SELECT_ARGS+=(
+              --enable-time-sharding
+              --test-time-map .github/workflows/scripts/pr_e2e_test_times.yaml
+              --max-group-seconds "${TEMP_E2E_MAX_GROUP_SECONDS}"
+            )
+          fi
+
+          manual_tests=$(printf "%s" "${TEMP_E2E_TESTS}" | tr '\n' ' ' | xargs)
+          if [ -z "${manual_tests}" ]; then
+            python3 .github/workflows/scripts/select_tests.py \
+              "${SELECT_ARGS[@]}" \
+              --diff-base origin/${{ github.base_ref }}
+          elif [ "${manual_tests}" = "all" ]; then
+            python3 .github/workflows/scripts/select_tests.py \
+              "${SELECT_ARGS[@]}" \
+              --diff-base origin/${{ github.base_ref }} \
+              --run-all-modules
+          else
+            read -ra TEST_ARRAY <<< "${manual_tests}"
+            python3 .github/workflows/scripts/select_tests.py \
+              "${SELECT_ARGS[@]}" \
+              --changed-files "${TEST_ARRAY[@]}"
+          fi
 
       - name: Set no-tests output when source paths unchanged
         id: noop
-        if: steps.filter.outputs.src != 'true'
+        if: steps.filter.outputs.src != 'true' && env.TEMP_E2E_TESTS == ''
         run: |
           {
             echo "has_tests=false"

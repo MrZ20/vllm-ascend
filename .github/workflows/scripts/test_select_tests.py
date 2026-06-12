@@ -264,9 +264,23 @@ def test_dedup_runner_resolution_and_output(tmp_path, monkeypatch, capsys):
             "npu_type": "cpu",
             "runner": "cpu-runner",
             "tests": "tests/ut/a.py tests/ut/b.py",
+            "shard_id": 0,
+            "shard_count": 1,
+            "shard_label": "1of1",
+            "shard_suffix": "",
             "image_tag": "cpu-img",
         },
-        {"num_npus": 1, "npu_type": "a2", "runner": "a2-runner", "tests": "e2e.py", "image_tag": "a2-img"},
+        {
+            "num_npus": 1,
+            "npu_type": "a2",
+            "runner": "a2-runner",
+            "tests": "e2e.py",
+            "shard_id": 0,
+            "shard_count": 1,
+            "shard_label": "1of1",
+            "shard_suffix": "",
+            "image_tag": "a2-img",
+        },
     ]
     with pytest.raises(SystemExit):
         select_tests._resolve_to_runners({(2, select_tests.NpuType.A2): ["x"]}, runners)
@@ -279,6 +293,70 @@ def test_dedup_runner_resolution_and_output(tmp_path, monkeypatch, capsys):
     monkeypatch.setenv("GITHUB_OUTPUT", str(output))
     select_tests._write_output([], [])
     assert "has_tests=false" in output.read_text()
+
+
+def test_time_map_lookup_and_runner_sharding(tmp_path, monkeypatch):
+    time_map_path = tmp_path / "times.yaml"
+    time_map_path.write_text(
+        yaml.safe_dump(
+            {
+                "default_estimated_time": 50,
+                "tests": {
+                    "tests/e2e/pull_request/one_card/test_a.py": 80,
+                    "tests/e2e/pull_request/one_card/test_b.py": 20,
+                    "tests/e2e/pull_request/one_card/test_b.py::test_case": 70,
+                },
+            }
+        )
+    )
+    test_time_map = select_tests._load_test_time_map(time_map_path)
+    assert (
+        select_tests._estimated_time_for_target(
+            "tests/e2e/pull_request/one_card/test_b.py::test_case",
+            test_time_map,
+        )
+        == 70
+    )
+    assert (
+        select_tests._estimated_time_for_target(
+            "tests/e2e/pull_request/one_card/test_b.py::test_other",
+            test_time_map,
+        )
+        == 20
+    )
+    assert (
+        select_tests._estimated_time_for_target(
+            "tests/e2e/pull_request/one_card/test_c.py",
+            test_time_map,
+        )
+        == 50
+    )
+
+    runner_file = tmp_path / "runner_label.json"
+    runner_file.write_text(json.dumps({"a2-runner": {"chip": "a2", "npu_num": 1}}))
+    monkeypatch.setattr(select_tests, "_RUNNER_LABEL_PATH", runner_file)
+    runners = select_tests._load_runners()
+    groups = select_tests._resolve_to_runners(
+        {
+            (1, select_tests.NpuType.A2): [
+                "tests/e2e/pull_request/one_card/test_a.py",
+                "tests/e2e/pull_request/one_card/test_b.py::test_case",
+                "tests/e2e/pull_request/one_card/test_c.py",
+            ]
+        },
+        runners,
+        enable_time_sharding=True,
+        test_time_map=test_time_map,
+        max_group_seconds=100,
+    )
+    assert len(groups) == 3
+    assert {g["shard_count"] for g in groups} == {3}
+    assert {g["shard_suffix"] for g in groups} == {"-shard-1of3", "-shard-2of3", "-shard-3of3"}
+    assert sorted(g["tests"] for g in groups) == [
+        "tests/e2e/pull_request/one_card/test_a.py",
+        "tests/e2e/pull_request/one_card/test_b.py::test_case",
+        "tests/e2e/pull_request/one_card/test_c.py",
+    ]
 
 
 def test_get_changed_files(monkeypatch):
@@ -435,6 +513,24 @@ def test_main_end_to_end_changed_files_options_and_skip(tmp_path, monkeypatch, c
     selected_tests = set(test_groups[0]["tests"].split())
     assert selected_tests == {"tests/e2e/pull_request/two_card/test_two_card.py::test_specific_case"}
 
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "select_tests.py",
+            "--config",
+            str(config_path),
+            "--changed-files",
+            "tests/e2e/pull_request/one_card",
+        ],
+    )
+    select_tests.main()
+    out = capsys.readouterr().out
+    groups_line = next(line for line in out.splitlines() if line.startswith("test_groups="))
+    test_groups = json.loads(groups_line.removeprefix("test_groups="))
+    selected_tests = set(test_groups[0]["tests"].split())
+    assert selected_tests == {"tests/e2e/pull_request/one_card/test_one_card.py"}
+
 
 def test_default_cpu_ut_always_runs(tmp_path, monkeypatch, capsys):
     test_root = tmp_path / "tests"
@@ -495,6 +591,44 @@ def test_default_cpu_ut_always_runs(tmp_path, monkeypatch, capsys):
     assert any("test_cpu.py" in t for t in cpu_tests)
     a2_tests = [g for g in test_groups if g["npu_type"] == "a2"]
     assert not a2_tests
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "select_tests.py",
+            "--config",
+            str(config_path),
+            "--skip-default-cpu-ut",
+            "--changed-files",
+            "README.md",
+        ],
+    )
+    select_tests.main()
+    out = capsys.readouterr().out
+    assert "matched_modules=" in out
+    groups_line = next(line for line in out.splitlines() if line.startswith("test_groups="))
+    test_groups = json.loads(groups_line.removeprefix("test_groups="))
+    assert test_groups == []
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "select_tests.py",
+            "--config",
+            str(config_path),
+            "--skip-default-cpu-ut",
+            "--changed-files",
+            "tests/ut/cpu/test_cpu.py",
+        ],
+    )
+    select_tests.main()
+    out = capsys.readouterr().out
+    groups_line = next(line for line in out.splitlines() if line.startswith("test_groups="))
+    test_groups = json.loads(groups_line.removeprefix("test_groups="))
+    cpu_tests = {g["tests"] for g in test_groups if g["npu_type"] == "cpu"}
+    assert cpu_tests == {"tests/ut/cpu/test_cpu.py"}
 
     monkeypatch.setattr(
         sys,
