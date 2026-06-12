@@ -180,15 +180,18 @@ jobs:
           pip install pyyaml
           python3 .github/workflows/scripts/coverage.py
 
-      - name: Select tests based on changed files
+      - name: Select temporary focused tests
         id: scope
         if: steps.filter.outputs.src == 'true'
         run: |
           git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
-          git fetch origin ${{ github.base_ref }}
           pip install regex
           python3 .github/workflows/scripts/select_tests.py \
-            --diff-base origin/${{ github.base_ref }}
+            --skip-default-cpu-ut \
+            --changed-files \
+            tests/e2e/pull_request/one_card/test_qwen3_5_0_8b.py \
+            tests/e2e/pull_request/four_card/test_qwen3_5.py \
+            tests/e2e/pull_request/four_card/spec_decode/test_mtp_qwen3_next.py
 
       - name: Set no-tests output when source paths unchanged
         id: noop

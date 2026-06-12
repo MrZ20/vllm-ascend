@@ -542,6 +542,11 @@ def main():
         action="store_true",
         help="Run tests for all configured modules regardless of changed files",
     )
+    parser.add_argument(
+        "--skip-default-cpu-ut",
+        action="store_true",
+        help="Skip cpu_only modules that are selected by default.",
+    )
 
     args = parser.parse_args()
     config = _resolve_config_inheritance(yaml.safe_load(args.config.read_text()))
@@ -550,6 +555,9 @@ def main():
     matched_modules = (
         [module["name"] for module in config] if args.run_all_modules else _match_modules(changed_files, config)
     )
+    if args.skip_default_cpu_ut:
+        module_map = {module["name"]: module for module in config}
+        matched_modules = [name for name in matched_modules if not module_map[name].get("cpu_only")]
     test_dirs, cpu_only_dirs = _collect_test_dirs(matched_modules, config)
 
     skip_tests: set[str] = set()

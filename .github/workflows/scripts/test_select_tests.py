@@ -516,3 +516,20 @@ def test_default_cpu_ut_always_runs(tmp_path, monkeypatch, capsys):
     assert any("test_cpu.py" in t for t in cpu_tests)
     a2_tests = {g["tests"] for g in test_groups if g["npu_type"] == "a2"}
     assert any("test_a2.py" in t for t in a2_tests)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "select_tests.py",
+            "--config",
+            str(config_path),
+            "--changed-files",
+            "README.md",
+            "--skip-default-cpu-ut",
+        ],
+    )
+    select_tests.main()
+    out = capsys.readouterr().out
+    assert "matched_modules=" in out
+    assert "has_tests=false" in out
