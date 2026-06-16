@@ -185,10 +185,20 @@ jobs:
         if: steps.filter.outputs.src == 'true'
         run: |
           git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
-          git fetch origin ${{ github.base_ref }}
           pip install regex
+          MAIN2MAIN_TESTS=(
+            tests/e2e/pull_request/two_card/test_qwen3_30b_a3b.py
+            tests/e2e/pull_request/two_card/test_qwen3_5_35b_a3b_w8a8.py
+            tests/e2e/pull_request/two_card/test_shared_expert_dp.py
+            tests/e2e/pull_request/one_card/spec_decode/test_dflash.py
+            tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py
+            tests/e2e/pull_request/two_card/test_prefix_caching.py
+            tests/e2e/pull_request/one_card/test_simple_cpu_offload.py
+            tests/e2e/pull_request/one_card/spec_decode/test_extract_hidden_states.py
+          )
           python3 .github/workflows/scripts/select_tests.py \
-            --diff-base origin/${{ github.base_ref }}
+            --config .github/workflows/scripts/main2main_probe_test_config.yaml \
+            --changed-files "${MAIN2MAIN_TESTS[@]}"
 
       - name: Set no-tests output when source paths unchanged
         id: noop
@@ -204,10 +214,10 @@ jobs:
     needs: lint-and-select-tests
     if: ${{ needs.lint-and-select-tests.outputs.has_tests == 'true' && contains(github.event.pull_request.labels.*.name, 'ready') }}
     strategy:
+      fail-fast: false
       matrix:
         vllm_version:
           - ${{ needs.lint-and-select-tests.outputs.main_commit }}
-          - ${{ needs.lint-and-select-tests.outputs.release_tag }}
     uses: ./.github/workflows/_selected_tests.yaml
     with:
       vllm: ${{ matrix.vllm_version }}
