@@ -261,6 +261,168 @@ CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27602442936?pr
 - target-main 新增导入、字段、factory patch、协议补齐才使用 `if not vllm_version_is("0.22.1")`。
 - UT 要么在同一个用例内部按版本选择断言/调用，要么拆成版本专属用例并用 `vllm_version_is("0.22.1")` 控制跳过，不能只保证单版本通过。
 
+## 第三轮 CI 失败与修复
+
+CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27609361478?pr=10459>
+
+本轮三处失败实际上只有两个根因。
+
+### 1. CPU UT: 测试引用了已被重命名的 `RoutedExperts` 模块属性
+
+失败：
+
+- `tests/ut/ops/test_fused_moe.py` 收集阶段报错
+  `AttributeError: module 'vllm_ascend.ops.fused_moe.fused_moe' has no attribute 'RoutedExperts'`。
+
+原因：
+
+- 第二轮 mypy 修复把 `fused_moe.py` 里的 target-main `RoutedExperts` 别名改成
+  `_TargetRoutedExperts`（避免与 v0.22.1 fallback 冲突的 `no-redef`），模块不再导出
+  `RoutedExperts`。
+- 但 `TestVllmParentInterfaceCompatibility` 仍按旧名字访问 `fused_moe_module.RoutedExperts`。
+
+修复：
+
+- target-main 分支的 parent-interface 用例与 `explicitly_calls_parent` 判断改用
+  `fused_moe_module._TargetRoutedExperts`，和源码别名保持一致。
+- 该引用只在 `else`（非 v0.22.1）分支求值，v0.22.1 分支不受影响。
+
+### 2. A2/A3 e2e: DeepSeek MoE 走的是上游 plain `MoERunner`/`RoutedExperts`，未命中 Ascend factory
+
+失败（同一根因，两个表现）：
+
+- A3 two-card `test_prefix_caching.py::...[deepseek-ai/DeepSeek-V2-Lite-Chat]`：
+  `AttributeError: 'UnquantizedFusedMoEMethod' object has no attribute 'is_monolithic'`。
+- A2 one-card `model_runner_v2/test_basic.py::...[vllm-ascend/DeepSeek-V2-Lite-W8A8]`：
+  `TypeError: AscendFusedMoEMethod.apply() got an unexpected keyword argument 'shared_experts'`。
+
+两条 traceback 都是
+`_moe_forward_shared -> MoERunner._forward_impl(moe_runner.py:821) -> _apply_quant_method`，
+即执行的是上游 plain `MoERunner`/`RoutedExperts`，而不是 `AscendMoERunner` /
+`AscendRoutedExperts`。说明该 MoE 层根本没走我们注入 `runner_cls` / `routed_experts_cls`
+的 factory。
+
+原因（导入顺序）：
+
+- 上游 vLLM PR #41184 把 `FusedMoE` 变成 module-level 函数，OOT `register_oot` 不能再替换它，
+  我们改为在 `patch_fused_moe_factory` 里替换 `fused_moe` package 和 `layer` 模块上的
+  `FusedMoE` 属性。这种替换只对“替换之后”才发生的 import 生效。
+- `worker.py` 中 `adapt_patch()`（line 103）先于 `register_ascend_customop`（line 111）。
+  `adapt_patch()` 经 `patch/worker/__init__.py` 导入 `patch_deepseek_mtp`，后者
+  `from vllm.model_executor.models.deepseek_v2 import GlmMoeDsaForCausalLM` 把 `deepseek_v2`
+  模块提前导入。`deepseek_v2` 顶部 `from ...fused_moe import FusedMoE` 此时绑定的是**原始**
+  factory。
+- 等到 `patch_fused_moe_factory` 执行时，`deepseek_v2.FusedMoE` 已经指向原始 factory，
+  我们的替换够不到它，于是 DeepSeek 构造的是上游 plain runner，触发上面两个错误。
+  （Qwen 等模型在 `load_model` 阶段才 import，发生在 patch 之后，因此不受影响。）
+
+修复：
+
+- `patch_fused_moe_factory` 在替换两个模块属性后，遍历 `sys.modules`，把所有
+  `vllm.model_executor.models.*` 模块里仍指向原始 factory 的 `FusedMoE` 引用一并重绑到 Ascend
+  替换实现。这样提前 import 的 DeepSeek 等模型也会用 `AscendFusedMoE` factory，进而得到
+  `AscendMoERunner` + `AscendRoutedExperts`，两个 e2e 报错同时消除。
+- 该逻辑位于 `patch_fused_moe_factory` 内部：函数在 `_FUSED_MOE_IS_CLASS`（即
+  `vllm_version_is("0.22.1")`）时直接 return，且仅在 `not vllm_version_is("0.22.1")` 时被调用，
+  属于 target-main 专属新增逻辑，符合双版本规范。
+
+### 3. A3 four-card: 修好 factory 后暴露 `AscendRoutedExperts` 删除了 `e_score_correction_bias`
+
+失败：
+
+- `tests/e2e/pull_request/four_card/test_deepseek_v4.py`
+- 根因：`RuntimeError: Worker failed with error
+  "'AscendRoutedExperts' object has no attribute 'e_score_correction_bias'"`，worker 崩溃后
+  executor 进入 SIGTERM/SIGKILL 宽限期，导致 CI 一直挂住。
+
+原因：
+
+- 上面第 2 点的 factory 重绑修好后，DeepSeek 才真正走 `AscendRoutedExperts`（之前是 plain
+  `RoutedExperts`，更早就在 `is_monolithic` 崩了），于是暴露出本类自身的下一个 bug。
+- 上游 `RoutedExperts.__init__`（routed_experts.py:107）把 `e_score_correction_bias` 存为属性；
+  deepseek v3/r1/v4 的该字段是 gate 共享的 `nn.Parameter`，会被注册进 `self._parameters`。
+- `AscendRoutedExperts.__init__` 为了用 Ascend 的 `local_num_experts/global_num_experts` 重建
+  权重，会先 `for param_name in list(self._parameters): delattr(...)` 删掉上游 eager 创建的
+  provisional 权重。这个循环把 `e_score_correction_bias` 也一并删了。
+- DeepSeek-V2-Lite 的 `e_score_correction_bias` 为 None（不是 Parameter，不在 `_parameters`），
+  所以之前没暴露；deepseek_v4 非 None，命中。
+
+修复：
+
+- 删除 provisional 权重的循环里跳过 `e_score_correction_bias`：它是路由字段（gate 共享 bias），
+  不是 `create_weights` 会重建的专家权重。保留它与上游 `RoutedExperts` 行为一致（上游同样把它
+  注册为参数且不删除）。
+- 该逻辑位于 target-main 专属类 `AscendRoutedExperts.__init__` 内，v0.22.1 走 legacy
+  `AscendFusedMoE`，不受影响。
+
+### 4. Dense graph: `AscendRoutedExperts.shared_forward_impl` 把 shared input 回传给 routed path
+
+失败：
+
+- `test_qwen3_dense_graph_mode[full_decode_only-False-32-vllm-ascend/DeepSeek-V2-Lite-W8A8]`
+- 根因断言：
+  `Number of global experts mismatch ... router_experts=2048, expected_experts=64`。
+
+原因：
+
+- 上游 vLLM PR #41184 把 `MoERunner` 拆成 `MoERunner` + `RoutedExperts`，并把 routed hidden
+  states 与 shared-expert input 分开传递。
+- `AscendRoutedExperts.shared_forward_impl` 已经在本函数内部保存了
+  `shared_hidden_states = hidden_states if shared_experts_input is None else shared_experts_input`，
+  并在 routed expert 结束后调用 `_forward_shared_experts(shared_hidden_states, ...)`。
+- 之前的适配又把 `shared_hidden_states` 作为 `shared_experts_input` 传回
+  `AscendFusedMoE.forward_impl`。而该参数在 legacy 兼容路径中会影响 routed 计算输入，导致
+  W8A8_DYNAMIC 看到的 logits/输入维度变成 hidden size 2048，而不是 DeepSeek-V2-Lite 的 64 个
+  logical experts，于是触发断言。
+
+修复：
+
+- `AscendRoutedExperts.shared_forward_impl` 增加显式双版本分支：
+  - `if vllm_version_is("0.22.1")`：保留原调用，继续把 `shared_hidden_states` 作为
+    `shared_experts_input` 传入。v0.22.1 没有上游 PR #41184 的 `RoutedExperts` 拆分，正常执行仍走
+    legacy `AscendFusedMoE`。
+  - `else`：target-main 调用 `self.forward_impl(...)` 时只传
+    `hidden_states/router_logits/return_with_event`，不再把 `shared_hidden_states` 回传给 routed path。
+- `shared_hidden_states` 仍在后续 `_forward_shared_experts(shared_hidden_states, ...)` 使用，保持
+  PR #41184 新增的 routed/shared 输入分离语义。
+- 该修复遵循 main2main 双版本规范：并列行为使用 `vllm_version_is("0.22.1")` 显式分支，旧版本分支
+  尽量保持原样，新版本分支只处理 PR #41184 引入的新 `RoutedExperts` 语义。
+
+### 4. 内部路由 gate 未生效：`The bias first dim should be same as x second dim`
+
+失败：
+
+- 手动 NPU 跑（路径 `/vllm-workspace/...`）：`RuntimeError: Worker failed with error
+  'The bias first dim should be same as x second dim'`，发生在 `determine_available_memory ->
+  profile_run` 的 MoE forward，worker 崩溃 -> CI/执行器挂住。
+
+原因（上游 PR #41184 的 gate owner 迁移 + 双版本 `is_internal_router` 语义不一致）：
+
+- 模型用 `self.experts.is_internal_router` 决定：True 时把 `hidden_states` 当 router_logits 占位
+  传进去、由 MoE 层内部应用 gate；False 时模型自己先调 gate 再传真正的 router_logits。
+- v0.22.1：`self.experts` 就是 `AscendFusedMoE` 实例，模型读到的是
+  `AscendFusedMoE.is_internal_router`（语义：gate 存在且有 `weight_fp32`）。只有 deepseek_v4 的
+  gate 设了 `precast_fp32_weight` 才有 `weight_fp32`，所以只有它走"层内 fp32 gate"，其它（qwen3、
+  deepseek_v2）模型自己应用 gate，行为自洽。
+- target main：`self.experts` 变成 `AscendMoERunner`，模型读到的是上游
+  `MoERunner.is_internal_router`（语义：`gate is not None`）——对所有带 gate 的 MoE 都为 True。
+  于是 qwen3 / deepseek_v2 也走占位路径，但 Ascend 只有在 `weight_fp32` 时才在 `shared_forward_impl`
+  里应用 gate，结果 `router_logits` 一直是 `hidden_states`（expert 维 = hidden_size），喂进 kernel
+  触发 bias/shape 报错。
+
+修复：
+
+- 给 `AscendMoERunner` 覆写 `is_internal_router`，让 target main 下也采用 Ascend 语义
+  （`gate is not None and hasattr(gate, "weight_fp32")`），与 v0.22.1 的
+  `AscendFusedMoE.is_internal_router` 对齐。这样：
+    - qwen3 / deepseek_v2（无 `weight_fp32`）：runner.is_internal_router=False，模型自己应用 gate，
+      传真正的 router_logits，Ascend 直接使用。
+    - deepseek_v4（有 `weight_fp32`）：runner.is_internal_router=True，模型传占位，Ascend 在
+      `shared_forward_impl` 走 fp32 gate。
+- 双版本：`if vllm_version_is("0.22.1")` 分支保留上游 runner 语义
+  （`MoERunner.is_internal_router.fget(self)`），仅 target main 改用 Ascend 语义。v0.22.1 的模型本来
+  就读 `AscendFusedMoE.is_internal_router`，不受影响。
+
 ## 本地验证状态
 
 本地已做：

@@ -354,8 +354,10 @@ class TestVllmParentInterfaceCompatibility:
         )
     else:
         # vLLM PR #41184 moves the subclassable MoE weight owner to
-        # RoutedExperts on target main.
-        _parent_interface_cases.append((AscendRoutedExperts, fused_moe_module.RoutedExperts, "__init__"))
+        # RoutedExperts on target main. The source module aliases the upstream
+        # class as `_TargetRoutedExperts` to avoid mypy no-redef against the
+        # v0.22.1 fallback, so reference that alias here.
+        _parent_interface_cases.append((AscendRoutedExperts, fused_moe_module._TargetRoutedExperts, "__init__"))
 
     @pytest.mark.parametrize(
         "child_cls,parent_cls,method_name",
@@ -363,7 +365,9 @@ class TestVllmParentInterfaceCompatibility:
     )
     def test_overridden_method_signature_accepts_parent_interface(self, child_cls, parent_cls, method_name):
         child_method = getattr(child_cls, method_name)
-        explicitly_calls_parent = child_cls is AscendRoutedExperts and parent_cls is fused_moe_module.RoutedExperts
+        explicitly_calls_parent = (
+            child_cls is AscendRoutedExperts and parent_cls is fused_moe_module._TargetRoutedExperts
+        )
         if not explicitly_calls_parent and not _method_uses_super(child_method):
             pytest.skip(
                 f"{child_cls.__name__}.{method_name} does not call "

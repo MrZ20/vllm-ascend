@@ -48,8 +48,7 @@ from .moe_comm_method import AllGatherCommImpl310
 # Upstream vLLM PR #41184 makes FusedMoE a factory on target main. Use the
 # explicit supported-version branch so 310P keeps the legacy subclass only on
 # v0.22.1-era vLLM.
-_FUSED_MOE_IS_CLASS = vllm_version_is("0.22.1")
-_FUSED_MOE_BASE = FusedMoE if _FUSED_MOE_IS_CLASS else torch.nn.Module
+_FUSED_MOE_BASE = FusedMoE if vllm_version_is("0.22.1") else torch.nn.Module
 
 
 class AscendUnquantizedFusedMoEMethod310(UnquantizedFusedMoEMethod):
@@ -146,7 +145,7 @@ class AscendUnquantizedFusedMoEMethod310(UnquantizedFusedMoEMethod):
 # must stay dynamic for dual-version support. Mypy cannot model variable bases.
 class AscendFusedMoE310(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
     def __new__(cls, *args, **kwargs):
-        if cls is AscendFusedMoE310 and not _FUSED_MOE_IS_CLASS:
+        if cls is AscendFusedMoE310 and not vllm_version_is("0.22.1"):
             # vLLM PR #41184 made FusedMoE a factory. 310P cannot subclass it
             # on target main, so delegate to the shared Ascend factory adapter
             # instead of patching vLLM's export to a class that cannot build.
@@ -156,7 +155,7 @@ class AscendFusedMoE310(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
         return super().__new__(cls)
 
     def __init__(self, *args, **kwargs):
-        if not _FUSED_MOE_IS_CLASS:
+        if not vllm_version_is("0.22.1"):
             raise RuntimeError(
                 "AscendFusedMoE310 class replacement requires the legacy vLLM "
                 "FusedMoE layer. The target vLLM exposes FusedMoE as a factory "

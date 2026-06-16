@@ -89,8 +89,7 @@ def get_compressed_expert_map(expert_map: torch.Tensor) -> str:
 # Upstream vLLM PR #41184 makes FusedMoE callable-but-not-a-class on target
 # main. Use the explicit supported-version branch so v0.22.1 keeps class
 # inheritance while target main uses the factory path.
-_FUSED_MOE_IS_CLASS = vllm_version_is("0.22.1")
-_FUSED_MOE_BASE = FusedMoE if _FUSED_MOE_IS_CLASS else torch.nn.Module
+_FUSED_MOE_BASE = FusedMoE if vllm_version_is("0.22.1") else torch.nn.Module
 
 
 @dataclass
@@ -305,6 +304,25 @@ class AscendMoERunner(MoERunner):
         return False
 
     @property
+    def is_internal_router(self) -> bool:
+        # The model reads `experts.is_internal_router` to decide whether to apply
+        # the gate itself (passing real router_logits) or to defer to the layer
+        # (passing hidden_states as a placeholder for the layer to apply the gate).
+        if vllm_version_is("0.22.1"):
+            # On v0.22.1 `experts` is the AscendFusedMoE instance, so the model
+            # reads AscendFusedMoE.is_internal_router; keep upstream runner
+            # semantics here for any internal MoERunner use.
+            return MoERunner.is_internal_router.fget(self)
+        # vLLM PR #41184 makes `experts` the MoERunner, so the model now reads
+        # this property. Upstream returns True whenever a gate is present, but
+        # Ascend only applies the gate (its fp32 overlap path) when the gate
+        # exposes weight_fp32 (e.g. deepseek_v4). For other gated MoEs (qwen3-moe,
+        # deepseek_v2) the model must apply the gate so router_logits are real,
+        # matching AscendFusedMoE.is_internal_router used on v0.22.1.
+        gate = self.gate
+        return gate is not None and hasattr(gate, "weight_fp32")
+
+    @property
     def _fused_output_is_reduced(self) -> bool:
         # For MC2/ALLTOALL/FUSED_MC2 comm types, finalize() already includes
         # TP all-reduce for the routed output, and _forward_shared_experts
@@ -364,7 +382,7 @@ class AscendMoERunner(MoERunner):
 class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
     moe_counter = -1
     gate_stream: torch.npu.Stream | None = None
-    if not _FUSED_MOE_IS_CLASS and _target_fused_moe_make_expert_params_mapping is not None:
+    if not vllm_version_is("0.22.1") and _target_fused_moe_make_expert_params_mapping is not None:
         make_expert_params_mapping = staticmethod(_target_fused_moe_make_expert_params_mapping)
 
     def __new__(cls, *args, **kwargs):
@@ -372,12 +390,12 @@ class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
         # MoERunner. When AscendFusedMoE is used as the replacement symbol,
         # create the runner through that factory instead of instantiating this
         # legacy compatibility class.
-        if cls is AscendFusedMoE and not _FUSED_MOE_IS_CLASS:
+        if cls is AscendFusedMoE and not vllm_version_is("0.22.1"):
             return _create_ascend_fused_moe_runner(*args, **kwargs)
         return super().__new__(cls)
 
     def __init__(self, *args, **kwargs):
-        if not _FUSED_MOE_IS_CLASS:
+        if not vllm_version_is("0.22.1"):
             raise RuntimeError(
                 "AscendFusedMoE class replacement requires the legacy vLLM "
                 "FusedMoE layer. The target vLLM exposes FusedMoE as a factory "
@@ -925,12 +943,27 @@ class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
             before_routed_experts = torch.npu.current_stream().record_event()
             after_routed_experts = None
 
-        fused_moe_results = self.forward_impl(
-            hidden_states=hidden_states,
-            router_logits=router_logits,
-            return_with_event=True,
-            shared_experts_input=shared_hidden_states,
-        )
+        if vllm_version_is("0.22.1"):
+            # Keep the legacy compatibility branch unchanged: v0.22.1 does not
+            # have upstream RoutedExperts from vLLM PR #41184, and normal
+            # execution still uses AscendFusedMoE directly.
+            fused_moe_results = self.forward_impl(
+                hidden_states=hidden_states,
+                router_logits=router_logits,
+                return_with_event=True,
+                shared_experts_input=shared_hidden_states,
+            )
+        else:
+            # vLLM PR #41184 splits MoERunner into routed and shared-expert
+            # stages. In the target-main RoutedExperts path, shared_hidden_states
+            # is consumed only by _forward_shared_experts below; passing it back
+            # into AscendFusedMoE.forward_impl would replace the routed input and
+            # make quantized MoE see the hidden-size dimension as expert logits.
+            fused_moe_results = self.forward_impl(
+                hidden_states=hidden_states,
+                router_logits=router_logits,
+                return_with_event=True,
+            )
         routed_out = fused_moe_results.routed_out
 
         if self._shared_experts is None:
@@ -1159,7 +1192,14 @@ class AscendRoutedExperts(_TargetRoutedExperts):
         # weights before Ascend can apply EPLB/redundant-expert adjustments.
         # Drop those provisional parameters and recreate them with Ascend's
         # final local_num_experts/global_num_experts below.
+        # Keep e_score_correction_bias: upstream RoutedExperts registers it as a
+        # parameter (it is the gate's shared correction bias, non-None for
+        # deepseek v3/r1/v4), but it is a routing field rather than a recreatable
+        # expert weight. Deleting it here would make the Ascend forward path fail
+        # with "AscendRoutedExperts object has no attribute e_score_correction_bias".
         for param_name in list(self._parameters):
+            if param_name == "e_score_correction_bias":
+                continue
             delattr(self, param_name)
 
         moe_quant_params = {
@@ -1251,16 +1291,32 @@ def _create_ascend_fused_moe_runner(*args, **kwargs):
 
 
 def patch_fused_moe_factory(replacement=None) -> None:
-    if _FUSED_MOE_IS_CLASS:
+    if vllm_version_is("0.22.1"):
         return
 
     # Upstream vLLM PR #41184 made FusedMoE a plain function, so CustomOp OOT
     # registration no longer replaces it. Patch both exported symbols so models
     # importing either package-level FusedMoE or layer.FusedMoE get Ascend's
     # runner/routed-experts factory.
+    import sys
+
     import vllm.model_executor.layers.fused_moe as fused_moe_pkg
     import vllm.model_executor.layers.fused_moe.layer as fused_moe_layer
 
     replacement = AscendFusedMoE if replacement is None else replacement
+    original_fused_moe = fused_moe_layer.FusedMoE
     fused_moe_layer.FusedMoE = replacement
     fused_moe_pkg.FusedMoE = replacement
+
+    # Patching the module attributes only affects imports that happen after this
+    # call. Some model modules (e.g. deepseek_v2) are imported earlier, during
+    # adapt_patch() -> patch_deepseek_mtp, which runs before register_ascend_customop.
+    # Those modules did `from vllm...fused_moe import FusedMoE` at import time and
+    # captured the original factory by name, so they would bypass the Ascend
+    # runner/routed-experts factory and fall back to the upstream MoERunner.
+    # Rebind those stale references to the Ascend replacement.
+    for module in list(sys.modules.values()):
+        if module is None or not getattr(module, "__name__", "").startswith("vllm.model_executor.models."):
+            continue
+        if getattr(module, "FusedMoE", None) is original_fused_moe:
+            module.FusedMoE = replacement
