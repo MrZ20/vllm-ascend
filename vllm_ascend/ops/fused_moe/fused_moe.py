@@ -1319,4 +1319,6 @@ def patch_fused_moe_factory(replacement=None) -> None:
         if module is None or not getattr(module, "__name__", "").startswith("vllm.model_executor.models."):
             continue
         if getattr(module, "FusedMoE", None) is original_fused_moe:
-            module.FusedMoE = replacement
+            # mypy cannot model dynamic module attributes; the getattr guard above
+            # already proves this module exposes FusedMoE.
+            module.FusedMoE = replacement  # type: ignore[attr-defined]
