@@ -104,13 +104,17 @@ class AscendCompressedTensorsConfig(QuantizationConfig):
     def _add_fused_moe_to_target_scheme_map(self):
         """
         Helper function to update target_scheme_map
-        since linear layers get fused into FusedMoE
-        targeting 'Linear' needs to also match
-        FusedMoE modules.
+        since linear layers get fused into the MoE weight owner,
+        targeting 'Linear' needs to also match that module.
         """
-        if "Linear" not in self.target_scheme_map or "FusedMoE" in self.target_scheme_map:
+        # vLLM PR #41184 moved the MoE weight owner from FusedMoE to
+        # RoutedExperts, so find_matched_target now matches the RoutedExperts
+        # module class name; register that target on target main and keep the
+        # legacy FusedMoE target on v0.22.1.
+        moe_target = "FusedMoE" if vllm_version_is("0.22.1") else "RoutedExperts"
+        if "Linear" not in self.target_scheme_map or moe_target in self.target_scheme_map:
             return
-        self.target_scheme_map["FusedMoE"] = self.target_scheme_map["Linear"]
+        self.target_scheme_map[moe_target] = self.target_scheme_map["Linear"]
 
     @classmethod
     def from_config(cls, config: dict[str, Any]) -> "AscendCompressedTensorsConfig":

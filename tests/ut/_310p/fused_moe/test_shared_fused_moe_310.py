@@ -48,7 +48,12 @@ class _DummySharedExperts(torch.nn.Module):
 
 
 def _build_layer(shared_experts: torch.nn.Module | None) -> AscendFusedMoE310:
-    layer = AscendFusedMoE310.__new__(AscendFusedMoE310)
+    # vLLM PR #41184 makes AscendFusedMoE310.__new__ delegate to the upstream
+    # FusedMoE factory on target main, so AscendFusedMoE310.__new__ would try to
+    # build a real layer (and fail on missing args). Bypass that factory with
+    # nn.Module.__new__ to get a half-initialized object for these helper tests;
+    # v0.22.1 behavior remains equivalent for nn.Module objects.
+    layer = torch.nn.Module.__new__(AscendFusedMoE310)
     # The test bypasses full layer init with __new__, so we must initialize
     # nn.Module internals before assigning child modules.
     torch.nn.Module.__init__(layer)

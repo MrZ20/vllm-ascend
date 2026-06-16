@@ -423,6 +423,33 @@ CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27609361478?pr
   （`MoERunner.is_internal_router.fget(self)`），仅 target main 改用 Ascend 语义。v0.22.1 的模型本来
   就读 `AscendFusedMoE.is_internal_router`，不受影响。
 
+### 5. CPU UT：310P 测试触发 factory & compressed-tensors MoE target 不匹配
+
+CPU UT 7 个失败（`error.py`），两类根因。
+
+#### 5.1 `tests/ut/_310p/fused_moe/test_shared_fused_moe_310.py`（6 个）
+
+- 报错：`TypeError: FusedMoE() missing 4 required positional arguments`，栈在
+  `fused_moe.py:_create_ascend_fused_moe_runner` 的 `return FusedMoE(*args, **kwargs)`。
+- 原因：测试用 `AscendFusedMoE310.__new__(AscendFusedMoE310)` 造半初始化对象，但 target main 下
+  `AscendFusedMoE310.__new__` 会委托到上游 factory（无参 → 报错）。这和第二轮给
+  `test_fused_moe.py` 加 `_new_uninitialized_ascend_fused_moe()` 是同一类问题。
+- 修复：`_build_layer` 改用 `torch.nn.Module.__new__(AscendFusedMoE310)` 绕过 factory；v0.22.1 下
+  对 nn.Module 对象等价。
+
+#### 5.2 `tests/ut/quantization/test_compressed_tensors_config.py::test_get_moe_quant_method`
+
+- 报错：`KeyError: None`，栈在 `compressed_tensors_config.py:get_scheme_dict` 的
+  `self.target_scheme_map[matched_target]`。
+- 原因：`find_matched_target` 用 `module.__class__.__name__`（`check_contains=True`）匹配 target。
+  上游 PR #41184 后 MoE owner 是 `RoutedExperts`（生产是 `AscendRoutedExperts`），但
+  `_add_fused_moe_to_target_scheme_map` 只加了 `"FusedMoE"` target，匹配不到 → `matched_target=None`
+  → KeyError。
+- 修复：`_add_fused_moe_to_target_scheme_map` 按版本注册 target —— target main 加 `"RoutedExperts"`，
+  v0.22.1 保留 `"FusedMoE"`。`check_contains=True` 让 `"RoutedExperts"` 既匹配 UT 的
+  `RoutedExperts` mock（精确），也匹配生产的 `AscendRoutedExperts`（子串包含），与 legacy
+  `"FusedMoE"` 匹配 `AscendFusedMoE` 的方式一致。
+
 ## 本地验证状态
 
 本地已做：
