@@ -78,9 +78,15 @@ def build_attn_metadata(
     prefill_context_parallel_metadata: AscendPrefillContextParallelMetadata | None = None,
     model_specific_attn_metadata: ModelSpecificAttnMetadata | None = None,
     for_cudagraph_capture: bool = False,
+    causal: bool = True,
 ) -> dict[str, Any]:
     """Build attention metadata for Ascend NPUs."""
     # TODO(Ronald1995): optimize AscendCommonAttentionMetadata.
+    # vLLM PR #41184-era target main calls build_attn_metadata from
+    # speculator.py with a ``causal`` keyword. Ascend does not need it for the
+    # current metadata builders, but accepting it keeps the wrapper compatible
+    # while v0.22.1 callers continue to omit the argument.
+    del causal
 
     # seq_lens_np is used for ascend npus, it maybe None in spec_decode case,
     # we fill it with max_seq_len in case `attn_metadata_builder.build` raise

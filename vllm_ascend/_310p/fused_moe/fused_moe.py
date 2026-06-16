@@ -21,11 +21,15 @@ from vllm.distributed import get_dp_group, get_ep_group, get_tp_group
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig
 from vllm.model_executor.layers.fused_moe.layer import FusedMoE
 
-# Upstream vLLM PR #41184 moved UnquantizedFusedMoEMethod out of layer.py.
-# Keep both import paths so 310P code can be imported across the upgrade.
-try:
+from vllm_ascend.utils import maybe_trans_nz, vllm_version_is
+
+if vllm_version_is("0.22.1"):
+    # vLLM PR #41184 has not landed in v0.22.1, so the unquantized MoE
+    # method still lives beside the legacy FusedMoE class.
     from vllm.model_executor.layers.fused_moe.layer import UnquantizedFusedMoEMethod
-except ImportError:
+else:
+    # vLLM PR #41184 moves UnquantizedFusedMoEMethod out of layer.py on
+    # target main. Use the explicit version branch instead of import probing.
     from vllm.model_executor.layers.fused_moe.unquantized_fused_moe_method import UnquantizedFusedMoEMethod
 
 from vllm_ascend.ascend_forward_context import _EXTRA_CTX, MoECommType
@@ -37,14 +41,14 @@ from vllm_ascend.ops.fused_moe.moe_comm_method import (
 )
 from vllm_ascend.ops.fused_moe.moe_runtime_args import build_fused_experts_input
 from vllm_ascend.quantization.quant_type import QuantType
-from vllm_ascend.utils import maybe_trans_nz
 
 from .experts_selector import select_experts
 from .moe_comm_method import AllGatherCommImpl310
 
-# Upstream vLLM PR #41184 makes FusedMoE a factory on target vLLM. Guard the
-# legacy 310P subclass so imports keep working even when runtime adaptation is separate.
-_FUSED_MOE_IS_CLASS = isinstance(FusedMoE, type)
+# Upstream vLLM PR #41184 makes FusedMoE a factory on target main. Use the
+# explicit supported-version branch so 310P keeps the legacy subclass only on
+# v0.22.1-era vLLM.
+_FUSED_MOE_IS_CLASS = vllm_version_is("0.22.1")
 _FUSED_MOE_BASE = FusedMoE if _FUSED_MOE_IS_CLASS else torch.nn.Module
 
 

@@ -109,6 +109,157 @@ CPU UT：
 - 删除 `.github/workflows/scripts/select_tests.py` 中未被 workflow 使用的 `--skip-default-cpu-ut` 参数及其 UT。CPU UT 在 main2main 中继续默认全跑，不引入额外选择器语义。
 - 推翻 `tests/ut/ops/test_fused_moe.py::test_forward_impl_delegates_to_layer` 的旧接口假设，改为覆盖 target vLLM 的 `MoERunner -> routed_experts` 委托。
 - 推翻 310P target vLLM 下只“保 import 但构造即 RuntimeError”的写法；target factory 场景必须至少可构造，并与主线 factory patch 保持同一扩展方式。
+- 第二轮 CI 后推翻 import-probing 式版本兼容：
+    - `vllm_ascend/ops/fused_moe/fused_moe.py`
+    - `vllm_ascend/_310p/fused_moe/fused_moe.py`
+    - `vllm_ascend/quantization/compressed_tensors_config.py`
+    - `vllm_ascend/quantization/modelslim_config.py`
+    - `vllm_ascend/quantization/fp8_config.py`
+    - `vllm_ascend/_310p/quantization/modelslim_config.py`
+    - 对应 UT 中的 MoE spec 选择
+    这些位置统一改成 `vllm_version_is("0.22.1")` 的 if-else。原因是上游 PR #41184 带来的语义变化不是单纯模块是否存在，而是 `FusedMoE` 从 class 变为 factory、权重 owner 迁移到 `RoutedExperts`；显式版本分支比 `try/except ImportError` 更符合 main/v0.22.1 双版本维护规范。
+    - 分支风格约定：旧/新两套并列实现使用 `if vllm_version_is("0.22.1") ... else ...`；只在 target main 新增的导入、字段或协议补齐使用 `if not vllm_version_is("0.22.1")`。
+    - quant config 中保留 v0.22.1 分支的原始 `isinstance(layer, FusedMoE)` 判断，只在 target-main 分支导入并识别 `RoutedExperts`，避免把旧分支也抽象重写，同时规避 `RoutedExperts = None` 后再 import 造成的 mypy `no-redef` / `isinstance(..., None)` 风险。
+
+## 第二轮 CI 失败与修复
+
+CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27602442936?pr=10459>
+
+### 1. CPU UT: `AscendFusedMoE.__new__` 触发 target factory
+
+失败：
+
+- `tests/ut/ops/test_fused_moe.py` 多个用例失败。
+- 报错：`TypeError: FusedMoE() missing 4 required positional arguments: 'num_experts', 'top_k', 'hidden_size', and 'intermediate_size'`。
+
+原因：
+
+- 上游 vLLM PR #41184 后，target main 下 `AscendFusedMoE.__new__(AscendFusedMoE)` 会委托到 `FusedMoE` factory。
+- 旧 UT 用 `AscendFusedMoE.__new__` 构造半初始化对象来测试 helper 方法，这在 target main 下不再是“空壳构造”，而是进入真实 factory。
+
+修复：
+
+- 新增测试 helper `_new_uninitialized_ascend_fused_moe()`，用 `nn.Module.__new__(AscendFusedMoE)` 显式绕过 target factory。
+- 所有需要半初始化对象的 UT 改用该 helper。
+- 注释说明该写法受 vLLM PR #41184 影响，v0.22.1 下等价于旧测试意图。
+
+### 2. A3 two-card: MoE quant method 缺 `is_monolithic`
+
+失败：
+
+- `tests/e2e/pull_request/two_card/test_prefix_caching.py::test_models_prefix_cache_tp2[50-deepseek-ai/DeepSeek-V2-Lite-Chat]`
+- 根因：`AttributeError: 'UnquantizedFusedMoEMethod' object has no attribute 'is_monolithic'`。
+
+原因：
+
+- 上游 vLLM PR #41184 的 `MoERunner._apply_quant_method` 会读取 `self.routed_experts.quant_method.is_monolithic` 来决定 modular/monolithic 路径。
+- Ascend 适配后的 quant method 需要暴露该 target-main 属性，同时保持 v0.22.1 旧路径不受影响。
+
+修复：
+
+- `AscendUnquantizedFusedMoEMethod` / `AscendUnquantizedFusedMoEMethod310` 保留 `is_monolithic = False`。
+- `AscendFusedMoEMethod` adapter 新增 `is_monolithic = False`，覆盖量化 MoE 场景。
+- `AscendRoutedExperts.__init__` 在替换为 Ascend quant method 后，额外补齐缺失的 `is_monolithic = False`。原因是 PR #41184 后 `RoutedExperts.__init__` 会先安装上游 quant method，部分 quant config 路径可能返回仍未声明该 target-main 协议的 method；在真正交给 `MoERunner` 前统一补齐，避免 prefix-cache DeepSeek 路径再次读到旧对象。
+- 注释说明该属性来自 vLLM PR #41184 的新 `MoERunner` 判断。
+
+### 3. A2 one-card: `AscendFusedMoEMethod.apply` 不接 `topk_weights`
+
+失败：
+
+- `tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py` 中 DeepSeek-V2-Lite-W8A8 相关用例。
+- 根因：`TypeError: AscendFusedMoEMethod.apply() got an unexpected keyword argument 'topk_weights'`。
+
+原因：
+
+- 上游 vLLM PR #41184 的 `RoutedExperts.forward_modular()` 会向 `quant_method.apply(...)` 传入预计算路由结果 `topk_weights` / `topk_ids`。
+- Ascend quantized MoE adapter 仍是旧签名，不能接收这两个新 keyword。
+
+修复：
+
+- `AscendFusedMoEMethod.apply` 增加可选 `topk_weights` / `topk_ids` 参数。
+- adapter 层接收并显式丢弃这两个参数，因为现有 Ascend quantized scheme 仍在自身 `apply` 内完成 `select_experts`；直接透传会打破 v0.22.1 风格的 scheme 签名。
+- `AscendUnquantizedFusedMoEMethod.apply` 也增加这两个参数；当 target main 已传入路由结果时复用它们，否则保持旧路径自行 `select_experts`。
+
+### 4. A2 one-card spec decode: `build_attn_metadata` 不接 `causal`
+
+失败：
+
+- `tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py` 中 EAGLE spec decode 相关用例。
+- 根因：`TypeError: build_attn_metadata() got an unexpected keyword argument 'causal'`。
+
+原因：
+
+- target main 的 spec decode `speculator.py` 调用 `build_attn_metadata(..., causal=...)`。
+- Ascend 覆盖的 `vllm_ascend/worker/v2/attn_utils.py::build_attn_metadata` 仍是旧签名。
+
+修复：
+
+- `build_attn_metadata` 增加默认参数 `causal: bool = True`。
+- 当前 Ascend metadata builder 不消费该字段，因此显式 `del causal`，仅用于兼容 target main 调用；v0.22.1 调用方继续不传该参数。
+
+### 5. A3 four-card: `AscendRoutedExperts` 缺旧 Ascend routing 字段
+
+失败：
+
+- `tests/e2e/pull_request/multi_card/test_ep.py::test_ep[deepseek-ai/DeepSeek-V2-Lite-Chat-4-2-True-3-1]`
+- 根因：`AttributeError: 'AscendRoutedExperts' object has no attribute 'e_score_correction_bias'`。
+
+原因：
+
+- 上游 vLLM PR #41184 将 target main 的 MoE 执行 owner 从 legacy `FusedMoE` 拆到 `RoutedExperts`。
+- Ascend target-main 适配复用了旧 `AscendFusedMoE.forward_impl`，该实现会读取 `renormalize`、`use_grouped_topk`、`topk_group`、`e_score_correction_bias`、`apply_router_weight_on_input` 等旧 `FusedMoE` public 字段。
+- 新上游 `RoutedExperts.__init__` 不保证继续以同名 public attribute 暴露这些字段，因此 EP DeepSeek 路径进入 Ascend forward 后直接访问失败。
+
+修复：
+
+- `AscendRoutedExperts.__init__` 调用上游 `RoutedExperts.__init__` 后，显式保存 Ascend 旧 forward 所需的 routing 字段。
+- 注释说明这是受 vLLM PR #41184 的 owner 拆分影响：target main 下 `AscendRoutedExperts` 是真实执行对象，必须携带旧 Ascend forward 依赖的状态；v0.22.1 仍走 legacy `AscendFusedMoE` class，不受影响。
+
+### 6. mypy: 条件导入导致 `no-redef` 和变量基类错误
+
+失败：
+
+- `vllm_ascend/ops/fused_moe/fused_moe.py`
+- 根因：`fused_moe_make_expert_params_mapping` / `RoutedExperts` 在 v0.22.1 分支先赋值，又在 target-main 分支用同名 import，触发 `no-redef`。
+- 继续用 `class AscendRoutedExperts(RoutedExperts)` 会让 mypy 把条件分支里的 `RoutedExperts` 当普通变量，不接受它作为基类。
+
+原因：
+
+- 上游 vLLM PR #41184 只在 target main 引入 `RoutedExperts` owner 和 `fused_moe_make_expert_params_mapping` helper。
+- v0.22.1 分支不应该 import target-main 新对象，但 mypy 需要在静态分析时看到真实基类类型。
+
+修复：
+
+- 使用 target-main 专用别名 `_TargetRoutedExperts` / `_target_fused_moe_make_expert_params_mapping`，避免覆盖旧分支名字。
+- `TYPE_CHECKING` 分支仅供 mypy 解析真实 target-main 类型；运行时 v0.22.1 仍使用 `torch.nn.Module` fallback，且不会走 target factory 注入路径。
+- `AscendRoutedExperts` 改为继承 `_TargetRoutedExperts`，内部显式调用也同步使用该别名，消除 `valid-type` / `Invalid base class`。
+
+### 7. 分支代码与 UT 双版本规范化
+
+检查范围：
+
+- 分支相对 `upstream/main` 的 Python 修改文件。
+- 重点检查 target-main 专属逻辑是否裸露、UT 是否只覆盖一个版本。
+
+修复：
+
+- `model_runner_v1.py::_bind_routed_experts_capturer`：
+    - v0.22.1 分支显式绑定 legacy `FusedMoE`。
+    - target-main 分支显式绑定 `MoERunner.routed_experts`。
+    - 去掉 `isinstance(FusedMoE, type)` 和 `hasattr(..., "routed_experts")` 探测。
+- `utils.py::register_ascend_customop`：
+    - `patch_fused_moe_factory(...)` 只在 `not vllm_version_is("0.22.1")` 下执行。
+    - v0.22.1 保留原 CustomOp OOT 注册路径。
+- `patch_tool_choice_none_content.py` 及对应 UT：
+    - v0.22.1 分支 patch / 测试 `_parse_tool_calls`。
+    - target-main 分支 patch / 测试 `_extract_tool_calls`。
+    - 不再用 `hasattr` 动态选择 API。
+
+原则：
+
+- 并列旧/新行为必须用 `if vllm_version_is("0.22.1") ... else ...`。
+- target-main 新增导入、字段、factory patch、协议补齐才使用 `if not vllm_version_is("0.22.1")`。
+- UT 要么在同一个用例内部按版本选择断言/调用，要么拆成版本专属用例并用 `vllm_version_is("0.22.1")` 控制跳过，不能只保证单版本通过。
 
 ## 本地验证状态
 
@@ -116,6 +267,8 @@ CPU UT：
 
 - `git diff --check` 通过。
 - `python3 -m py_compile` 覆盖本轮修改文件，通过。
+- `source .venv/bin/activate && bash format.sh` 通过。
+- 本地尝试 `python3 -m mypy --ignore-missing-imports ...`，但当前 `.venv` 缺完整 target vLLM/torch-npu 类型环境，仍会展开到大量无关导入文件；该结果不能等价 CI mypy。已根据输出额外清理 quant config / UT 中的 `RoutedExperts = None` 静态类型风险，同时保持 v0.22.1 分支尽量原样。
 
 本地未做：
 

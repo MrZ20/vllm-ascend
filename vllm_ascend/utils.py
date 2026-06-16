@@ -757,10 +757,11 @@ def register_ascend_customop(vllm_config: VllmConfig | None = None):
             }
         )
 
-    # Upstream vLLM PR #41184 made FusedMoE a function, so CustomOp OOT
-    # registration alone cannot replace it. Patch the factory export after
-    # choosing the final device-specific replacement.
-    patch_fused_moe_factory(REGISTERED_ASCEND_OPS["FusedMoE"])
+    if not vllm_version_is("0.22.1"):
+        # Upstream vLLM PR #41184 made FusedMoE a function, so CustomOp OOT
+        # registration alone cannot replace it. Patch the factory export after
+        # choosing the final device-specific replacement.
+        patch_fused_moe_factory(REGISTERED_ASCEND_OPS["FusedMoE"])
 
     for name, op_cls in REGISTERED_ASCEND_OPS.items():
         CustomOp.register_oot(_decorated_op_cls=op_cls, name=name)

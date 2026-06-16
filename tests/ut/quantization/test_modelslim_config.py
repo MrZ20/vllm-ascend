@@ -8,12 +8,12 @@ from vllm.model_executor.layers.attention import Attention
 from vllm.model_executor.layers.attention_layer_base import AttentionLayerBase
 from vllm.model_executor.layers.fused_moe import FusedMoE
 
-# vLLM PR #41184 makes FusedMoE a factory on target main. Tests need the
-# RoutedExperts spec there because it owns the MoE weights after the refactor.
-try:
+from vllm_ascend.utils import ASCEND_QUANTIZATION_METHOD, vllm_version_is
+
+if not vllm_version_is("0.22.1"):
+    # vLLM PR #41184 makes FusedMoE a factory on target main. Tests need the
+    # RoutedExperts spec there because it owns the MoE weights after the refactor.
     from vllm.model_executor.layers.fused_moe import RoutedExperts
-except ImportError:
-    RoutedExperts = None
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig
 from vllm.model_executor.layers.linear import LinearBase
 
@@ -23,13 +23,16 @@ from vllm_ascend.quantization.modelslim_config import (
     MODELSLIM_CONFIG_FILENAME,
     AscendModelSlimConfig,
 )
-from vllm_ascend.utils import ASCEND_QUANTIZATION_METHOD
 
 
 def _fused_moe_spec():
-    # Upstream vLLM PR #41184 makes FusedMoE a factory; use RoutedExperts
-    # as the spec in target vLLM because it now owns MoE weights.
-    return FusedMoE if isinstance(FusedMoE, type) else RoutedExperts
+    if vllm_version_is("0.22.1"):
+        # vLLM PR #41184 has not landed in v0.22.1; keep the original test
+        # spec because FusedMoE is still the class that owns MoE weights.
+        return FusedMoE
+    # vLLM PR #41184 makes FusedMoE a factory; use RoutedExperts as the spec
+    # in target vLLM because it now owns MoE weights.
+    return RoutedExperts
 
 
 class TestAscendModelSlimConfig(TestBase):

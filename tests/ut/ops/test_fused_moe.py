@@ -41,9 +41,17 @@ from vllm_ascend.ops.fused_moe.moe_runtime_args import (
     MoEWeights,
 )
 from vllm_ascend.quantization.quant_type import QuantType
-from vllm_ascend.utils import AscendDeviceType, adapt_patch
+from vllm_ascend.utils import AscendDeviceType, adapt_patch, vllm_version_is
 
 adapt_patch(True)
+
+
+def _new_uninitialized_ascend_fused_moe():
+    # vLLM PR #41184 makes AscendFusedMoE.__new__ delegate to the upstream
+    # FusedMoE factory on target main. These unit tests need a deliberately
+    # half-initialized object to exercise helper methods, so bypass that
+    # factory while v0.22.1 behavior remains equivalent for nn.Module objects.
+    return nn.Module.__new__(AscendFusedMoE)
 
 
 def mock_ep_and_mc2_group(mocker):
@@ -307,11 +315,10 @@ def _assert_child_signature_accepts_parent_interface(child_method, parent_method
 
 
 def _method_uses_super(method) -> bool:
-    try:
-        source = inspect.getsource(method)
-    except (OSError, TypeError):
-        return False
-
+    # The checked methods are local test targets. vLLM PR #41184 changed the
+    # parent MoE interface, so keep this helper direct and deterministic
+    # instead of hiding source lookup failures behind a broad fallback.
+    source = inspect.getsource(method)
     tree = ast.parse(textwrap.dedent(source))
     return any(
         isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "super"
@@ -334,7 +341,9 @@ class TestVllmParentInterfaceCompatibility:
         (AscendMoERunner, fused_moe_module.MoERunner, "forward_impl"),
         (AscendMoERunner, fused_moe_module.MoERunner, "_forward_impl"),
     ]
-    if isinstance(fused_moe_module.FusedMoE, type):
+    if vllm_version_is("0.22.1"):
+        # vLLM PR #41184 has not landed in v0.22.1, so AscendFusedMoE still
+        # subclasses the legacy FusedMoE layer and should track that interface.
         _parent_interface_cases.extend(
             [
                 (AscendFusedMoE, fused_moe_module.FusedMoE, "__init__"),
@@ -344,6 +353,8 @@ class TestVllmParentInterfaceCompatibility:
             ]
         )
     else:
+        # vLLM PR #41184 moves the subclassable MoE weight owner to
+        # RoutedExperts on target main.
         _parent_interface_cases.append((AscendRoutedExperts, fused_moe_module.RoutedExperts, "__init__"))
 
     @pytest.mark.parametrize(
@@ -578,7 +589,7 @@ class TestAscendMoERunner:
 
 class TestAscendFusedMoE:
     def _build_layer(self):
-        layer = AscendFusedMoE.__new__(AscendFusedMoE)
+        layer = _new_uninitialized_ascend_fused_moe()
         layer.quant_method = MagicMock()
         layer.ensure_moe_quant_config_init = MagicMock()
         layer.runner = MagicMock()
@@ -755,7 +766,7 @@ class TestAscendFusedMoE:
 
 class TestAscendFusedMoESharedExperts:
     def test_properties_and_forward_delegate(self, monkeypatch):
-        layer = AscendFusedMoE.__new__(AscendFusedMoE)
+        layer = _new_uninitialized_ascend_fused_moe()
         if not hasattr(type(layer), "gate"):
             pytest.skip("Current AscendFusedMoE does not expose gate property")
         layer.multistream_overlap_shared_expert = False
@@ -776,7 +787,7 @@ class TestAscendFusedMoESharedExperts:
         assert layer.forward(torch.ones(1, 2), torch.ones(1, 2)) == "forwarded"
 
     def test_shared_experts_split_with_expert_gate(self):
-        layer = AscendFusedMoE.__new__(AscendFusedMoE)
+        layer = _new_uninitialized_ascend_fused_moe()
         if not hasattr(layer, "_shared_experts_part1"):
             pytest.skip("Current AscendFusedMoE does not split shared experts")
         hidden_states = torch.tensor([[1.0, -1.0]])
@@ -798,7 +809,7 @@ class TestAscendFusedMoESharedExperts:
 
     @pytest.mark.parametrize("has_shared_experts", [False, True])
     def test_shared_forward_impl_routes_shared_output(self, monkeypatch, has_shared_experts):
-        layer = AscendFusedMoE.__new__(AscendFusedMoE)
+        layer = _new_uninitialized_ascend_fused_moe()
         if not hasattr(layer, "shared_forward_impl"):
             pytest.skip("Current AscendFusedMoE has no shared_forward_impl")
         layer.multistream_overlap_shared_expert = False

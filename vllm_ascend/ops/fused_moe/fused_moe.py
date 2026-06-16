@@ -17,6 +17,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from functools import wraps
+from typing import TYPE_CHECKING
 
 import torch
 import torch.nn.functional as F
@@ -28,28 +29,41 @@ from vllm.logger import logger
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig
 from vllm.model_executor.layers.fused_moe.layer import FusedMoE
 
-# Upstream vLLM PR #41184 changed FusedMoE from a class to a factory and
-# moved expert-param mapping to this module-level helper. Keep the old
-# static-method spelling available for Ascend model code.
-try:
-    from vllm.model_executor.layers.fused_moe.layer import fused_moe_make_expert_params_mapping
-except ImportError:
-    fused_moe_make_expert_params_mapping = None
-# Upstream vLLM PR #41184 split expert weights/execution into RoutedExperts.
-# Ascend quantization now has to recognize and customize this object instead
-# of only subclassing the legacy FusedMoE layer.
-try:
-    from vllm.model_executor.layers.fused_moe.routed_experts import RoutedExperts
-except ImportError:
-    RoutedExperts = torch.nn.Module
-from vllm.model_executor.layers.fused_moe.runner.moe_runner import MoERunner  # type: ignore
+from vllm_ascend.utils import (
+    ACL_FORMAT_FRACTAL_NZ,
+    enable_sp,
+    maybe_trans_nz,
+    npu_stream_switch,
+    shared_expert_dp_enabled,
+    shared_experts_calculation_stream,
+    vllm_version_is,
+)
 
-# Upstream vLLM PR #41184 also moved UnquantizedFusedMoEMethod out of layer.py.
-# Import both locations so the same Ascend code still supports the old base.
-try:
-    from vllm.model_executor.layers.fused_moe.layer import UnquantizedFusedMoEMethod
-except ImportError:
+if TYPE_CHECKING:
+    from vllm.model_executor.layers.fused_moe.layer import (
+        fused_moe_make_expert_params_mapping as _target_fused_moe_make_expert_params_mapping,
+    )
+    from vllm.model_executor.layers.fused_moe.routed_experts import RoutedExperts as _TargetRoutedExperts
     from vllm.model_executor.layers.fused_moe.unquantized_fused_moe_method import UnquantizedFusedMoEMethod
+elif vllm_version_is("0.22.1"):
+    # vLLM PR #41184 has not landed in v0.22.1, so FusedMoE is still the
+    # subclassable owner of MoE weights and helper methods. The target-main
+    # RoutedExperts hook is not used on this branch.
+    _target_fused_moe_make_expert_params_mapping = None
+    _TargetRoutedExperts = torch.nn.Module
+    from vllm.model_executor.layers.fused_moe.layer import UnquantizedFusedMoEMethod
+else:
+    # vLLM PR #41184 changed FusedMoE into a factory and moved the
+    # subclassable weight owner to RoutedExperts. Use explicit version
+    # branches instead of import probing so main/v0.22.1 compatibility is
+    # deterministic.
+    from vllm.model_executor.layers.fused_moe.layer import (
+        fused_moe_make_expert_params_mapping as _target_fused_moe_make_expert_params_mapping,
+    )
+    from vllm.model_executor.layers.fused_moe.routed_experts import RoutedExperts as _TargetRoutedExperts
+    from vllm.model_executor.layers.fused_moe.unquantized_fused_moe_method import UnquantizedFusedMoEMethod
+
+from vllm.model_executor.layers.fused_moe.runner.moe_runner import MoERunner  # type: ignore
 
 from vllm_ascend.ascend_config import get_ascend_config
 from vllm_ascend.ascend_forward_context import _EXTRA_CTX, MoECommType
@@ -61,14 +75,6 @@ from vllm_ascend.ops.fused_moe.moe_comm_method import AllGatherCommImpl, FusedEx
 from vllm_ascend.ops.fused_moe.moe_runtime_args import build_fused_experts_input
 from vllm_ascend.quantization.methods.base import get_moe_num_logical_experts
 from vllm_ascend.quantization.quant_type import QuantType
-from vllm_ascend.utils import (
-    ACL_FORMAT_FRACTAL_NZ,
-    enable_sp,
-    maybe_trans_nz,
-    npu_stream_switch,
-    shared_expert_dp_enabled,
-    shared_experts_calculation_stream,
-)
 
 
 def get_compressed_expert_map(expert_map: torch.Tensor) -> str:
@@ -80,9 +86,10 @@ def get_compressed_expert_map(expert_map: torch.Tensor) -> str:
     )
 
 
-# Upstream vLLM PR #41184 makes FusedMoE callable-but-not-a-class. This guard
-# lets legacy vLLM keep class inheritance while target vLLM uses the factory path.
-_FUSED_MOE_IS_CLASS = isinstance(FusedMoE, type)
+# Upstream vLLM PR #41184 makes FusedMoE callable-but-not-a-class on target
+# main. Use the explicit supported-version branch so v0.22.1 keeps class
+# inheritance while target main uses the factory path.
+_FUSED_MOE_IS_CLASS = vllm_version_is("0.22.1")
 _FUSED_MOE_BASE = FusedMoE if _FUSED_MOE_IS_CLASS else torch.nn.Module
 
 
@@ -173,6 +180,8 @@ class AscendUnquantizedFusedMoEMethod(UnquantizedFusedMoEMethod):
         global_redundant_expert_num: int = 0,
         pertoken_scale: torch.Tensor | None = None,
         mc2_mask: torch.Tensor | None = None,
+        topk_weights: torch.Tensor | None = None,
+        topk_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
         zero_expert_num = getattr(layer, "zero_expert_num", 0)
         zero_expert_type = getattr(layer, "zero_expert_type", None)
@@ -186,22 +195,30 @@ class AscendUnquantizedFusedMoEMethod(UnquantizedFusedMoEMethod):
             global_redundant_expert_num=global_redundant_expert_num,
             num_shared_experts=num_shared_experts,
         )
-        topk_weights, topk_ids = select_experts(
-            hidden_states=x,
-            router_logits=router_logits,
-            top_k=top_k,
-            use_grouped_topk=use_grouped_topk,
-            renormalize=renormalize,
-            topk_group=topk_group,
-            num_expert_group=num_expert_group,
-            custom_routing_function=custom_routing_function,
-            scoring_func=scoring_func,
-            routed_scaling_factor=routed_scaling_factor,
-            e_score_correction_bias=e_score_correction_bias,
-            num_experts=num_logical_experts,
-            tid2eid=self.tid2eid,
-            input_ids=input_ids,
-        )
+        if topk_weights is None or topk_ids is None:
+            topk_weights, topk_ids = select_experts(
+                hidden_states=x,
+                router_logits=router_logits,
+                top_k=top_k,
+                use_grouped_topk=use_grouped_topk,
+                renormalize=renormalize,
+                topk_group=topk_group,
+                num_expert_group=num_expert_group,
+                custom_routing_function=custom_routing_function,
+                scoring_func=scoring_func,
+                routed_scaling_factor=routed_scaling_factor,
+                e_score_correction_bias=e_score_correction_bias,
+                num_experts=num_logical_experts,
+                tid2eid=self.tid2eid,
+                input_ids=input_ids,
+            )
+        else:
+            # vLLM PR #41184's RoutedExperts.forward_modular precomputes
+            # routing and passes topk_weights/topk_ids into quant_method.apply.
+            # Reuse those tensors on target main while v0.22.1 keeps selecting
+            # experts inside Ascend's legacy FusedMoE path.
+            topk_weights = topk_weights.to(device=x.device)
+            topk_ids = topk_ids.to(device=x.device)
         if layer.vllm_config.model_config is not None and layer.vllm_config.model_config.enable_return_routed_experts:
             capturer = getattr(layer, "_ascend_routed_experts_capturer", None)
             if capturer is not None:
@@ -347,8 +364,8 @@ class AscendMoERunner(MoERunner):
 class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
     moe_counter = -1
     gate_stream: torch.npu.Stream | None = None
-    if not _FUSED_MOE_IS_CLASS and fused_moe_make_expert_params_mapping is not None:
-        make_expert_params_mapping = staticmethod(fused_moe_make_expert_params_mapping)
+    if not _FUSED_MOE_IS_CLASS and _target_fused_moe_make_expert_params_mapping is not None:
+        make_expert_params_mapping = staticmethod(_target_fused_moe_make_expert_params_mapping)
 
     def __new__(cls, *args, **kwargs):
         # Upstream vLLM PR #41184 turns FusedMoE into a factory returning
@@ -938,7 +955,7 @@ class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
         return shared_out, routed_out
 
 
-class AscendRoutedExperts(RoutedExperts):
+class AscendRoutedExperts(_TargetRoutedExperts):
     # Upstream vLLM PR #41184 moved weight ownership from FusedMoE to
     # RoutedExperts. Mirror the old AscendFusedMoE initialization here so
     # quantization, EPLB, shared experts, and NPU MoE communication still use
@@ -990,7 +1007,7 @@ class AscendRoutedExperts(RoutedExperts):
         # Upstream vLLM PR #41184 requires RoutedExperts to own the weight
         # parameters. Run its constructor first so weight loading names follow
         # the new "experts.routed_experts.*" hierarchy.
-        RoutedExperts.__init__(
+        _TargetRoutedExperts.__init__(
             self,
             layer_name=layer_name,
             params_dtype=params_dtype,
@@ -1009,6 +1026,20 @@ class AscendRoutedExperts(RoutedExperts):
             e_score_correction_bias=e_score_correction_bias,
             apply_router_weight_on_input=apply_router_weight_on_input,
         )
+
+        # Upstream vLLM PR #41184 moved execution from the legacy FusedMoE
+        # class to RoutedExperts, but Ascend still reuses the old
+        # AscendFusedMoE.forward_impl on target main. Keep the routing fields
+        # that the Ascend forward path reads as public attributes even if
+        # upstream RoutedExperts stores or normalizes them differently.
+        self.renormalize = renormalize
+        self.use_grouped_topk = use_grouped_topk
+        self.num_expert_group = num_expert_group
+        self.topk_group = topk_group
+        self.custom_routing_function = custom_routing_function
+        self.scoring_func = scoring_func
+        self.e_score_correction_bias = e_score_correction_bias
+        self.apply_router_weight_on_input = apply_router_weight_on_input
 
         self.vllm_config = get_current_vllm_config()
         self._original_routed_scaling_factor = original_routed_scaling_factor
@@ -1031,6 +1062,13 @@ class AscendRoutedExperts(RoutedExperts):
         # Upstream vLLM PR #41184 installs an upstream quant method during
         # RoutedExperts.__init__. Replace it with Ascend's method and recreate
         # weights so the NPU kernels get Ascend-formatted parameters.
+        if not hasattr(self.quant_method, "is_monolithic"):
+            # MoERunner._apply_quant_method added by vLLM PR #41184 requires
+            # every modular MoE quant method to expose is_monolithic. Some
+            # quant configs can still hand back an upstream-compatible method,
+            # so stamp the target-main protocol here before MoERunner reads it.
+            is_monolithic_attr = "is_monolithic"
+            setattr(self.quant_method, is_monolithic_attr, False)
         self.base_quant_method = self.quant_method
 
         self.moe_config.tp_group = get_tp_group()
@@ -1177,7 +1215,7 @@ class AscendRoutedExperts(RoutedExperts):
 
     def update_expert_map(self, new_expert_map=None):
         if new_expert_map is None:
-            return RoutedExperts.update_expert_map(self)
+            return _TargetRoutedExperts.update_expert_map(self)
         self._expert_map = new_expert_map
         self.expert_map_manager._expert_map = new_expert_map
 

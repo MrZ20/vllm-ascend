@@ -36,19 +36,23 @@ from vllm.logger import logger
 from vllm.model_executor.layers.attention_layer_base import AttentionLayerBase
 from vllm.model_executor.layers.fused_moe import FusedMoE
 
-# vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts. Import
-# conditionally so ModelSlim quantization keeps dual-version compatibility.
-try:
+from vllm_ascend.utils import (
+    ASCEND_QUANTIZATION_METHOD,
+    AscendDeviceType,
+    calc_split_factor,
+    get_ascend_device_type,
+    vllm_version_is,
+)
+
+if not vllm_version_is("0.22.1"):
+    # vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # ModelSlim quantization must follow the new owner on target main.
     from vllm.model_executor.layers.fused_moe import RoutedExperts
-except ImportError:
-    RoutedExperts = None
 from vllm.model_executor.layers.linear import LinearBase
 from vllm.model_executor.layers.quantization import register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig, QuantizeMethodBase
 from vllm.model_executor.layers.vocab_parallel_embedding import UnquantizedEmbeddingMethod, VocabParallelEmbedding
 from vllm.model_executor.models.utils import WeightsMapper
-
-from vllm_ascend.utils import ASCEND_QUANTIZATION_METHOD, AscendDeviceType, calc_split_factor, get_ascend_device_type
 
 from .methods import get_scheme_class
 
@@ -57,11 +61,13 @@ MODELSLIM_CONFIG_FILENAME = "quant_model_description.json"
 
 
 def _is_fused_moe_layer(layer: torch.nn.Module) -> bool:
-    # Upstream vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    if vllm_version_is("0.22.1"):
+        # vLLM PR #41184 has not landed in v0.22.1, so keep the original
+        # ModelSlim behavior: legacy FusedMoE is the MoE weight owner.
+        return isinstance(layer, FusedMoE)
+    # vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
     # ModelSlim quantization must follow the new owner to keep Ascend kernels active.
-    return (isinstance(FusedMoE, type) and isinstance(layer, FusedMoE)) or (
-        RoutedExperts is not None and isinstance(layer, RoutedExperts)
-    )
+    return isinstance(layer, RoutedExperts)
 
 
 # key: model_type

@@ -118,9 +118,10 @@ def test_responses_parser_allows_named_tool_choice_with_none_content():
     )
     parser = _DummyDelegatingParser(tokenizer=None)
 
-    # Upstream vLLM PRs #45190/#45171/#45104 renamed the parser hook.
-    # Exercise whichever API exists in the checked-out vLLM version.
-    if hasattr(parser, "_parse_tool_calls"):
+    # Upstream vLLM PRs #45190/#45171/#45104 renamed the parser hook on target
+    # main. Keep both UT branches explicit so each supported vLLM version
+    # verifies the API it actually owns.
+    if vllm_version_is("0.22.1"):
         tool_calls, content = parser._parse_tool_calls(
             request=request,
             content=None,
