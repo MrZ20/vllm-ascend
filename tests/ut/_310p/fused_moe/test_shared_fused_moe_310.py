@@ -21,6 +21,7 @@ import torch.nn.functional as F
 from vllm_ascend._310p.fused_moe.fused_moe import (
     AscendFusedMoE310,
 )
+from vllm_ascend.utils import vllm_version_is
 
 
 class _DummyGate(torch.nn.Module):
@@ -48,7 +49,12 @@ class _DummySharedExperts(torch.nn.Module):
 
 
 def _build_layer(shared_experts: torch.nn.Module | None) -> AscendFusedMoE310:
-    layer = AscendFusedMoE310.__new__(AscendFusedMoE310)
+    # vLLM PR #41184 makes AscendFusedMoE310.__new__ delegate to the upstream
+    # FusedMoE factory on target main, so AscendFusedMoE310.__new__ would try to
+    # build a real layer (and fail on missing args). Bypass that factory with
+    # nn.Module.__new__ to get a half-initialized object for these helper tests;
+    # v0.22.1 behavior remains equivalent for nn.Module objects.
+    layer = torch.nn.Module.__new__(AscendFusedMoE310)
     # The test bypasses full layer init with __new__, so we must initialize
     # nn.Module internals before assigning child modules.
     torch.nn.Module.__init__(layer)
@@ -82,6 +88,32 @@ def test_forward_impl_with_shared_experts_returns_tuple_310():
         shared_out, routed = layer.shared_forward_impl(hidden_states, router_logits)
 
     expected_shared = 0.5 * (hidden_states * 2.0 + 1.0)
+    torch.testing.assert_close(shared_out, expected_shared)
+    torch.testing.assert_close(routed, routed_out)
+
+
+def test_target_main_shared_forward_uses_separate_shared_input_310():
+    if vllm_version_is("0.22.1"):
+        return
+
+    layer = _build_layer(_DummySharedExperts(with_gate=True))
+    hidden_states = torch.randn(3, 8)
+    shared_input = torch.randn(3, 8)
+    router_logits = torch.randn(3, 8)
+    routed_out = torch.randn(3, 8)
+
+    # vLLM PR #41184 makes MoERunner pass a separate shared_experts_input to
+    # RoutedExperts.shared_forward_impl. 310P should consume that tensor only
+    # for the shared path and keep routed MoE inputs unchanged.
+    with patch.object(AscendFusedMoE310, "forward_impl", return_value=routed_out) as mock_forward_impl:
+        shared_out, routed = layer.shared_forward_impl(hidden_states, router_logits, shared_input)
+
+    mock_forward_impl.assert_called_once_with(
+        layer,
+        hidden_states=hidden_states,
+        router_logits=router_logits,
+    )
+    expected_shared = 0.5 * (shared_input * 2.0 + 1.0)
     torch.testing.assert_close(shared_out, expected_shared)
     torch.testing.assert_close(routed, routed_out)
 

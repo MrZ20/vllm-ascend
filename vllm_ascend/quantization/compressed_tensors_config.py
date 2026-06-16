@@ -23,6 +23,13 @@ import torch
 from compressed_tensors.quantization import QuantizationArgs, QuantizationStrategy, QuantizationType
 from vllm.logger import logger
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+from vllm_ascend.utils import COMPRESSED_TENSORS_METHOD, vllm_version_is
+
+if not vllm_version_is("0.22.1"):
+    # vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # Recognize that owner explicitly on target main.
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
 from vllm.model_executor.layers.linear import LinearBase, UnquantizedLinearMethod
 from vllm.model_executor.layers.quantization import QUANTIZATION_METHODS, register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig, QuantizeMethodBase
@@ -32,8 +39,6 @@ from vllm.model_executor.layers.quantization.compressed_tensors.utils import (
     should_ignore_layer,
 )
 from vllm.model_executor.models.utils import WeightsMapper
-
-from vllm_ascend.utils import COMPRESSED_TENSORS_METHOD
 
 from .methods import AscendLinearScheme, AscendMoEScheme
 
@@ -47,6 +52,16 @@ def _remove_quantization_method():
 _remove_quantization_method()
 
 QUANTIZATION_SCHEME_MAP_TYPE = dict[str, dict[str, "QuantizationArgs"] | None]
+
+
+def _is_fused_moe_layer(layer: torch.nn.Module) -> bool:
+    if vllm_version_is("0.22.1"):
+        # vLLM PR #41184 has not landed in v0.22.1, so keep the original
+        # compressed_tensors behavior: legacy FusedMoE is the MoE weight owner.
+        return isinstance(layer, FusedMoE)
+    # vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # Quantization must recognize the new owner so Ascend MoE methods are still selected.
+    return isinstance(layer, RoutedExperts)
 
 
 @register_quantization_config(COMPRESSED_TENSORS_METHOD)
@@ -89,13 +104,17 @@ class AscendCompressedTensorsConfig(QuantizationConfig):
     def _add_fused_moe_to_target_scheme_map(self):
         """
         Helper function to update target_scheme_map
-        since linear layers get fused into FusedMoE
-        targeting 'Linear' needs to also match
-        FusedMoE modules.
+        since linear layers get fused into the MoE weight owner,
+        targeting 'Linear' needs to also match that module.
         """
-        if "Linear" not in self.target_scheme_map or "FusedMoE" in self.target_scheme_map:
+        # vLLM PR #41184 moved the MoE weight owner from FusedMoE to
+        # RoutedExperts, so find_matched_target now matches the RoutedExperts
+        # module class name; register that target on target main and keep the
+        # legacy FusedMoE target on v0.22.1.
+        moe_target = "FusedMoE" if vllm_version_is("0.22.1") else "RoutedExperts"
+        if "Linear" not in self.target_scheme_map or moe_target in self.target_scheme_map:
             return
-        self.target_scheme_map["FusedMoE"] = self.target_scheme_map["Linear"]
+        self.target_scheme_map[moe_target] = self.target_scheme_map["Linear"]
 
     @classmethod
     def from_config(cls, config: dict[str, Any]) -> "AscendCompressedTensorsConfig":
@@ -167,23 +186,27 @@ class AscendCompressedTensorsConfig(QuantizationConfig):
             logger.info_once("Using the vLLM Ascend llmcompressor Quantization now!")
             return AscendLinearMethod(linear_scheme)
 
-        if isinstance(layer, FusedMoE):
+        if _is_fused_moe_layer(layer):
             # Delayed import to avoid circular import
             from vllm_ascend.ops.fused_moe.fused_moe import AscendUnquantizedFusedMoEMethod
 
-            layer.ascend_quant_method = COMPRESSED_TENSORS_METHOD
+            # vLLM PR #41184 makes this branch accept either legacy FusedMoE
+            # or target-main RoutedExperts. After the runtime predicate, use a
+            # narrow local cast for MoE-only dynamic attributes.
+            moe_layer = cast(Any, layer)
+            moe_layer.ascend_quant_method = COMPRESSED_TENSORS_METHOD
             layer_name = prefix + ".0.gate_proj"
             # Get the scheme for this layer
-            moe_scheme = self._get_moe_scheme(layer=layer, layer_name=layer_name)
+            moe_scheme = self._get_moe_scheme(layer=moe_layer, layer_name=layer_name)
 
             # Return unquantized method if no scheme found
             if moe_scheme is None:
-                return AscendUnquantizedFusedMoEMethod(layer.moe_config)
+                return AscendUnquantizedFusedMoEMethod(moe_layer.moe_config)
 
             # Store scheme on layer for reference (optional, for debugging)
-            layer.scheme = moe_scheme
+            moe_layer.scheme = moe_scheme
             logger.info_once("Using the vLLM Ascend llmcompressor Quantization now!")
-            return AscendFusedMoEMethod(moe_scheme, layer.moe_config, tid2eid)
+            return AscendFusedMoEMethod(moe_scheme, moe_layer.moe_config, tid2eid)
 
         return None
 

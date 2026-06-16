@@ -4,15 +4,30 @@ import torch
 from compressed_tensors.quantization import QuantizationArgs
 from vllm.logger import logger
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+from vllm_ascend.utils import FP8_METHOD, vllm_version_is
+
+if not vllm_version_is("0.22.1"):
+    # vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # FP8 MoE quantization has to match the new owner on target main.
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
 from vllm.model_executor.layers.linear import LinearBase
 from vllm.model_executor.layers.quantization import QUANTIZATION_METHODS, register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig, QuantizeMethodBase
 
-from vllm_ascend.utils import FP8_METHOD
-
 from .methods import get_scheme_class
 
 QUANTIZATION_SCHEME_MAP_TYPE = dict[str, dict[str, QuantizationArgs] | None]
+
+
+def _is_fused_moe_layer(layer: torch.nn.Module) -> bool:
+    if vllm_version_is("0.22.1"):
+        # vLLM PR #41184 has not landed in v0.22.1, so keep the original FP8
+        # behavior: legacy FusedMoE is the MoE weight owner.
+        return isinstance(layer, FusedMoE)
+    # vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # FP8 MoE quantization has to match the new owner object.
+    return isinstance(layer, RoutedExperts)
 
 
 def remove_quantization_method():
@@ -113,10 +128,14 @@ class AscendFp8Config(QuantizationConfig):
             scheme = create_scheme_for_layer(self.quant_description, prefix, "ds_linear", self.packed_modules_mapping)
             quant_method = AscendLinearMethod(scheme)
             return quant_method
-        if isinstance(layer, FusedMoE):
-            layer.ascend_quant_method = FP8_METHOD
+        if _is_fused_moe_layer(layer):
+            # vLLM PR #41184 makes this branch accept either legacy FusedMoE
+            # or target-main RoutedExperts. After the runtime predicate, use a
+            # narrow local cast for MoE-only dynamic attributes.
+            moe_layer = cast(Any, layer)
+            moe_layer.ascend_quant_method = FP8_METHOD
             scheme = create_scheme_for_layer(self.quant_description, prefix, "w4a8_moe", self.packed_modules_mapping)
-            quant_method = AscendFusedMoEMethod(scheme, layer.moe_config, tid2eid=tid2eid)
+            quant_method = AscendFusedMoEMethod(scheme, moe_layer.moe_config, tid2eid=tid2eid)
             return quant_method
         return None
 

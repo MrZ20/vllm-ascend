@@ -112,27 +112,53 @@ def _patch_named_tool_choice_bool() -> None:
 
 _patch_named_tool_choice_bool()
 
-_original_delegating_parse_tool_calls = DelegatingParser._parse_tool_calls
+# Upstream vLLM PRs #45190/#45171/#45104 unified parser entry points and
+# renamed DelegatingParser._parse_tool_calls to _extract_tool_calls. Keep both
+# hook shapes so forced tool-choice with content=None stays fixed across the upgrade.
+if vllm_version_is("0.22.1"):
+    # vLLM PRs #45190/#45171/#45104 have not landed in v0.22.1, so keep the
+    # original DelegatingParser._parse_tool_calls hook.
+    _original_delegating_parse_tool_calls = DelegatingParser._parse_tool_calls
 
-
-def _patched_delegating_parse_tool_calls(
-    self,
-    request,
-    content: str | None,
-    enable_auto_tools: bool,
-):
-    if content is None and _is_forced_tool_choice(request):
-        return [], None
-
-    return _original_delegating_parse_tool_calls(
+    def _patched_delegating_parse_tool_calls(
         self,
         request,
-        content,
-        enable_auto_tools,
-    )
+        content: str | None,
+        enable_auto_tools: bool,
+    ):
+        if content is None and _is_forced_tool_choice(request):
+            return [], None
 
+        return _original_delegating_parse_tool_calls(
+            self,
+            request,
+            content,
+            enable_auto_tools,
+        )
 
-DelegatingParser._parse_tool_calls = _patched_delegating_parse_tool_calls
+    DelegatingParser._parse_tool_calls = _patched_delegating_parse_tool_calls
+else:
+    # vLLM PRs #45190/#45171/#45104 renamed the parser hook on target main.
+    # Patch the new entry point there instead of probing at runtime.
+    _original_delegating_extract_tool_calls = DelegatingParser._extract_tool_calls
+
+    def _patched_delegating_extract_tool_calls(
+        self,
+        content: str | None,
+        request,
+        enable_auto_tools: bool = False,
+    ):
+        if content is None and _is_forced_tool_choice(request):
+            return [], None
+
+        return _original_delegating_extract_tool_calls(
+            self,
+            content,
+            request,
+            enable_auto_tools,
+        )
+
+    DelegatingParser._extract_tool_calls = _patched_delegating_extract_tool_calls
 
 if vllm_version_is("0.22.1"):
     from vllm.entrypoints.openai.engine.serving import OpenAIServing  # type: ignore[import-not-found]

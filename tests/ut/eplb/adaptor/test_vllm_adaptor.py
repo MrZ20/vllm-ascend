@@ -6,6 +6,7 @@ from transformers import DeepseekV2Config
 
 from vllm_ascend.eplb.adaptor.vllm_adaptor import VllmEplbAdaptor
 from vllm_ascend.quantization.methods.base import QuantType
+from vllm_ascend.utils import vllm_version_is
 
 
 class TestVllmAdaptor(unittest.TestCase):
@@ -20,7 +21,19 @@ class TestVllmAdaptor(unittest.TestCase):
         del mock_model.language_model
         self.model = mock_model
         num_dense_layers = getattr(config, "first_k_dense_replace", 0)
-        self.model.model.layers[num_dense_layers].mlp.experts.quant_type = QuantType.W8A8
+        if vllm_version_is("0.22.1"):
+            # vLLM PR #41184 has not landed in v0.22.1, so mlp.experts owns
+            # quant_type/local expert state directly.
+            moe_weight_owner = self.model.model.layers[num_dense_layers].mlp.experts
+            last_moe_weight_owner = self.model.model.layers[-1].mlp.experts
+        else:
+            # vLLM PR #41184 moved the MoE weight owner under
+            # MoERunner.routed_experts on target main. Mirror that shape in the
+            # adaptor tests instead of relying on MagicMock's auto attributes.
+            moe_weight_owner = self.model.model.layers[num_dense_layers].mlp.experts.routed_experts
+            last_moe_weight_owner = self.model.model.layers[-1].mlp.experts.routed_experts
+        moe_weight_owner.quant_type = QuantType.W8A8
+        last_moe_weight_owner.local_num_experts = 1
 
         self.mock_rank = patch("vllm_ascend.eplb.adaptor.vllm_adaptor.dist.get_rank", return_value=0).start()
         self.mock_size = patch("vllm_ascend.eplb.adaptor.vllm_adaptor.dist.get_world_size", return_value=4).start()

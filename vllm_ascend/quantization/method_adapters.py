@@ -213,6 +213,14 @@ class AscendFusedMoEMethod(FusedMoEMethodBase):
         self.quant_method = scheme
         self.tid2eid = tid2eid
 
+    @property
+    def is_monolithic(self) -> bool:
+        # vLLM PR #41184's MoERunner checks quant_method.is_monolithic before
+        # dispatching the modular RoutedExperts path. Ascend quant methods keep
+        # routing/communication in their own apply path, so expose the expected
+        # target-main attribute while retaining v0.22.1 behavior.
+        return False
+
     def create_weights(
         self,
         layer: torch.nn.Module,
@@ -270,7 +278,15 @@ class AscendFusedMoEMethod(FusedMoEMethodBase):
         activation: str = "silu",
         apply_router_weight_on_input: bool = False,
         mc2_mask: torch.Tensor | None = None,
+        topk_weights: torch.Tensor | None = None,
+        topk_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
+        # vLLM PR #41184 passes precomputed routing tensors from
+        # RoutedExperts.forward_modular into quant_method.apply. Ascend's
+        # quantized schemes still select experts inside their own apply path,
+        # so the adapter accepts the new target-main keywords but does not
+        # forward them to v0.22.1-style scheme implementations.
+        del topk_weights, topk_ids
         return self.quant_method.apply(
             layer=layer,
             x=x,

@@ -23,6 +23,7 @@ import torch.distributed as dist
 from vllm.logger import logger
 
 from vllm_ascend.ascend_config import get_ascend_config
+from vllm_ascend.eplb.utils import get_moe_weight_owner
 from vllm_ascend.quantization.methods.base import QuantType
 
 
@@ -42,7 +43,7 @@ class VllmEplbAdaptor:
 
         self.expert_map_per_layer_cpu = dict()  # copy of expert map on CPU to avoid device synchronize frequently
 
-        self.num_local_experts = self.model.model.layers[-1].mlp.experts.local_num_experts
+        self.num_local_experts = get_moe_weight_owner(self.model.model.layers[-1].mlp.experts).local_num_experts
         self.expert_param_per_layer = dict()
         self.init_expert_param_per_layer()
 
@@ -67,7 +68,10 @@ class VllmEplbAdaptor:
     def init_expert_param_per_layer(self):
         self.param_dict = dict()
         if self.model.quant_config is not None:
-            quant_type = self.model.model.layers[self.num_dense_layers].mlp.experts.quant_type
+            # vLLM PR #41184 moved quant_type from the public FusedMoE object
+            # to RoutedExperts on target main. Keep v0.22.1 on mlp.experts and
+            # follow MoERunner.routed_experts only on the target-main branch.
+            quant_type = get_moe_weight_owner(self.model.model.layers[self.num_dense_layers].mlp.experts).quant_type
             if quant_type == QuantType.W8A8:
                 self.expert_weight_names = [
                     "w13_weight_list",
@@ -107,7 +111,7 @@ class VllmEplbAdaptor:
             self.expert_param_per_layer[layer_idx] = list()
             for name in self.expert_weight_names:
                 param_key = f"model.layers.{layer_idx}.mlp.experts.{name}"
-                param_value = getattr(self.model.model.layers[layer_idx].mlp.experts, name)
+                param_value = getattr(get_moe_weight_owner(self.model.model.layers[layer_idx].mlp.experts), name)
                 self.param_dict[param_key] = param_value
             for local_expert_id in range(self.num_local_experts):
                 per_expert_param = list()
@@ -162,7 +166,11 @@ class VllmEplbAdaptor:
     def get_global_expert_map(self):
         all_layer_global_expert_map = []
         for layer_id in range(self.num_moe_layers):
-            map_cpu = self.model.model.layers[self.num_dense_layers + layer_id].mlp.experts.global_expert_map.cpu()
+            # vLLM PR #41184 moved global_expert_map to RoutedExperts on
+            # target main; v0.22.1 still reads it from the legacy FusedMoE.
+            map_cpu = get_moe_weight_owner(
+                self.model.model.layers[self.num_dense_layers + layer_id].mlp.experts
+            ).global_expert_map.cpu()
             all_layer_global_expert_map.append(map_cpu)
             self.expert_map_per_layer_cpu[self.num_dense_layers + layer_id] = map_cpu[self.rank_id]
 
