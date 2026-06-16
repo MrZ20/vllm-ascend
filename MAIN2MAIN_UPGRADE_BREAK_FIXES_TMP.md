@@ -378,10 +378,10 @@ CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27609361478?pr
 修复：
 
 - `AscendRoutedExperts.shared_forward_impl` 增加显式双版本分支：
-  - `if vllm_version_is("0.22.1")`：保留原调用，继续把 `shared_hidden_states` 作为
+    - `if vllm_version_is("0.22.1")`：保留原调用，继续把 `shared_hidden_states` 作为
     `shared_experts_input` 传入。v0.22.1 没有上游 PR #41184 的 `RoutedExperts` 拆分，正常执行仍走
     legacy `AscendFusedMoE`。
-  - `else`：target-main 调用 `self.forward_impl(...)` 时只传
+    - `else`：target-main 调用 `self.forward_impl(...)` 时只传
     `hidden_states/router_logits/return_with_event`，不再把 `shared_hidden_states` 回传给 routed path。
 - `shared_hidden_states` 仍在后续 `_forward_shared_experts(shared_hidden_states, ...)` 使用，保持
   PR #41184 新增的 routed/shared 输入分离语义。
