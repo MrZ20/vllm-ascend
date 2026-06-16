@@ -28,7 +28,7 @@ from copy import copy, deepcopy
 from dataclasses import dataclass, replace
 from functools import partial
 from multiprocessing import Manager
-from typing import TYPE_CHECKING, Any, NamedTuple, TypeAlias
+from typing import TYPE_CHECKING, Any, NamedTuple, TypeAlias, cast
 
 import numpy as np
 import torch
@@ -3709,9 +3709,21 @@ class NPUModelRunner(GPUModelRunner):
         # plain attribute on every FusedMoE layer; ``apply()`` reads it
         # back on the hot path.
         from vllm.model_executor.layers.fused_moe.layer import FusedMoE
+        from vllm.model_executor.layers.fused_moe.runner.moe_runner import MoERunner
         for module in self.compilation_config.static_forward_context.values():
-            if isinstance(module, FusedMoE):
-                module._ascend_routed_experts_capturer = capturer
+            if isinstance(FusedMoE, type) and isinstance(module, FusedMoE):
+                # vLLM PR #41184 changes FusedMoE from a class to a factory on
+                # target main. The legacy branch still binds a dynamic Ascend
+                # capture hook onto FusedMoE layers; cast to Any so mypy does
+                # not require the upstream class to declare this plugin field.
+                module_any = cast(Any, module)
+                module_any._ascend_routed_experts_capturer = capturer
+            elif isinstance(module, MoERunner) and hasattr(module, "routed_experts"):
+                # Upstream vLLM PR #41184 registers MoERunner in static_forward_context
+                # and stores the weights under runner.routed_experts. Bind there so
+                # Ascend's direct select_experts path can still capture top-k ids.
+                routed_experts = cast(Any, module.routed_experts)
+                routed_experts._ascend_routed_experts_capturer = capturer
 
     def _align_memory(self, tensor: torch.Tensor, alignment: int) -> torch.Tensor:
         data_ptr = tensor.data_ptr()

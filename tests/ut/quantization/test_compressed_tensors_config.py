@@ -2,6 +2,13 @@ from unittest.mock import MagicMock, patch
 
 from vllm.model_executor.layers.attention import Attention
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+# vLLM PR #41184 makes FusedMoE a factory on target main. Tests need the
+# RoutedExperts spec there because it owns the MoE weights after the refactor.
+try:
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
+except ImportError:
+    RoutedExperts = None
 from vllm.model_executor.layers.linear import RowParallelLinear, UnquantizedLinearMethod
 
 from tests.ut.base import TestBase
@@ -11,6 +18,12 @@ from vllm_ascend.quantization.compressed_tensors_config import AscendCompressedT
 from vllm_ascend.quantization.method_adapters import AscendFusedMoEMethod, AscendLinearMethod
 from vllm_ascend.quantization.methods import AscendW8A8DynamicFusedMoEMethod, AscendW8A8DynamicLinearMethod
 from vllm_ascend.utils import COMPRESSED_TENSORS_METHOD
+
+
+def _fused_moe_spec():
+    # Upstream vLLM PR #41184 makes FusedMoE a factory; use RoutedExperts
+    # as the spec in target vLLM because it now owns MoE weights.
+    return FusedMoE if isinstance(FusedMoE, type) else RoutedExperts
 
 
 class TestAscendCompressedTensorsQuanType(TestBase):
@@ -97,7 +110,7 @@ class TestAscendCompressedTensorsConfigGetQuantMethod(TestBase):
     @patch("vllm_ascend.quantization.methods.AscendW8A8DynamicFusedMoEMethod.__init__")
     def test_get_moe_quant_method(self, mock_method):
         mock_method.return_value = None
-        layer = MagicMock(spec=FusedMoE)
+        layer = MagicMock(spec=_fused_moe_spec())
         layer.moe_config = {}
         result = self.config.get_quant_method(layer, "model.layers.0.mlp.experts")
         self.assertEqual(layer.ascend_quant_method, COMPRESSED_TENSORS_METHOD)
@@ -109,7 +122,7 @@ class TestAscendCompressedTensorsConfigGetQuantMethod(TestBase):
     def test_get_moe_unquantized_method(self, mock_ignore_layer, mock_method):
         mock_method.return_value = None
         mock_ignore_layer.return_value = True
-        layer = MagicMock(spec=FusedMoE)
+        layer = MagicMock(spec=_fused_moe_spec())
         layer.moe_config = {}
         result = self.config.get_quant_method(layer, "model.layers.0.mlp.experts")
         self.assertEqual(layer.ascend_quant_method, COMPRESSED_TENSORS_METHOD)

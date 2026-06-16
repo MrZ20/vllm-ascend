@@ -19,7 +19,14 @@ from collections.abc import Callable
 import torch
 from vllm.distributed import get_dp_group, get_ep_group, get_tp_group
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig
-from vllm.model_executor.layers.fused_moe.layer import FusedMoE, UnquantizedFusedMoEMethod
+from vllm.model_executor.layers.fused_moe.layer import FusedMoE
+
+# Upstream vLLM PR #41184 moved UnquantizedFusedMoEMethod out of layer.py.
+# Keep both import paths so 310P code can be imported across the upgrade.
+try:
+    from vllm.model_executor.layers.fused_moe.layer import UnquantizedFusedMoEMethod
+except ImportError:
+    from vllm.model_executor.layers.fused_moe.unquantized_fused_moe_method import UnquantizedFusedMoEMethod
 
 from vllm_ascend.ascend_forward_context import _EXTRA_CTX, MoECommType
 from vllm_ascend.ops.fused_moe.experts_selector import zero_experts_compute
@@ -34,6 +41,11 @@ from vllm_ascend.utils import maybe_trans_nz
 
 from .experts_selector import select_experts
 from .moe_comm_method import AllGatherCommImpl310
+
+# Upstream vLLM PR #41184 makes FusedMoE a factory on target vLLM. Guard the
+# legacy 310P subclass so imports keep working even when runtime adaptation is separate.
+_FUSED_MOE_IS_CLASS = isinstance(FusedMoE, type)
+_FUSED_MOE_BASE = FusedMoE if _FUSED_MOE_IS_CLASS else torch.nn.Module
 
 
 class AscendUnquantizedFusedMoEMethod310(UnquantizedFusedMoEMethod):
@@ -126,8 +138,26 @@ class AscendUnquantizedFusedMoEMethod310(UnquantizedFusedMoEMethod):
         return final_hidden_states
 
 
-class AscendFusedMoE310(FusedMoE):
+# vLLM PR #41184 makes FusedMoE a factory on target main, so the runtime base
+# must stay dynamic for dual-version support. Mypy cannot model variable bases.
+class AscendFusedMoE310(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
+    def __new__(cls, *args, **kwargs):
+        if cls is AscendFusedMoE310 and not _FUSED_MOE_IS_CLASS:
+            # vLLM PR #41184 made FusedMoE a factory. 310P cannot subclass it
+            # on target main, so delegate to the shared Ascend factory adapter
+            # instead of patching vLLM's export to a class that cannot build.
+            from vllm_ascend.ops.fused_moe.fused_moe import _create_ascend_fused_moe_runner
+
+            return _create_ascend_fused_moe_runner(*args, **kwargs)
+        return super().__new__(cls)
+
     def __init__(self, *args, **kwargs):
+        if not _FUSED_MOE_IS_CLASS:
+            raise RuntimeError(
+                "AscendFusedMoE310 class replacement requires the legacy vLLM "
+                "FusedMoE layer. The target vLLM exposes FusedMoE as a factory "
+                "returning MoERunner; adapt via runner_cls/routed_experts_cls."
+            )
         super().__init__(*args, **kwargs)
 
         self._routed_input_transform = kwargs.get("routed_input_transform")

@@ -180,16 +180,26 @@ jobs:
           pip install pyyaml
           python3 .github/workflows/scripts/coverage.py
 
-      - name: Select tests based on changed files
+      - name: Select temporary focused tests
         id: scope
         if: steps.filter.outputs.src == 'true'
         run: |
           git config --global --add safe.directory /__w/vllm-ascend/vllm-ascend
           pip install regex
           MAIN2MAIN_TESTS=(
+            # Temporary main2main probe for vLLM PR #41184: exercise the
+            # new FusedMoE factory -> MoERunner/RoutedExperts path on Ascend.
+            tests/e2e/pull_request/one_card/test_multistream_overlap_shared_expert.py
             tests/e2e/pull_request/two_card/test_qwen3_30b_a3b.py
             tests/e2e/pull_request/two_card/test_qwen3_5_35b_a3b_w8a8.py
             tests/e2e/pull_request/two_card/test_shared_expert_dp.py
+            tests/e2e/pull_request/two_card/test_moe_routing_replay.py
+            tests/e2e/pull_request/two_card/test_deepseek_multistream_moe.py
+            tests/e2e/pull_request/two_card/test_qwen3_moe_eplb.py
+            tests/e2e/pull_request/four_card/test_deepseek_v4.py
+            # Temporary main2main probe for vLLM PRs #45190/#45171/#45104:
+            # exercise parser/tool-choice paths after _parse_tool_calls moved.
+            tests/e2e/pull_request/one_card/test_guided_decoding.py
             tests/e2e/pull_request/one_card/spec_decode/test_dflash.py
             tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py
             tests/e2e/pull_request/two_card/test_prefix_caching.py

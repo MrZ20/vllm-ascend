@@ -35,6 +35,13 @@ from vllm.config import get_current_vllm_config
 from vllm.logger import logger
 from vllm.model_executor.layers.attention_layer_base import AttentionLayerBase
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+# vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts. Import
+# conditionally so ModelSlim quantization keeps dual-version compatibility.
+try:
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
+except ImportError:
+    RoutedExperts = None
 from vllm.model_executor.layers.linear import LinearBase
 from vllm.model_executor.layers.quantization import register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig, QuantizeMethodBase
@@ -47,6 +54,15 @@ from .methods import get_scheme_class
 
 # The config filename that ModelSlim generates after quantizing a model.
 MODELSLIM_CONFIG_FILENAME = "quant_model_description.json"
+
+
+def _is_fused_moe_layer(layer: torch.nn.Module) -> bool:
+    # Upstream vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # ModelSlim quantization must follow the new owner to keep Ascend kernels active.
+    return (isinstance(FusedMoE, type) and isinstance(layer, FusedMoE)) or (
+        RoutedExperts is not None and isinstance(layer, RoutedExperts)
+    )
+
 
 # key: model_type
 # value: dict of fused module name -> list of original module names
@@ -560,7 +576,7 @@ class AscendModelSlimConfig(QuantizationConfig):
 
             logger.debug("Select AscendKVCacheMethod(C8) for %s (layer=%s)", prefix, "AttentionLayerBase[C8]")
             return AscendKVCacheMethod(AscendC8KVCacheAttentionMethod(self.quant_description, prefix))
-        elif isinstance(layer, FusedMoE):
+        elif _is_fused_moe_layer(layer):
             if self.is_layer_skipped_ascend(prefix, self.packed_modules_mapping):
                 # Delayed import to avoid circular import
                 from vllm_ascend.ops.fused_moe.fused_moe import AscendUnquantizedFusedMoEMethod

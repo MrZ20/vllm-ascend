@@ -23,6 +23,13 @@ import torch
 from compressed_tensors.quantization import QuantizationArgs, QuantizationStrategy, QuantizationType
 from vllm.logger import logger
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+# vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts. Import
+# conditionally so this file still supports the pre-refactor vLLM base.
+try:
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
+except ImportError:
+    RoutedExperts = None
 from vllm.model_executor.layers.linear import LinearBase, UnquantizedLinearMethod
 from vllm.model_executor.layers.quantization import QUANTIZATION_METHODS, register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig, QuantizeMethodBase
@@ -47,6 +54,14 @@ def _remove_quantization_method():
 _remove_quantization_method()
 
 QUANTIZATION_SCHEME_MAP_TYPE = dict[str, dict[str, "QuantizationArgs"] | None]
+
+
+def _is_fused_moe_layer(layer: torch.nn.Module) -> bool:
+    # Upstream vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # Quantization must recognize the new owner so Ascend MoE methods are still selected.
+    return (isinstance(FusedMoE, type) and isinstance(layer, FusedMoE)) or (
+        RoutedExperts is not None and isinstance(layer, RoutedExperts)
+    )
 
 
 @register_quantization_config(COMPRESSED_TENSORS_METHOD)
@@ -167,7 +182,7 @@ class AscendCompressedTensorsConfig(QuantizationConfig):
             logger.info_once("Using the vLLM Ascend llmcompressor Quantization now!")
             return AscendLinearMethod(linear_scheme)
 
-        if isinstance(layer, FusedMoE):
+        if _is_fused_moe_layer(layer):
             # Delayed import to avoid circular import
             from vllm_ascend.ops.fused_moe.fused_moe import AscendUnquantizedFusedMoEMethod
 

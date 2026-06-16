@@ -42,12 +42,16 @@
     - target vLLM 下 `AscendFusedMoE(...)` 通过上游 factory 注入 `runner_cls=AscendMoERunner` 和 `routed_experts_cls=AscendRoutedExperts`。
     - patch package-level 和 layer-level `FusedMoE` export，避免 OOT class 注册无法替换 plain function。
     - 为 `make_expert_params_mapping` 保留旧静态方法写法。
+    - review 后修正：`AscendMoERunner.forward_impl` 的 UT 改为验证新版 `self.routed_experts` 委托路径，不再保留旧 `layer` 参数假设。
+    - review 后修正：新版 runner 传入的 `shared_experts_input` 继续传给 Ascend shared expert 路径，避免 routed input transform 场景下 shared expert 误用 routed hidden states。
+    - review 后修正：重建 RoutedExperts 权重时补齐上游新增的 `unpadded_hidden_size` 参数，保持和 target vLLM `RoutedExperts.create_weights` 参数集一致。
 - `vllm_ascend/quantization/*.py`
     - MoE layer 判断改为兼容旧 `FusedMoE` class 和新 `RoutedExperts`。
 - `vllm_ascend/worker/model_runner_v1.py`
     - target vLLM 下把 routed-experts capturer 绑定到 `MoERunner.routed_experts`。
 - `_310p` 相关文件
     - 保持 import/量化识别兼容 target vLLM 的拆分，避免 CPU UT 收集阶段失败。
+    - review 后修正：旧 vLLM 仍使用 `AscendFusedMoE310(FusedMoE)` subclass；target vLLM 下 `AscendFusedMoE310(...)` 不再抛错，而是委托到已适配的 factory path。这样 310P 不会把新版 package/layer-level `FusedMoE` patch 成一个不可构造的类。
 
 ### 2. vLLM PR #45190 / #45171 / #45104: parser/Response API refactor
 
@@ -100,12 +104,18 @@ CPU UT：
 这些测试通过 `.github/workflows/pr_test.yaml` 的 `MAIN2MAIN_TESTS` 和
 `.github/workflows/scripts/main2main_probe_test_config.yaml` 临时选择。
 
+## Review 后推翻/删除的内容
+
+- 删除 `.github/workflows/scripts/select_tests.py` 中未被 workflow 使用的 `--skip-default-cpu-ut` 参数及其 UT。CPU UT 在 main2main 中继续默认全跑，不引入额外选择器语义。
+- 推翻 `tests/ut/ops/test_fused_moe.py::test_forward_impl_delegates_to_layer` 的旧接口假设，改为覆盖 target vLLM 的 `MoERunner -> routed_experts` 委托。
+- 推翻 310P target vLLM 下只“保 import 但构造即 RuntimeError”的写法；target factory 场景必须至少可构造，并与主线 factory patch 保持同一扩展方式。
+
 ## 本地验证状态
 
 本地已做：
 
-- `python3 -m py_compile` 覆盖本轮修改文件，通过。
 - `git diff --check` 通过。
+- `python3 -m py_compile` 覆盖本轮修改文件，通过。
 
 本地未做：
 

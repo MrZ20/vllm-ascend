@@ -33,11 +33,19 @@ partition:
   cpu_x0: 1
 
 estimated_times:
+  # Temporary main2main probe for vLLM PRs #45190/#45171/#45104.
+  tests/e2e/pull_request/one_card/test_guided_decoding.py: 810
+  # Temporary main2main probe for vLLM PR #41184 MoE factory/RoutedExperts refactor.
+  tests/e2e/pull_request/one_card/test_multistream_overlap_shared_expert.py: 270
   tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py: 730
   tests/e2e/pull_request/one_card/spec_decode/test_dflash.py: 230
   tests/e2e/pull_request/one_card/spec_decode/test_extract_hidden_states.py: 200
   tests/e2e/pull_request/one_card/test_simple_cpu_offload.py: 220
+  tests/e2e/pull_request/two_card/test_deepseek_multistream_moe.py: 120
+  tests/e2e/pull_request/two_card/test_moe_routing_replay.py: 500
   tests/e2e/pull_request/two_card/test_prefix_caching.py: 430
   tests/e2e/pull_request/two_card/test_qwen3_30b_a3b.py: 230
   tests/e2e/pull_request/two_card/test_qwen3_5_35b_a3b_w8a8.py: 350
+  tests/e2e/pull_request/two_card/test_qwen3_moe_eplb.py: 380
   tests/e2e/pull_request/two_card/test_shared_expert_dp.py: 350
+  tests/e2e/pull_request/four_card/test_deepseek_v4.py: 950

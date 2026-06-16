@@ -23,6 +23,13 @@ import torch
 from vllm.config import get_current_vllm_config
 from vllm.logger import logger
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+# vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts. Import
+# conditionally so 310P ModelSlim tests/imports still work on v0.22.1-era vLLM.
+try:
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
+except ImportError:
+    RoutedExperts = None
 from vllm.model_executor.layers.linear import LinearBase
 from vllm.model_executor.layers.quantization import register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizeMethodBase
@@ -40,6 +47,14 @@ from vllm_ascend.quantization.modelslim_config import (
     packed_modules_model_mapping,
 )
 from vllm_ascend.utils import ASCEND_QUANTIZATION_METHOD
+
+
+def _is_fused_moe_layer(layer: torch.nn.Module) -> bool:
+    # Upstream vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # Keep 310P ModelSlim detection aligned with the new owner object.
+    return (isinstance(FusedMoE, type) and isinstance(layer, FusedMoE)) or (
+        RoutedExperts is not None and isinstance(layer, RoutedExperts)
+    )
 
 
 def create_scheme_for_layer(
@@ -118,7 +133,7 @@ class AscendModelSlimConfig310(AscendModelSlimConfig):
             logger.debug("Select AscendLinearMethod for %s (layer=%s)", prefix, "LinearBase")
             return AscendLinearMethod(scheme)
 
-        elif isinstance(layer, FusedMoE):
+        elif _is_fused_moe_layer(layer):
             if self.is_layer_skipped_ascend(prefix, self.packed_modules_mapping):
                 from vllm_ascend._310p.fused_moe.fused_moe import AscendUnquantizedFusedMoEMethod310
 

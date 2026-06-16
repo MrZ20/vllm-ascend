@@ -4,6 +4,13 @@ import torch
 from compressed_tensors.quantization import QuantizationArgs
 from vllm.logger import logger
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+# vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts. Import
+# conditionally so FP8 config can run on both v0.22.1-era and target main.
+try:
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
+except ImportError:
+    RoutedExperts = None
 from vllm.model_executor.layers.linear import LinearBase
 from vllm.model_executor.layers.quantization import QUANTIZATION_METHODS, register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig, QuantizeMethodBase
@@ -13,6 +20,14 @@ from vllm_ascend.utils import FP8_METHOD
 from .methods import get_scheme_class
 
 QUANTIZATION_SCHEME_MAP_TYPE = dict[str, dict[str, QuantizationArgs] | None]
+
+
+def _is_fused_moe_layer(layer: torch.nn.Module) -> bool:
+    # Upstream vLLM PR #41184 moved MoE weights from FusedMoE to RoutedExperts.
+    # FP8 MoE quantization has to match both old and new layer shapes.
+    return (isinstance(FusedMoE, type) and isinstance(layer, FusedMoE)) or (
+        RoutedExperts is not None and isinstance(layer, RoutedExperts)
+    )
 
 
 def remove_quantization_method():
@@ -113,7 +128,7 @@ class AscendFp8Config(QuantizationConfig):
             scheme = create_scheme_for_layer(self.quant_description, prefix, "ds_linear", self.packed_modules_mapping)
             quant_method = AscendLinearMethod(scheme)
             return quant_method
-        if isinstance(layer, FusedMoE):
+        if _is_fused_moe_layer(layer):
             layer.ascend_quant_method = FP8_METHOD
             scheme = create_scheme_for_layer(self.quant_description, prefix, "w4a8_moe", self.packed_modules_mapping)
             quant_method = AscendFusedMoEMethod(scheme, layer.moe_config, tid2eid=tid2eid)

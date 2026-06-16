@@ -7,6 +7,13 @@ import torch
 from vllm.model_executor.layers.attention import Attention
 from vllm.model_executor.layers.attention_layer_base import AttentionLayerBase
 from vllm.model_executor.layers.fused_moe import FusedMoE
+
+# vLLM PR #41184 makes FusedMoE a factory on target main. Tests need the
+# RoutedExperts spec there because it owns the MoE weights after the refactor.
+try:
+    from vllm.model_executor.layers.fused_moe import RoutedExperts
+except ImportError:
+    RoutedExperts = None
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig
 from vllm.model_executor.layers.linear import LinearBase
 
@@ -17,6 +24,12 @@ from vllm_ascend.quantization.modelslim_config import (
     AscendModelSlimConfig,
 )
 from vllm_ascend.utils import ASCEND_QUANTIZATION_METHOD
+
+
+def _fused_moe_spec():
+    # Upstream vLLM PR #41184 makes FusedMoE a factory; use RoutedExperts
+    # as the spec in target vLLM because it now owns MoE weights.
+    return FusedMoE if isinstance(FusedMoE, type) else RoutedExperts
 
 
 class TestAscendModelSlimConfig(TestBase):
@@ -157,7 +170,7 @@ class TestAscendModelSlimConfig(TestBase):
             self.assertIsInstance(args[0], AscendC8KVCacheAttentionMethod)
 
     def test_get_quant_method_for_fused_moe(self):
-        fused_moe_layer = MagicMock(spec=FusedMoE)
+        fused_moe_layer = MagicMock(spec=_fused_moe_spec())
         fused_moe_layer.moe = MagicMock(spec=FusedMoEConfig)
         fused_moe_layer.moe_config = MagicMock(spec=FusedMoEConfig)
         mock_config = MagicMock()
