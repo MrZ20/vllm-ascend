@@ -605,16 +605,124 @@ CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27635141589?pr
 - `pytest -sv tests/e2e/pull_request/one_card/_310p/test_dense_model_310p.py::test_qwen3_5_dense_prefix_mamba_cache_tp1_fp16`
 - `pytest -sv tests/e2e/pull_request/one_card/_310p/test_dense_model_310p.py`
 
+## 第六轮 CI 失败与修复
+
+CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27667199237?pr=10459>
+
+### 1. v0.22.1 A2/A3: `AscendMoERunner._forward_impl` 丢失旧版 layer 参数
+
+失败：
+
+- A3 two-card part 1:
+  <https://github.com/vllm-project/vllm-ascend/actions/runs/27667199237/job/81824150381?pr=10459>
+    - `test_external_launcher.py::test_qwen3_moe_external_launcher_ep_tp2`
+    - `test_flashcomm_distributed.py::test_deepseek_v2_lite_fc1_tp2`
+    - `test_gpt_oss_distributed.py::test_gpt_oss_distributed_tp2`
+- A2 one-card:
+  <https://github.com/vllm-project/vllm-ascend/actions/runs/27667199237/job/81824150386?pr=10459>
+    - `test_multistream_overlap_shared_expert.py::test_multistream_overlap_shared_expert`
+- A3 two-card part 2:
+  <https://github.com/vllm-project/vllm-ascend/actions/runs/27667199237/job/81824150473?pr=10459>
+    - `test_qwen3_moe_eplb.py::test_qwen3_moe_eplb`
+    - `test_qwen3_30b_a3b.py` 的 timeout/engine init failure 是 worker 已退出后的下游表现。
+- 根因报错：
+  `TypeError: AscendMoERunner._forward_impl() takes from 4 to 5 positional arguments but 6 were given`。
+
+原因：
+
+- vLLM PR #41184 后 target main 的 `MoERunner` 自己就是 layer，`_forward_impl` 不再接收旧版
+  `layer` 参数。
+- v0.22.1 尚未包含 PR #41184，上游仍通过
+  `layer.runner._forward_impl(layer, hidden_states, router_logits, shared_experts_input, input_ids)`
+  调用 Ascend runner。
+- 之前把 `AscendMoERunner.forward_impl/_forward_impl` 改成 target-main 签名，导致 v0.22.1 旧调用直接
+  TypeError；即使进入 `forward_impl`，旧版 runner 也没有 `self.routed_experts`。
+
+修复：
+
+- `AscendMoERunner.forward_impl/_forward_impl` 改成显式双版本方法定义：
+    - `if vllm_version_is("0.22.1")`：恢复 merge-base `3ac10c803` 的旧 `layer.forward_impl` /
+      `layer.shared_forward_impl` 委托签名。
+    - `else`：保留 PR #41184 后 target-main 的 `self.routed_experts` 委托和 router placeholder
+      归一化。
+- rebase 到 `11803e307` 时，上游新增了 `_maybe_reduce_final_output`。冲突解决时保留该上游 helper，
+  同时保留本 PR 的双版本 runner；没有选择单边覆盖。
+
+### 2. CPU UT target-main: 测试 mock 与 GPT-OSS patch 目标不匹配
+
+失败：
+
+- CPU UT job:
+  <https://github.com/vllm-project/vllm-ascend/actions/runs/27667199237/job/81824150388?pr=10459>
+- `test_forward_impl_delegates_to_routed_experts[...]`
+    - 报错：`AttributeError: 'AscendMoERunner' object has no attribute 'gate'`。
+    - 原因：PR #41184 后 target-main runner 会先检查 internal-router placeholder，UT 的半初始化 runner
+      没补齐真实 runner 必有的 `gate` / `moe_config` 字段。
+- `test_gpt_oss_other_loader_remaps_routed_expert_weight_names`
+    - 报错：`patch_gpt_oss has no attribute '_original_load_weights_other'`。
+    - 原因：patch 为了幂等 reload，把原始方法保存到
+      `GptOssModel._ascend_original_load_weights_other`，UT 仍 patch 旧模块级变量。
+
+修复：
+
+- target-main 专属 MoE runner UT 在 v0.22.1 下 skip；target-main mock 补齐 `gate=None` 与
+  `moe_config(num_logical_experts/num_experts)`。
+- GPT-OSS UT 改为 patch `GptOssModel._ascend_original_load_weights_other`，并在 v0.22.1 下 skip，因为
+  `experts.routed_experts.*` weight name 只存在 PR #41184 后的 target main。
+
+### 3. target-main-only MoE 新语义不暴露给 v0.22.1
+
+问题：
+
+- 早期为了绕过 mypy `no-redef` / invalid base class，在 v0.22.1 分支把 `_TargetRoutedExperts` 设成
+  `torch.nn.Module` fallback。
+- 这会让旧版运行时/UT 看到一个假的 `RoutedExperts` 语义，不符合 main2main 规范：v0.22.1 应保持
+  PR #41184 之前的 legacy `FusedMoE` owner。
+
+修复：
+
+- `AscendRoutedExperts`、target-main factory patch、stale model-module `FusedMoE` rebind、310P
+  `AscendRoutedExperts310` / `_create_ascend_fused_moe_runner_310` 都放进
+  `if not vllm_version_is("0.22.1")`。
+- v0.22.1 分支不再定义 dummy `_TargetRoutedExperts` / `_TargetRoutedExperts310`。
+- `is_monolithic` 协议补齐也收进 `if not vllm_version_is("0.22.1")`，因为它来自 PR #41184 的
+  `MoERunner._apply_quant_method` 判断，v0.22.1 不读取该协议。
+
+### 4. shared expert 输入按版本拆分
+
+问题：
+
+- PR #41184 后 target main 可以把 routed hidden states 与 `shared_experts_input` 分开传入。
+- v0.22.1 没有这套拆分语义，旧 Ascend 路径应保持 shared/routed 都消费 `hidden_states`。
+
+修复：
+
+- `AscendFusedMoE.forward_impl/shared_forward_impl` 使用显式版本分支：
+    - v0.22.1：`shared_hidden_states = hidden_states`。
+    - target main：仅在新分支使用 `shared_experts_input`。
+- v0.22.1 的 `shared_forward_impl` 不再向 `self.forward_impl(...)` 传 target-main-only 的
+  `shared_experts_input` keyword。
+
 ## 本地验证状态
 
 本地已做：
 
 - `git diff --check` 通过。
 - `.venv/bin/python -m py_compile` 覆盖本轮修改文件，通过。
-- `PATH=.venv/bin:$PATH bash format.sh` 通过。
-- 本地尝试 `python3 -m mypy --ignore-missing-imports ...`，但当前 `.venv` 缺完整 target vLLM/torch-npu 类型环境，仍会展开到大量无关导入文件；该结果不能等价 CI mypy。已根据输出额外清理 quant config / UT 中的 `RoutedExperts = None` 静态类型风险，同时保持 v0.22.1 分支尽量原样。
+- `source .venv/bin/activate && bash format.sh` 通过。
+- `.venv/bin/python -m mypy --ignore-missing-imports --follow-imports=skip`
+  覆盖本轮 MoE / 310P / quant adapter 修改文件，通过。
+- 本地尝试过不带 `--follow-imports=skip` 的 focused mypy，但当前 `.venv` 缺完整 target vLLM /
+  torch-npu 类型环境，会展开到大量无关导入文件；该结果不能等价 CI mypy。已根据输出额外处理
+  `AscendMoERunner.forward_impl/_forward_impl` 条件签名问题：运行时仍按 `vllm_version_is("0.22.1")`
+  显式分支，`TYPE_CHECKING` 下只给 mypy 一个 target-main stub。
 
 本地未做：
 
-- pytest / e2e 未跑。本地 `.venv` 没有安装 `pytest` / `vllm`，也没有完整 torch-npu/NPU 运行环境，
-  行为验证依赖 CI。
+- 目标 pytest 已尝试运行：
+  `tests/ut/ops/test_fused_moe.py::TestAscendMoERunner::test_forward_impl_delegates_to_routed_experts`
+  `tests/ut/ops/test_fused_moe.py::TestAscendMoERunner::test_forward_impl_normalizes_target_main_router_placeholder`
+  `tests/ut/patch/worker/test_patch_gpt_oss.py`。
+  本地在加载 `tests/ut/conftest.py` 时失败：`.venv` 缺 `vllm`，报
+  `ModuleNotFoundError: No module named 'vllm'`，尚未进入测试用例。
+- e2e 未跑。本地没有完整 torch-npu/NPU 运行环境，行为验证依赖 CI。

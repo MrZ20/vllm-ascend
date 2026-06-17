@@ -47,10 +47,9 @@ if TYPE_CHECKING:
     from vllm.model_executor.layers.fused_moe.unquantized_fused_moe_method import UnquantizedFusedMoEMethod
 elif vllm_version_is("0.22.1"):
     # vLLM PR #41184 has not landed in v0.22.1, so FusedMoE is still the
-    # subclassable owner of MoE weights and helper methods. The target-main
-    # RoutedExperts hook is not used on this branch.
-    _target_fused_moe_make_expert_params_mapping = None
-    _TargetRoutedExperts = torch.nn.Module
+    # subclassable owner of MoE weights and helper methods. Do not create a
+    # dummy RoutedExperts fallback here: that is target-main-only semantics and
+    # must not be visible to v0.22.1 tests or runtime.
     from vllm.model_executor.layers.fused_moe.layer import UnquantizedFusedMoEMethod
 else:
     # vLLM PR #41184 changed FusedMoE into a factory and moved the
@@ -125,9 +124,14 @@ class AscendUnquantizedFusedMoEMethod(UnquantizedFusedMoEMethod):
         self.dynamic_eplb = get_ascend_config().eplb_config.dynamic_eplb
         self.tid2eid = tid2eid
 
-    @property
-    def is_monolithic(self) -> bool:
-        return False
+    if not vllm_version_is("0.22.1"):
+
+        @property
+        def is_monolithic(self) -> bool:
+            # vLLM PR #41184 makes MoERunner query this modular-kernel protocol
+            # on target main. v0.22.1 never reads it, so keep the legacy public
+            # method surface unchanged there.
+            return False
 
     def maybe_make_prepare_finalize(self, routing_tables=None):
         # Ascend uses its own MoE communication and forward_impl path.
@@ -779,10 +783,16 @@ class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
         shared_experts_input: torch.Tensor | None = None,
     ) -> torch.Tensor | FusedMoEResult:
         assert self.quant_method is not None
-        # vLLM PR #41184 can pass a separate shared_experts_input after
-        # routed_input_transform. The legacy Ascend path used hidden_states for
-        # both, so make the split explicit while keeping old callers working.
-        shared_hidden_states = hidden_states if shared_experts_input is None else shared_experts_input
+        if vllm_version_is("0.22.1"):
+            # vLLM PR #41184 has not landed in v0.22.1, so keep the legacy
+            # Ascend path exactly on hidden_states for both routed and shared
+            # experts instead of honoring the target-main-only split input.
+            shared_hidden_states = hidden_states
+        else:
+            # vLLM PR #41184 can pass a separate shared_experts_input after
+            # routed_input_transform. Use it only on target main so shared
+            # experts do not accidentally consume transformed routed states.
+            shared_hidden_states = hidden_states if shared_experts_input is None else shared_experts_input
 
         forward_context = get_forward_context()
         # When static kernels are enabled, the forward pass runs twice (compilation + capture),
@@ -1032,9 +1042,15 @@ class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
         router_logits: torch.Tensor,
         shared_experts_input: torch.Tensor | None = None,
     ):
-        # vLLM PR #41184 separates routed hidden states from shared-expert
-        # input. Keep the shared path on shared_experts_input when provided.
-        shared_hidden_states = hidden_states if shared_experts_input is None else shared_experts_input
+        if vllm_version_is("0.22.1"):
+            # vLLM PR #41184 has not landed in v0.22.1, so preserve the
+            # merge-base shared expert behavior: the shared path consumes the
+            # same hidden_states tensor as the routed path.
+            shared_hidden_states = hidden_states
+        else:
+            # vLLM PR #41184 separates routed hidden states from shared-expert
+            # input. Keep the shared path on shared_experts_input when provided.
+            shared_hidden_states = hidden_states if shared_experts_input is None else shared_experts_input
         if self.shared_multistream_overlap_gate:
             set_flash_common3_context(shared_experts=self._shared_experts)
 
@@ -1061,7 +1077,6 @@ class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
                 hidden_states=hidden_states,
                 router_logits=router_logits,
                 return_with_event=True,
-                shared_experts_input=shared_hidden_states,
             )
         else:
             # vLLM PR #41184 splits MoERunner into routed and shared-expert
@@ -1116,324 +1131,344 @@ def _clear_provisional_routed_expert_parameters(
         delattr(module, param_name)
 
 
-class AscendRoutedExperts(_TargetRoutedExperts):
-    # Upstream vLLM PR #41184 moved weight ownership from FusedMoE to
-    # RoutedExperts. Mirror the old AscendFusedMoE initialization here so
-    # quantization, EPLB, shared experts, and NPU MoE communication still use
-    # Ascend-specific state after the upstream split.
-    _validate_shared_expert_consistency = AscendFusedMoE._validate_shared_expert_consistency
-    _shared_experts_part1 = AscendFusedMoE._shared_experts_part1
-    _shared_experts_part2 = AscendFusedMoE._shared_experts_part2
-    _get_quant_type = AscendFusedMoE._get_quant_type
-    get_log2phy_map = AscendFusedMoE.get_log2phy_map
-    clear_moe_load = AscendFusedMoE.clear_moe_load
-    maybe_all_reduce_tensor_model_parallel = AscendFusedMoE.maybe_all_reduce_tensor_model_parallel
-    gate = AscendFusedMoE.gate
-    is_internal_router = AscendFusedMoE.is_internal_router
-    use_dp_chunking = AscendFusedMoE.use_dp_chunking
-    forward = AscendFusedMoE.forward
-    forward_impl = AscendFusedMoE.forward_impl
-    _forward_shared_experts = AscendFusedMoE._forward_shared_experts
-    shared_forward_impl = AscendFusedMoE.shared_forward_impl
+if not vllm_version_is("0.22.1"):
+    # vLLM PR #41184 introduced the RoutedExperts owner and factory
+    # extension points only on target main. Keep all of that new semantic
+    # surface out of the v0.22.1 runtime so legacy tests cannot touch a
+    # dummy RoutedExperts path.
+    class AscendRoutedExperts(_TargetRoutedExperts):
+        # Upstream vLLM PR #41184 moved weight ownership from FusedMoE to
+        # RoutedExperts. Mirror the old AscendFusedMoE initialization here so
+        # quantization, EPLB, shared experts, and NPU MoE communication still use
+        # Ascend-specific state after the upstream split.
+        _validate_shared_expert_consistency = AscendFusedMoE._validate_shared_expert_consistency
+        _shared_experts_part1 = AscendFusedMoE._shared_experts_part1
+        _shared_experts_part2 = AscendFusedMoE._shared_experts_part2
+        _get_quant_type = AscendFusedMoE._get_quant_type
+        get_log2phy_map = AscendFusedMoE.get_log2phy_map
+        clear_moe_load = AscendFusedMoE.clear_moe_load
+        maybe_all_reduce_tensor_model_parallel = AscendFusedMoE.maybe_all_reduce_tensor_model_parallel
+        gate = AscendFusedMoE.gate
+        is_internal_router = AscendFusedMoE.is_internal_router
+        use_dp_chunking = AscendFusedMoE.use_dp_chunking
+        forward = AscendFusedMoE.forward
+        forward_impl = AscendFusedMoE.forward_impl
+        _forward_shared_experts = AscendFusedMoE._forward_shared_experts
+        shared_forward_impl = AscendFusedMoE.shared_forward_impl
 
-    def __init__(
-        self,
-        layer_name: str,
-        params_dtype: torch.dtype,
-        moe_config: FusedMoEConfig,
-        quant_config,
-        expert_map_manager,
-        expert_mapping=None,
-        renormalize: bool = True,
-        use_grouped_topk: bool = False,
-        num_expert_group: int | None = None,
-        topk_group: int | None = None,
-        custom_routing_function: Callable | None = None,
-        scoring_func: str = "softmax",
-        routed_scaling_factor: float = 1.0,
-        swiglu_limit: float | None = None,
-        e_score_correction_bias: torch.Tensor | None = None,
-        apply_router_weight_on_input: bool = False,
-        *,
-        original_num_experts: int | None = None,
-        original_routed_scaling_factor: float = 1.0,
-        original_activation: str = "silu",
-        n_shared_experts: int | None = None,
-        gate: torch.nn.Module | None = None,
-        shared_experts: torch.nn.Module | None = None,
-        routed_input_transform: torch.nn.Module | None = None,
-        tid2eid: torch.Tensor | None = None,
-        **kwargs,
-    ):
-        # Upstream vLLM PR #41184 requires RoutedExperts to own the weight
-        # parameters. Run its constructor first so weight loading names follow
-        # the new "experts.routed_experts.*" hierarchy.
-        _TargetRoutedExperts.__init__(
+        def __init__(
             self,
-            layer_name=layer_name,
-            params_dtype=params_dtype,
-            moe_config=moe_config,
-            quant_config=quant_config,
-            expert_map_manager=expert_map_manager,
-            expert_mapping=expert_mapping,
-            renormalize=renormalize,
-            use_grouped_topk=use_grouped_topk,
-            num_expert_group=num_expert_group,
-            topk_group=topk_group,
-            custom_routing_function=custom_routing_function,
-            scoring_func=scoring_func,
-            routed_scaling_factor=routed_scaling_factor,
-            swiglu_limit=swiglu_limit,
-            e_score_correction_bias=e_score_correction_bias,
-            apply_router_weight_on_input=apply_router_weight_on_input,
-        )
-
-        # Upstream vLLM PR #41184 moved execution from the legacy FusedMoE
-        # class to RoutedExperts, but Ascend still reuses the old
-        # AscendFusedMoE.forward_impl on target main. Keep the routing fields
-        # that the Ascend forward path reads as public attributes even if
-        # upstream RoutedExperts stores or normalizes them differently.
-        self.renormalize = renormalize
-        self.use_grouped_topk = use_grouped_topk
-        self.num_expert_group = num_expert_group
-        self.topk_group = topk_group
-        self.custom_routing_function = custom_routing_function
-        self.scoring_func = scoring_func
-        self.e_score_correction_bias = e_score_correction_bias
-        self.apply_router_weight_on_input = apply_router_weight_on_input
-
-        self.vllm_config = get_current_vllm_config()
-        self._original_routed_scaling_factor = original_routed_scaling_factor
-        self.activation = original_activation
-        self.use_overlapped = True
-        self._routed_input_transform = routed_input_transform
-        self._shared_experts = shared_experts
-        self.shared_expert_stream = None
-        self._gate = gate
-        self.tid2eid = tid2eid
-        self._expert_map = None
-        self.log2phy = None
-
-        if quant_config is None:
-            self.quant_method = AscendUnquantizedFusedMoEMethod(self.moe_config, tid2eid=self.tid2eid)
-        else:
-            self.quant_method = quant_config.get_quant_method(self, self.layer_name, tid2eid=self.tid2eid)
-
-        assert self.quant_method is not None
-        # Upstream vLLM PR #41184 installs an upstream quant method during
-        # RoutedExperts.__init__. Replace it with Ascend's method and recreate
-        # weights so the NPU kernels get Ascend-formatted parameters.
-        if not hasattr(self.quant_method, "is_monolithic"):
-            # MoERunner._apply_quant_method added by vLLM PR #41184 requires
-            # every modular MoE quant method to expose is_monolithic. Some
-            # quant configs can still hand back an upstream-compatible method,
-            # so stamp the target-main protocol here before MoERunner reads it.
-            is_monolithic_attr = "is_monolithic"
-            setattr(self.quant_method, is_monolithic_attr, False)
-        self.base_quant_method = self.quant_method
-
-        self.moe_config.tp_group = get_tp_group()
-        self.moe_config.dp_group = get_dp_group()
-        if self.moe_config.ep_size > 1:
-            self.moe_config.ep_group = get_ep_group()
-            self.moe_config.mc2_group = get_mc2_group()
-        self.moe_config.supports_eplb = self.quant_method.supports_eplb
-
-        ascend_config = get_ascend_config()
-        has_shared_experts = shared_experts is not None
-        self.multistream_overlap_shared_expert = ascend_config.multistream_overlap_shared_expert and has_shared_experts
-        self.shared_multistream_overlap_gate = ascend_config.multistream_overlap_gate and has_shared_experts
-        if self.multistream_overlap_shared_expert:
-            logger.info_once("[fused_moe/layer] Multistream overlap shared expert is enabled.")
-        if enable_sp() and has_shared_experts:
-            logger.info_once(
-                "[fused_moe/layer] Sequence parallelism is enabled, shared experts are replicated for best performance."
-            )
-
-        self.multistream_overlap_gate = ascend_config.multistream_overlap_gate
-        if self.multistream_overlap_gate and AscendFusedMoE.gate_stream is None:
-            AscendFusedMoE.gate_stream = torch.npu.Stream()
-        if self.multistream_overlap_gate:
-            logger.info_once("[fused_moe/layer] Multistream overlap gate is enabled.")
-
-        if (
-            self.custom_routing_function is None
-            and self.e_score_correction_bias is not None
-            and self.vllm_config.model_config is not None
-            and not self.vllm_config.model_config.is_deepseek_mla
+            layer_name: str,
+            params_dtype: torch.dtype,
+            moe_config: FusedMoEConfig,
+            quant_config,
+            expert_map_manager,
+            expert_mapping=None,
+            renormalize: bool = True,
+            use_grouped_topk: bool = False,
+            num_expert_group: int | None = None,
+            topk_group: int | None = None,
+            custom_routing_function: Callable | None = None,
+            scoring_func: str = "softmax",
+            routed_scaling_factor: float = 1.0,
+            swiglu_limit: float | None = None,
+            e_score_correction_bias: torch.Tensor | None = None,
+            apply_router_weight_on_input: bool = False,
+            *,
+            original_num_experts: int | None = None,
+            original_routed_scaling_factor: float = 1.0,
+            original_activation: str = "silu",
+            n_shared_experts: int | None = None,
+            gate: torch.nn.Module | None = None,
+            shared_experts: torch.nn.Module | None = None,
+            routed_input_transform: torch.nn.Module | None = None,
+            tid2eid: torch.Tensor | None = None,
+            **kwargs,
         ):
-            self.e_score_correction_bias.data = self.e_score_correction_bias.data.to(
-                dtype=self.vllm_config.model_config.dtype
+            # Upstream vLLM PR #41184 requires RoutedExperts to own the weight
+            # parameters. Run its constructor first so weight loading names follow
+            # the new "experts.routed_experts.*" hierarchy.
+            _TargetRoutedExperts.__init__(
+                self,
+                layer_name=layer_name,
+                params_dtype=params_dtype,
+                moe_config=moe_config,
+                quant_config=quant_config,
+                expert_map_manager=expert_map_manager,
+                expert_mapping=expert_mapping,
+                renormalize=renormalize,
+                use_grouped_topk=use_grouped_topk,
+                num_expert_group=num_expert_group,
+                topk_group=topk_group,
+                custom_routing_function=custom_routing_function,
+                scoring_func=scoring_func,
+                routed_scaling_factor=routed_scaling_factor,
+                swiglu_limit=swiglu_limit,
+                e_score_correction_bias=e_score_correction_bias,
+                apply_router_weight_on_input=apply_router_weight_on_input,
             )
 
-        eplb_config = ascend_config.eplb_config
-        self.mix_placement = getattr(ascend_config, "mix_placement", False)
-        num_shared_experts = n_shared_experts or 0
-        self.n_shared_experts = num_shared_experts
-        num_experts = original_num_experts or self.moe_config.num_logical_experts
-        num_experts += num_shared_experts if self.mix_placement else 0
-        self.moe_config.num_experts = num_experts
+            # Upstream vLLM PR #41184 moved execution from the legacy FusedMoE
+            # class to RoutedExperts, but Ascend still reuses the old
+            # AscendFusedMoE.forward_impl on target main. Keep the routing fields
+            # that the Ascend forward path reads as public attributes even if
+            # upstream RoutedExperts stores or normalizes them differently.
+            self.renormalize = renormalize
+            self.use_grouped_topk = use_grouped_topk
+            self.num_expert_group = num_expert_group
+            self.topk_group = topk_group
+            self.custom_routing_function = custom_routing_function
+            self.scoring_func = scoring_func
+            self.e_score_correction_bias = e_score_correction_bias
+            self.apply_router_weight_on_input = apply_router_weight_on_input
 
-        AscendFusedMoE.moe_counter += 1
-        self.moe_instance_id = AscendFusedMoE.moe_counter
+            self.vllm_config = get_current_vllm_config()
+            self._original_routed_scaling_factor = original_routed_scaling_factor
+            self.activation = original_activation
+            self.use_overlapped = True
+            self._routed_input_transform = routed_input_transform
+            self._shared_experts = shared_experts
+            self.shared_expert_stream = None
+            self._gate = gate
+            self.tid2eid = tid2eid
+            self._expert_map = None
+            self.log2phy = None
 
-        self.global_expert_map, self._expert_map, self.log2phy, self.global_redundant_expert_num = init_eplb_config(
-            eplb_config, self.moe_instance_id, self.moe_config, self.mix_placement, num_shared_experts
+            if quant_config is None:
+                self.quant_method = AscendUnquantizedFusedMoEMethod(self.moe_config, tid2eid=self.tid2eid)
+            else:
+                self.quant_method = quant_config.get_quant_method(self, self.layer_name, tid2eid=self.tid2eid)
+
+            assert self.quant_method is not None
+            # Upstream vLLM PR #41184 installs an upstream quant method during
+            # RoutedExperts.__init__. Replace it with Ascend's method and recreate
+            # weights so the NPU kernels get Ascend-formatted parameters.
+            if not hasattr(self.quant_method, "is_monolithic"):
+                # MoERunner._apply_quant_method added by vLLM PR #41184 requires
+                # every modular MoE quant method to expose is_monolithic. Some
+                # quant configs can still hand back an upstream-compatible method,
+                # so stamp the target-main protocol here before MoERunner reads it.
+                is_monolithic_attr = "is_monolithic"
+                setattr(self.quant_method, is_monolithic_attr, False)
+            self.base_quant_method = self.quant_method
+
+            self.moe_config.tp_group = get_tp_group()
+            self.moe_config.dp_group = get_dp_group()
+            if self.moe_config.ep_size > 1:
+                self.moe_config.ep_group = get_ep_group()
+                self.moe_config.mc2_group = get_mc2_group()
+            self.moe_config.supports_eplb = self.quant_method.supports_eplb
+
+            ascend_config = get_ascend_config()
+            has_shared_experts = shared_experts is not None
+            self.multistream_overlap_shared_expert = (
+                ascend_config.multistream_overlap_shared_expert and has_shared_experts
+            )
+            self.shared_multistream_overlap_gate = ascend_config.multistream_overlap_gate and has_shared_experts
+            if self.multistream_overlap_shared_expert:
+                logger.info_once("[fused_moe/layer] Multistream overlap shared expert is enabled.")
+            if enable_sp() and has_shared_experts:
+                logger.info_once(
+                    "[fused_moe/layer] Sequence parallelism is enabled, "
+                    "shared experts are replicated for best performance."
+                )
+
+            self.multistream_overlap_gate = ascend_config.multistream_overlap_gate
+            if self.multistream_overlap_gate and AscendFusedMoE.gate_stream is None:
+                AscendFusedMoE.gate_stream = torch.npu.Stream()
+            if self.multistream_overlap_gate:
+                logger.info_once("[fused_moe/layer] Multistream overlap gate is enabled.")
+
+            if (
+                self.custom_routing_function is None
+                and self.e_score_correction_bias is not None
+                and self.vllm_config.model_config is not None
+                and not self.vllm_config.model_config.is_deepseek_mla
+            ):
+                self.e_score_correction_bias.data = self.e_score_correction_bias.data.to(
+                    dtype=self.vllm_config.model_config.dtype
+                )
+
+            eplb_config = ascend_config.eplb_config
+            self.mix_placement = getattr(ascend_config, "mix_placement", False)
+            num_shared_experts = n_shared_experts or 0
+            self.n_shared_experts = num_shared_experts
+            num_experts = original_num_experts or self.moe_config.num_logical_experts
+            num_experts += num_shared_experts if self.mix_placement else 0
+            self.moe_config.num_experts = num_experts
+
+            AscendFusedMoE.moe_counter += 1
+            self.moe_instance_id = AscendFusedMoE.moe_counter
+
+            (
+                self.global_expert_map,
+                self._expert_map,
+                self.log2phy,
+                self.global_redundant_expert_num,
+            ) = init_eplb_config(
+                eplb_config,
+                self.moe_instance_id,
+                self.moe_config,
+                self.mix_placement,
+                num_shared_experts,
+            )
+            self.global_num_experts = num_experts + self.global_redundant_expert_num
+            self.dynamic_eplb = eplb_config.dynamic_eplb and (self.log2phy is not None)
+            self.local_num_experts = self.global_num_experts // self.ep_size
+            self.expert_map_manager.global_num_experts = self.global_num_experts
+            self.expert_map_manager._local_num_experts = self.local_num_experts
+            self.expert_map_manager._expert_map = self._expert_map
+            if self._expert_map is not None:
+                logger.info_once(
+                    "[fused_moe/layer] Expert parallelism is enabled."
+                    " ep_rank=%s/%s, local_num_experts=%s, global_num_experts=%s,"
+                    " expert_map=%s",
+                    self.ep_rank,
+                    self.ep_size,
+                    self.local_num_experts,
+                    self.global_num_experts,
+                    get_compressed_expert_map(self._expert_map),
+                )
+            if self.dynamic_eplb:
+                self.multi_stage = False
+                self.moe_load = torch.zeros(self.local_num_experts, dtype=torch.int64).npu()
+                if eplb_config.eplb_policy_type == 3:
+                    self.multi_stage = True
+                    self.load_counter = torch.tensor(0, dtype=torch.int32, device="npu")
+                    self.num_iter = eplb_config.expert_heat_collection_interval
+                    self.moe_load = torch.zeros(
+                        (self.num_iter, self.local_num_experts), dtype=torch.int32, device="npu"
+                    )
+            else:
+                self.moe_load = None
+                self.multi_stage = False
+
+            self.moe_config.num_experts = self.global_num_experts
+            self.moe_config.num_local_experts = self.local_num_experts
+            self.moe_config.global_redundant_expert_num = self.global_redundant_expert_num
+            self.swiglu_limit = 0
+            if self.vllm_config.model_config is not None:
+                self.swiglu_limit = getattr(self.vllm_config.model_config.hf_config, "swiglu_limit", 0)
+
+            # Upstream vLLM PR #41184 makes RoutedExperts.__init__ eagerly create
+            # weights before Ascend can apply EPLB/redundant-expert adjustments.
+            # Drop those provisional parameters and recreate them with Ascend's
+            # final local_num_experts/global_num_experts below.
+            _clear_provisional_routed_expert_parameters(self)
+
+            moe_quant_params = {
+                "num_experts": self.local_num_experts,
+                "hidden_size": self.hidden_size,
+                # vLLM PR #41184's RoutedExperts.create_weights passes this for
+                # padded-hidden MoE methods; include it when recreating Ascend
+                # weights after applying EPLB/redundant-expert adjustments.
+                "unpadded_hidden_size": self.moe_config.hidden_dim_unpadded,
+                "intermediate_size_per_partition": self.intermediate_size_per_partition,
+                "params_dtype": self.params_dtype,
+                "weight_loader": self.weight_loader,
+                "global_num_experts": self.global_num_experts,
+            }
+            if self.quant_method.__class__.__name__ in ("GPTQMarlinMoEMethod", "CompressedTensorsWNA16MoEMethod"):
+                moe_quant_params["intermediate_size_full"] = self.moe_config.intermediate_size
+            self.quant_method.create_weights(layer=self, **moe_quant_params)
+
+            self.enable_shared_expert_dp = ascend_config.enable_shared_expert_dp
+            self.enable_npugraph_ex_static_kernel = ascend_config.ascend_compilation_config.enable_static_kernel
+
+            setup_moe_comm_method(self.moe_config)
+            self.quant_type = self._get_quant_type()
+
+            if self.multistream_overlap_shared_expert:
+                original_process_weights = self.quant_method.process_weights_after_loading
+
+                @wraps(original_process_weights)
+                def wrapped_process_weights(*args, **kwargs):
+                    result = original_process_weights(*args, **kwargs)
+                    self._validate_shared_expert_consistency()
+                    return result
+
+                self.quant_method.process_weights_after_loading = wrapped_process_weights  # type: ignore
+
+        @property
+        def ep_size(self):
+            return self.moe_config.ep_size
+
+        @property
+        def ep_rank(self):
+            return self.moe_config.ep_rank
+
+        @property
+        def tp_size(self):
+            return self.moe_config.tp_size
+
+        @property
+        def layer_id(self):
+            from vllm.model_executor.models.utils import extract_layer_index
+
+            return extract_layer_index(self.layer_name)
+
+        def update_expert_map(self, new_expert_map=None):
+            if new_expert_map is None:
+                return _TargetRoutedExperts.update_expert_map(self)
+            self._expert_map = new_expert_map
+            self.expert_map_manager._expert_map = new_expert_map
+
+        def ensure_moe_quant_config_init(self):
+            return self._ensure_moe_quant_config_init()
+
+    def _create_ascend_fused_moe_runner(*args, **kwargs):
+        # Upstream vLLM PR #41184 exposes runner_cls/routed_experts_cls as the
+        # supported extension point. Pass Ascend implementations through that
+        # interface instead of relying on the old FusedMoE subclass replacement.
+        kwargs = dict(kwargs)
+        hash_enabled = kwargs.pop("hash", None)
+        tid2eid = kwargs.pop("tid2eid", None)
+        routed_experts_args = dict(kwargs.pop("routed_experts_args", {}) or {})
+        routed_experts_args.update(
+            {
+                "original_num_experts": kwargs.get("num_experts"),
+                "original_routed_scaling_factor": kwargs.get("routed_scaling_factor", 1.0),
+                "original_activation": kwargs.get("activation", "silu"),
+                "n_shared_experts": kwargs.get("n_shared_experts", 0),
+                "gate": kwargs.get("gate"),
+                "shared_experts": kwargs.get("shared_experts"),
+                "routed_input_transform": kwargs.get("routed_input_transform"),
+                "tid2eid": tid2eid,
+                "hash_enabled": hash_enabled,
+            }
         )
-        self.global_num_experts = num_experts + self.global_redundant_expert_num
-        self.dynamic_eplb = eplb_config.dynamic_eplb and (self.log2phy is not None)
-        self.local_num_experts = self.global_num_experts // self.ep_size
-        self.expert_map_manager.global_num_experts = self.global_num_experts
-        self.expert_map_manager._local_num_experts = self.local_num_experts
-        self.expert_map_manager._expert_map = self._expert_map
-        if self._expert_map is not None:
-            logger.info_once(
-                "[fused_moe/layer] Expert parallelism is enabled."
-                " ep_rank=%s/%s, local_num_experts=%s, global_num_experts=%s,"
-                " expert_map=%s",
-                self.ep_rank,
-                self.ep_size,
-                self.local_num_experts,
-                self.global_num_experts,
-                get_compressed_expert_map(self._expert_map),
-            )
-        if self.dynamic_eplb:
-            self.multi_stage = False
-            self.moe_load = torch.zeros(self.local_num_experts, dtype=torch.int64).npu()
-            if eplb_config.eplb_policy_type == 3:
-                self.multi_stage = True
-                self.load_counter = torch.tensor(0, dtype=torch.int32, device="npu")
-                self.num_iter = eplb_config.expert_heat_collection_interval
-                self.moe_load = torch.zeros((self.num_iter, self.local_num_experts), dtype=torch.int32, device="npu")
-        else:
-            self.moe_load = None
-            self.multi_stage = False
+        kwargs.setdefault("runner_cls", AscendMoERunner)
+        kwargs.setdefault("routed_experts_cls", AscendRoutedExperts)
+        kwargs["routed_experts_args"] = routed_experts_args
+        return FusedMoE(*args, **kwargs)
 
-        self.moe_config.num_experts = self.global_num_experts
-        self.moe_config.num_local_experts = self.local_num_experts
-        self.moe_config.global_redundant_expert_num = self.global_redundant_expert_num
-        self.swiglu_limit = 0
-        if self.vllm_config.model_config is not None:
-            self.swiglu_limit = getattr(self.vllm_config.model_config.hf_config, "swiglu_limit", 0)
+    def _rebind_stale_fused_moe_factory_captures(original_fused_moe, replacement) -> None:
+        # Patching the module attributes only affects imports that happen after
+        # patch_fused_moe_factory() runs. Some model modules (e.g. deepseek_v2) are
+        # imported earlier, during adapt_patch() -> patch_deepseek_mtp, which runs
+        # before register_ascend_customop. Those modules did
+        # `from vllm...fused_moe import FusedMoE` at import time and captured the
+        # original PR #41184 factory by name, so they would bypass the Ascend
+        # runner/routed-experts factory and fall back to the upstream MoERunner.
+        # Rebind only those stale captures, identified by an identity check against
+        # the original factory symbol (not a blanket replacement of every FusedMoE
+        # name), so newly added model modules are still covered automatically.
+        import sys
 
-        # Upstream vLLM PR #41184 makes RoutedExperts.__init__ eagerly create
-        # weights before Ascend can apply EPLB/redundant-expert adjustments.
-        # Drop those provisional parameters and recreate them with Ascend's
-        # final local_num_experts/global_num_experts below.
-        _clear_provisional_routed_expert_parameters(self)
-
-        moe_quant_params = {
-            "num_experts": self.local_num_experts,
-            "hidden_size": self.hidden_size,
-            # vLLM PR #41184's RoutedExperts.create_weights passes this for
-            # padded-hidden MoE methods; include it when recreating Ascend
-            # weights after applying EPLB/redundant-expert adjustments.
-            "unpadded_hidden_size": self.moe_config.hidden_dim_unpadded,
-            "intermediate_size_per_partition": self.intermediate_size_per_partition,
-            "params_dtype": self.params_dtype,
-            "weight_loader": self.weight_loader,
-            "global_num_experts": self.global_num_experts,
-        }
-        if self.quant_method.__class__.__name__ in ("GPTQMarlinMoEMethod", "CompressedTensorsWNA16MoEMethod"):
-            moe_quant_params["intermediate_size_full"] = self.moe_config.intermediate_size
-        self.quant_method.create_weights(layer=self, **moe_quant_params)
-
-        self.enable_shared_expert_dp = ascend_config.enable_shared_expert_dp
-        self.enable_npugraph_ex_static_kernel = ascend_config.ascend_compilation_config.enable_static_kernel
-
-        setup_moe_comm_method(self.moe_config)
-        self.quant_type = self._get_quant_type()
-
-        if self.multistream_overlap_shared_expert:
-            original_process_weights = self.quant_method.process_weights_after_loading
-
-            @wraps(original_process_weights)
-            def wrapped_process_weights(*args, **kwargs):
-                result = original_process_weights(*args, **kwargs)
-                self._validate_shared_expert_consistency()
-                return result
-
-            self.quant_method.process_weights_after_loading = wrapped_process_weights  # type: ignore
-
-    @property
-    def ep_size(self):
-        return self.moe_config.ep_size
-
-    @property
-    def ep_rank(self):
-        return self.moe_config.ep_rank
-
-    @property
-    def tp_size(self):
-        return self.moe_config.tp_size
-
-    @property
-    def layer_id(self):
-        from vllm.model_executor.models.utils import extract_layer_index
-
-        return extract_layer_index(self.layer_name)
-
-    def update_expert_map(self, new_expert_map=None):
-        if new_expert_map is None:
-            return _TargetRoutedExperts.update_expert_map(self)
-        self._expert_map = new_expert_map
-        self.expert_map_manager._expert_map = new_expert_map
-
-    def ensure_moe_quant_config_init(self):
-        return self._ensure_moe_quant_config_init()
-
-
-def _create_ascend_fused_moe_runner(*args, **kwargs):
-    # Upstream vLLM PR #41184 exposes runner_cls/routed_experts_cls as the
-    # supported extension point. Pass Ascend implementations through that
-    # interface instead of relying on the old FusedMoE subclass replacement.
-    kwargs = dict(kwargs)
-    hash_enabled = kwargs.pop("hash", None)
-    tid2eid = kwargs.pop("tid2eid", None)
-    routed_experts_args = dict(kwargs.pop("routed_experts_args", {}) or {})
-    routed_experts_args.update(
-        {
-            "original_num_experts": kwargs.get("num_experts"),
-            "original_routed_scaling_factor": kwargs.get("routed_scaling_factor", 1.0),
-            "original_activation": kwargs.get("activation", "silu"),
-            "n_shared_experts": kwargs.get("n_shared_experts", 0),
-            "gate": kwargs.get("gate"),
-            "shared_experts": kwargs.get("shared_experts"),
-            "routed_input_transform": kwargs.get("routed_input_transform"),
-            "tid2eid": tid2eid,
-            "hash_enabled": hash_enabled,
-        }
-    )
-    kwargs.setdefault("runner_cls", AscendMoERunner)
-    kwargs.setdefault("routed_experts_cls", AscendRoutedExperts)
-    kwargs["routed_experts_args"] = routed_experts_args
-    return FusedMoE(*args, **kwargs)
-
-
-def _rebind_stale_fused_moe_factory_captures(original_fused_moe, replacement) -> None:
-    # Patching the module attributes only affects imports that happen after
-    # patch_fused_moe_factory() runs. Some model modules (e.g. deepseek_v2) are
-    # imported earlier, during adapt_patch() -> patch_deepseek_mtp, which runs
-    # before register_ascend_customop. Those modules did
-    # `from vllm...fused_moe import FusedMoE` at import time and captured the
-    # original PR #41184 factory by name, so they would bypass the Ascend
-    # runner/routed-experts factory and fall back to the upstream MoERunner.
-    # Rebind only those stale captures, identified by an identity check against
-    # the original factory symbol (not a blanket replacement of every FusedMoE
-    # name), so newly added model modules are still covered automatically.
-    import sys
-
-    for module in list(sys.modules.values()):
-        if module is None or not getattr(module, "__name__", "").startswith("vllm.model_executor.models."):
-            continue
-        if getattr(module, "FusedMoE", None) is original_fused_moe:
-            # mypy cannot model dynamic module attributes; the getattr guard above
-            # already proves this module exposes FusedMoE.
-            module.FusedMoE = replacement  # type: ignore[attr-defined]
+        for module in list(sys.modules.values()):
+            if module is None or not getattr(module, "__name__", "").startswith("vllm.model_executor.models."):
+                continue
+            if getattr(module, "FusedMoE", None) is original_fused_moe:
+                # mypy cannot model dynamic module attributes; the getattr guard above
+                # already proves this module exposes FusedMoE.
+                module.FusedMoE = replacement  # type: ignore[attr-defined]
 
 
 def patch_fused_moe_factory(replacement=None) -> None:
     if vllm_version_is("0.22.1"):
+        # vLLM PR #41184 has not landed in v0.22.1, where FusedMoE is still a
+        # class and CustomOp OOT registration handles replacement. The factory
+        # patch below is target-main-only and must not run on the legacy branch.
         return
 
     # Upstream vLLM PR #41184 made FusedMoE a plain function, so CustomOp OOT

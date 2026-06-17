@@ -30,8 +30,9 @@ if TYPE_CHECKING:
     from vllm.model_executor.layers.fused_moe.unquantized_fused_moe_method import UnquantizedFusedMoEMethod
 elif vllm_version_is("0.22.1"):
     # vLLM PR #41184 has not landed in v0.22.1, so the unquantized MoE
-    # method still lives beside the legacy FusedMoE class.
-    _TargetRoutedExperts310 = torch.nn.Module
+    # method still lives beside the legacy FusedMoE class. Do not expose a
+    # dummy RoutedExperts owner on the legacy branch; 310P target-main routing
+    # is only valid after PR #41184.
     from vllm.model_executor.layers.fused_moe.layer import UnquantizedFusedMoEMethod
 else:
     # vLLM PR #41184 moves UnquantizedFusedMoEMethod out of layer.py on
@@ -63,9 +64,13 @@ class AscendUnquantizedFusedMoEMethod310(UnquantizedFusedMoEMethod):
     def __init__(self, moe: FusedMoEConfig = None):
         super().__init__(moe=moe)
 
-    @property
-    def is_monolithic(self) -> bool:
-        return False
+    if not vllm_version_is("0.22.1"):
+
+        @property
+        def is_monolithic(self) -> bool:
+            # vLLM PR #41184 makes MoERunner query this modular-kernel protocol
+            # on target main. v0.22.1 keeps the old 310P quant method surface.
+            return False
 
     def maybe_make_prepare_finalize(self, routing_tables=None):
         # Ascend 310P uses its own MoE communication and forward_impl path.
@@ -362,142 +367,145 @@ class AscendFusedMoE310(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
         return shared_out, routed_out
 
 
-class AscendRoutedExperts310(_TargetRoutedExperts310):
-    # vLLM PR #41184 moved the MoE weight owner from FusedMoE to
-    # RoutedExperts. Mirror the old 310P AscendFusedMoE310 state on the new
-    # owner so target main still uses the 310P quant method and communication
-    # implementation.
-    get_quant_type = AscendFusedMoE310.get_quant_type
-    forward_impl = AscendFusedMoE310.forward_impl
-    _forward_shared_experts = AscendFusedMoE310._forward_shared_experts
-    shared_forward_impl = AscendFusedMoE310.shared_forward_impl
-    is_internal_router = AscendFusedMoE310.is_internal_router
+if not vllm_version_is("0.22.1"):
+    # vLLM PR #41184 introduced the RoutedExperts owner only on target
+    # main. Keep the 310P routed owner/factory out of v0.22.1 so the
+    # legacy AscendFusedMoE310 subclass path remains untouched.
+    class AscendRoutedExperts310(_TargetRoutedExperts310):
+        # vLLM PR #41184 moved the MoE weight owner from FusedMoE to
+        # RoutedExperts. Mirror the old 310P AscendFusedMoE310 state on the new
+        # owner so target main still uses the 310P quant method and communication
+        # implementation.
+        get_quant_type = AscendFusedMoE310.get_quant_type
+        forward_impl = AscendFusedMoE310.forward_impl
+        _forward_shared_experts = AscendFusedMoE310._forward_shared_experts
+        shared_forward_impl = AscendFusedMoE310.shared_forward_impl
+        is_internal_router = AscendFusedMoE310.is_internal_router
 
-    def __init__(
-        self,
-        layer_name: str,
-        params_dtype: torch.dtype,
-        moe_config: FusedMoEConfig,
-        quant_config,
-        expert_map_manager,
-        expert_mapping=None,
-        renormalize: bool = True,
-        use_grouped_topk: bool = False,
-        num_expert_group: int | None = None,
-        topk_group: int | None = None,
-        custom_routing_function: Callable | None = None,
-        scoring_func: str = "softmax",
-        routed_scaling_factor: float = 1.0,
-        swiglu_limit: float | None = None,
-        e_score_correction_bias: torch.Tensor | None = None,
-        apply_router_weight_on_input: bool = False,
-        *,
-        original_num_experts: int | None = None,
-        shared_experts: torch.nn.Module | None = None,
-        routed_input_transform: torch.nn.Module | None = None,
-        **kwargs,
-    ):
-        # Upstream vLLM PR #41184 requires RoutedExperts to own weight names.
-        # Initialize it first, then replace the provisional upstream weights
-        # with the 310P-specific Ascend weights below.
-        _TargetRoutedExperts310.__init__(
+        def __init__(
             self,
-            layer_name=layer_name,
-            params_dtype=params_dtype,
-            moe_config=moe_config,
-            quant_config=quant_config,
-            expert_map_manager=expert_map_manager,
-            expert_mapping=expert_mapping,
-            renormalize=renormalize,
-            use_grouped_topk=use_grouped_topk,
-            num_expert_group=num_expert_group,
-            topk_group=topk_group,
-            custom_routing_function=custom_routing_function,
-            scoring_func=scoring_func,
-            routed_scaling_factor=routed_scaling_factor,
-            swiglu_limit=swiglu_limit,
-            e_score_correction_bias=e_score_correction_bias,
-            apply_router_weight_on_input=apply_router_weight_on_input,
+            layer_name: str,
+            params_dtype: torch.dtype,
+            moe_config: FusedMoEConfig,
+            quant_config,
+            expert_map_manager,
+            expert_mapping=None,
+            renormalize: bool = True,
+            use_grouped_topk: bool = False,
+            num_expert_group: int | None = None,
+            topk_group: int | None = None,
+            custom_routing_function: Callable | None = None,
+            scoring_func: str = "softmax",
+            routed_scaling_factor: float = 1.0,
+            swiglu_limit: float | None = None,
+            e_score_correction_bias: torch.Tensor | None = None,
+            apply_router_weight_on_input: bool = False,
+            *,
+            original_num_experts: int | None = None,
+            shared_experts: torch.nn.Module | None = None,
+            routed_input_transform: torch.nn.Module | None = None,
+            **kwargs,
+        ):
+            # Upstream vLLM PR #41184 requires RoutedExperts to own weight names.
+            # Initialize it first, then replace the provisional upstream weights
+            # with the 310P-specific Ascend weights below.
+            _TargetRoutedExperts310.__init__(
+                self,
+                layer_name=layer_name,
+                params_dtype=params_dtype,
+                moe_config=moe_config,
+                quant_config=quant_config,
+                expert_map_manager=expert_map_manager,
+                expert_mapping=expert_mapping,
+                renormalize=renormalize,
+                use_grouped_topk=use_grouped_topk,
+                num_expert_group=num_expert_group,
+                topk_group=topk_group,
+                custom_routing_function=custom_routing_function,
+                scoring_func=scoring_func,
+                routed_scaling_factor=routed_scaling_factor,
+                swiglu_limit=swiglu_limit,
+                e_score_correction_bias=e_score_correction_bias,
+                apply_router_weight_on_input=apply_router_weight_on_input,
+            )
+
+            self.vllm_config = get_current_vllm_config()
+            self._routed_input_transform = routed_input_transform
+            self._shared_experts = shared_experts
+            self.global_num_experts = original_num_experts or self.moe_config.num_logical_experts
+            self.renormalize = renormalize
+            self.use_grouped_topk = use_grouped_topk
+            self.num_expert_group = num_expert_group
+            self.topk_group = topk_group
+            self.custom_routing_function = custom_routing_function
+            self.scoring_func = scoring_func
+            self.routed_scaling_factor = routed_scaling_factor
+            self.e_score_correction_bias = e_score_correction_bias
+            self.apply_router_weight_on_input = apply_router_weight_on_input
+
+            if quant_config is None:
+                self.quant_method = AscendUnquantizedFusedMoEMethod310(self.moe_config)
+            else:
+                self.quant_method = quant_config.get_quant_method(self, self.layer_name)
+
+            assert self.quant_method is not None
+            self.base_quant_method = self.quant_method
+
+            self.moe_config.tp_group = get_tp_group()
+            self.moe_config.dp_group = get_dp_group()
+            self.moe_config.ep_group = get_ep_group()
+            self.moe_config.supports_eplb = False
+
+            self.global_expert_map = None
+            self.local_expert_map = None
+            if self.moe_config.ep_size > 1:
+                raise RuntimeError("Expert Parallel is not supported on 310P. Please remove --enable-expert-parallel.")
+            self.local_num_experts = self.global_num_experts
+
+            self.moe_config.num_experts = self.global_num_experts
+            self.moe_config.num_local_experts = self.local_num_experts
+            self.moe_config.global_redundant_expert_num = 0
+            self.expert_map_manager.global_num_experts = self.global_num_experts
+            self.expert_map_manager._local_num_experts = self.local_num_experts
+            self.expert_map_manager._expert_map = None
+
+            # vLLM PR #41184's RoutedExperts.__init__ eagerly creates upstream
+            # weights before the 310P quant method is installed. Reuse the shared
+            # helper to drop those provisional expert weights while preserving
+            # e_score_correction_bias (a routing parameter, not a recreatable weight).
+            _clear_provisional_routed_expert_parameters(self)
+
+            moe_quant_params = {
+                "num_experts": self.local_num_experts,
+                "hidden_size": self.hidden_size,
+                "intermediate_size_per_partition": self.intermediate_size_per_partition,
+                "params_dtype": self.params_dtype,
+                "weight_loader": self.weight_loader,
+                "global_num_experts": self.global_num_experts,
+            }
+            self.quant_method.create_weights(layer=self, **moe_quant_params)
+            self.quant_type = self.get_quant_type()
+
+            _MoECommMethods[MoECommType.ALLGATHER] = AllGatherCommImpl310(self.moe_config)
+
+        def ensure_moe_quant_config_init(self):
+            return self._ensure_moe_quant_config_init()
+
+    def _create_ascend_fused_moe_runner_310(*args, **kwargs):
+        # Upstream vLLM PR #41184 exposes runner_cls/routed_experts_cls as the
+        # target-main extension point. Use that point for 310P too, but inject the
+        # 310P-specific routed owner so quantization and communication do not fall
+        # back to the generic Ascend implementation.
+        kwargs = dict(kwargs)
+        routed_experts_args = dict(kwargs.pop("routed_experts_args", {}) or {})
+        routed_experts_args.update(
+            {
+                "original_num_experts": kwargs.get("num_experts"),
+                "shared_experts": kwargs.get("shared_experts"),
+                "routed_input_transform": kwargs.get("routed_input_transform"),
+            }
         )
-
-        self.vllm_config = get_current_vllm_config()
-        self._routed_input_transform = routed_input_transform
-        self._shared_experts = shared_experts
-        self.global_num_experts = original_num_experts or self.moe_config.num_logical_experts
-        self.renormalize = renormalize
-        self.use_grouped_topk = use_grouped_topk
-        self.num_expert_group = num_expert_group
-        self.topk_group = topk_group
-        self.custom_routing_function = custom_routing_function
-        self.scoring_func = scoring_func
-        self.routed_scaling_factor = routed_scaling_factor
-        self.e_score_correction_bias = e_score_correction_bias
-        self.apply_router_weight_on_input = apply_router_weight_on_input
-
-        if quant_config is None:
-            self.quant_method = AscendUnquantizedFusedMoEMethod310(self.moe_config)
-        else:
-            self.quant_method = quant_config.get_quant_method(self, self.layer_name)
-
-        assert self.quant_method is not None
-        self.base_quant_method = self.quant_method
-
-        self.moe_config.tp_group = get_tp_group()
-        self.moe_config.dp_group = get_dp_group()
-        self.moe_config.ep_group = get_ep_group()
-        self.moe_config.supports_eplb = False
-
-        self.global_expert_map = None
-        self.local_expert_map = None
-        if self.moe_config.ep_size > 1:
-            raise RuntimeError("Expert Parallel is not supported on 310P. Please remove --enable-expert-parallel.")
-        self.local_num_experts = self.global_num_experts
-
-        self.moe_config.num_experts = self.global_num_experts
-        self.moe_config.num_local_experts = self.local_num_experts
-        self.moe_config.global_redundant_expert_num = 0
-        self.expert_map_manager.global_num_experts = self.global_num_experts
-        self.expert_map_manager._local_num_experts = self.local_num_experts
-        self.expert_map_manager._expert_map = None
-
-        # vLLM PR #41184's RoutedExperts.__init__ eagerly creates upstream
-        # weights before the 310P quant method is installed. Reuse the shared
-        # helper to drop those provisional expert weights while preserving
-        # e_score_correction_bias (a routing parameter, not a recreatable weight).
-        _clear_provisional_routed_expert_parameters(self)
-
-        moe_quant_params = {
-            "num_experts": self.local_num_experts,
-            "hidden_size": self.hidden_size,
-            "intermediate_size_per_partition": self.intermediate_size_per_partition,
-            "params_dtype": self.params_dtype,
-            "weight_loader": self.weight_loader,
-            "global_num_experts": self.global_num_experts,
-        }
-        self.quant_method.create_weights(layer=self, **moe_quant_params)
-        self.quant_type = self.get_quant_type()
-
-        _MoECommMethods[MoECommType.ALLGATHER] = AllGatherCommImpl310(self.moe_config)
-
-    def ensure_moe_quant_config_init(self):
-        return self._ensure_moe_quant_config_init()
-
-
-def _create_ascend_fused_moe_runner_310(*args, **kwargs):
-    # Upstream vLLM PR #41184 exposes runner_cls/routed_experts_cls as the
-    # target-main extension point. Use that point for 310P too, but inject the
-    # 310P-specific routed owner so quantization and communication do not fall
-    # back to the generic Ascend implementation.
-    kwargs = dict(kwargs)
-    routed_experts_args = dict(kwargs.pop("routed_experts_args", {}) or {})
-    routed_experts_args.update(
-        {
-            "original_num_experts": kwargs.get("num_experts"),
-            "shared_experts": kwargs.get("shared_experts"),
-            "routed_input_transform": kwargs.get("routed_input_transform"),
-        }
-    )
-    kwargs.setdefault("runner_cls", AscendMoERunner310)
-    kwargs.setdefault("routed_experts_cls", AscendRoutedExperts310)
-    kwargs["routed_experts_args"] = routed_experts_args
-    return FusedMoE(*args, **kwargs)
+        kwargs.setdefault("runner_cls", AscendMoERunner310)
+        kwargs.setdefault("routed_experts_cls", AscendRoutedExperts310)
+        kwargs["routed_experts_args"] = routed_experts_args
+        return FusedMoE(*args, **kwargs)

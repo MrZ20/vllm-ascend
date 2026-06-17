@@ -12,6 +12,8 @@ def test_gpt_oss_other_loader_remaps_routed_expert_weight_names(monkeypatch):
     else:
         pytest.importorskip("vllm.model_executor.models.gpt_oss")
 
+    from vllm.model_executor.models.gpt_oss import GptOssModel
+
     from vllm_ascend.patch.worker import patch_gpt_oss
 
     routed_name = "layers.0.mlp.experts.routed_experts.w2_weight"
@@ -30,7 +32,9 @@ def test_gpt_oss_other_loader_remaps_routed_expert_weight_names(monkeypatch):
         seen_names.extend(name for name, _ in weights)
         return set(seen_names)
 
-    monkeypatch.setattr(patch_gpt_oss, "_original_load_weights_other", fake_original_load_weights_other)
+    # The patch stores the original on the class (_ascend_original_load_weights_other)
+    # and the wrapper calls it from there, so override that class attribute.
+    monkeypatch.setattr(GptOssModel, "_ascend_original_load_weights_other", fake_original_load_weights_other)
 
     model = SimpleNamespace(
         named_parameters=lambda: [(routed_name, torch.nn.Parameter(torch.empty(1)))],

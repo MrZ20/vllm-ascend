@@ -30,7 +30,6 @@ from vllm_ascend.ops.fused_moe import fused_moe as fused_moe_module
 from vllm_ascend.ops.fused_moe.fused_moe import (
     AscendFusedMoE,
     AscendMoERunner,
-    AscendRoutedExperts,
     AscendUnquantizedFusedMoEMethod,
     _clear_provisional_routed_expert_parameters,
 )
@@ -45,6 +44,11 @@ from vllm_ascend.quantization.quant_type import QuantType
 from vllm_ascend.utils import AscendDeviceType, adapt_patch, vllm_version_is
 
 adapt_patch(True)
+
+# vLLM PR #41184 introduces RoutedExperts only on target main. Keep the import
+# version-gated so v0.22.1 UT collection never requires a target-main-only
+# AscendRoutedExperts symbol.
+AscendRoutedExperts = getattr(fused_moe_module, "AscendRoutedExperts", None)
 
 
 def _new_uninitialized_ascend_fused_moe():
@@ -584,6 +588,10 @@ class TestAscendMoERunner:
         # vLLM PR #41184 removed the legacy layer argument from MoERunner and
         # moved expert execution under runner.routed_experts. This test pins the
         # new delegation path so it does not regress back to the old signature.
+        if vllm_version_is("0.22.1"):
+            pytest.skip(
+                "v0.22.1 keeps the legacy layer-delegated forward_impl; routed_experts path is target-main only"
+            )
         runner = AscendMoERunner.__new__(AscendMoERunner)
         shared_experts = MagicMock() if has_shared_experts else None
         shared_experts_owner = next(
@@ -593,6 +601,11 @@ class TestAscendMoERunner:
         monkeypatch.setattr(shared_experts_owner, "shared_experts", property(lambda _: shared_experts), raising=False)
         routed_experts = MagicMock()
         runner.routed_experts = routed_experts
+        # A real runner always has gate/moe_config set; with no internal router
+        # gate (gate=None) _maybe_apply_target_main_internal_router passes the
+        # router logits through unchanged so this test exercises pure delegation.
+        runner.gate = None
+        runner.moe_config = SimpleNamespace(num_logical_experts=3, num_experts=3)
         runner._sequence_parallel_context = MagicMock()
         runner._sequence_parallel_context.return_value.__enter__.return_value = None
         runner._sequence_parallel_context.return_value.__exit__.return_value = None

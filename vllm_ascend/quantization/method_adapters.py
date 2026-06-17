@@ -219,13 +219,15 @@ class AscendFusedMoEMethod(FusedMoEMethodBase):
         self.quant_method = scheme
         self.tid2eid = tid2eid
 
-    @property
-    def is_monolithic(self) -> bool:
-        # vLLM PR #41184's MoERunner checks quant_method.is_monolithic before
-        # dispatching the modular RoutedExperts path. Ascend quant methods keep
-        # routing/communication in their own apply path, so expose the expected
-        # target-main attribute while retaining v0.22.1 behavior.
-        return False
+    if not vllm_version_is("0.22.1"):
+
+        @property
+        def is_monolithic(self) -> bool:
+            # vLLM PR #41184's MoERunner checks quant_method.is_monolithic
+            # before dispatching the modular RoutedExperts path. Ascend quant
+            # methods keep routing/communication in their own apply path; keep
+            # this target-main-only so v0.22.1 preserves the old method surface.
+            return False
 
     def create_weights(
         self,
