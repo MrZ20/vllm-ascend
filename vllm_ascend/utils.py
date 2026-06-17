@@ -710,6 +710,7 @@ def register_ascend_customop(vllm_config: VllmConfig | None = None):
         "GatedDeltaNetAttention": AscendGatedDeltaNetAttention,
         "BailingMoELinearAttention": AscendBailingMoELinearAttention,
     }
+
     if vllm_config is None:
         try:
             from vllm.config import get_current_vllm_config
