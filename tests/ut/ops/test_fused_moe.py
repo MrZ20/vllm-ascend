@@ -590,6 +590,43 @@ class TestAscendMoERunner:
             routed_experts.forward_impl.assert_called_once_with(hidden_states, router_logits)
             routed_experts.shared_forward_impl.assert_not_called()
 
+    @pytest.mark.parametrize("has_shared_experts", [False, True])
+    def test_forward_impl_normalizes_target_main_router_placeholder(self, monkeypatch, has_shared_experts):
+        if vllm_version_is("0.22.1"):
+            pytest.skip("v0.22.1 does not use the PR #41184 MoERunner router placeholder path")
+
+        runner = AscendMoERunner.__new__(AscendMoERunner)
+        shared_experts = MagicMock() if has_shared_experts else None
+        shared_experts_owner = next(
+            (cls for cls in type(runner).__mro__ if "shared_experts" in cls.__dict__),
+            AscendMoERunner,
+        )
+        monkeypatch.setattr(shared_experts_owner, "shared_experts", property(lambda _: shared_experts), raising=False)
+        runner.moe_config = SimpleNamespace(num_experts=64, num_logical_experts=64)
+        runner._fse_fuse_gate = False
+        gate_logits = torch.randn(2, 64)
+        runner.gate = MagicMock(return_value=(gate_logits, None))
+        routed_experts = MagicMock()
+        routed_experts.forward_impl.return_value = "routed"
+        routed_experts.shared_forward_impl.return_value = ("shared", "routed")
+        runner.routed_experts = routed_experts
+        runner._sequence_parallel_context = MagicMock()
+        runner._sequence_parallel_context.return_value.__enter__.return_value = None
+        runner._sequence_parallel_context.return_value.__exit__.return_value = None
+
+        hidden_states = torch.randn(2, 2048)
+        result = runner.forward_impl(hidden_states, hidden_states)
+
+        runner.gate.assert_called_once_with(hidden_states)
+        if has_shared_experts:
+            assert result == ("shared", "routed")
+            routed_experts.shared_forward_impl.assert_called_once_with(hidden_states, gate_logits, None)
+            routed_experts.forward_impl.assert_not_called()
+        else:
+            assert result == "routed"
+            routed_experts.forward_impl.assert_called_once_with(hidden_states, gate_logits)
+            routed_experts.shared_forward_impl.assert_not_called()
+
 
 class TestAscendFusedMoE:
     def _build_layer(self):

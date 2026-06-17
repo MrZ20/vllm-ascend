@@ -511,6 +511,100 @@ CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27618176532?pr
 - `shared_forward_impl` 按版本处理 vLLM PR #41184 新增的 `shared_experts_input`：v0.22.1 保持
   单输入语义，target main 只在 shared path 使用该输入，routed path 继续使用真实 router logits。
 
+## 第五轮 CI 失败与修复
+
+CI run: <https://github.com/vllm-project/vllm-ascend/actions/runs/27635141589?pr=10459>
+
+### 1. A2 one-card dense graph: runner custom-op 入口仍可能拿到 hidden placeholder
+
+失败：
+
+- Job:
+  <https://github.com/vllm-project/vllm-ascend/actions/runs/27635141589/job/81721101298?pr=10459>
+- `tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py::test_qwen3_dense_graph_mode`
+- 模型：`vllm-ascend/DeepSeek-V2-Lite-W8A8`
+- 根因断言：
+  `Number of global experts mismatch ... router_experts=2048, expected_experts=64`。
+
+原因：
+
+- 第三轮里已经修过 `AscendRoutedExperts.shared_forward_impl` 不再把
+  `shared_experts_input` 回传给 routed path，但 CI 栈显示失败仍从 target-main 的
+  `MoERunner._moe_forward_shared -> AscendMoERunner._forward_impl -> AscendMoERunner.forward_impl`
+  进入。
+- 上游 vLLM PR #41184 后，graph/custom-op 入口会把 `router_logits` 和
+  `shared_experts_input` 分开传进 `MoERunner._forward_impl`。当 runner 被视为 internal router 时，
+  第二个参数可能仍是 `hidden_states` placeholder。
+- Ascend 的 target-main runner 又把执行委托给 `AscendRoutedExperts`，如果不先在 runner 层把
+  placeholder 归一成真实 router logits，旧 Ascend `forward_impl` 会把 hidden size 2048 当成 expert
+  数，继续触发 W8A8_DYNAMIC 的 expert 数校验。
+
+修复：
+
+- 在 `AscendMoERunner.forward_impl` 增加显式双版本分支：
+    - `if vllm_version_is("0.22.1")`：保持旧行为，直接使用传入的 `router_logits`。
+    - `else`：调用 target-main helper，在进入 `self.routed_experts.forward_impl` /
+      `shared_forward_impl` 前归一化 router logits。
+- 新增 `_maybe_apply_target_main_internal_router`，且新增逻辑用
+  `if not vllm_version_is("0.22.1")` 包住：
+    - 如果 `router_logits.shape[-1]` 已等于 `moe_config.num_logical_experts` /
+      `moe_config.num_experts`，说明模型已经应用 gate，直接返回。
+    - 如果 runner 持有 gate 且 `router_logits` 仍是 hidden placeholder，则通过 gate 重新算真实
+      expert logits。
+    - 对 FSE fuse gate 路径保留上游 PR #41184 的 combined gate 处理。
+- 注释说明该变更来自上游 PR #41184：router gate 迁移到 `MoERunner`，模型可把
+  `hidden_states` 作为 `router_logits` placeholder 传入。
+- 新增 UT：
+  `tests/ut/ops/test_fused_moe.py::TestAscendMoERunner::test_forward_impl_normalizes_target_main_router_placeholder`，
+  覆盖 shared/no-shared 两条路径，固定 2048 hidden placeholder 被归一成 64 expert logits。
+
+建议补跑：
+
+- `pytest -sv tests/ut/ops/test_fused_moe.py::TestAscendMoERunner::test_forward_impl_normalizes_target_main_router_placeholder`
+- `pytest -sv tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py::test_qwen3_dense_graph_mode`
+- `pytest -sv tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py`
+
+### 2. 310P one-card: Mamba prefix cache scheduler 签名不兼容
+
+失败：
+
+- Job:
+  <https://github.com/vllm-project/vllm-ascend/actions/runs/27635141589/job/81721101301?pr=10459>
+- `tests/e2e/pull_request/one_card/_310p/test_dense_model_310p.py::test_qwen3_5_dense_prefix_mamba_cache_tp1_fp16`
+- 根因：
+  `TypeError: _mamba_block_aligned_split() takes from 3 to 5 positional arguments but 6 were given`。
+
+原因：
+
+- 上游 vLLM PR #37898 给
+  `Scheduler._mamba_block_aligned_split` 增加了
+  `num_uncached_common_prefix_tokens` 参数，并新增 Marconi-style prefix-cache admission 逻辑。
+- `vllm_ascend/patch/platform/patch_scheduler.py` 覆盖了上游 scheduler 方法，但仍是旧签名，只接
+  `request`、`num_new_tokens`、`num_new_local_computed_tokens`、
+  `num_external_computed_tokens`。
+- target main 的 scheduler 在 hybrid Mamba prefix-cache align 模式下传入第 5 个上下文参数，
+  覆盖后的旧函数直接 TypeError。
+
+修复：
+
+- `patch_scheduler.py::_mamba_block_aligned_split` 增加
+  `num_uncached_common_prefix_tokens: int = 0`，保证 target-main 调用形状兼容。
+- 新增逻辑用 `if not vllm_version_is("0.22.1")` 包住：
+    - 当 uncached common prefix 长度大于等于 block size，且当前计划 token 数超过该 common prefix
+      长度时，把 `num_new_tokens` 截断到 common prefix 边界。
+    - 截断后继续按 block size 对齐，保持 Mamba state cache 和 attention prefix cache 一致。
+- v0.22.1 分支保持旧行为：即使测试传入第 5 个参数，也不启用 PR #37898 的 admission 逻辑。
+- 新增 UT：
+  `tests/ut/patch/platform/test_patch_scheduler.py`
+    - target-main 分支验证第 5 个参数生效。
+    - v0.22.1 分支验证旧行为不变。
+
+建议补跑：
+
+- `pytest -sv tests/ut/patch/platform/test_patch_scheduler.py`
+- `pytest -sv tests/e2e/pull_request/one_card/_310p/test_dense_model_310p.py::test_qwen3_5_dense_prefix_mamba_cache_tp1_fp16`
+- `pytest -sv tests/e2e/pull_request/one_card/_310p/test_dense_model_310p.py`
+
 ## 本地验证状态
 
 本地已做：
