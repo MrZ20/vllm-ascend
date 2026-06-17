@@ -23,8 +23,6 @@ if not vllm_version_is("0.22.1"):
     import torch
     from vllm.model_executor.models.gpt_oss import GptOssModel
 
-    _original_load_weights_other = GptOssModel._load_weights_other
-
     def _remap_gpt_oss_routed_expert_weight_names(
         model: torch.nn.Module,
         weights: Iterable[tuple[str, torch.Tensor]],
@@ -51,7 +49,9 @@ if not vllm_version_is("0.22.1"):
         weights: Iterable[tuple[str, torch.Tensor]],
         stacked_params_mapping: list[tuple[str, ...]],
     ) -> set[str]:
-        return _original_load_weights_other(
+        # Call the class-saved original (not a module-level closure) so a second
+        # import / importlib.reload does not wrap an already-patched method.
+        return GptOssModel._ascend_original_load_weights_other(
             self,
             ep_rank_end,
             ep_rank_start,
@@ -61,4 +61,7 @@ if not vllm_version_is("0.22.1"):
             stacked_params_mapping,
         )
 
-    GptOssModel._load_weights_other = _patched_load_weights_other
+    # Idempotent guard: only capture the original and install the wrapper once.
+    if not hasattr(GptOssModel, "_ascend_original_load_weights_other"):
+        GptOssModel._ascend_original_load_weights_other = GptOssModel._load_weights_other
+        GptOssModel._load_weights_other = _patched_load_weights_other

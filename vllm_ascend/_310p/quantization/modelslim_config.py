@@ -117,8 +117,12 @@ class AscendModelSlimConfig310(AscendModelSlimConfig):
 
         prefix = self.quant_prefix_mapper(model_type, prefix)
 
+        # Resolve packed_modules_mapping defensively once: some model types never
+        # populate the attribute, so fall back to {} for both the Linear and MoE
+        # branches (previously only the Linear branch was guarded).
+        packed = getattr(self, "packed_modules_mapping", {})
+
         if isinstance(layer, LinearBase):
-            packed = getattr(self, "packed_modules_mapping", {})
             if self.is_layer_skipped_ascend(prefix, packed):
                 from vllm_ascend.ops.linear import AscendUnquantizedLinearMethod
 
@@ -135,12 +139,12 @@ class AscendModelSlimConfig310(AscendModelSlimConfig):
             return AscendLinearMethod(scheme)
 
         elif _is_fused_moe_layer(layer):
-            if self.is_layer_skipped_ascend(prefix, self.packed_modules_mapping):
+            if self.is_layer_skipped_ascend(prefix, packed):
                 from vllm_ascend._310p.fused_moe.fused_moe import AscendUnquantizedFusedMoEMethod310
 
                 logger.debug("Select AscendUnquantizedFusedMoEMethod310 for %s (layer=%s)", prefix, "FusedMoE")
                 return AscendUnquantizedFusedMoEMethod310(layer.moe_config)
-            scheme = create_scheme_for_layer(self.quant_description, prefix, "moe", self.packed_modules_mapping)
+            scheme = create_scheme_for_layer(self.quant_description, prefix, "moe", packed)
             logger.debug("Select AscendFusedMoEMethod for %s (layer=%s)", prefix, "FusedMoE")
             return AscendFusedMoEMethod(scheme, layer.moe_config)
 

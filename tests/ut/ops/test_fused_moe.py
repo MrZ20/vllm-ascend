@@ -32,6 +32,7 @@ from vllm_ascend.ops.fused_moe.fused_moe import (
     AscendMoERunner,
     AscendRoutedExperts,
     AscendUnquantizedFusedMoEMethod,
+    _clear_provisional_routed_expert_parameters,
 )
 from vllm_ascend.ops.fused_moe.moe_comm_method import FusedExpertsResult
 from vllm_ascend.ops.fused_moe.moe_runtime_args import (
@@ -227,6 +228,28 @@ def test_ascend_unquantized_skips_upstream_modular_kernel_init():
     method = AscendUnquantizedFusedMoEMethod.maybe_make_prepare_finalize
 
     assert method(object()) is None
+
+
+def test_clear_provisional_routed_expert_parameters_preserves_correction_bias():
+    # vLLM PR #41184 makes RoutedExperts.__init__ eagerly register expert
+    # weights; the Ascend RoutedExperts adapters drop those provisional params
+    # (so the Ascend quant_method can recreate them) while keeping the routing
+    # field e_score_correction_bias. The helper is shared by the generic NPU and
+    # 310P RoutedExperts subclasses, so verify the preserve semantics directly.
+    module = nn.Module()
+    module.register_parameter("w13_weight", nn.Parameter(torch.zeros(2), requires_grad=False))
+    module.register_parameter("w2_weight", nn.Parameter(torch.zeros(2), requires_grad=False))
+    module.register_parameter("e_score_correction_bias", nn.Parameter(torch.zeros(2), requires_grad=False))
+
+    _clear_provisional_routed_expert_parameters(module)
+
+    assert "w13_weight" not in module._parameters
+    assert "w2_weight" not in module._parameters
+    assert "e_score_correction_bias" in module._parameters
+
+    # The preserve set is configurable; an empty set drops everything.
+    _clear_provisional_routed_expert_parameters(module, preserve=frozenset())
+    assert len(module._parameters) == 0
 
 
 class Device(TypedDict):

@@ -28,11 +28,16 @@ def get_moe_weight_owner(experts: Any) -> Any:
         # vLLM PR #41184 has not landed in v0.22.1, so mlp.experts is still
         # the legacy FusedMoE object that owns MoE weights and EPLB state.
         return experts
-    else:
-        # vLLM PR #41184 moved MoE weights/EPLB state from FusedMoE to
-        # RoutedExperts. Target-main models expose MoERunner at mlp.experts, so
-        # EPLB must follow the runner to its routed_experts owner.
-        return experts.routed_experts
+    # vLLM PR #41184 moved MoE weights/EPLB state from FusedMoE to RoutedExperts.
+    # Target-main models expose MoERunner at mlp.experts, so EPLB must follow the
+    # runner to its routed_experts owner. Fail loudly here (rather than with a
+    # deep AttributeError) if upstream changes the layout again.
+    if not hasattr(experts, "routed_experts"):
+        raise TypeError(
+            "Expected a target-main MoERunner exposing 'routed_experts' after "
+            f"vLLM PR #41184, but got {type(experts).__name__}."
+        )
+    return experts.routed_experts
 
 
 def get_expert_map(self, layer_id):

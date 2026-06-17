@@ -29,7 +29,13 @@ from vllm.model_executor.utils import set_weight_attrs
 
 from vllm_ascend.ascend_config import get_ascend_config
 from vllm_ascend.distributed.parallel_state import get_flashcomm2_otp_group, get_mlp_tp_group, get_otp_group
-from vllm_ascend.utils import enable_dsa_cp_with_layer_shard, flashcomm2_enable, mlp_tp_enable, oproj_tp_enable
+from vllm_ascend.utils import (
+    enable_dsa_cp_with_layer_shard,
+    flashcomm2_enable,
+    mlp_tp_enable,
+    oproj_tp_enable,
+    vllm_version_is,
+)
 
 from .methods import AscendAttentionScheme, AscendLinearScheme, AscendMoEScheme, is_mx_quant_type
 
@@ -281,12 +287,18 @@ class AscendFusedMoEMethod(FusedMoEMethodBase):
         topk_weights: torch.Tensor | None = None,
         topk_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
-        # vLLM PR #41184 passes precomputed routing tensors from
-        # RoutedExperts.forward_modular into quant_method.apply. Ascend's
-        # quantized schemes still select experts inside their own apply path,
-        # so the adapter accepts the new target-main keywords but does not
-        # forward them to v0.22.1-style scheme implementations.
-        del topk_weights, topk_ids
+        if vllm_version_is("0.22.1"):
+            # vLLM PR #41184 has not landed in v0.22.1, so legacy callers must
+            # not supply precomputed routing tensors. Surface the unexpected
+            # case instead of silently dropping it.
+            assert topk_weights is None and topk_ids is None
+        else:
+            # vLLM PR #41184 passes precomputed routing tensors from
+            # RoutedExperts.forward_modular into quant_method.apply. Ascend's
+            # quantized schemes still select experts inside their own apply path,
+            # so the adapter accepts the new target-main keywords but does not
+            # forward them to the v0.22.1-style scheme implementations.
+            del topk_weights, topk_ids
         return self.quant_method.apply(
             layer=layer,
             x=x,

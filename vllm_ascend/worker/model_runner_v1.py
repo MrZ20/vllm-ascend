@@ -3709,22 +3709,25 @@ class NPUModelRunner(GPUModelRunner):
         # upstream hook never fires. Instead, stash the capturer as a
         # plain attribute on every FusedMoE layer; ``apply()`` reads it
         # back on the hot path.
-        from vllm.model_executor.layers.fused_moe.layer import FusedMoE
-        from vllm.model_executor.layers.fused_moe.runner.moe_runner import MoERunner
-        for module in self.compilation_config.static_forward_context.values():
-            if vllm_version_is("0.22.1"):
-                # vLLM PR #41184 has not landed in v0.22.1, so the static
-                # context still stores legacy FusedMoE layers.
+        if vllm_version_is("0.22.1"):
+            # vLLM PR #41184 has not landed in v0.22.1, so the static forward
+            # context still stores legacy FusedMoE layers that own the experts.
+            from vllm.model_executor.layers.fused_moe.layer import FusedMoE
+
+            for module in self.compilation_config.static_forward_context.values():
                 if not isinstance(module, FusedMoE):
                     continue
-                module_any = cast(Any, module)
-                module_any._ascend_routed_experts_capturer = capturer
-            elif isinstance(module, MoERunner):
-                # Upstream vLLM PR #41184 registers MoERunner in static_forward_context
-                # and stores the weights under runner.routed_experts. Bind there so
-                # Ascend's direct select_experts path can still capture top-k ids.
-                routed_experts = cast(Any, module.routed_experts)
-                routed_experts._ascend_routed_experts_capturer = capturer
+                cast(Any, module)._ascend_routed_experts_capturer = capturer
+            return
+
+        # vLLM PR #41184 registers MoERunner in static_forward_context and moves
+        # the experts under runner.routed_experts. Bind the capturer there so
+        # Ascend's direct select_experts path can still capture top-k ids.
+        from vllm.model_executor.layers.fused_moe.runner.moe_runner import MoERunner
+
+        for module in self.compilation_config.static_forward_context.values():
+            if isinstance(module, MoERunner):
+                cast(Any, module.routed_experts)._ascend_routed_experts_capturer = capturer
 
     def _align_memory(self, tensor: torch.Tensor, alignment: int) -> torch.Tensor:
         data_ptr = tensor.data_ptr()

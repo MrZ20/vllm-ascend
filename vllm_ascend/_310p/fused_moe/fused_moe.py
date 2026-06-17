@@ -41,7 +41,7 @@ else:
 
 from vllm_ascend.ascend_forward_context import _EXTRA_CTX, MoECommType
 from vllm_ascend.ops.fused_moe.experts_selector import zero_experts_compute
-from vllm_ascend.ops.fused_moe.fused_moe import AscendMoERunner
+from vllm_ascend.ops.fused_moe.fused_moe import AscendMoERunner, _clear_provisional_routed_expert_parameters
 from vllm_ascend.ops.fused_moe.moe_comm_method import (
     AllGatherCommImpl,
     FusedExpertsResult,
@@ -461,13 +461,10 @@ class AscendRoutedExperts310(_TargetRoutedExperts310):
         self.expert_map_manager._expert_map = None
 
         # vLLM PR #41184's RoutedExperts.__init__ eagerly creates upstream
-        # weights before the 310P quant method is installed. Remove those
-        # provisional expert weights, but keep e_score_correction_bias because
-        # it is a routing parameter that may be registered as an nn.Parameter.
-        for param_name in list(self._parameters):
-            if param_name == "e_score_correction_bias":
-                continue
-            delattr(self, param_name)
+        # weights before the 310P quant method is installed. Reuse the shared
+        # helper to drop those provisional expert weights while preserving
+        # e_score_correction_bias (a routing parameter, not a recreatable weight).
+        _clear_provisional_routed_expert_parameters(self)
 
         moe_quant_params = {
             "num_experts": self.local_num_experts,

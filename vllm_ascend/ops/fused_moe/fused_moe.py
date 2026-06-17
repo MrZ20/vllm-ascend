@@ -1098,6 +1098,24 @@ class AscendFusedMoE(_FUSED_MOE_BASE):  # type: ignore[valid-type, misc]
         return shared_out, routed_out
 
 
+def _clear_provisional_routed_expert_parameters(
+    module: torch.nn.Module,
+    preserve: frozenset[str] = frozenset({"e_score_correction_bias"}),
+) -> None:
+    # Upstream vLLM PR #41184 makes RoutedExperts.__init__ eagerly create expert
+    # weights before Ascend can apply EPLB/redundant-expert adjustments. Drop
+    # those provisional parameters so Ascend's quant_method.create_weights can
+    # rebuild them with the final local/global expert counts.
+    # Preserve e_score_correction_bias: upstream registers it as a parameter, but
+    # it is the gate's shared routing correction bias (non-None for deepseek
+    # v3/r1/v4), not a recreatable expert weight. Deleting it would break the
+    # Ascend forward path which reads it as a public attribute.
+    for param_name in list(module._parameters):
+        if param_name in preserve:
+            continue
+        delattr(module, param_name)
+
+
 class AscendRoutedExperts(_TargetRoutedExperts):
     # Upstream vLLM PR #41184 moved weight ownership from FusedMoE to
     # RoutedExperts. Mirror the old AscendFusedMoE initialization here so
@@ -1302,15 +1320,7 @@ class AscendRoutedExperts(_TargetRoutedExperts):
         # weights before Ascend can apply EPLB/redundant-expert adjustments.
         # Drop those provisional parameters and recreate them with Ascend's
         # final local_num_experts/global_num_experts below.
-        # Keep e_score_correction_bias: upstream RoutedExperts registers it as a
-        # parameter (it is the gate's shared correction bias, non-None for
-        # deepseek v3/r1/v4), but it is a routing field rather than a recreatable
-        # expert weight. Deleting it here would make the Ascend forward path fail
-        # with "AscendRoutedExperts object has no attribute e_score_correction_bias".
-        for param_name in list(self._parameters):
-            if param_name == "e_score_correction_bias":
-                continue
-            delattr(self, param_name)
+        _clear_provisional_routed_expert_parameters(self)
 
         moe_quant_params = {
             "num_experts": self.local_num_experts,
@@ -1400,6 +1410,28 @@ def _create_ascend_fused_moe_runner(*args, **kwargs):
     return FusedMoE(*args, **kwargs)
 
 
+def _rebind_stale_fused_moe_factory_captures(original_fused_moe, replacement) -> None:
+    # Patching the module attributes only affects imports that happen after
+    # patch_fused_moe_factory() runs. Some model modules (e.g. deepseek_v2) are
+    # imported earlier, during adapt_patch() -> patch_deepseek_mtp, which runs
+    # before register_ascend_customop. Those modules did
+    # `from vllm...fused_moe import FusedMoE` at import time and captured the
+    # original PR #41184 factory by name, so they would bypass the Ascend
+    # runner/routed-experts factory and fall back to the upstream MoERunner.
+    # Rebind only those stale captures, identified by an identity check against
+    # the original factory symbol (not a blanket replacement of every FusedMoE
+    # name), so newly added model modules are still covered automatically.
+    import sys
+
+    for module in list(sys.modules.values()):
+        if module is None or not getattr(module, "__name__", "").startswith("vllm.model_executor.models."):
+            continue
+        if getattr(module, "FusedMoE", None) is original_fused_moe:
+            # mypy cannot model dynamic module attributes; the getattr guard above
+            # already proves this module exposes FusedMoE.
+            module.FusedMoE = replacement  # type: ignore[attr-defined]
+
+
 def patch_fused_moe_factory(replacement=None) -> None:
     if vllm_version_is("0.22.1"):
         return
@@ -1408,8 +1440,6 @@ def patch_fused_moe_factory(replacement=None) -> None:
     # registration no longer replaces it. Patch both exported symbols so models
     # importing either package-level FusedMoE or layer.FusedMoE get Ascend's
     # runner/routed-experts factory.
-    import sys
-
     import vllm.model_executor.layers.fused_moe as fused_moe_pkg
     import vllm.model_executor.layers.fused_moe.layer as fused_moe_layer
 
@@ -1418,17 +1448,4 @@ def patch_fused_moe_factory(replacement=None) -> None:
     fused_moe_layer.FusedMoE = replacement
     fused_moe_pkg.FusedMoE = replacement
 
-    # Patching the module attributes only affects imports that happen after this
-    # call. Some model modules (e.g. deepseek_v2) are imported earlier, during
-    # adapt_patch() -> patch_deepseek_mtp, which runs before register_ascend_customop.
-    # Those modules did `from vllm...fused_moe import FusedMoE` at import time and
-    # captured the original factory by name, so they would bypass the Ascend
-    # runner/routed-experts factory and fall back to the upstream MoERunner.
-    # Rebind those stale references to the Ascend replacement.
-    for module in list(sys.modules.values()):
-        if module is None or not getattr(module, "__name__", "").startswith("vllm.model_executor.models."):
-            continue
-        if getattr(module, "FusedMoE", None) is original_fused_moe:
-            # mypy cannot model dynamic module attributes; the getattr guard above
-            # already proves this module exposes FusedMoE.
-            module.FusedMoE = replacement  # type: ignore[attr-defined]
+    _rebind_stale_fused_moe_factory_captures(original_fused_moe, replacement)
