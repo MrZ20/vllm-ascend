@@ -10,9 +10,7 @@ This document describes the CI workflows for `vllm-ascend`, how to add tests, an
 | `_selected_tests.yaml` | Called by `pr_test.yaml` | Runs tests selected by `select_tests.py` |
 | `_parse_trigger.yaml` | PR comment `/e2e` | Parses comment to run specific E2E tests |
 | `_pre_commit.yml` | Called by `pr_test.yaml` | Lint and format checks |
-| `schedule_nightly_test_a2.yaml` | Cron | Nightly E2E on A2 runners |
-| `schedule_nightly_test_a3.yaml` | Cron | Nightly E2E on A3 runners |
-| `schedule_weekly_test_a3.yaml` | Cron | Weekly E2E on A3 runners |
+| `schedule_periodic_test.yaml` | Cron / manual / `/nightly` PR comment | Periodic E2E tests from `schedule_config.yaml` |
 
 ## Selective Testing System
 

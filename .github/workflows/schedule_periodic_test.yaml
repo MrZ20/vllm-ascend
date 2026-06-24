@@ -1,0 +1,439 @@
+#
+# Copyright (c) 2025 Huawei Technologies Co., Ltd. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# This file is a part of the vllm-ascend project.
+#
+
+# Unified periodic test workflow.
+#
+# Adding a new test:
+#   1. Place the config/script under tests/e2e/schedule/<Family|accuracy|ops>/<resource_dir>/
+#   2. Register its path in .github/workflows/scripts/schedule_config.yaml
+#   (No changes to this workflow file required)
+
+name: Periodic-Test
+
+on:
+  schedule:
+    # Nightly: 23:45 Beijing time (UTC+8) = 15:45 UTC
+    - cron: "45 15 * * *"
+    # Weekly: every Monday at 23:45 Beijing time
+    - cron: "45 15 * * 1"
+  workflow_dispatch:
+    inputs:
+      vllm_ascend_ref:
+        description: 'vllm-ascend ref to test (branch, tag, or SHA)'
+        required: false
+        default: 'main'
+        type: string
+      group:
+        description: 'Comma-separated schedule_config groups to run. Leave empty only when test_filter is set.'
+        required: false
+        default: ''
+        type: string
+      test_filter:
+        description: 'Comma-separated path substrings used to select tests across matching groups'
+        required: false
+        default: ''
+        type: string
+  repository_dispatch:
+    types: [nightly-command]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+defaults:
+  run:
+    shell: bash -el {0}
+
+concurrency:
+  group: periodic-test-${{ github.ref }}-${{ github.event.schedule || inputs.group || github.event.client_payload.github.payload.issue.number || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  ASCEND_LOG_PREFIX: '/root/.cache/ascend-logs'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Resolve trigger-specific inputs into the unified periodic test contract.
+  # ---------------------------------------------------------------------------
+  resolve-trigger:
+    name: Resolve trigger
+    runs-on: ubuntu-latest
+    outputs:
+      vllm_ascend_ref: ${{ steps.resolve.outputs.vllm_ascend_ref }}
+      checkout_ref:    ${{ steps.resolve.outputs.checkout_ref }}
+      ref_tag:         ${{ steps.resolve.outputs.ref_tag }}
+      group:           ${{ steps.resolve.outputs.group }}
+      test_filter:     ${{ steps.resolve.outputs.test_filter }}
+    steps:
+      - name: Resolve trigger inputs
+        id: resolve
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE_CRON: ${{ github.event.schedule || '' }}
+          INPUT_REF: ${{ inputs.vllm_ascend_ref || '' }}
+          INPUT_GROUP: ${{ inputs.group || '' }}
+          INPUT_TEST_FILTER: ${{ inputs.test_filter || '' }}
+          COMMENT_ARGS: ${{ github.event.client_payload.slash_command.args.all || '' }}
+          COMMENT_ACTOR: ${{ github.event.client_payload.github.payload.comment.user.login || '' }}
+          COMMENT_ID: ${{ github.event.client_payload.github.payload.comment.id || '' }}
+          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number || '' }}
+          PR_URL: ${{ github.event.client_payload.github.payload.issue.pull_request.url || '' }}
+          REPOSITORY_FULL_NAME: ${{ github.event.client_payload.github.payload.repository.full_name || github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import shlex
+          import subprocess
+          import sys
+
+
+          def csv_items(value: str) -> list[str]:
+              return [item.strip() for item in value.split(",") if item.strip()]
+
+
+          def csv_join(items: list[str]) -> str:
+              seen = []
+              for item in items:
+                  if item not in seen:
+                      seen.append(item)
+              return ",".join(seen)
+
+
+          def gh(*args: str) -> str:
+              return subprocess.check_output(["gh", *args], text=True).strip()
+
+
+          def post_comment(message: str) -> None:
+              repo = os.environ.get("REPOSITORY_FULL_NAME", "")
+              issue_number = os.environ.get("ISSUE_NUMBER", "")
+              if repo and issue_number:
+                  subprocess.run(
+                      [
+                          "gh",
+                          "api",
+                          f"repos/{repo}/issues/{issue_number}/comments",
+                          "-f",
+                          f"body={message}",
+                      ],
+                      check=False,
+                  )
+
+
+          def fail(message: str) -> None:
+              if os.environ["EVENT_NAME"] == "repository_dispatch":
+                  post_comment(f"[Bot]: periodic test command failed: {message}")
+              print(f"::error::{message}")
+              sys.exit(1)
+
+
+          def ensure_valid_group(group: str) -> None:
+              groups = csv_items(group)
+              if "all" in groups:
+                  fail("group does not support 'all'; specify concrete group names or use test_filter.")
+
+
+          def parse_comment_args(args: str) -> tuple[str, str, str]:
+              tokens = shlex.split(args)
+              groups: list[str] = []
+              filters: list[str] = []
+              ref = ""
+
+              index = 0
+              while index < len(tokens):
+                  token = tokens[index]
+                  if token == "--group":
+                      index += 1
+                      if index >= len(tokens):
+                          fail("--group requires a comma-separated value.")
+                      groups.extend(csv_items(tokens[index]))
+                  elif token.startswith("--group="):
+                      groups.extend(csv_items(token.split("=", 1)[1]))
+                  elif token == "--ref":
+                      index += 1
+                      if index >= len(tokens):
+                          fail("--ref requires a branch, tag, or SHA.")
+                      ref = tokens[index]
+                  elif token.startswith("--ref="):
+                      ref = token.split("=", 1)[1].strip()
+                  elif token.startswith("--"):
+                      fail(f"unsupported option: {token}")
+                  else:
+                      filters.extend(csv_items(token))
+                  index += 1
+
+              return csv_join(groups), csv_join(filters), ref
+
+
+          event_name = os.environ["EVENT_NAME"]
+          group = ""
+          test_filter = ""
+          vllm_ascend_ref = "main"
+          checkout_ref = "main"
+
+          if event_name == "schedule":
+              vllm_ascend_ref = "main"
+              checkout_ref = "main"
+          elif event_name == "workflow_dispatch":
+              vllm_ascend_ref = os.environ.get("INPUT_REF", "").strip() or "main"
+              checkout_ref = vllm_ascend_ref
+              group = csv_join(csv_items(os.environ.get("INPUT_GROUP", "")))
+              test_filter = csv_join(csv_items(os.environ.get("INPUT_TEST_FILTER", "")))
+              if not group and not test_filter:
+                  fail("workflow_dispatch requires group or test_filter.")
+          elif event_name == "repository_dispatch":
+              actor = os.environ.get("COMMENT_ACTOR", "")
+              repo = os.environ.get("REPOSITORY_FULL_NAME", "")
+              if not actor or not repo:
+                  fail("missing repository_dispatch comment metadata.")
+
+              role_name = gh("api", f"repos/{repo}/collaborators/{actor}/permission", "--jq", ".role_name")
+              if role_name not in {"triage", "write", "maintain", "admin"}:
+                  fail("you do not have permission. Only users with triage+ permission can trigger periodic tests.")
+
+              pr_url = os.environ.get("PR_URL", "")
+              if not pr_url:
+                  fail("/nightly must be used from a pull request comment.")
+              pr_sha = gh("api", pr_url, "--jq", ".head.sha")
+              issue_number = os.environ.get("ISSUE_NUMBER", "")
+
+              group, test_filter, requested_ref = parse_comment_args(os.environ.get("COMMENT_ARGS", "").strip())
+              vllm_ascend_ref = requested_ref or pr_sha
+              checkout_ref = requested_ref or f"refs/pull/{issue_number}/head"
+              if not group and not test_filter:
+                  fail("use `/nightly <test_filter>` or `/nightly <test_filter> --group <group1,group2>`.")
+              post_comment(f"[Bot]: periodic test triggered: {os.environ['RUN_URL']}")
+          else:
+              fail(f"unsupported event: {event_name}")
+
+          ensure_valid_group(group)
+
+          ref_tag = re.sub(r"[^A-Za-z0-9_.-]+", "-", vllm_ascend_ref).strip(".-")
+          if not ref_tag:
+              fail("vllm_ascend_ref cannot be normalized into a Docker tag.")
+          ref_tag = ref_tag[:120]
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output_file:
+              output_file.write(f"vllm_ascend_ref={vllm_ascend_ref}\n")
+              output_file.write(f"checkout_ref={checkout_ref}\n")
+              output_file.write(f"ref_tag={ref_tag}\n")
+              output_file.write(f"group={group}\n")
+              output_file.write(f"test_filter={test_filter}\n")
+          PY
+
+  # ---------------------------------------------------------------------------
+  # 2. Parse schedule_config.yaml -> produce test matrices
+  # ---------------------------------------------------------------------------
+  parse-config:
+    name: Parse schedule config
+    needs: resolve-trigger
+    runs-on: ubuntu-latest
+    outputs:
+      single_node_matrix:    ${{ steps.parse.outputs.single_node_matrix }}
+      multi_node_matrix:     ${{ steps.parse.outputs.multi_node_matrix }}
+      accuracy_matrix:       ${{ steps.parse.outputs.accuracy_matrix }}
+      ops_matrix:            ${{ steps.parse.outputs.ops_matrix }}
+      image_build_targets:   ${{ steps.parse.outputs.image_build_targets }}
+      vllm_ascend_ref:       ${{ steps.trigger.outputs.vllm_ascend_ref }}
+      checkout_ref:          ${{ steps.trigger.outputs.checkout_ref }}
+      ref_tag:               ${{ steps.trigger.outputs.ref_tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.resolve-trigger.outputs.checkout_ref }}
+          fetch-depth: 1
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Export trigger outputs
+        id: trigger
+        run: |
+          echo "vllm_ascend_ref=${{ needs.resolve-trigger.outputs.vllm_ascend_ref }}" >> "$GITHUB_OUTPUT"
+          echo "checkout_ref=${{ needs.resolve-trigger.outputs.checkout_ref }}" >> "$GITHUB_OUTPUT"
+          echo "ref_tag=${{ needs.resolve-trigger.outputs.ref_tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: Parse schedule config
+        id: parse
+        run: |
+          python3 .github/workflows/scripts/parse_schedule_config.py \
+            --config .github/workflows/scripts/schedule_config.yaml \
+            --event-name "${{ github.event_name }}" \
+            --cron "${{ github.event.schedule }}" \
+            --group "${{ needs.resolve-trigger.outputs.group }}" \
+            --test-filter "${{ needs.resolve-trigger.outputs.test_filter }}"
+
+
+  # ---------------------------------------------------------------------------
+  # 3. Build periodic images (one per hardware target)
+  # ---------------------------------------------------------------------------
+  build-image:
+    name: Build periodic image (${{ matrix.target }} / ${{ needs.parse-config.outputs.ref_tag }})
+    needs: parse-config
+    if: needs.parse-config.outputs.image_build_targets != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(needs.parse-config.outputs.image_build_targets) }}
+    uses: ./.github/workflows/_periodic_image_build.yaml
+    with:
+      target: ${{ matrix.target }}
+      checkout_ref: ${{ needs.parse-config.outputs.checkout_ref }}
+      ref_tag: ${{ needs.parse-config.outputs.ref_tag }}
+    secrets:
+      HW_USERNAME: ${{ secrets.HW_USERNAME }}
+      HW_TOKEN: ${{ secrets.HW_TOKEN }}
+      GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+
+  # ---------------------------------------------------------------------------
+  # 4. Multi-node tests (sequential, max-parallel: 1 to respect A3 NPU budget)
+  #    Parser pre-sorts: 4-node entries first (largest resource consumer).
+  # ---------------------------------------------------------------------------
+  multi-node-tests:
+    name: multi-node / ${{ matrix.test_config.name }}
+    needs: [parse-config, build-image]
+    if: >-
+      always() &&
+      needs.parse-config.outputs.multi_node_matrix != '[]' &&
+      (needs.build-image.result == 'success' || needs.build-image.result == 'skipped')
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        test_config: ${{ fromJSON(needs.parse-config.outputs.multi_node_matrix) }}
+    uses: ./.github/workflows/_e2e_periodic_multi_node.yaml
+    with:
+      soc_version:      ${{ matrix.test_config.chip }}
+      image:            swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/vllm-ascend:periodic-ci-${{ needs.parse-config.outputs.ref_tag }}-${{ matrix.test_config.chip }}
+      config_path:      ${{ matrix.test_config.config_path }}
+      extra_components: ${{ matrix.test_config.extra_components }}
+      size:             ${{ matrix.test_config.size }}
+      name:             ${{ matrix.test_config.name }}
+      ascend_log_prefix: /root/.cache/ascend-logs/${{ needs.parse-config.outputs.ref_tag }}
+      ref_tag:          ${{ needs.parse-config.outputs.ref_tag }}
+      vllm_ascend_ref:  ${{ needs.parse-config.outputs.vllm_ascend_ref }}
+    secrets:
+      KUBECONFIG_B64:  ${{ matrix.test_config.chip == 'a2' && secrets.KUBECONFIG_HK_001_INTERNAL_B64 || secrets.KUBECONFIG_B64 }}
+      OBS_ACCESS_KEY_ID: ${{ secrets.OBS_ACCESS_KEY_ID }}
+      OBS_SECRET_ACCESS_KEY: ${{ secrets.OBS_SECRET_ACCESS_KEY }}
+
+  # ---------------------------------------------------------------------------
+  # 5. Single-node tests (after multi-node, to keep A3 resource window clear)
+  # ---------------------------------------------------------------------------
+  single-node-tests:
+    name: single-node / ${{ matrix.test_config.name }}
+    needs: [parse-config, build-image, multi-node-tests]
+    if: >-
+      always() &&
+      needs.parse-config.outputs.single_node_matrix != '[]' &&
+      (needs.build-image.result == 'success' || needs.build-image.result == 'skipped')
+    strategy:
+      fail-fast: false
+      max-parallel: 7
+      matrix:
+        test_config: ${{ fromJSON(needs.parse-config.outputs.single_node_matrix) }}
+    uses: ./.github/workflows/_e2e_periodic_single_node.yaml
+    with:
+      runner:      ${{ matrix.test_config.runner }}
+      image:       swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/vllm-ascend:periodic-ci-${{ needs.parse-config.outputs.ref_tag }}-${{ matrix.test_config.chip }}
+      config_path: ${{ matrix.test_config.config_path }}
+      tests:       ${{ matrix.test_config.tests }}
+      name:        ${{ matrix.test_config.name }}
+      ref_tag:     ${{ needs.parse-config.outputs.ref_tag }}
+    secrets:
+      OBS_ACCESS_KEY_ID: ${{ secrets.OBS_ACCESS_KEY_ID }}
+      OBS_SECRET_ACCESS_KEY: ${{ secrets.OBS_SECRET_ACCESS_KEY }}
+
+  # ---------------------------------------------------------------------------
+  # 6. Accuracy tests (parallel with single-node, independent resource pool)
+  # ---------------------------------------------------------------------------
+  accuracy-tests:
+    name: accuracy / ${{ matrix.test_config.name }}
+    needs: [parse-config, build-image]
+    if: >-
+      always() &&
+      needs.parse-config.outputs.accuracy_matrix != '[]' &&
+      (needs.build-image.result == 'success' || needs.build-image.result == 'skipped')
+    strategy:
+      fail-fast: false
+      matrix:
+        test_config: ${{ fromJSON(needs.parse-config.outputs.accuracy_matrix) }}
+    uses: ./.github/workflows/_e2e_periodic_accuracy.yaml
+    with:
+      runner:       ${{ matrix.test_config.runner }}
+      config_paths: ${{ toJson(matrix.test_config.config_paths) }}
+      image:        swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/vllm-ascend:periodic-ci-${{ needs.parse-config.outputs.ref_tag }}-${{ matrix.test_config.chip }}
+      upload:       false
+
+  # ---------------------------------------------------------------------------
+  # 7. Ops tests (lightweight pytest-driven, independent resource pool)
+  # ---------------------------------------------------------------------------
+  ops-tests:
+    name: ops / ${{ matrix.test_config.name }}
+    needs: [parse-config, build-image]
+    if: >-
+      always() &&
+      needs.parse-config.outputs.ops_matrix != '[]' &&
+      (needs.build-image.result == 'success' || needs.build-image.result == 'skipped')
+    strategy:
+      fail-fast: false
+      matrix:
+        test_config: ${{ fromJSON(needs.parse-config.outputs.ops_matrix) }}
+    uses: ./.github/workflows/_e2e_periodic_ops.yaml
+    with:
+      runner:             ${{ matrix.test_config.runner }}
+      image:              swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/vllm-ascend:periodic-ci-${{ needs.parse-config.outputs.ref_tag }}-${{ matrix.test_config.chip }}
+      tests:              ${{ matrix.test_config.tests }}
+      name:               ${{ matrix.test_config.name }}
+
+  # ---------------------------------------------------------------------------
+  # 8. Clear PVC logs (schedule-only, runs after multi-node completes)
+  # ---------------------------------------------------------------------------
+  clear-pre-logs:
+    name: Clear pre-run logs from PVC
+    needs: [parse-config, multi-node-tests]
+    if: >-
+      github.event_name == 'schedule' &&
+      needs.multi-node-tests.result != 'skipped'
+    runs-on: linux-aarch64-a3-0
+    steps:
+      - name: Clear logs generated before the test run
+        run: rm -rf "${ASCEND_LOG_PREFIX:?}"/* || true
+
+  # ---------------------------------------------------------------------------
+  # 9. Merge benchmark artifacts
+  # ---------------------------------------------------------------------------
+  merge-benchmark-artifacts:
+    name: Merge benchmark artifacts
+    needs: [parse-config, single-node-tests, multi-node-tests, accuracy-tests, ops-tests]
+    if: >-
+      always() &&
+      (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch') &&
+      needs.parse-config.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge all benchmark result artifacts
+        continue-on-error: true
+        uses: actions/upload-artifact/merge@v7
+        with:
+          name: periodic-test-results
+          pattern: periodic-test-benchmark-results-*
+          compression-level: 0
+          delete-merged: true

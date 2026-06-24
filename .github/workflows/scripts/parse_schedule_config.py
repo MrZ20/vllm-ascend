@@ -179,31 +179,21 @@ def accuracy_framework(raw_path: Any, group: str, accuracy_list: list[PeriodicCa
     if "accuracy" not in config_path:
         return False
 
-    accuracy_list.append(make_case(config_path, "accuracy", "accuracy", group))
+    accuracy_list.append(make_case(config_path, "accuracy", "accuracy", group, default_device_type="a2"))
     return True
 
 
+def parse_csv(value: str) -> list[str]:
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 def matches_filter(case: PeriodicCase, test_filter: str) -> bool:
-    filters = [item.strip() for item in test_filter.split(",") if item.strip()] or ["all"]
-    if "all" in filters:
+    filters = parse_csv(test_filter)
+    if not filters:
         return True
 
-    item_values = [
-        case.name,
-        case.config_path,
-        case.test_directory,
-        case.framework,
-        case.device_type,
-        case.device_scale,
-        str(case.device_num),
-        case.runner,
-        case.group,
-    ]
-    for filter_text in filters:
-        for value in item_values:
-            if filter_text == value or filter_text in value:
-                return True
-    return False
+    config_path = case.config_path.casefold()
+    return any(filter_text.casefold() in config_path for filter_text in filters)
 
 
 def filter_cases(cases: list[PeriodicCase], test_filter: str) -> list[PeriodicCase]:
@@ -305,8 +295,17 @@ def select_schedule_sections(config: dict[str, Any], event_name: str, cron: str,
     schedule_sections = config.get("periodic_tests", [])
     if event_name == "schedule" and cron:
         return [section for section in schedule_sections if section["cron"] == cron]
-    if group and group != "manual":
-        return [section for section in schedule_sections if section["group"] == group]
+
+    groups = parse_csv(group)
+    if groups:
+        if "all" in groups:
+            raise ValueError("group does not support 'all'; specify concrete group names or use test_filter")
+        known_groups = {section["group"] for section in schedule_sections}
+        unknown_groups = sorted(set(groups) - known_groups)
+        if unknown_groups:
+            raise ValueError(f"Unknown group(s): {', '.join(unknown_groups)}")
+        return [section for section in schedule_sections if section["group"] in groups]
+
     return schedule_sections
 
 
@@ -375,7 +374,7 @@ def main() -> None:
     parser.add_argument("--event-name", default="workflow_dispatch")
     parser.add_argument("--cron", default="")
     parser.add_argument("--group", default="")
-    parser.add_argument("--test-filter", default="all")
+    parser.add_argument("--test-filter", default="")
     args = parser.parse_args()
 
     with open(args.config, encoding="utf-8") as config_file:

@@ -15,7 +15,7 @@
 # This file is a part of the vllm-ascend project.
 #
 
-name: 'e2e periodic ops test'
+name: 'e2e periodic single-node test'
 
 on:
   workflow_call:
@@ -24,16 +24,34 @@ on:
         required: true
         type: string
       image:
-        required: true
+        required: false
         type: string
+        default: "swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann:9.0.0-910b-ubuntu22.04-py3.12"
       tests:
-        required: true
+        required: false
         type: string
-        description: space-separated pytest paths for scheduled ops tests
+      config_path:
+        required: false
+        type: string
+        description: full relative path to the YAML config (e.g. tests/e2e/schedule/model/DeepSeek/one_node/X.yaml)
       name:
         required: false
         type: string
+      ref_tag:
+        required: false
+        type: string
         default: ''
+        description: sanitized vllm-ascend ref used as prefix in artifact/benchmark names
+      testcase_timeout:
+        required: false
+        default: 120
+        type: string
+        description: test case execution timeout period,default:120 minutes
+    secrets:
+      OBS_ACCESS_KEY_ID:
+        required: false
+      OBS_SECRET_ACCESS_KEY:
+        required: false
 
 # Bash shells do not use ~/.profile or ~/.bashrc so these shells need to be explicitly
 # declared as "shell: bash -el {0}" on steps that need to be properly activated.
@@ -43,14 +61,14 @@ defaults:
     shell: bash -el {0}
 
 concurrency:
-  group: ascend-periodic-ops-${{ github.workflow_ref }}-${{ github.ref }}-${{ inputs.name || inputs.runner }}
+  group: ascend-periodic-${{ github.workflow_ref }}-${{ github.ref }}-${{ inputs.config_path || inputs.tests }}
   cancel-in-progress: true
 
 jobs:
-  e2e-periodic-ops:
-    name: ${{ inputs.name || inputs.tests }}
+  e2e-periodic:
+    name: ${{ inputs.name || inputs.config_path || inputs.tests }}
     runs-on: ${{ inputs.runner }}
-    timeout-minutes: 120
+    timeout-minutes: ${{ fromJSON(inputs.testcase_timeout) }}
     container:
       image: ${{ inputs.image }}
     env:
@@ -77,6 +95,7 @@ jobs:
         run: |
           echo "Installed vLLM-related Python packages:"
           pip list | grep vllm || echo "No vllm packages found."
+
 
           echo ""
           echo "============================"
@@ -111,9 +130,11 @@ jobs:
             echo "Tags:        $(git tag --points-at HEAD || echo 'None')"
             echo "Remote:      $(git remote -v | head -n1)"
             echo ""
+            echo "VLLM_ASCEND_VERSION=$(git rev-parse HEAD)" >> $GITHUB_ENV
           else
             echo "No .git directory found in vllm-ascend"
           fi
+          cd ..
 
       - name: Install clang
         shell: bash -l {0}
@@ -122,25 +143,67 @@ jobs:
           update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 20
           update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 20
 
-      - name: Validate inputs
+      - name: Validate Inputs
         run: |
-          if [[ -z "${{ inputs.tests }}" ]]; then
-            echo "Error: 'tests' must be provided."
+          if [[ -z "${{ inputs.tests }}" && -z "${{ inputs.config_path }}" ]]; then
+            echo "Error: Either 'tests' or 'config_path' must be provided."
             exit 1
           fi
 
-      - name: Run periodic ops pytest
+      - name: Run Pytest (py-driven)
+        if: ${{ inputs.tests != '' }}
         env:
           VLLM_WORKER_MULTIPROC_METHOD: spawn
           VLLM_USE_MODELSCOPE: True
           VLLM_CI_RUNNER: ${{ inputs.runner }}
-          PERIODIC_OPS_TESTS: ${{ inputs.tests }}
         working-directory: /vllm-workspace/vllm-ascend
         run: |
           export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-          read -r -a test_paths <<< "$PERIODIC_OPS_TESTS"
-          echo "Running periodic ops pytest with paths:"
-          printf '  %s\n' "${test_paths[@]}"
+          echo "Running pytest with tests path: ${{ inputs.tests }}"
+          pytest -sv "${{ inputs.tests }}" \
+          --ignore=tests/e2e/schedule/ops/one_card/test_fused_moe.py
 
-          pytest -sv "${test_paths[@]}" \
-            --ignore=tests/e2e/schedule/ops/one_card/test_fused_moe.py
+      - name: Run Pytest (YAML-driven)
+        if: ${{ always() && inputs.config_path != '' }}
+        env:
+          VLLM_WORKER_MULTIPROC_METHOD: spawn
+          VLLM_USE_MODELSCOPE: True
+          VLLM_CI_RUNNER: ${{ inputs.runner }}
+          CONFIG_YAML_PATH: ${{ inputs.config_path }}
+          BENCHMARK_JOB_NAME: ${{ inputs.ref_tag }}-${{ inputs.name }}
+        working-directory: /vllm-workspace/vllm-ascend
+        run: |
+          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+          echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc
+          echo "Running YAML-driven test with config: ${{ inputs.config_path }}"
+          pytest -sv tests/e2e/schedule/scripts/single_node/test_single_node.py
+
+      - name: Set benchmark artifact timestamp
+        if: ${{ always() && inputs.config_path != '' }}
+        id: bench_ts
+        run: |
+          echo "artifact_ts=$(date -u +%Y%m%dT%H%M%SZ)" >> $GITHUB_OUTPUT
+          echo "effective_name=${{ inputs.ref_tag }}-${{ inputs.name }}" >> $GITHUB_OUTPUT
+
+      - name: Upload benchmark results
+        if: ${{ always() && inputs.config_path != '' }}
+        continue-on-error: true
+        uses: ascend-gha-runners/artifact/upload@v0.3
+        with:
+          access_key: ${{ secrets.OBS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.OBS_SECRET_ACCESS_KEY }}
+          name: periodic-test-benchmark-results-${{ steps.bench_ts.outputs.effective_name }}-${{ steps.bench_ts.outputs.artifact_ts }}
+          path: /vllm-workspace/vllm-ascend/benchmark_results/${{ steps.bench_ts.outputs.effective_name }}.json
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Upload benchmark results (GitHub Artifacts)
+        if: ${{ always() && inputs.config_path != '' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: periodic-test-benchmark-results-${{ steps.bench_ts.outputs.effective_name }}-${{ steps.bench_ts.outputs.artifact_ts }}
+          path: /vllm-workspace/vllm-ascend/benchmark_results/${{ steps.bench_ts.outputs.effective_name }}.json
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0

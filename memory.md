@@ -167,7 +167,85 @@ M  .github/workflows/_e2e_nightly_single_node_models.yaml
 
 Do not revert unrelated user changes.
 
+## Step 3 Status
+
+The file `.github/workflows/_e2e_periodic_ops.yaml` has been completed as a
+slim reusable pytest workflow for scheduled ops tests.
+
+Current implementation shape:
+
+- Accepts only the narrow periodic-ops caller inputs:
+  `runner`, `image`, `tests`, `name`, `should_run`, and
+  `vllm_ascend_branch`.
+- Uses the provided nightly image and runner; it does not implement PR/comment
+  trigger checkout or reinstall compatibility yet.
+- Preserves the same basic NPU/CANN, pip mirror, uv, clang, and vLLM version
+  logging setup used by existing nightly single-node workflows.
+- Treats `tests` as a space-separated list of pytest paths, splits it into a
+  Bash array, and passes the paths to pytest as separate arguments.
+- Keeps the existing periodic ops exclusion:
+  `--ignore=tests/e2e/schedule/ops/one_card/test_fused_moe.py`.
+- Uses `inputs.name || inputs.runner` in the concurrency key instead of the
+  full `tests` string, because grouped ops paths may be long.
+
+Validation already run:
+
+```bash
+.venv/bin/python -c "import yaml; yaml.safe_load(open('.github/workflows/_e2e_periodic_ops.yaml', encoding='utf-8'))"
+git diff --check -- .github/workflows/_e2e_periodic_ops.yaml
+```
+
+`actionlint` is not installed locally, so GitHub Actions-specific linting was
+not run.
+
+## Step 4 Status
+
+Accuracy config grouping has been moved into
+`.github/workflows/scripts/schedule_config.yaml`.
+
+Current implementation shape:
+
+- Accuracy config files moved from `tests/e2e/models/configs/` to:
+  `tests/e2e/schedule/accuracy/{one_card,two_card,four_card}/*.yaml`.
+- The old `tests/e2e/models/configs/accuracy_groups_a2.json` and
+  `tests/e2e/models/configs/accuracy.txt` files were deleted.
+- `parse_schedule_config.py` now calls `make_case(...,
+  default_device_type="a2")` for accuracy entries, so accuracy configs default
+  to A2 when the filename has no explicit chip token.
+- `schedule_config.yaml` explicitly lists nightly accuracy configs under
+  `nightly-main` instead of using whole accuracy directories, so the old
+  nightly groups are represented by resource path:
+  `one_card`, `two_card`, and `four_card`.
+- The old `pr_only` accuracy configs were placed into a new `manual` group as
+  placeholders for later comment-trigger/manual integration.
+- User explicitly said not to worry yet about whether `manual` would be scanned;
+  functionality is not live.
+
+Validation already run:
+
+```bash
+.venv/bin/python -m py_compile .github/workflows/scripts/parse_schedule_config.py
+.venv/bin/python -c "import yaml; yaml.safe_load(open('.github/workflows/scripts/schedule_config.yaml', encoding='utf-8'))"
+.venv/bin/python .github/workflows/scripts/parse_schedule_config.py \
+  --config .github/workflows/scripts/schedule_config.yaml \
+  --event-name workflow_dispatch \
+  --group nightly-main \
+  --test-filter accuracy
+.venv/bin/python .github/workflows/scripts/parse_schedule_config.py \
+  --config .github/workflows/scripts/schedule_config.yaml \
+  --event-name workflow_dispatch \
+  --group manual \
+  --test-filter gemma-3-4b-it
+git diff --check -- .github/workflows/scripts/parse_schedule_config.py \
+  .github/workflows/scripts/schedule_config.yaml \
+  tests/e2e/models/configs tests/e2e/schedule/accuracy
+```
+
+`ruff` is not installed in `.venv/bin/ruff` or on PATH in this environment, so
+ruff validation was not run for Step 4.
+
 ## Next Action
 
-Wait for user review/confirmation of Step 2. If confirmed, start Step 3 with a
-`grill-me` question before editing workflow files.
+Wait for user review/confirmation of Step 4. If confirmed, start Step 5 with a
+`grill-me` question before migrating the remaining `tests/` directories and
+scripts.
