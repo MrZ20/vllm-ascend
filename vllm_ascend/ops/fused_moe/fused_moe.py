@@ -532,8 +532,10 @@ class AscendMoERunner(MoERunner):
         if self.multistream_overlap_gate:
             fc3_context = get_flash_common3_context()
             assert fc3_context is not None
-            AscendMoERunner.gate_stream.wait_stream(torch.npu.current_stream())
-            with npu_stream_switch(AscendMoERunner.gate_stream, enabled=self.multistream_overlap_gate):
+            gate_stream = AscendMoERunner.gate_stream
+            assert gate_stream is not None
+            gate_stream.wait_stream(torch.npu.current_stream())
+            with npu_stream_switch(gate_stream, enabled=self.multistream_overlap_gate):
                 # share_expert
                 assert fc3_context.shared_experts is not None
                 shared_out = fc3_context.shared_experts(hidden_states)
@@ -585,7 +587,9 @@ class AscendMoERunner(MoERunner):
 
         # Make sure the default stream waits for the gate stream to finish.
         if self.multistream_overlap_gate:
-            torch.npu.current_stream().wait_stream(AscendMoERunner.gate_stream)
+            gate_stream = AscendMoERunner.gate_stream
+            assert gate_stream is not None
+            torch.npu.current_stream().wait_stream(gate_stream)
 
         # Matrix multiply.
         # apply() expects a RoutedExperts-like layer for weight access

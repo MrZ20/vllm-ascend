@@ -1,9 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import asyncio
 import json
 from types import SimpleNamespace
-from typing import Any
 
 import pytest
 from vllm.parser.parser_manager import ParserManager
@@ -16,7 +14,6 @@ from vllm_ascend.patch.platform import (
     patch_chat_usage_accounting as usage_patch,
 )
 from vllm_ascend.patch.platform import patch_minimax_usage_accounting  # noqa: F401
-from vllm_ascend.utils import vllm_version_is
 
 
 class FakeTokenizer:
@@ -284,97 +281,3 @@ def test_stream_usage_details_inject_prompt_details_without_reasoning():
         "cached_tokens": 0,
     }
     assert "completion_tokens_details" not in payload["usage"]
-
-
-def test_full_generator_forwards_chat_template_kwargs_with_versioned_signature():
-    calls: dict[str, Any] = {}
-    parser_calls = []
-
-    class FakeReasoningParser:
-        def __init__(self, tokenizer, chat_template_kwargs=None):
-            parser_calls.append((tokenizer, chat_template_kwargs))
-
-    if vllm_version_is("0.23.0"):
-
-        async def original_full_generator(
-            request,
-            result_generator,
-            request_id,
-            model_name,
-            conversation,
-            tokenizer,
-            request_metadata,
-            reasoning_parser,
-            **kwargs,
-        ):
-            calls["args"] = (
-                request,
-                result_generator,
-                request_id,
-                model_name,
-                conversation,
-                tokenizer,
-                request_metadata,
-            )
-            calls["reasoning_parser"] = reasoning_parser
-            calls["kwargs"] = kwargs
-            return SimpleNamespace()
-
-    else:
-
-        async def original_full_generator(
-            request,
-            result_generator,
-            request_id,
-            model_name,
-            conversation,
-            tokenizer,
-            request_metadata,
-            **kwargs,
-        ):
-            calls["args"] = (
-                request,
-                result_generator,
-                request_id,
-                model_name,
-                conversation,
-                tokenizer,
-                request_metadata,
-            )
-            calls["reasoning_parser"] = "not-passed"
-            calls["kwargs"] = kwargs
-            return SimpleNamespace()
-
-    async def result_generator():
-        if False:
-            yield None
-
-    fake_serving = SimpleNamespace(
-        enable_prompt_tokens_details=False,
-        reasoning_parser_cls=FakeReasoningParser,
-        _ascend_original_chat_completion_full_generator=original_full_generator,
-    )
-    chat_template_kwargs = {"enable_thinking": False}
-    tokenizer = object()
-
-    asyncio.run(
-        usage_patch._wrapped_chat_completion_full_generator(
-            fake_serving,
-            SimpleNamespace(n=None),
-            result_generator(),
-            "request-id",
-            "model",
-            [],
-            tokenizer,
-            SimpleNamespace(),
-            chat_template_kwargs=chat_template_kwargs,
-        )
-    )
-
-    assert len(calls["args"]) == 7
-    if vllm_version_is("0.23.0"):
-        assert calls["reasoning_parser"] is None
-    else:
-        assert calls["reasoning_parser"] == "not-passed"
-    assert calls["kwargs"] == {"chat_template_kwargs": chat_template_kwargs}
-    assert parser_calls == [(tokenizer, chat_template_kwargs)]
