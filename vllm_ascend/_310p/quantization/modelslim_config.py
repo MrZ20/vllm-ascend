@@ -22,7 +22,6 @@ from typing import Any
 import torch
 from vllm.config import get_current_vllm_config
 from vllm.logger import logger
-from vllm.model_executor.layers.fused_moe import FusedMoE
 from vllm.model_executor.layers.linear import LinearBase
 from vllm.model_executor.layers.quantization import register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizeMethodBase
@@ -33,6 +32,7 @@ from vllm.model_executor.layers.vocab_parallel_embedding import (
 from vllm_ascend._310p.quantization.methods.registry import (
     get_scheme_class,
 )
+from vllm_ascend.ops.fused_moe.compat import is_fused_moe_layer
 from vllm_ascend.quantization.method_adapters import AscendFusedMoEMethod, AscendLinearMethod
 from vllm_ascend.quantization.modelslim_config import (
     AscendModelSlimConfig,
@@ -118,7 +118,7 @@ class AscendModelSlimConfig310(AscendModelSlimConfig):
             logger.debug("Select AscendLinearMethod for %s (layer=%s)", prefix, "LinearBase")
             return AscendLinearMethod(scheme)
 
-        elif isinstance(layer, FusedMoE):
+        elif is_fused_moe_layer(layer):
             if self.is_layer_skipped_ascend(prefix, self.packed_modules_mapping):
                 from vllm_ascend._310p.fused_moe.fused_moe import AscendUnquantizedFusedMoEMethod310
 

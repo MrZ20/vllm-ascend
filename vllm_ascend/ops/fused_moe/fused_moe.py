@@ -87,6 +87,25 @@ def mock_true():
     return True
 
 
+def _is_allgather_comm_method(moe_comm_method: object, allgather_impl: object = AllGatherCommImpl) -> bool:
+    if isinstance(allgather_impl, type):
+        return isinstance(moe_comm_method, allgather_impl)
+
+    impl_name = getattr(allgather_impl, "__name__", "AllGatherCommImpl")
+    return type(moe_comm_method).__name__ in {impl_name, "AllGatherCommImpl", "AllGatherCommImpl310"}
+
+
+def _get_gate_weight_fp32(gate: torch.nn.Module) -> torch.Tensor:
+    gate_weight_fp32 = getattr(gate, "weight_fp32", None)
+    if gate_weight_fp32 is not None:
+        return gate_weight_fp32
+
+    gate_weight = getattr(gate, "weight", None)
+    if gate_weight is None:
+        raise AttributeError(f"{type(gate).__name__} has neither weight_fp32 nor weight")
+    return gate_weight.float()
+
+
 class AscendUnquantizedFusedMoEMethod(UnquantizedFusedMoEMethod):
     def __init__(self, moe: FusedMoEConfig = None, tid2eid=None):
         super().__init__(moe=moe)
@@ -566,7 +585,7 @@ class AscendMoERunner(MoERunner):
                     tid2eid=self.tid2eid,
                 )
 
-                if isinstance(_EXTRA_CTX.moe_comm_method, AllGatherCommImpl):
+                if _is_allgather_comm_method(_EXTRA_CTX.moe_comm_method):
                     topk_weights = torch.ops.vllm.maybe_all_gather_and_maybe_unpad(topk_weights, True, True)
                     topk_ids = torch.ops.vllm.maybe_all_gather_and_maybe_unpad(topk_ids, True, True)
 
@@ -641,7 +660,7 @@ class AscendMoERunner(MoERunner):
 
         routed_out = _EXTRA_CTX.moe_comm_method.finalize(
             hidden_states=fused_experts_results.routed_out,
-            reduce_results=isinstance(_EXTRA_CTX.moe_comm_method, AllGatherCommImpl),
+            reduce_results=_is_allgather_comm_method(_EXTRA_CTX.moe_comm_method),
             padded_hidden_states_shape=padded_hidden_states_shape,
         )
 
@@ -780,7 +799,7 @@ class AscendMoERunner(MoERunner):
             # process_weights_after_loading of AscendUnquantizedLinearMethod.
             hidden_states_fp32 = hidden_states.float()
             before_routed_experts = torch.npu.current_stream().record_event()
-            router_logits = F.linear(hidden_states_fp32, gate.weight_fp32)
+            router_logits = F.linear(hidden_states_fp32, _get_gate_weight_fp32(gate))
             after_routed_experts = torch.npu.current_stream().record_event()
         else:
             before_routed_experts = torch.npu.current_stream().record_event()

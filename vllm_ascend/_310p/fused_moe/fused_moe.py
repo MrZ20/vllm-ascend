@@ -19,21 +19,24 @@ from collections.abc import Callable
 import torch
 from vllm.distributed import get_dp_group, get_ep_group, get_tp_group
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig
-from vllm.model_executor.layers.fused_moe.layer import FusedMoE, UnquantizedFusedMoEMethod
+from vllm.model_executor.layers.fused_moe.layer import FusedMoE
+from vllm.model_executor.layers.fused_moe.unquantized_fused_moe_method import UnquantizedFusedMoEMethod
 
 from vllm_ascend.ascend_forward_context import _EXTRA_CTX, MoECommType
 from vllm_ascend.ops.fused_moe.experts_selector import zero_experts_compute
+from vllm_ascend.ops.fused_moe.fused_moe import _is_allgather_comm_method
 from vllm_ascend.ops.fused_moe.moe_comm_method import (
-    AllGatherCommImpl,
     FusedExpertsResult,
     _MoECommMethods,
 )
 from vllm_ascend.ops.fused_moe.moe_runtime_args import build_fused_experts_input
 from vllm_ascend.quantization.quant_type import QuantType
-from vllm_ascend.utils import maybe_trans_nz
+from vllm_ascend.utils import maybe_trans_nz, vllm_version_is
 
 from .experts_selector import select_experts
 from .moe_comm_method import AllGatherCommImpl310
+
+_FUSED_MOE_BASE = torch.nn.Module if vllm_version_is("0.23.0") else FusedMoE
 
 
 class AscendUnquantizedFusedMoEMethod310(UnquantizedFusedMoEMethod):
@@ -126,7 +129,7 @@ class AscendUnquantizedFusedMoEMethod310(UnquantizedFusedMoEMethod):
         return final_hidden_states
 
 
-class AscendFusedMoE310(FusedMoE):
+class AscendFusedMoE310(_FUSED_MOE_BASE):  # type: ignore[misc, valid-type]
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -271,7 +274,7 @@ class AscendFusedMoE310(FusedMoE):
 
         routed_out = _EXTRA_CTX.moe_comm_method.finalize(
             hidden_states=fused_experts_results.routed_out,
-            reduce_results=isinstance(_EXTRA_CTX.moe_comm_method, AllGatherCommImpl),
+            reduce_results=_is_allgather_comm_method(_EXTRA_CTX.moe_comm_method, AllGatherCommImpl310),
             padded_hidden_states_shape=padded_hidden_states_shape,
         )
 

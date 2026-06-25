@@ -3878,9 +3878,10 @@ class NPUModelRunner(GPUModelRunner):
         # upstream hook never fires. Instead, stash the capturer as a
         # plain attribute on every FusedMoE layer; ``apply()`` reads it
         # back on the hot path.
-        from vllm.model_executor.layers.fused_moe.layer import FusedMoE
+        from vllm_ascend.ops.fused_moe.compat import is_fused_moe_layer
+
         for module in self.compilation_config.static_forward_context.values():
-            if isinstance(module, FusedMoE):
+            if is_fused_moe_layer(module):
                 module._ascend_routed_experts_capturer = capturer
 
     def _align_memory(self, tensor: torch.Tensor, alignment: int) -> torch.Tensor:
