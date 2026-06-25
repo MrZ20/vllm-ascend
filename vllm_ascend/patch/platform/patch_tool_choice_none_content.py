@@ -30,6 +30,8 @@ from vllm.entrypoints.openai.chat_completion.protocol import (
 )
 from vllm.parser.abstract_parser import DelegatingParser
 
+from vllm_ascend.utils import vllm_version_is
+
 _original_chat_completion_response_model_dump = ChatCompletionResponse.model_dump
 _original_chat_completion_stream_response_model_dump = ChatCompletionStreamResponse.model_dump
 
@@ -83,24 +85,44 @@ def _is_forced_tool_choice(request) -> bool:
     )
 
 
-_original_delegating_parse_tool_calls = DelegatingParser._parse_tool_calls
+if not vllm_version_is("0.23.0"):
+    _original_delegating_extract_tool_calls = DelegatingParser._extract_tool_calls
 
+    def _patched_delegating_extract_tool_calls(
+        self,
+        content: str | None,
+        request,
+        enable_auto_tools: bool = False,
+    ):
+        if content is None and _is_forced_tool_choice(request):
+            return [], None
 
-def _patched_delegating_parse_tool_calls(
-    self,
-    request,
-    content: str | None,
-    enable_auto_tools: bool,
-):
-    if content is None and _is_forced_tool_choice(request):
-        return [], None
+        return _original_delegating_extract_tool_calls(
+            self,
+            content,
+            request,
+            enable_auto_tools,
+        )
 
-    return _original_delegating_parse_tool_calls(
+    DelegatingParser._extract_tool_calls = _patched_delegating_extract_tool_calls
+
+else:
+    _original_delegating_parse_tool_calls = DelegatingParser._parse_tool_calls
+
+    def _patched_delegating_parse_tool_calls(
         self,
         request,
-        content,
-        enable_auto_tools,
-    )
+        content: str | None,
+        enable_auto_tools: bool,
+    ):
+        if content is None and _is_forced_tool_choice(request):
+            return [], None
 
+        return _original_delegating_parse_tool_calls(
+            self,
+            request,
+            content,
+            enable_auto_tools,
+        )
 
-DelegatingParser._parse_tool_calls = _patched_delegating_parse_tool_calls
+    DelegatingParser._parse_tool_calls = _patched_delegating_parse_tool_calls

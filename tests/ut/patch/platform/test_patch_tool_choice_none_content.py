@@ -21,6 +21,7 @@ from vllm.entrypoints.openai.responses.protocol import ResponsesRequest
 from vllm.parser.abstract_parser import DelegatingParser
 
 from vllm_ascend.patch.platform import patch_tool_choice_none_content  # noqa: F401
+from vllm_ascend.utils import vllm_version_is
 
 
 class _DummyDelegatingParser(DelegatingParser):
@@ -65,11 +66,18 @@ def test_responses_parser_allows_named_tool_choice_with_none_content():
     )
     parser = _DummyDelegatingParser(tokenizer=None)
 
-    tool_calls, content = parser._parse_tool_calls(
-        request=request,
-        content=None,
-        enable_auto_tools=False,
-    )
+    if not vllm_version_is("0.23.0"):
+        tool_calls, content = parser._extract_tool_calls(
+            content=None,
+            request=request,
+            enable_auto_tools=False,
+        )
+    else:
+        tool_calls, content = parser._parse_tool_calls(
+            request=request,
+            content=None,
+            enable_auto_tools=False,
+        )
 
     assert content is None
     assert tool_calls == []
