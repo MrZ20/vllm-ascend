@@ -25,6 +25,7 @@ from vllm.distributed.parallel_state import (
     get_pcp_group,
     get_tensor_model_parallel_rank,
     get_tensor_model_parallel_world_size,
+    get_tp_group,
 )
 from vllm.forward_context import get_forward_context
 from vllm.model_executor.layers.fused_moe import FusedMoEConfig
@@ -180,8 +181,15 @@ class PrepareAndFinalizeWithAll2All(PrepareAndFinalize):
         self,
         input_ids,
     ):
-        if not (self.replace_allreduce or self.enable_shared_expert_dp):
-            pad_size = self.tp_size - self.num_tokens
+        # NOTE(fused_moe refactor): like the MC2 override below, this now runs during
+        # select_experts (before prepare()), so derive the dispatch params from the forward
+        # context / config / input instead of the prepare()-set self.replace_allreduce /
+        # enable_shared_expert_dp / num_tokens.
+        replace_allreduce = get_forward_context().flash_comm_v1_enabled
+        enable_shared_expert_dp = get_ascend_config().enable_shared_expert_dp
+        num_tokens = input_ids.shape[0]
+        if not (replace_allreduce or enable_shared_expert_dp):
+            pad_size = self.tp_size - num_tokens
             if pad_size > 0:
                 input_ids = nn.functional.pad(input_ids, (0, pad_size))
 
@@ -189,6 +197,20 @@ class PrepareAndFinalizeWithAll2All(PrepareAndFinalize):
                 input_ids = torch.tensor_split(input_ids, self.tp_size, dim=0)
                 input_ids = input_ids[self.tp_rank]
         return input_ids
+
+    def pad_and_split_topk(self, topk_weights, topk_ids):
+        """Apply the same pad/slice as `prepare` does to hidden_states so that the
+        per-rank topk tensors stay row-aligned with the dispatched hidden_states."""
+        if not (self.replace_allreduce or self.enable_shared_expert_dp):
+            pad_size = self.tp_size - self.num_tokens
+            if pad_size > 0:
+                topk_weights = nn.functional.pad(topk_weights, (0, 0, 0, pad_size))
+                topk_ids = nn.functional.pad(topk_ids, (0, 0, 0, pad_size))
+
+            if self.tp_size > 1:
+                topk_weights = torch.tensor_split(topk_weights, self.tp_size, dim=0)[self.tp_rank]
+                topk_ids = torch.tensor_split(topk_ids, self.tp_size, dim=0)[self.tp_rank]
+        return topk_weights, topk_ids
 
     def finalize(
         self,
@@ -216,7 +238,7 @@ class PrepareAndFinalizeWithAll2All(PrepareAndFinalize):
                     padded_hidden_states_shape, device=hidden_states.device, dtype=hidden_states.dtype
                 )
                 split_hidden_states = torch.tensor_split(gathered_hidden_states, self.tp_size, dim=0)
-                dist.all_gather(list(split_hidden_states), hidden_states, self.moe_config.tp_group.device_group)
+                dist.all_gather(list(split_hidden_states), hidden_states, get_tp_group().device_group)
                 hidden_states = gathered_hidden_states
 
             if self.num_tokens < hidden_states.shape[0]:
@@ -305,17 +327,43 @@ class PrepareAndFinalizeWithMC2(PrepareAndFinalizeWithAll2All):
         self,
         input_ids,
     ):
+        # NOTE(fused_moe refactor): in the unified runner, select_experts() — which calls
+        # this for hash routing — now runs BEFORE prepare(); previously the hash select ran
+        # inside the quant method's apply(), after prepare(). So this can no longer read the
+        # replace_allreduce / enable_shared_expert_dp / num_tokens that prepare() stores on
+        # self (they don't exist yet on the first forward, and are stale afterwards). Derive
+        # them from the forward context / config / input so the pad+slice still matches what
+        # prepare() applies to hidden_states this forward.
+        forward_context = get_forward_context()
+        replace_allreduce = forward_context.flash_comm_v1_enabled
+        enable_shared_expert_dp = get_ascend_config().enable_shared_expert_dp
+        num_tokens = input_ids.shape[0]
+        if not replace_allreduce:
+            target_pad_length = forward_context.padded_num_tokens
+            pad_size = target_pad_length - num_tokens
+            if pad_size > 0 and not enable_shared_expert_dp:
+                input_ids = nn.functional.pad(input_ids, (0, pad_size))
+
+            if self.tp_size > 1 and not enable_shared_expert_dp:
+                input_ids = torch.tensor_split(input_ids, self.tp_size, dim=0)
+                input_ids = input_ids[self.tp_rank]
+        return input_ids
+
+    def pad_and_split_topk(self, topk_weights, topk_ids):
+        """Apply the same pad/slice as `prepare` does to hidden_states so that the
+        per-rank topk tensors stay row-aligned with the dispatched hidden_states."""
         if not self.replace_allreduce:
             forward_context = get_forward_context()
             target_pad_length = forward_context.padded_num_tokens
             pad_size = target_pad_length - self.num_tokens
             if pad_size > 0 and not self.enable_shared_expert_dp:
-                input_ids = nn.functional.pad(input_ids, (0, pad_size))
+                topk_weights = nn.functional.pad(topk_weights, (0, 0, 0, pad_size))
+                topk_ids = nn.functional.pad(topk_ids, (0, 0, 0, pad_size))
 
             if self.tp_size > 1 and not self.enable_shared_expert_dp:
-                input_ids = torch.tensor_split(input_ids, self.tp_size, dim=0)
-                input_ids = input_ids[self.tp_rank]
-        return input_ids
+                topk_weights = torch.tensor_split(topk_weights, self.tp_size, dim=0)[self.tp_rank]
+                topk_ids = torch.tensor_split(topk_ids, self.tp_size, dim=0)[self.tp_rank]
+        return topk_weights, topk_ids
 
 
 class PrepareAndFinalizeWithAllGather(PrepareAndFinalize):

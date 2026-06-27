@@ -10,7 +10,10 @@ from vllm._aiter_ops import rocm_aiter_ops
 from vllm.compilation.decorators import support_torch_compile
 from vllm.config import VllmConfig
 from vllm.distributed import get_tensor_model_parallel_rank, get_tensor_model_parallel_world_size
-from vllm.model_executor.layers.fused_moe import FusedMoE
+
+# NOTE(fused_moe refactor / vllm #41184): make_expert_params_mapping was moved off the
+# FusedMoE class (now a factory function) to a module-level helper. Import the new symbol.
+from vllm.model_executor.layers.fused_moe import fused_moe_make_expert_params_mapping
 from vllm.model_executor.layers.layernorm import RMSNorm
 from vllm.model_executor.layers.linear import ReplicatedLinear
 from vllm.model_executor.layers.logits_processor import LogitsProcessor
@@ -257,7 +260,8 @@ class DeepSeekV4MTP(nn.Module, SupportsPP, DeepseekV2MixtureOfExperts):
             ("gate_up_proj", "up_proj", 1),
         ]
 
-        expert_params_mapping = FusedMoE.make_expert_params_mapping(
+        # fused_moe refactor: was FusedMoE.make_expert_params_mapping (relocated upstream).
+        expert_params_mapping = fused_moe_make_expert_params_mapping(
             model=self.model,
             ckpt_gate_proj_name="gate_proj",
             ckpt_down_proj_name="down_proj",

@@ -36,6 +36,7 @@ class TestAscendW8A8FusedMoEMethod310(TestBase):
         ) as mock_get_current_vllm_config:
             mock_vllm_config = Mock()
             mock_vllm_config.quant_config = Mock(quant_description={"group_size": 0})
+            mock_vllm_config.model_config.dtype = torch.float32
             mock_vllm_config.scheduler_config = Mock(
                 max_num_batched_tokens=2048, max_model_len=2048, enable_chunked_prefill=False
             )
@@ -67,6 +68,57 @@ class TestAscendW8A8FusedMoEMethod310(TestBase):
         self.assertEqual(param_dict["w13_weight_scale"].shape, (self.num_experts, 2 * self.intermediate_size, 1))
         self.assertEqual(param_dict["w2_weight_scale"].dtype, torch.float32)
         self.assertEqual(param_dict["w2_weight_scale"].shape, (self.num_experts, self.hidden_size, 1))
+
+    @patch("vllm_ascend._310p.quantization.methods.w8a8_dynamic._EXTRA_CTX")
+    def test_apply_uses_precomputed_topk_310(self, mock_extra_ctx):
+        tokens = 4
+        layer = torch.nn.Module()
+        layer.w13_weight = torch.randint(
+            -8,
+            8,
+            (self.num_experts, 2 * self.intermediate_size, self.hidden_size),
+            dtype=torch.int8,
+        )
+        layer.w2_weight = torch.randint(
+            -8,
+            8,
+            (self.num_experts, self.hidden_size, self.intermediate_size),
+            dtype=torch.int8,
+        )
+        layer.w13_weight_scale = torch.ones(self.num_experts, 2 * self.intermediate_size, dtype=torch.float32)
+        layer.w2_weight_scale = torch.ones(self.num_experts, self.hidden_size, dtype=torch.float32)
+
+        x = torch.randn(tokens, self.hidden_size, dtype=torch.float32)
+        topk_weights = torch.randn(tokens, 2, dtype=torch.float32)
+        topk_ids = torch.randint(0, self.num_experts, (tokens, 2), dtype=torch.int64)
+        mock_comm = Mock()
+        expected_output = Mock()
+        mock_comm.fused_experts.return_value = expected_output
+        mock_extra_ctx.moe_comm_method = mock_comm
+
+        output = self.quant_method.apply(
+            layer=layer,
+            x=x,
+            topk_weights=topk_weights,
+            topk_ids=topk_ids,
+            activation="silu",
+            apply_router_weight_on_input=True,
+        )
+
+        self.assertIs(output, expected_output)
+        fused_experts_input = mock_comm.fused_experts.call_args.kwargs["fused_experts_input"]
+        self.assertIs(fused_experts_input.topk_weights, topk_weights)
+        self.assertIs(fused_experts_input.topk_ids, topk_ids)
+        self.assertTrue(fused_experts_input.routing.apply_router_weight_on_input)
+
+    def test_apply_requires_precomputed_topk_310(self):
+        with self.assertRaisesRegex(RuntimeError, "310P/W8A8_DYNAMIC"):
+            self.quant_method.apply(
+                layer=torch.nn.Module(),
+                x=torch.randn(4, self.hidden_size, dtype=torch.float32),
+                topk_weights=None,
+                topk_ids=None,
+            )
 
 
 class TestAscendW8A8DynamicLinearMethod310(TestBase):

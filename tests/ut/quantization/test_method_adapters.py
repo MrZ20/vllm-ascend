@@ -184,9 +184,20 @@ class TestAscendFusedMoEMethod(TestBase):
     def test_apply_method(self):
         layer = torch.nn.Module()
         x = torch.randn(8, 64)
-        router_logits = torch.randn(8, 64)
-        top_k = 3
-        renormalize = True
+        topk_weights = torch.randn(8, 3)
+        topk_ids = torch.randint(0, 64, (8, 3))
         self.mock_scheme.apply.return_value = None
-        self.method.apply(layer, x, router_logits, top_k, renormalize)
-        self.mock_scheme.apply.assert_called_once()
+        self.method.apply(layer, x, topk_weights=topk_weights, topk_ids=topk_ids)
+        self.mock_scheme.apply.assert_called_once_with(
+            layer=layer,
+            x=x,
+            topk_weights=topk_weights,
+            topk_ids=topk_ids,
+            expert_map=None,
+            log2phy=None,
+            global_redundant_expert_num=0,
+            pertoken_scale=None,
+            activation="silu",
+            apply_router_weight_on_input=False,
+            mc2_mask=None,
+        )

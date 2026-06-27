@@ -70,11 +70,16 @@ class TestPrepareAndFinalize(unittest.TestCase):
         result = layer.finalize(h_out, reduce_results=False, padded_hidden_states_shape=padded_hidden_states_shape)
         self.assertEqual(result.shape[0], 3)
 
+    # NOTE(fused_moe refactor): finalize() obtains the all-gather group via get_tp_group(),
+    # so the TP-split path must mock it (mocking moe_config.tp_group alone is insufficient).
+    @patch("vllm_ascend.ops.fused_moe.prepare_finalize.get_tp_group")
     @patch("vllm_ascend.ops.fused_moe.prepare_finalize.get_tensor_model_parallel_world_size", return_value=2)
     @patch("vllm_ascend.ops.fused_moe.prepare_finalize.get_tensor_model_parallel_rank", return_value=0)
     @patch("vllm_ascend.ascend_forward_context.get_forward_context")
     @patch("torch.distributed.all_gather")
-    def test_mc2_tp_split_allgather(self, mock_all_gather, mock_get_forward_context, mock_tp_rank, mock_tp_size):
+    def test_mc2_tp_split_allgather(
+        self, mock_all_gather, mock_get_forward_context, mock_tp_rank, mock_tp_size, mock_get_tp_group
+    ):
         mock_context = MagicMock()
         mock_context.mc2_mask = torch.tensor([1, 0, 1, 0])
         mock_context.padded_num_tokens = 4
@@ -127,10 +132,13 @@ class TestPrepareAndFinalize(unittest.TestCase):
         result = layer.finalize(h_out, reduce_results=False, padded_hidden_states_shape=padded_hidden_states_shape)
         self.assertEqual(result.shape[0], 3)
 
+    # NOTE(fused_moe refactor): finalize() obtains the all-gather group via get_tp_group();
+    # mock it for the TP-split path.
+    @patch("vllm_ascend.ops.fused_moe.prepare_finalize.get_tp_group")
     @patch("vllm_ascend.ops.fused_moe.prepare_finalize.get_tensor_model_parallel_world_size", return_value=2)
     @patch("vllm_ascend.ops.fused_moe.prepare_finalize.get_tensor_model_parallel_rank", return_value=0)
     @patch("torch.distributed.all_gather")
-    def test_all2all_tp_split_allgather(self, mock_all_gather, mock_tp_rank, mock_tp_size):
+    def test_all2all_tp_split_allgather(self, mock_all_gather, mock_tp_rank, mock_tp_size, mock_get_tp_group):
         layer = PrepareAndFinalizeWithAll2All(self.moe_config)
         hidden_states = torch.randn(2, 8)
         router_logits = torch.randn(2, 2)

@@ -225,6 +225,9 @@ class MC2CommImpl(MoECommMethod):
     def pad_and_split_input_ids(self, input_ids):
         return self.prepare_finalize.pad_and_split_input_ids(input_ids)  # type: ignore[attr-defined]
 
+    def pad_and_split_topk(self, topk_weights, topk_ids):
+        return self.prepare_finalize.pad_and_split_topk(topk_weights, topk_ids)  # type: ignore[attr-defined]
+
     def _get_token_dispatcher(self):
         return TokenDispatcherWithMC2()
 
@@ -244,6 +247,9 @@ class AlltoAllCommImpl(MoECommMethod):
 
     def pad_and_split_input_ids(self, input_ids):
         return self.prepare_finalize.pad_and_split_input_ids(input_ids)  # type: ignore[attr-defined]
+
+    def pad_and_split_topk(self, topk_weights, topk_ids):
+        return self.prepare_finalize.pad_and_split_topk(topk_weights, topk_ids)  # type: ignore[attr-defined]
 
     def _get_token_dispatcher(self):
         return TokenDispatcherWithAll2AllV(
@@ -275,6 +281,9 @@ class FusedMC2CommImpl(MoECommMethod):
 
     def pad_and_split_input_ids(self, input_ids):
         return self.prepare_finalize.pad_and_split_input_ids(input_ids)  # type: ignore[attr-defined]
+
+    def pad_and_split_topk(self, topk_weights, topk_ids):
+        return self.prepare_finalize.pad_and_split_topk(topk_weights, topk_ids)  # type: ignore[attr-defined]
 
     def _get_token_dispatcher(self):
         return TokenDispatcherWithMC2()

@@ -205,6 +205,7 @@ class AscendHybridKVCacheCoordinator(HybridKVCacheCoordinator):
         # NOTE: use 16k as the alignment tokens for model with compress ratio
         block_sizes = [self._get_effective_block_size(spec) for spec, _, _ in self.attention_groups]
         self.lcm_block_size = lcm(*block_sizes)
+        self.num_uncached_common_prefix_tokens = 0
 
     def find_longest_cache_hit(
         self,
@@ -239,6 +240,7 @@ class AscendHybridKVCacheCoordinator(HybridKVCacheCoordinator):
 
         num_groups = len(self.kv_cache_config.kv_cache_groups)
         hit_length = max_cache_hit_length
+        longest_hit_length = 0
         hit_blocks_by_group: list[list[KVCacheBlock] | None] = [None] * num_groups
 
         # Simple hybrid (1 full attn + 1 other): one iteration suffices.
@@ -294,6 +296,8 @@ class AscendHybridKVCacheCoordinator(HybridKVCacheCoordinator):
                 for group_id, blocks in zip(group_ids, hit_blocks):
                     hit_blocks_by_group[group_id] = blocks
 
+                longest_hit_length = max(longest_hit_length, curr_hit_length)
+
             if curr_hit_length >= hit_length:
                 break
             hit_length = curr_hit_length
@@ -314,6 +318,7 @@ class AscendHybridKVCacheCoordinator(HybridKVCacheCoordinator):
                 if (blks := hit_blocks_by_group[group_id]) is not None:
                     del blks[num_blocks:]
 
+        self.num_uncached_common_prefix_tokens = max(0, longest_hit_length - hit_length)
         return tuple(blocks if blocks is not None else [] for blocks in hit_blocks_by_group), hit_length
 
     def find_longest_cache_hit_per_group(
@@ -331,6 +336,7 @@ class AscendHybridKVCacheCoordinator(HybridKVCacheCoordinator):
 
         num_groups = len(self.kv_cache_config.kv_cache_groups)
         hit_length = max_cache_hit_length
+        longest_hit_length = 0
         hit_blocks_by_group: list[list[KVCacheBlock] | None] = [None] * num_groups
 
         # Simple hybrid (1 full attn + 1 other): one iteration suffices.
@@ -396,6 +402,8 @@ class AscendHybridKVCacheCoordinator(HybridKVCacheCoordinator):
                 for group_id, blocks in zip(group_ids, hit_blocks):
                     hit_blocks_by_group[group_id] = blocks
 
+                longest_hit_length = max(longest_hit_length, curr_hit_length)
+
             if curr_hit_length >= hit_length:
                 break
             hit_length = curr_hit_length
@@ -416,6 +424,7 @@ class AscendHybridKVCacheCoordinator(HybridKVCacheCoordinator):
                 if (blks := hit_blocks_by_group[group_id]) is not None:
                     del blks[num_blocks:]
 
+        self.num_uncached_common_prefix_tokens = max(0, longest_hit_length - hit_length)
         return tuple(blocks if blocks is not None else [] for blocks in hit_blocks_by_group), hit_length
 
 

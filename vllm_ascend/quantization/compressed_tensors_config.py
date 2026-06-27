@@ -22,7 +22,6 @@ from typing import Any, Optional, cast
 import torch
 from compressed_tensors.quantization import QuantizationArgs, QuantizationStrategy, QuantizationType
 from vllm.logger import logger
-from vllm.model_executor.layers.fused_moe import FusedMoE
 from vllm.model_executor.layers.linear import LinearBase, UnquantizedLinearMethod
 from vllm.model_executor.layers.quantization import QUANTIZATION_METHODS, register_quantization_config
 from vllm.model_executor.layers.quantization.base_config import QuantizationConfig, QuantizeMethodBase
@@ -89,13 +88,18 @@ class AscendCompressedTensorsConfig(QuantizationConfig):
     def _add_fused_moe_to_target_scheme_map(self):
         """
         Helper function to update target_scheme_map
-        since linear layers get fused into FusedMoE
+        since linear layers get fused into the MoE experts module
         targeting 'Linear' needs to also match
-        FusedMoE modules.
+        RoutedExperts modules.
         """
-        if "Linear" not in self.target_scheme_map or "FusedMoE" in self.target_scheme_map:
+        # NOTE(fused_moe refactor / vllm #41184): the MoE experts module is now RoutedExperts
+        # (AscendRoutedExperts), not the old FusedMoE layer. find_matched_target matches the
+        # module's class name as a substring against the targets, so register "RoutedExperts"
+        # (which is a substring of "AscendRoutedExperts"). Mirrors upstream compressed-tensors,
+        # which renamed this target from "FusedMoE" to "RoutedExperts".
+        if "Linear" not in self.target_scheme_map or "RoutedExperts" in self.target_scheme_map:
             return
-        self.target_scheme_map["FusedMoE"] = self.target_scheme_map["Linear"]
+        self.target_scheme_map["RoutedExperts"] = self.target_scheme_map["Linear"]
 
     @classmethod
     def from_config(cls, config: dict[str, Any]) -> "AscendCompressedTensorsConfig":
@@ -151,6 +155,8 @@ class AscendCompressedTensorsConfig(QuantizationConfig):
         prefix: str,
         tid2eid: dict[int, int] | None = None,
     ) -> Optional["QuantizeMethodBase"]:
+        from vllm_ascend.ops.fused_moe.fused_moe import AscendRoutedExperts
+
         from .method_adapters import AscendFusedMoEMethod, AscendLinearMethod
 
         if isinstance(layer, LinearBase):
@@ -167,7 +173,7 @@ class AscendCompressedTensorsConfig(QuantizationConfig):
             logger.info_once("Using the vLLM Ascend llmcompressor Quantization now!")
             return AscendLinearMethod(linear_scheme)
 
-        if isinstance(layer, FusedMoE):
+        if isinstance(layer, AscendRoutedExperts):
             # Delayed import to avoid circular import
             from vllm_ascend.ops.fused_moe.fused_moe import AscendUnquantizedFusedMoEMethod
 

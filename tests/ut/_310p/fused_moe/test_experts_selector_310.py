@@ -23,7 +23,7 @@ from vllm_ascend._310p.fused_moe.experts_selector import select_experts
 
 class TestExpertsSelector310:
     @pytest.mark.parametrize("global_num_experts", [256, 128])
-    def test_select_experts(self, global_num_experts):
+    def test_select_experts_uses_310p_fast_path(self, global_num_experts):
         hidden_states = torch.randn(8, 16)
         router_logits = torch.randn(8, 8)
 

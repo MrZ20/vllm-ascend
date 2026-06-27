@@ -121,10 +121,12 @@ def mock_dist_env(mocker: MockerFixture):
     with (
         patch("torch.distributed.get_rank", return_value=0),
         patch("torch.distributed.get_world_size", return_value=4),
-        patch("vllm_ascend.ops.fused_moe.fused_moe.get_ep_group", return_value=mock_ep_and_mc2_group(mocker)),
+        # NOTE(fused_moe refactor): get_ep_group/get_mc2_group/get_tp_group are no longer imported
+        # in fused_moe.fused_moe -- EP/MC2-group usage moved into token_dispatcher and TP-group
+        # usage moved into experts_selector. Patch them where they now live (patching them on
+        # fused_moe.fused_moe raised AttributeError at setup).
         patch("vllm_ascend.ops.fused_moe.token_dispatcher.get_ep_group", return_value=mock_ep_and_mc2_group(mocker)),
-        patch("vllm_ascend.ops.fused_moe.fused_moe.get_mc2_group", return_value=mock_ep_and_mc2_group(mocker)),
-        patch("vllm_ascend.ops.fused_moe.fused_moe.get_tp_group", return_value=mock_dp_and_tp_group(mocker)),
+        patch("vllm_ascend.ops.fused_moe.experts_selector.get_tp_group", return_value=mock_dp_and_tp_group(mocker)),
         patch("vllm.distributed.parallel_state.get_tp_group", return_value=mock_dp_and_tp_group(mocker)),
         patch("vllm_ascend.ops.fused_moe.fused_moe.get_dp_group", return_value=mock_dp_and_tp_group(mocker)),
         patch("vllm.model_executor.layers.fused_moe.layer.get_dp_group", return_value=mock_dp_and_tp_group(mocker)),

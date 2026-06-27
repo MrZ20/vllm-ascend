@@ -38,6 +38,10 @@ class VllmEplbAdaptor:
         """
         VllmEplbAdaptor._registered_moe_layers.append(layer)
 
+    @staticmethod
+    def _expert_storage(layer: "torch.nn.Module") -> "torch.nn.Module":
+        return getattr(layer, "routed_experts", layer)
+
     def __init__(self, model, **args):
         super().__init__(**args)
         if hasattr(model, "language_model"):
@@ -121,10 +125,11 @@ class VllmEplbAdaptor:
             self.expert_weight_names = ["w13_weight", "w2_weight"]
 
         for local_idx, layer in enumerate(self.moe_layers):
+            expert_storage = self._expert_storage(layer)
             self.expert_param_per_layer[local_idx] = list()
             for name in self.expert_weight_names:
                 param_key = f"{local_idx}.{name}"
-                self.param_dict[param_key] = getattr(layer, name)
+                self.param_dict[param_key] = getattr(expert_storage, name)
             for local_expert_id in range(self.num_local_experts):
                 per_expert_param = list()
                 for name in self.expert_weight_names:

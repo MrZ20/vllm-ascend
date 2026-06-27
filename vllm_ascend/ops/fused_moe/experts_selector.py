@@ -271,6 +271,12 @@ def _select_experts_with_fusion_ops(
         else:
             input_ids = None
             tid2eid_ones = None
+        # NOTE(fused_moe refactor): the hash routing op requires bias.dtype == x.dtype, but
+        # e_score_correction_bias is kept in fp32 while router_logits follows the model dtype
+        # (bf16 for deepseek_v4). The non-hash moe_gating_top_k path below already coerces this;
+        # mirror it here so the bf16 hash path doesn't hit "bias dtype must equal x dtype".
+        if e_score_correction_bias is not None and e_score_correction_bias.dtype != router_logits.dtype:
+            e_score_correction_bias = e_score_correction_bias.to(router_logits.dtype)
         topk_weights, topk_ids, _ = torch.ops._C_ascend.moe_gating_top_k_hash(
             x=router_logits,
             k=top_k,

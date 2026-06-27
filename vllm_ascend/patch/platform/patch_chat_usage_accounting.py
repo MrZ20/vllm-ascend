@@ -209,6 +209,24 @@ def _make_full_response_usage(
     )
 
 
+def _resolve_reasoning_parser_for_usage(
+    self,
+    tokenizer,
+    reasoning_parser,
+    extra_kwargs: dict[str, Any],
+):
+    if reasoning_parser is not None:
+        return reasoning_parser
+
+    reasoning_parser_cls = getattr(self, "reasoning_parser_cls", None)
+    if reasoning_parser_cls is None:
+        return None
+    return reasoning_parser_cls(
+        tokenizer,
+        chat_template_kwargs=extra_kwargs.get("chat_template_kwargs"),
+    )
+
+
 def _usage_reasoning_tokens_for_stream_chunk(
     state: _UsageTrackingState,
     chunk: dict[str, Any],
@@ -298,15 +316,21 @@ async def _wrapped_chat_completion_stream_generator(
     reasoning_parser=None,
     **extra_kwargs: Any,
 ):
+    usage_reasoning_parser = _resolve_reasoning_parser_for_usage(
+        self,
+        tokenizer,
+        reasoning_parser,
+        extra_kwargs,
+    )
     num_choices = 1 if request.n is None else request.n
     state = _create_usage_tracking_state(
         num_choices,
-        reasoning_parser,
+        usage_reasoning_parser,
         enable_prompt_tokens_details=self.enable_prompt_tokens_details,
     )
 
     original_stream_generator = self._ascend_original_chat_completion_stream_generator
-    async for data in original_stream_generator(
+    stream_generator = original_stream_generator(
         request,
         _tracked_result_generator(result_generator, state),
         request_id,
@@ -314,9 +338,9 @@ async def _wrapped_chat_completion_stream_generator(
         conversation,
         tokenizer,
         request_metadata,
-        reasoning_parser,
         **extra_kwargs,
-    ):
+    )
+    async for data in stream_generator:
         yield _inject_stream_usage_details(data, state)
 
     usage = _make_full_response_usage(self, state)
@@ -334,11 +358,18 @@ async def _wrapped_chat_completion_full_generator(
     tokenizer,
     request_metadata: engine_protocol.RequestResponseMetadata,
     reasoning_parser=None,
+    **extra_kwargs: Any,
 ):
+    usage_reasoning_parser = _resolve_reasoning_parser_for_usage(
+        self,
+        tokenizer,
+        reasoning_parser,
+        extra_kwargs,
+    )
     num_choices = 1 if request.n is None else request.n
     state = _create_usage_tracking_state(
         num_choices,
-        reasoning_parser,
+        usage_reasoning_parser,
         enable_prompt_tokens_details=self.enable_prompt_tokens_details,
     )
 
@@ -351,7 +382,7 @@ async def _wrapped_chat_completion_full_generator(
         conversation,
         tokenizer,
         request_metadata,
-        reasoning_parser,
+        **extra_kwargs,
     )
 
     if not isinstance(response, chat_protocol.ChatCompletionResponse):

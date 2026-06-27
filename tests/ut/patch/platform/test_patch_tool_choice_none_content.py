@@ -64,11 +64,16 @@ def test_responses_parser_allows_named_tool_choice_with_none_content():
         }
     )
     parser = _DummyDelegatingParser(tokenizer=None)
+    parser.tool_parser = type(
+        "FakeToolParser",
+        (),
+        {"supports_required_and_named": False},
+    )()
 
-    tool_calls, content = parser._parse_tool_calls(
-        request=request,
+    tool_calls, content = parser._extract_tool_calls(
         content=None,
-        enable_auto_tools=False,
+        request=request,
+        enable_auto_tools=True,
     )
 
     assert content is None

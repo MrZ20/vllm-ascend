@@ -36,27 +36,8 @@ def select_experts(
     e_score_correction_bias: torch.Tensor | None = None,
     global_num_experts: int = -1,
 ):
-    """
-    Fused experts with select experts.
+    del global_num_experts
 
-    Args:
-        router_logits: router logits of shape (num_tokens, hidden_size).
-        hidden_states: Hidden states of shape (num_tokens, hidden_size).
-        top_k: number of top k experts.
-        use_grouped_topk: Whether to group experts before selecting top-k.
-        renormalize: Whether to renormalize the routing weights.
-        topk_group: Number of expert groups to select from.
-        num_expert_group: Number of experts in each group.
-        custom_routing_function: Custom routing function.
-        scoring_func: Scoring function to use.
-        e_score_correction_bias: Correction bias to apply to expert scores.
-        routed_scaling_factor: Scaling factor applied to routing weights.
-        global_num_experts: Global number of experts.
-
-    Returns:
-        topk_weights: router weights of shape (num_tokens, top_k).
-        topk_ids: selected expert IDs of shape (num_tokens, top_k).
-    """
     if scoring_func == "softmax" and not use_grouped_topk and custom_routing_function is None:
         topk_weights, topk_ids, _ = torch_npu.npu_moe_gating_top_k_softmax(router_logits, k=top_k)
         topk_weights = _renormalize_topk_weights(topk_weights, renormalize)
@@ -73,7 +54,7 @@ def select_experts(
             scoring_func=scoring_func,
             e_score_correction_bias=e_score_correction_bias,
         )
-    # Apply routed scaling factor to weights
+
     if routed_scaling_factor != 1.0:
         topk_weights = topk_weights * routed_scaling_factor
 

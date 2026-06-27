@@ -22,10 +22,13 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from openai.types.responses import ToolChoiceFunction
 from vllm.entrypoints.openai.chat_completion.protocol import (
+    ChatCompletionNamedToolChoiceParam,
     ChatCompletionResponse,
     ChatCompletionStreamResponse,
 )
+from vllm.parser.abstract_parser import DelegatingParser
 
 _original_chat_completion_response_model_dump = ChatCompletionResponse.model_dump
 _original_chat_completion_stream_response_model_dump = ChatCompletionStreamResponse.model_dump
@@ -85,3 +88,34 @@ ChatCompletionResponse.model_dump = _patched_chat_completion_response_model_dump
 ChatCompletionResponse.model_dump_json = _patched_chat_completion_response_model_dump_json
 ChatCompletionStreamResponse.model_dump = _patched_chat_completion_stream_response_model_dump
 ChatCompletionStreamResponse.model_dump_json = _patched_chat_completion_stream_response_model_dump_json
+
+
+def _is_forced_tool_choice(request) -> bool:
+    tool_choice = getattr(request, "tool_choice", None)
+    return isinstance(
+        tool_choice,
+        (ToolChoiceFunction, ChatCompletionNamedToolChoiceParam),
+    )
+
+
+_original_delegating_extract_tool_calls = DelegatingParser._extract_tool_calls
+
+
+def _patched_delegating_extract_tool_calls(
+    self,
+    content: str | None,
+    request,
+    enable_auto_tools: bool = False,
+):
+    if content is None and _is_forced_tool_choice(request):
+        return [], None
+
+    return _original_delegating_extract_tool_calls(
+        self,
+        content,
+        request,
+        enable_auto_tools,
+    )
+
+
+DelegatingParser._extract_tool_calls = _patched_delegating_extract_tool_calls

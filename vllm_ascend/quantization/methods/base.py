@@ -17,7 +17,6 @@
 """Abstract base classes for Ascend quantization schemes."""
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable
 from typing import Any
 
 import torch
@@ -37,6 +36,16 @@ def get_moe_num_logical_experts(
         return int(num_logical_experts)
 
     return int(num_experts - global_redundant_expert_num - num_shared_experts)
+
+
+def require_topk_weights_and_ids(
+    topk_weights: torch.Tensor | None,
+    topk_ids: torch.Tensor | None,
+    quant_name: str,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    if topk_weights is None or topk_ids is None:
+        raise RuntimeError(f"{quant_name} requires precomputed topk_weights and topk_ids from AscendFusedMoERouter.")
+    return topk_weights, topk_ids
 
 
 class AscendLinearScheme(ABC):
@@ -236,47 +245,24 @@ class AscendMoEScheme(ABC):
         self,
         layer: torch.nn.Module,
         x: torch.Tensor,
-        router_logits: torch.Tensor,
-        top_k: int,
-        renormalize: bool,
-        use_grouped_topk: bool = False,
-        num_experts: int = -1,
+        topk_weights: torch.Tensor,
+        topk_ids: torch.Tensor,
         expert_map: torch.Tensor | None = None,
-        topk_group: int | None = None,
-        num_expert_group: int | None = None,
-        custom_routing_function: Callable | None = None,
-        scoring_func: str = "softmax",
-        routed_scaling_factor: float = 1.0,
-        e_score_correction_bias: torch.Tensor | None = None,
-        is_prefill: bool = True,
-        enable_force_load_balance: bool = False,
         log2phy: torch.Tensor | None = None,
         global_redundant_expert_num: int = 0,
         pertoken_scale: Any | None = None,
         activation: str = "silu",
         apply_router_weight_on_input: bool = False,
         mc2_mask: torch.Tensor | None = None,
-        tid2eid: Any | None = None,
     ) -> torch.Tensor:
         """Forward computation for MoE layer.
 
         Args:
             layer: The MoE layer module.
             x: Input hidden states.
-            router_logits: Router logits for expert selection.
-            top_k: Number of experts to select per token.
-            renormalize: Whether to renormalize expert weights.
-            use_grouped_topk: Whether to use grouped top-k selection.
-            num_experts: Number of experts.
+            topk_weights: Precomputed expert weights from AscendFusedMoERouter.
+            topk_ids: Precomputed expert ids from AscendFusedMoERouter.
             expert_map: Mapping from local to global expert indices.
-            topk_group: Group size for grouped top-k.
-            num_expert_group: Number of expert groups.
-            custom_routing_function: Custom routing function.
-            scoring_func: Scoring function name.
-            routed_scaling_factor: Scaling factor for routed experts.
-            e_score_correction_bias: Expert score correction bias.
-            is_prefill: Whether in prefill phase.
-            enable_force_load_balance: Whether to force load balancing.
             log2phy: Logical to physical expert mapping.
             global_redundant_expert_num: Number of redundant experts.
             pertoken_scale: Optional per-token activation scale from prepare stage.

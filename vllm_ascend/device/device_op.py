@@ -193,6 +193,16 @@ class BaseDeviceAdaptor:
 
         if fallback_output_dtype is None:
             fallback_output_dtype = weight_scale[0].dtype if isinstance(weight_scale, list) else weight_scale.dtype
+
+        # The per-token grouped matmul kernel requires the dequant scale dtype to match
+        # the output: fp32 scale for fp16 output (bf16 scale for bf16 output). A fp16
+        # scale with fp16 output is rejected, so promote a fp16 scale to fp32 here.
+        if fallback_output_dtype == torch.float16:
+            if isinstance(weight_scale, list):
+                weight_scale = [s.to(torch.float32) if s.dtype == torch.float16 else s for s in weight_scale]
+            elif weight_scale.dtype == torch.float16:
+                weight_scale = weight_scale.to(torch.float32)
+
         return torch_npu.npu_grouped_matmul(
             x=[hidden_states],
             weight=weight,

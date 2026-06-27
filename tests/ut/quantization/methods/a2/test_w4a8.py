@@ -361,9 +361,8 @@ class TestAscendW4A8DynamicFusedMoEMethod(TestBase):
         self.assertEqual(per_channel_layer.w2_weight_scale.data.shape, (self.experts, 1, self.output_size))
 
     @patch("vllm_ascend.quantization.methods.w4a8._EXTRA_CTX")
-    @patch("vllm_ascend.quantization.methods.w4a8.select_experts")
     @patch("vllm_ascend.quantization.methods.w4a8.build_fused_experts_input")
-    def test_apply_comprehensive(self, mock_build_input, mock_select, mock_ctx):
+    def test_apply_comprehensive(self, mock_build_input, mock_ctx):
         tokens = 4
         num_experts = self.experts
         hidden_size = self.output_size
@@ -373,16 +372,12 @@ class TestAscendW4A8DynamicFusedMoEMethod(TestBase):
         self.quant_method.is_per_channel_weight = True
         layer.swiglu_limit = 1000000
         x = torch.randn(tokens, hidden_size, dtype=torch.bfloat16)
-        router_logits = torch.randn(tokens, num_experts, dtype=torch.float32)
         topk_weights = torch.randn(tokens, top_k, dtype=torch.float32)
         topk_ids = torch.randint(0, num_experts, (tokens, top_k), dtype=torch.int64)
         expert_map = torch.randint(0, num_experts, (num_experts,), dtype=torch.int64)
         mc2_mask = torch.tensor([1, 0, 1, 0], dtype=torch.bool)
         pertoken_scale = torch.randn(tokens, dtype=torch.float32)
         log2phy = torch.randint(0, num_experts, (num_experts,), dtype=torch.int64)
-        e_score_correction_bias = torch.randn(num_experts, dtype=torch.float32)
-
-        mock_select.return_value = (topk_weights, topk_ids)
 
         mock_fused_input = Mock()
         mock_fused_input.hidden_states = x
@@ -399,17 +394,9 @@ class TestAscendW4A8DynamicFusedMoEMethod(TestBase):
         output = self.quant_method.apply(
             layer=layer,
             x=x,
-            router_logits=router_logits,
-            top_k=top_k,
-            renormalize=True,
-            use_grouped_topk=False,
-            num_experts=num_experts,
+            topk_weights=topk_weights,
+            topk_ids=topk_ids,
             expert_map=expert_map,
-            scoring_func="softmax",
-            routed_scaling_factor=1.0,
-            e_score_correction_bias=e_score_correction_bias,
-            is_prefill=True,
-            enable_force_load_balance=False,
             log2phy=log2phy,
             global_redundant_expert_num=0,
             pertoken_scale=pertoken_scale,
@@ -418,15 +405,14 @@ class TestAscendW4A8DynamicFusedMoEMethod(TestBase):
             mc2_mask=mc2_mask,
         )
 
-        mock_select.assert_called_once()
-        select_call_args = mock_select.call_args
-        self.assertTrue(torch.equal(select_call_args.kwargs["hidden_states"], x))
-        self.assertEqual(select_call_args.kwargs["top_k"], top_k)
-        self.assertEqual(select_call_args.kwargs["num_experts"], num_experts)
-
         mock_build_input.assert_called_once()
         build_kwargs = mock_build_input.call_args.kwargs
         self.assertTrue(torch.equal(build_kwargs["hidden_states"], x))
+        # NOTE(fused_moe refactor): apply() casts topk_weights to x.dtype before dispatch (so the
+        # routing weights match the activation dtype), so the forwarded tensor is value-equal --
+        # not identity-equal -- to the input topk_weights.
+        self.assertTrue(torch.equal(build_kwargs["topk_weights"], topk_weights.to(x.dtype)))
+        self.assertIs(build_kwargs["topk_ids"], topk_ids)
         self.assertEqual(build_kwargs["quant_type"], self.quant_method.quant_type)
         self.assertTrue(build_kwargs["is_per_channel_weight"])
         self.assertEqual(build_kwargs["activation"], "silu")
@@ -436,21 +422,15 @@ class TestAscendW4A8DynamicFusedMoEMethod(TestBase):
         self.assertEqual(mock_comm.fused_experts.call_args.kwargs["fused_experts_input"], mock_fused_input)
         self.assertTrue(torch.equal(output, expected_output))
 
-    def test_apply_asserts_router_logits_expert_mismatch(self):
+    def test_apply_requires_precomputed_topk(self):
         layer = self.build_layer(is_new_quant_version=True, is_per_channel_weight=True)
         x = torch.randn(4, self.output_size, dtype=torch.bfloat16)
-        router_logits = torch.randn(4, self.experts - 1, dtype=torch.float32)
-        expected_message = (
-            "Number of global experts mismatch (excluding redundancy): "
-            f"router_logits.shape[1]={self.experts - 1}, num_logical_experts={self.experts}"
-        )
+        expected_message = "[vllm-ascend/W4A8_DYNAMIC] requires precomputed topk_weights and topk_ids"
 
-        with self.assertRaisesRegex(AssertionError, re.escape(expected_message)):
+        with self.assertRaisesRegex(RuntimeError, re.escape(expected_message)):
             self.quant_method.apply(
                 layer=layer,
                 x=x,
-                router_logits=router_logits,
-                top_k=2,
-                renormalize=True,
-                num_experts=self.experts,
+                topk_weights=None,
+                topk_ids=None,
             )

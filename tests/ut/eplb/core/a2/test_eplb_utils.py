@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 # isort: off
 import torch
 from vllm.config import VllmConfig
+from vllm.model_executor.layers.fused_moe.activation import MoEActivation
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig, FusedMoEParallelConfig
 
 from vllm_ascend.ascend_config import init_ascend_config
@@ -29,10 +30,10 @@ class TestAscendConfig(unittest.TestCase):
             num_experts=8,
             experts_per_token=8,
             hidden_dim=8192,
-            intermediate_size_per_partition=5,
+            intermediate_size=10,
             num_local_experts=8,
             num_logical_experts=8,
-            activation="silu",
+            activation=MoEActivation.SILU,
             device="npu",
             routing_method=RoutingMethodType.Simulated,
             moe_parallel_config=moe_parallel_config,

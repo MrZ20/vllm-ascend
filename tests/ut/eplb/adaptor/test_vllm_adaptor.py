@@ -65,7 +65,11 @@ class TestVllmAdaptor(unittest.TestCase):
         model.config.text_config = self.model.config
         VllmEplbAdaptor(model)
 
-    def test_pp_eplb_adaptor_init_with_registered_layer(self):
+    # NOTE(fused_moe refactor): expert weights now live on layer.routed_experts (see
+    # VllmEplbAdaptor._expert_storage), so the registered MagicMock's weight buffers are mocks;
+    # patch empty_like like the sibling adaptor-init tests do so buffer init does not choke on them.
+    @patch("torch.empty_like", return_value=torch.zeros(16, 32))
+    def test_pp_eplb_adaptor_init_with_registered_layer(self, mock_empty_like):
         """PP+EPLB: adaptor picks up MoE layers registered via register_layer."""
         VllmEplbAdaptor._registered_moe_layers = []
         layer = MagicMock()

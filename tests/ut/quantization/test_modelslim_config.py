@@ -6,11 +6,11 @@ from unittest.mock import MagicMock, patch
 import torch
 from vllm.model_executor.layers.attention import Attention
 from vllm.model_executor.layers.attention_layer_base import AttentionLayerBase
-from vllm.model_executor.layers.fused_moe import FusedMoE
 from vllm.model_executor.layers.fused_moe.config import FusedMoEConfig
 from vllm.model_executor.layers.linear import LinearBase
 
 from tests.ut.base import TestBase
+from vllm_ascend.ops.fused_moe.fused_moe import AscendRoutedExperts
 from vllm_ascend.ops.linear import AscendUnquantizedLinearMethod
 from vllm_ascend.quantization.modelslim_config import (
     MODELSLIM_CONFIG_FILENAME,
@@ -157,7 +157,7 @@ class TestAscendModelSlimConfig(TestBase):
             self.assertIsInstance(args[0], AscendC8KVCacheAttentionMethod)
 
     def test_get_quant_method_for_fused_moe(self):
-        fused_moe_layer = MagicMock(spec=FusedMoE)
+        fused_moe_layer = MagicMock(spec=AscendRoutedExperts)
         fused_moe_layer.moe = MagicMock(spec=FusedMoEConfig)
         fused_moe_layer.moe_config = MagicMock(spec=FusedMoEConfig)
         mock_config = MagicMock()
