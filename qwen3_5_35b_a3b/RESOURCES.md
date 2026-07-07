@@ -47,7 +47,13 @@
 - [ModelSlim 配置：`vllm_ascend/quantization/modelslim_config.py`](../vllm_ascend/quantization/modelslim_config.py)
   用途：理解 `quant_model_description.json` 如何映射到 Ascend quant method。
 - [公式速查：`reference/formulas.md`](reference/formulas.md)
-  用途：复习 RMSNorm、attention、MoE、W8A8、logits 和 sampling 公式。
+  用途：复习 embedding、position、RMSNorm、RoPE、attention、KV cache、MoE、W8A8、TP、logits 和 sampling 公式。
+- [术语表：`reference/glossary.md`](reference/glossary.md)
+  用途：查 prompt、prefill、decode、SchedulerOutput、attention metadata、FusedMoE、W8A8 等术语和易混点。
+- [Tensor 形状速查：`reference/tensor-shapes.md`](reference/tensor-shapes.md)
+  用途：按阶段核对 `input_ids`、`positions`、`router_logits`、`topk_ids`、`logits` 等关键形状。
+- [运行检查表：`reference/runtime-checklist.md`](reference/runtime-checklist.md)
+  用途：按环境、加载、scheduler、runner、attention、MoE、sampling 层定位日志和源码现象。
 - [源码地图：`reference/source-map.md`](reference/source-map.md)
   用途：快速定位每个概念对应的代码。
 - [源码逐跳讲解：`SOURCE_WALKTHROUGH.md`](SOURCE_WALKTHROUGH.md)
@@ -56,7 +62,7 @@
 ## 实战经验来源
 
 - 以仓库里的 e2e pytest 用例作为主要练习闭环，因为它们直接体现 Ascend 硬件上的真实运行假设。
-- 需要理解跨文件调用链或做大范围改动时，先用 CodeGraph 建图和查询，避免在多个 model runner 路径里迷路。
+- 需要理解跨文件调用链或做大范围改动时，先用 CodeGraph 建图和查询，避免在多个 model runner 路径里迷路；普通查阅文档和单点源码不需要建图。
 
 ## 已验证的远端模型文件
 

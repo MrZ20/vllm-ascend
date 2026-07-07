@@ -6,14 +6,14 @@
 pytest -sv tests/e2e/pull_request/two_card/test_qwen3_5_35b_a3b_w8a8.py
 ```
 
-## 当前状态
+## 当前内容
 
-- 源码定位：已完成目标链路的第一轮梳理。
-- 教学大纲：已创建。
+- 源码定位：已覆盖 pytest、上游 vLLM offline engine、EngineCore、Ascend worker、Qwen3.5 patch、FusedMoE、W8A8 和 sampling。
+- 教学大纲：包含快速大纲、深度大纲和源码逐跳大纲。
 - 远端 pytest：已通过。
-- 动态追踪：已通过临时脚本采集。
+- 动态追踪：已通过教学插桩脚本采集。
 - 分章讲解：已升级为连续深度版，包含运行环境、模型加载、request/scheduler、attention metadata、并行内存、数据推导、prefill/decode、Transformer、FusedMoE、W8A8 和 sampling。
-- 源码逐跳讲解：已创建教学分支和 `source-walkthrough/`。
+- 源码逐跳讲解：已覆盖从 pytest 到 `RequestOutput` 的关键函数跳转。
 - 模型配置：已从远端真实缓存目录读取。
 - 量化描述：已从 `quant_model_description.json` 解析。
 
@@ -35,10 +35,14 @@ pytest -sv tests/e2e/pull_request/two_card/test_qwen3_5_35b_a3b_w8a8.py
 14. `chapters/015-logits-sampling-output.md`：理解 logits 到最终文本。
 15. `SOURCE_WALKTHROUGH.md`：进入源码逐跳讲解。
 16. `source-walkthrough/000-branch-and-reading-map.md` 到 `source-walkthrough/006-sampling-and-output.md`：按真实源码调用链逐步阅读。
+17. `reference/formulas.md`：复习公式和张量形状。
+18. `reference/glossary.md`：查术语定义和易混点。
+19. `reference/tensor-shapes.md`：按推理阶段查关键 tensor。
+20. `reference/runtime-checklist.md`：按日志和源码定位问题。
 
 ## 编号说明
 
-最早先写了 `000-004` 作为基础扫盲，再把第二轮数学深挖放在 `010-015`，中间 `005-009` 原本预留给运行系统和模型数学之间的桥梁层。现在这些中间章节已经补齐，所以阅读路径是连续的：
+当前章节按学习层次连续编号：
 
 ```text
 000-004 基础心智模型
@@ -57,10 +61,10 @@ pytest -sv tests/e2e/pull_request/two_card/test_qwen3_5_35b_a3b_w8a8.py
 - `OUTLINE.md`：教学大纲。
 - `DEEP_OUTLINE.md`：深度版教学路线和模型配置事实。
 - `SOURCE_WALKTHROUGH.md`：源码逐跳讲解入口。
-- `trace_qwen_run.py`：动态追踪用临时脚本。
+- `trace_qwen_run.py`：动态追踪用教学插桩脚本。
 - `inspect_cached_config.py`：远端容器内读取模型 `config.json` 的只读脚本。
 - `inspect_quant_description.py`：远端容器内读取 `quant_model_description.json` 的只读脚本。
 - `chapters/`：按章节展开的讲解。
 - `source-walkthrough/`：按代码调用顺序展开的源码讲解。
-- `reference/`：速查表和术语表。
-- `learning-records/`：后续记录用户真正掌握的知识点。
+- `reference/`：公式、术语、张量形状、源码地图和运行检查表。
+- `learning-records/`：记录已经固化的学习阶段和重要更新。

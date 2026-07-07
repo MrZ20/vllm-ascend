@@ -1,6 +1,6 @@
 # 教学大纲
 
-这是第一版学习路线，适合快速扫全局。第二版深度路线见 `DEEP_OUTLINE.md`，新增了真实模型配置、量化统计、公式推导和关键源码链路。
+这是总览型学习路线，适合快速扫全局。深度路线见 `DEEP_OUTLINE.md`；源码逐跳路线见 `SOURCE_WALKTHROUGH.md`；复习材料见 `reference/`。
 
 ## 深度章节入口
 
@@ -16,6 +16,9 @@
 - `chapters/014-w8a8-dynamic-quantization.md`：W8A8_DYNAMIC 量化公式和源码路径。
 - `chapters/015-logits-sampling-output.md`：logits、greedy sampling、token 解码和最终输出。
 - `reference/formulas.md`：公式速查。
+- `reference/glossary.md`：术语表。
+- `reference/tensor-shapes.md`：关键 tensor 形状速查。
+- `reference/runtime-checklist.md`：运行和源码排查检查表。
 - `reference/source-map.md`：源码地图。
 - `SOURCE_WALKTHROUGH.md`：源码逐跳讲解入口。
 - `source-walkthrough/000-branch-and-reading-map.md`：两个教学分支和跨仓库源码地图。
@@ -26,7 +29,7 @@
 - `source-walkthrough/005-fusedmoe-w8a8-source-flow.md`：MoE、router、FusedMoE 和 W8A8 源码。
 - `source-walkthrough/006-sampling-and-output.md`：logits、greedy sampling 和 `RequestOutput`。
 
-编号说明：`000-004` 是第一轮基础章节；`010-015` 是先写出的第二轮核心数学章节；`005-009` 现在补齐为运行时桥梁层，负责解释环境、加载、调度、metadata、并行内存这些从工作流到 Transformer 数学之间的内容。
+编号说明：`000-004` 是基础章节；`005-009` 是运行时桥梁层；`010-015` 是核心数学、源码和公式深挖。
 
 ## 0. 一屏心智模型
 
@@ -121,7 +124,7 @@
 - `A3B`：每个 token 激活的参数量小于总参数量，通常来自 MoE 路由。
 - `MoE`：router 在 FFN 阶段选择专家。
 - `MTP`：multi-token prediction 支持，本仓库有 Qwen3.5 相关 patch。
-- 如果后续需要，可以结合模型 `config.json` 讲层数、专家数、hidden size。
+- 结合真实 `config.json` 解释层数、专家数、hidden size、M-RoPE 和 attention 类型。
 
 ## 8. 从零理解 W8A8 量化
 

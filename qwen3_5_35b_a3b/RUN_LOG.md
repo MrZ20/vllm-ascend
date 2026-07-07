@@ -55,7 +55,7 @@ pytest -sv tests/e2e/pull_request/two_card/test_qwen3_5_35b_a3b_w8a8.py
 FileNotFoundError: [Errno 2] No such file or directory: '/vllm-workspace/vllm-ascend/<stdin>'
 ```
 
-解释：`VLLM_WORKER_MULTIPROC_METHOD=spawn` 会让子进程重新加载主 Python 文件。`python -` 从标准输入执行脚本时没有真实文件路径，所以子进程无法重新加载它。因此后续追踪必须使用真实 `.py` 文件。
+解释：`VLLM_WORKER_MULTIPROC_METHOD=spawn` 会让子进程重新加载主 Python 文件。`python -` 从标准输入执行脚本时没有真实文件路径，所以子进程无法重新加载它。因此动态追踪必须使用真实 `.py` 文件。
 
 ## 第 3 次：动态追踪脚本
 
