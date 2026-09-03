@@ -17,18 +17,40 @@
 # This file is a part of the vllm-ascend project.
 #
 
-set -eo errexit
+set -Eeuo pipefail
 
-. $(dirname "$0")/common.sh
+E2E_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-export VLLM_USE_MODELSCOPE=True
-export MODELSCOPE_HUB_FILE_LOCK=false
-export HF_HUB_OFFLINE=1
+function usage() {
+  echo "Usage:"
+  echo "  $0 quickstart {a2|310p}"
+  echo "  $0 installation {pip|uv|source}"
+  echo "  $0 local-install"
+}
 
-_info "====> Start Quickstart test"
-. "${SCRIPT_DIR}/doctests/001-quickstart-test.sh"
-
-_info "====> Start pip binary installation test"
-. "${SCRIPT_DIR}/doctests/002-pip-binary-installation-test.sh"
-
-_info "Doctest passed."
+case "${1:-}" in
+  quickstart)
+    [[ $# -eq 2 ]] || { usage; exit 1; }
+    case "$2" in
+      a2|310p) ;;
+      *) usage; exit 1 ;;
+    esac
+    exec bash "${E2E_DIR}/doctests/001-quickstart-test.sh" run "$2"
+    ;;
+  installation)
+    [[ $# -eq 2 ]] || { usage; exit 1; }
+    case "$2" in
+      pip|uv|source) ;;
+      *) usage; exit 1 ;;
+    esac
+    exec bash "${E2E_DIR}/doctests/002-installation-test.sh" run "$2"
+    ;;
+  local-install)
+    [[ $# -eq 1 ]] || { usage; exit 1; }
+    exec bash "${E2E_DIR}/doctests/002-installation-test.sh" local-install
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+esac

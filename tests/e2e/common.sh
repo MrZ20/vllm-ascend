@@ -66,9 +66,4 @@ function create_vllm_venv() {
   source ${VENV_PATH}/bin/activate
 }
 
-function get_version() {
-  local VERSION_NAME="$1"
-  python3 "${SCRIPT_DIR}/../../docs/source/conf.py" | jq .${VERSION_NAME} | tr -d '"'
-}
-
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)

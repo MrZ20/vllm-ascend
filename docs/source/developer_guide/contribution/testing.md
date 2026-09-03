@@ -308,15 +308,23 @@ The CI resource is limited, and you might need to reduce the number of layers of
 
 ### Run doctest
 
-vllm-ascend provides a `vllm-ascend/tests/e2e/run_doctests.sh` command to run all doctests in the doc files.
-The doctest is a good way to make sure docs stay current and examples remain executable, which can be run locally as follows:
+vLLM Ascend provides `tests/e2e/run_doctests.sh` commands for the supported Quick Start and Installation documentation cases. Run them in the corresponding prepared NPU environment:
 
 ```bash
-# Run doctest
-/vllm-workspace/vllm-ascend/tests/e2e/run_doctests.sh
+# Quick Start runs both offline and online examples.
+./tests/e2e/run_doctests.sh quickstart a2
+./tests/e2e/run_doctests.sh quickstart 310p
+
+# Installation is currently validated on A2 and detects Ubuntu or openEuler.
+./tests/e2e/run_doctests.sh installation pip
+./tests/e2e/run_doctests.sh installation uv
+./tests/e2e/run_doctests.sh installation source
+
+# Install and verify the current local vLLM Ascend checkout.
+./tests/e2e/run_doctests.sh local-install
 ```
 
-This will reproduce the same environment as the CI. See [labeled_doctest.yaml](https://github.com/vllm-project/vllm-ascend/blob/main/.github/workflows/labeled_doctest.yaml).
+The CI workflow selects the matching runner and container image. See [labeled_doctest.yaml](https://github.com/vllm-project/vllm-ascend/blob/main/.github/workflows/labeled_doctest.yaml).
 
 ### Run docs link check
 

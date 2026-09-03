@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2025 Huawei Technologies Co., Ltd. All Rights Reserved.
+# Copyright (c) 2026 Huawei Technologies Co., Ltd. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,266 +20,309 @@ name: Doc Test
 on:
   workflow_dispatch:
     inputs:
-      doc_versions:
-        description: 'JSON array of Read the Docs versions to test, e.g. ["v0.18.0","latest"]'
+      quickstart_device:
+        description: Quick Start device to test
         required: true
-        type: string
-        default: '["v0.18.0","latest"]'
+        type: choice
+        default: none
+        options:
+          - none
+          - a2
+          - 310p
+      installation_method:
+        description: Installation method to test
+        required: true
+        type: choice
+        default: none
+        options:
+          - none
+          - pip
+          - uv
+          - source
   workflow_call:
     inputs:
-      doc_versions:
-        description: 'JSON array of Read the Docs versions to test'
+      quickstart_device:
+        description: Quick Start device to test, or none
         required: false
         type: string
-        default: '["v0.18.0","latest"]'
+        default: none
+      installation_method:
+        description: Installation method to test, or none
+        required: false
+        type: string
+        default: none
   pull_request:
     branches:
-      - 'main'
-      - '*-dev'
+      - main
       - 'releases/v*'
     paths:
-      # If we are changing the doctest we should do a PR test
       - '.github/workflows/labeled_doctest.yaml'
-      # Version variables are sourced from mkdocs.yml 'extra:' and
-      # re-exported via the docs/source/conf.py shim. Trigger the
-      # workflow whenever either file changes.
       - 'mkdocs.yml'
-      - 'docs/source/conf.py'
-      - 'tests/e2e/doctests/**'
+      - 'docs/source/getting_started/**'
       - 'tests/e2e/common.sh'
       - 'tests/e2e/run_doctests.sh'
+      - 'tests/e2e/doctests/001-quickstart-test.sh'
+      - 'tests/e2e/doctests/002-installation-test.sh'
+      - 'tests/e2e/doctests/doctest_helper.py'
+
 permissions:
   contents: read
 
-# Bash shells do not use ~/.profile or ~/.bashrc so these shells need to be explicitly
-# declared as "shell: bash -el {0}" on steps that need to be properly activated.
-# It's used to activate ascend-toolkit environment variables.
 defaults:
   run:
     shell: bash -el {0}
 
 concurrency:
-  group: "labeled_doctest-${{ github.ref }}"
+  group: doctest-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  setup-matrix:
-    name: Setup test matrix
+  select:
+    name: Select doctests
     runs-on: linux-amd64-cpu-4-hk
     outputs:
-      matrix: ${{ steps.set_matrix_pr.outputs.matrix || steps.set_matrix_doc.outputs.matrix }}
+      quickstart: ${{ steps.select.outputs.quickstart }}
+      installation: ${{ steps.select.outputs.installation }}
+      quickstart_count: ${{ steps.select.outputs.quickstart_count }}
+      installation_count: ${{ steps.select.outputs.installation_count }}
     steps:
-      # PR runs should validate the PR content itself. The matrix is generated
-      # from this checkout instead of resolving a Read the Docs version.
-      - name: Checkout current source
-        if: github.event_name == 'pull_request'
+      - name: Checkout source
         uses: actions/checkout@v7
         with:
-          path: matrix-src
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Set matrix (PR-driven)
-        if: github.event_name == 'pull_request'
-        id: set_matrix_pr
+      - name: Select tests and build matrices
+        id: select
+        env:
+          DOCTEST_EVENT: ${{ github.event_name }}
+          DOCTEST_BASE_REF: ${{ github.event.pull_request.base.sha }}
+          DOCTEST_HEAD_REF: ${{ github.event.pull_request.head.sha }}
+          DOCTEST_QUICKSTART_DEVICE: ${{ inputs.quickstart_device }}
+          DOCTEST_INSTALLATION_METHOD: ${{ inputs.installation_method }}
         run: |
-          set -euo pipefail
+          quickstart_devices=()
+          installation_methods=()
 
-          matrix_file="$(mktemp)"
-          trap 'rm -f "${matrix_file}"' EXIT
-          echo '{"include":[]}' > "${matrix_file}"
+          add_unique() {
+            local -n values="$1"
+            local value="$2"
+            local item
+            for item in "${values[@]}"; do
+              [[ "${item}" == "${value}" ]] && return
+            done
+            values+=("${value}")
+          }
 
-          doc_repository="${GITHUB_REPOSITORY}"
-          doc_version="pull_request"
-          doc_ref="${GITHUB_REF}"
-          doc_verbose_name="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
-          documentation_url=""
-          repo_dir="${GITHUB_WORKSPACE}/matrix-src"
+          if [[ "${DOCTEST_EVENT}" == "pull_request" ]]; then
+            quickstart_selection="$(
+              bash tests/e2e/doctests/001-quickstart-test.sh \
+                select "${DOCTEST_BASE_REF}" "${DOCTEST_HEAD_REF}"
+            )"
+            installation_selection="$(
+              bash tests/e2e/doctests/002-installation-test.sh \
+                select "${DOCTEST_BASE_REF}" "${DOCTEST_HEAD_REF}"
+            )"
+            if [[ -n "${quickstart_selection}" ]]; then
+              mapfile -t quickstart_devices <<<"${quickstart_selection}"
+            fi
+            if [[ -n "${installation_selection}" ]]; then
+              mapfile -t installation_methods <<<"${installation_selection}"
+            fi
 
-          vllm_ascend_version="$(python3 "${repo_dir}/docs/source/conf.py" \
-            | jq -r '.vllm_ascend_version // empty')"
-          if [ -z "${vllm_ascend_version}" ]; then
-            echo "Failed to resolve vllm_ascend_version from ${doc_ref}." >&2
-            exit 1
+            shared_tooling_changed=false
+            if git diff --quiet "${DOCTEST_BASE_REF}" "${DOCTEST_HEAD_REF}" -- \
+              .github/workflows/labeled_doctest.yaml \
+              tests/e2e/common.sh \
+              tests/e2e/run_doctests.sh \
+              tests/e2e/doctests/doctest_helper.py
+            then
+              :
+            else
+              command_status=$?
+              if [[ ${command_status} -eq 1 ]]; then
+                shared_tooling_changed=true
+              else
+                exit "${command_status}"
+              fi
+            fi
+
+            release_changed=false
+            if python3 tests/e2e/doctests/doctest_helper.py \
+              release-changed "${DOCTEST_BASE_REF}" "${DOCTEST_HEAD_REF}"
+            then
+              release_changed=true
+            else
+              command_status=$?
+              [[ ${command_status} -eq 1 ]] || exit "${command_status}"
+            fi
+
+            if [[ "${release_changed}" == true || "${shared_tooling_changed}" == true ]]; then
+              # Release values form one compatible stack. Validate both Quick
+              # Start hardware paths and source installation as smoke coverage.
+              add_unique quickstart_devices a2
+              add_unique quickstart_devices 310p
+              add_unique installation_methods source
+            fi
+          else
+            case "${DOCTEST_QUICKSTART_DEVICE}" in
+              none) ;;
+              a2|310p) quickstart_devices+=("${DOCTEST_QUICKSTART_DEVICE}") ;;
+              *) echo "Invalid Quick Start device: ${DOCTEST_QUICKSTART_DEVICE}" >&2; exit 1 ;;
+            esac
+            case "${DOCTEST_INSTALLATION_METHOD}" in
+              none) ;;
+              pip|uv|source) installation_methods+=("${DOCTEST_INSTALLATION_METHOD}") ;;
+              *) echo "Invalid Installation method: ${DOCTEST_INSTALLATION_METHOD}" >&2; exit 1 ;;
+            esac
           fi
 
-          for os_variant in ubuntu openeuler; do
-            if [ "${os_variant}" = "ubuntu" ]; then
-              image="quay.io/ascend/vllm-ascend:${vllm_ascend_version}"
-            else
-              image="quay.io/ascend/vllm-ascend:${vllm_ascend_version}-${os_variant}"
+          image_tag_from_marker() {
+            local path="$1"
+            local marker="$2"
+            local block
+            local image
+            block="$(python3 tests/e2e/doctests/doctest_helper.py block --expand "${path}" "${marker}")"
+            image="$(sed -nE 's/^[[:space:]]*export IMAGE=([^[:space:]]+)[[:space:]]*$/\1/p' <<<"${block}")"
+            if [[ -z "${image}" || "${image}" == *$'\n'* || "${image}" != *:* ]]; then
+              echo "Cannot read one IMAGE value from ${path}:${marker}" >&2
+              return 1
             fi
+            image="${image%\"}"
+            image="${image#\"}"
+            image="${image%\'}"
+            image="${image#\'}"
+            echo "${image##*:}"
+          }
 
-            next_matrix_file="$(mktemp)"
-            jq \
-              --arg doc_repository "${doc_repository}" \
-              --arg doc_version "${doc_version}" \
-              --arg doc_ref "${doc_ref}" \
-              --arg doc_verbose_name "${doc_verbose_name}" \
-              --arg documentation_url "${documentation_url}" \
-              --arg vllm_ascend_version "${vllm_ascend_version}" \
-              --arg os_variant "${os_variant}" \
-              --arg image "${image}" \
-              '.include += [{
-                doc_repository: $doc_repository,
-                doc_version: $doc_version,
-                doc_ref: $doc_ref,
-                doc_verbose_name: $doc_verbose_name,
-                documentation_url: $documentation_url,
-                vllm_ascend_version: $vllm_ascend_version,
-                os_variant: $os_variant,
-                image: $image
-              }]' "${matrix_file}" > "${next_matrix_file}"
-            mv "${next_matrix_file}" "${matrix_file}"
+          quickstart_rows='[]'
+          for device in "${quickstart_devices[@]}"; do
+            case "${device}" in
+              a2) runner=linux-aarch64-a2b3-1 ;;
+              310p) runner=linux-aarch64-310p-1 ;;
+            esac
+            for os_variant in ubuntu openeuler; do
+              case "${device}:${os_variant}" in
+                a2:ubuntu)
+                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-a2.inc.md
+                  image_marker=quickstart-image-a2-ubuntu
+                  ;;
+                a2:openeuler)
+                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-a2.inc.md
+                  image_marker=quickstart-image-a2-openeuler
+                  ;;
+                310p:ubuntu)
+                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-300i-duo.inc.md
+                  image_marker=quickstart-image-300i-duo-ubuntu
+                  ;;
+                310p:openeuler)
+                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-300i-duo.inc.md
+                  image_marker=quickstart-image-300i-duo-openeuler
+                  ;;
+              esac
+              image_tag="$(image_tag_from_marker "${image_path}" "${image_marker}")"
+              row="$(jq -cn \
+                --arg device "${device}" \
+                --arg os "${os_variant}" \
+                --arg runner "${runner}" \
+                --arg image_tag "${image_tag}" \
+                '{device:$device, os:$os, runner:$runner, image_tag:$image_tag}')"
+              quickstart_rows="$(jq -c --argjson row "${row}" '. + [$row]' <<<"${quickstart_rows}")"
+            done
           done
 
-          echo "Resolved PR-driven doctest matrix:"
-          jq . "${matrix_file}"
-
-          {
-            echo "matrix<<EOF"
-            jq -c . "${matrix_file}"
-            echo "EOF"
-          } >> "${GITHUB_OUTPUT}"
-
-      - name: Set matrix (doc-driven)
-        if: github.event_name != 'pull_request'
-        id: set_matrix_doc
-        env:
-          INPUT_DOC_VERSIONS: ${{ inputs.doc_versions || '["v0.18.0","latest"]' }}
-        run: |
-          set -euo pipefail
-
-          matrix_file="$(mktemp)"
-          workdir="$(mktemp -d)"
-          trap 'rm -rf "${matrix_file}" "${workdir}"' EXIT
-          echo '{"include":[]}' > "${matrix_file}"
-
-          # Manual and scheduled runs are version-driven. Resolve each RTD
-          # version to the Git ref that owns the published documentation.
-          echo "${INPUT_DOC_VERSIONS}" | jq -e 'type == "array" and all(.[]; type == "string")' >/dev/null
-
-          while IFS= read -r doc_version; do
-            version_url="https://readthedocs.org/api/v3/projects/vllm-ascend/versions/${doc_version}/"
-            metadata_file="${workdir}/${doc_version}.json"
-            repo_dir="${workdir}/repo-${doc_version//[^A-Za-z0-9._-]/-}"
-
-            echo "Resolving Read the Docs version: ${doc_version}"
-            curl --fail --show-error --location \
-              --retry 3 \
-              --retry-delay 5 \
-              "${version_url}" \
-              -o "${metadata_file}"
-
-            doc_ref="$(jq -r '.identifier // empty' "${metadata_file}")"
-            doc_verbose_name="$(jq -r '.verbose_name // empty' "${metadata_file}")"
-            documentation_url="$(jq -r '.urls.documentation // empty' "${metadata_file}")"
-
-            if [ -z "${doc_ref}" ]; then
-              echo "Read the Docs version ${doc_version} does not have an identifier." >&2
-              exit 1
-            fi
-
-            git clone --depth 1 --branch "${doc_ref}" \
-              https://github.com/vllm-project/vllm-ascend.git "${repo_dir}"
-
-            doc_repository="vllm-project/vllm-ascend"
-            vllm_ascend_version="$(python3 "${repo_dir}/docs/source/conf.py" \
-              | jq -r '.vllm_ascend_version // empty')"
-            if [ -z "${vllm_ascend_version}" ]; then
-              echo "Failed to resolve vllm_ascend_version from ${doc_ref}." >&2
-              exit 1
-            fi
-
+          installation_rows='[]'
+          for method in "${installation_methods[@]}"; do
             for os_variant in ubuntu openeuler; do
-              if [ "${os_variant}" = "ubuntu" ]; then
-                image="quay.io/ascend/vllm-ascend:${vllm_ascend_version}"
-              else
-                image="quay.io/ascend/vllm-ascend:${vllm_ascend_version}-${os_variant}"
-              fi
-
-              next_matrix_file="$(mktemp)"
-              jq \
-                --arg doc_repository "${doc_repository}" \
-                --arg doc_version "${doc_version}" \
-                --arg doc_ref "${doc_ref}" \
-                --arg doc_verbose_name "${doc_verbose_name}" \
-                --arg documentation_url "${documentation_url}" \
-                --arg vllm_ascend_version "${vllm_ascend_version}" \
-                --arg os_variant "${os_variant}" \
-                --arg image "${image}" \
-                '.include += [{
-                  doc_repository: $doc_repository,
-                  doc_version: $doc_version,
-                  doc_ref: $doc_ref,
-                  doc_verbose_name: $doc_verbose_name,
-                  documentation_url: $documentation_url,
-                  vllm_ascend_version: $vllm_ascend_version,
-                  os_variant: $os_variant,
-                  image: $image
-                }]' "${matrix_file}" > "${next_matrix_file}"
-              mv "${next_matrix_file}" "${matrix_file}"
+              image_path=docs/source/getting_started/installation/cann_image/atlas-a2.inc.md
+              image_marker="installation-cann-image-a2-${os_variant}"
+              image_tag="$(image_tag_from_marker "${image_path}" "${image_marker}")"
+              row="$(jq -cn \
+                --arg method "${method}" \
+                --arg os "${os_variant}" \
+                --arg runner linux-aarch64-a2b3-1 \
+                --arg image_tag "${image_tag}" \
+                '{method:$method, os:$os, runner:$runner, image_tag:$image_tag}')"
+              installation_rows="$(jq -c --argjson row "${row}" '. + [$row]' <<<"${installation_rows}")"
             done
-          done < <(echo "${INPUT_DOC_VERSIONS}" | jq -r '.[]')
+          done
 
-          echo "Resolved doc-driven doctest matrix:"
-          jq . "${matrix_file}"
+          quickstart_matrix="$(jq -cn --argjson rows "${quickstart_rows}" '{include:$rows}')"
+          installation_matrix="$(jq -cn --argjson rows "${installation_rows}" '{include:$rows}')"
+          {
+            echo "quickstart=${quickstart_matrix}"
+            echo "installation=${installation_matrix}"
+            echo "quickstart_count=$(jq 'length' <<<"${quickstart_rows}")"
+            echo "installation_count=$(jq 'length' <<<"${installation_rows}")"
+          } >>"${GITHUB_OUTPUT}"
 
           {
-            echo "matrix<<EOF"
-            jq -c . "${matrix_file}"
-            echo "EOF"
-          } >> "${GITHUB_OUTPUT}"
+            echo '## Doctest matrices'
+            echo
+            echo '```json'
+            jq -n \
+              --argjson quickstart "${quickstart_matrix}" \
+              --argjson installation "${installation_matrix}" \
+              '{quickstart:$quickstart, installation:$installation}'
+            echo '```'
+          } >>"${GITHUB_STEP_SUMMARY}"
 
-  test:
-    needs: setup-matrix
+  quickstart:
+    name: Quick Start (${{ matrix.device }}, ${{ matrix.os }})
+    needs: select
+    if: needs.select.outputs.quickstart_count != '0'
     strategy:
-      # Each version should be tested
       fail-fast: false
-      matrix: ${{ fromJSON(needs.setup-matrix.outputs.matrix) }}
-    name: vLLM Ascend test (${{ matrix.doc_version }}, ${{ matrix.os_variant }})
-    runs-on: linux-aarch64-a2b3-1
+      matrix: ${{ fromJSON(needs.select.outputs.quickstart) }}
+    runs-on: ${{ matrix.runner }}
     container:
-      image: ${{ matrix.image }}
+      image: swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/vllm-ascend:${{ matrix.image_tag }}
     steps:
-      # setup-matrix decides whether this is a PR ref or an RTD identifier, so
-      # the test job can use the same checkout step for both trigger types.
-      - name: Checkout doctest source
+      - name: Checkout source
         uses: actions/checkout@v7
         with:
-          repository: ${{ matrix.doc_repository }}
-          ref: ${{ matrix.doc_ref }}
-          path: doctest-src
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Check NPU/CANN and git info
+      - name: Show test environment
         run: |
-          echo "====> Print doctest source info"
-          echo "Doc repository: ${{ matrix.doc_repository }}"
-          echo "Doc version: ${{ matrix.doc_version }}"
-          echo "Doc ref: ${{ matrix.doc_ref }}"
-          echo "Doc verbose name: ${{ matrix.doc_verbose_name }}"
-          echo "Documentation URL: ${{ matrix.documentation_url }}"
-          echo "vllm-ascend version: ${{ matrix.vllm_ascend_version }}"
-          echo "Container image: ${{ matrix.image }}"
-
-          echo "====> Print NPU/CANN info"
+          echo "Device: ${{ matrix.device }}"
+          echo "OS: ${{ matrix.os }}"
+          echo "Image tag: ${{ matrix.image_tag }}"
           npu-smi info
-          cat /usr/local/Ascend/ascend-toolkit/latest/"$(uname -i)"-linux/ascend_toolkit_install.info
 
-          echo "====> Print doctest source git info"
-          git -C "${GITHUB_WORKSPACE}/doctest-src" --no-pager log -1
-          echo "====> Print doctest source version info"
-          python3 "${GITHUB_WORKSPACE}/doctest-src/docs/source/conf.py" | jq .
-
-          echo "====> Print container vllm-ascend git info"
-          git -C /vllm-workspace/vllm-ascend --no-pager log -1 || true
-          echo "====> Print container vllm git info"
-          git -C /vllm-workspace/vllm --no-pager log -1 || true
-
-      - name: Run doctest source tests/e2e/run_doctests.sh
+      - name: Run Quick Start doctest
         run: |
-          # Avoid putting the checkout root on Python's import path. The test
-          # should use doctest scripts from the checkout and packages installed
-          # in the container image.
-          cd /workspace
+          runtime_dir="$(mktemp -d)"
+          cd "${runtime_dir}"
+          bash "${GITHUB_WORKSPACE}/tests/e2e/run_doctests.sh" \
+            quickstart "${{ matrix.device }}"
 
-          echo "Test:"
-          bash "${GITHUB_WORKSPACE}/doctest-src/tests/e2e/run_doctests.sh"
+  installation:
+    name: Installation (${{ matrix.method }}, ${{ matrix.os }})
+    needs: select
+    if: needs.select.outputs.installation_count != '0'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.select.outputs.installation) }}
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann:${{ matrix.image_tag }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Show test environment
+        run: |
+          echo "Method: ${{ matrix.method }}"
+          echo "OS: ${{ matrix.os }}"
+          echo "Image tag: ${{ matrix.image_tag }}"
+          npu-smi info
+
+      - name: Run Installation doctest
+        run: |
+          runtime_dir="$(mktemp -d)"
+          cd "${runtime_dir}"
+          bash "${GITHUB_WORKSPACE}/tests/e2e/run_doctests.sh" \
+            installation "${{ matrix.method }}"
