@@ -21,6 +21,7 @@ import argparse
 import re
 import subprocess
 import sys
+from functools import cache
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -163,6 +164,7 @@ def _repo_path(path: Path) -> str:
         raise DoctestError(f"Path is outside the repository: {path}") from error
 
 
+@cache
 def _check_ref(ref: str) -> None:
     result = subprocess.run(
         ["git", "cat-file", "-e", f"{ref}^{{commit}}"],
@@ -208,6 +210,31 @@ def block_changed(base_text: str | None, head_text: str | None, marker: str, sou
     return base_block != head_block
 
 
+def any_block_changed(base_ref: str, head_ref: str, entries: list[str]) -> bool:
+    files: dict[str, tuple[str | None, str | None]] = {}
+    changed = False
+
+    for entry in entries:
+        if "|" not in entry:
+            raise DoctestError(f"Invalid doctest entry '{entry}'. Expected PATH|MARKER.")
+        path_text, marker = entry.split("|", 1)
+        if not path_text or not marker:
+            raise DoctestError(f"Invalid doctest entry '{entry}'. Expected PATH|MARKER.")
+
+        if path_text not in files:
+            path = Path(path_text)
+            files[path_text] = (
+                read_text(path, base_ref, allow_missing=True),
+                read_text(path, head_ref, allow_missing=True),
+            )
+
+        base_text, head_text = files[path_text]
+        if block_changed(base_text, head_text, marker, path_text):
+            changed = True
+
+    return changed
+
+
 def _required_block(path: Path, marker: str, ref: str | None) -> str:
     text = read_text(path, ref)
     assert text is not None
@@ -236,11 +263,10 @@ def parse_args() -> argparse.Namespace:
     block_parser.add_argument("path", type=Path)
     block_parser.add_argument("marker")
 
-    changed_parser = subparsers.add_parser("changed")
-    changed_parser.add_argument("base")
-    changed_parser.add_argument("head")
-    changed_parser.add_argument("path", type=Path)
-    changed_parser.add_argument("marker")
+    changed_any_parser = subparsers.add_parser("changed-any")
+    changed_any_parser.add_argument("base")
+    changed_any_parser.add_argument("head")
+    changed_any_parser.add_argument("entries", nargs="+")
 
     extra_parser = subparsers.add_parser("extra")
     extra_parser.add_argument("--ref")
@@ -262,10 +288,8 @@ def main() -> int:
             content = expand_macros(content, load_extra(mkdocs_text), args.marker)
         sys.stdout.write(content)
         return 0
-    if args.command == "changed":
-        base_text = read_text(args.path, args.base, allow_missing=True)
-        head_text = read_text(args.path, args.head, allow_missing=True)
-        return 0 if block_changed(base_text, head_text, args.marker, str(args.path)) else 1
+    if args.command == "changed-any":
+        return 0 if any_block_changed(args.base, args.head, args.entries) else 1
     if args.command == "release-changed":
         base_text = read_text(MKDOCS_PATH, args.base)
         head_text = read_text(MKDOCS_PATH, args.head)

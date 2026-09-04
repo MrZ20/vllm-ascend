@@ -95,6 +95,94 @@ def test_changed_rejects_marker_missing_from_both_refs():
         doctest_helper.block_changed("prose\n", "different prose\n", "sample", "doc.md")
 
 
+def test_any_changed_detects_changed_marker_and_reads_each_ref_once(monkeypatch):
+    documents = {
+        "base": """<!-- doctest: marker-a -->
+```bash
+echo same
+```
+<!-- doctest: marker-b -->
+```bash
+echo base
+```
+""",
+        "head": """<!-- doctest: marker-a -->
+```bash
+echo same
+```
+<!-- doctest: marker-b -->
+```bash
+echo head
+```
+""",
+    }
+    calls = []
+
+    def read_text(path, ref, *, allow_missing=False):
+        calls.append((str(path), ref, allow_missing))
+        return documents[ref]
+
+    monkeypatch.setattr(doctest_helper, "read_text", read_text)
+
+    assert doctest_helper.any_block_changed("base", "head", ["doc.md|marker-a", "doc.md|marker-b"])
+    assert calls == [("doc.md", "base", True), ("doc.md", "head", True)]
+
+
+def test_any_changed_returns_false_when_all_markers_are_unchanged(monkeypatch):
+    document = """<!-- doctest: marker-a -->
+```bash
+echo same
+```
+<!-- doctest: marker-b -->
+```bash
+echo same
+```
+"""
+    monkeypatch.setattr(doctest_helper, "read_text", lambda *args, **kwargs: document)
+
+    assert not doctest_helper.any_block_changed("base", "head", ["doc.md|marker-a", "doc.md|marker-b"])
+
+
+def test_any_changed_checks_markers_in_different_documents(monkeypatch):
+    documents = {
+        ("doc-a.md", "base"): "<!-- doctest: marker-a -->\n```bash\necho same\n```\n",
+        ("doc-a.md", "head"): "<!-- doctest: marker-a -->\n```bash\necho same\n```\n",
+        ("doc-b.md", "base"): "<!-- doctest: marker-b -->\n```bash\necho base\n```\n",
+        ("doc-b.md", "head"): "<!-- doctest: marker-b -->\n```bash\necho head\n```\n",
+    }
+
+    def read_text(path, ref, *, allow_missing=False):
+        return documents[(str(path), ref)]
+
+    monkeypatch.setattr(doctest_helper, "read_text", read_text)
+
+    assert doctest_helper.any_block_changed("base", "head", ["doc-a.md|marker-a", "doc-b.md|marker-b"])
+
+
+def test_any_changed_rejects_marker_missing_from_both_refs(monkeypatch):
+    monkeypatch.setattr(doctest_helper, "read_text", lambda *args, **kwargs: "prose\n")
+
+    with pytest.raises(doctest_helper.DoctestError, match="does not exist at either ref"):
+        doctest_helper.any_block_changed("base", "head", ["doc.md|missing"])
+
+
+@pytest.mark.parametrize("entry", ["missing-delimiter", "|marker", "path|"])
+def test_any_changed_rejects_invalid_entry(entry):
+    with pytest.raises(doctest_helper.DoctestError, match=r"Expected PATH\|MARKER"):
+        doctest_helper.any_block_changed("base", "head", [entry])
+
+
+def test_any_changed_checks_later_markers_after_detecting_change(monkeypatch):
+    documents = {
+        "base": "<!-- doctest: changed -->\n```bash\necho base\n```\n",
+        "head": "<!-- doctest: changed -->\n```bash\necho head\n```\n",
+    }
+    monkeypatch.setattr(doctest_helper, "read_text", lambda path, ref, **kwargs: documents[ref])
+
+    with pytest.raises(doctest_helper.DoctestError, match="does not exist at either ref"):
+        doctest_helper.any_block_changed("base", "head", ["doc.md|changed", "doc.md|missing"])
+
+
 def test_loads_simple_extra_scalars():
     text = """site_name: docs
 extra:

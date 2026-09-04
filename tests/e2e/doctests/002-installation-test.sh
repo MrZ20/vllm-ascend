@@ -52,38 +52,8 @@ WORKER_PATH="tests/e2e/doctests/002-installation-test.sh"
 INSTALL_WORK_DIR=""
 VERIFY_RUNTIME_DIR=""
 
-function marker_changed() {
-  local base="$1"
-  local head="$2"
-  local entry="$3"
-  local path="${entry%%|*}"
-  local marker="${entry#*|}"
-  local command_status
-  if python3 "${DOCTEST_HELPER}" changed "${base}" "${head}" "${path}" "${marker}"; then
-    return 0
-  else
-    command_status=$?
-  fi
-  [[ ${command_status} -eq 1 ]] && return 1
-  return "${command_status}"
-}
-
 function any_marker_changed() {
-  local base="$1"
-  local head="$2"
-  shift 2
-  local entry
-  local command_status
-  local changed=false
-  for entry in "$@"; do
-    if marker_changed "${base}" "${head}" "${entry}"; then
-      changed=true
-    else
-      command_status=$?
-      [[ ${command_status} -eq 1 ]] || return "${command_status}"
-    fi
-  done
-  [[ "${changed}" == true ]]
+  python3 "${DOCTEST_HELPER}" changed-any "$@"
 }
 
 function worker_changed() {

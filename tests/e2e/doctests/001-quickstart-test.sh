@@ -61,38 +61,8 @@ WORKER_PATH="tests/e2e/doctests/001-quickstart-test.sh"
 VLLM_PID=""
 RUNTIME_DIR=""
 
-function marker_changed() {
-  local base="$1"
-  local head="$2"
-  local entry="$3"
-  local path="${entry%%|*}"
-  local marker="${entry#*|}"
-  local command_status
-  if python3 "${DOCTEST_HELPER}" changed "${base}" "${head}" "${path}" "${marker}"; then
-    return 0
-  else
-    command_status=$?
-  fi
-  [[ ${command_status} -eq 1 ]] && return 1
-  return "${command_status}"
-}
-
 function any_marker_changed() {
-  local base="$1"
-  local head="$2"
-  shift 2
-  local entry
-  local command_status
-  local changed=false
-  for entry in "$@"; do
-    if marker_changed "${base}" "${head}" "${entry}"; then
-      changed=true
-    else
-      command_status=$?
-      [[ ${command_status} -eq 1 ]] || return "${command_status}"
-    fi
-  done
-  [[ "${changed}" == true ]]
+  python3 "${DOCTEST_HELPER}" changed-any "$@"
 }
 
 function worker_changed() {
@@ -198,34 +168,37 @@ function cleanup_quickstart() {
 
 function run_quickstart() {
   local device="$1"
+  local offline_doc
+  local online_doc
+  local marker_prefix
   source "${E2E_DIR}/common.sh"
   export MODELSCOPE_HUB_FILE_LOCK=false
   export HF_HUB_OFFLINE=1
   trap cleanup_quickstart EXIT
   RUNTIME_DIR="$(mktemp -d)"
 
-  run_shell_block "${QUICKSTART_DOC}" quickstart-modelscope
-  run_shell_block "${QUICKSTART_VERIFY_DOC}" quickstart-container-verify
   case "${device}" in
     a2)
-      run_offline "${A2_OFFLINE_DOC}" quickstart-standard-offline quickstart-standard-offline-run
-      run_online \
-        "${A2_ONLINE_DOC}" \
-        quickstart-standard-online-serve \
-        quickstart-standard-online-model-list \
-        quickstart-standard-online-completion \
-        quickstart-standard-online-stop
+      offline_doc="${A2_OFFLINE_DOC}"
+      online_doc="${A2_ONLINE_DOC}"
+      marker_prefix=quickstart-standard
       ;;
     310p)
-      run_offline "${DUO_OFFLINE_DOC}" quickstart-300i-duo-offline quickstart-300i-duo-offline-run
-      run_online \
-        "${DUO_ONLINE_DOC}" \
-        quickstart-300i-duo-online-serve \
-        quickstart-300i-duo-online-model-list \
-        quickstart-300i-duo-online-completion \
-        quickstart-300i-duo-online-stop
+      offline_doc="${DUO_OFFLINE_DOC}"
+      online_doc="${DUO_ONLINE_DOC}"
+      marker_prefix=quickstart-300i-duo
       ;;
   esac
+
+  run_shell_block "${QUICKSTART_DOC}" quickstart-modelscope
+  run_shell_block "${QUICKSTART_VERIFY_DOC}" quickstart-container-verify
+  run_offline "${offline_doc}" "${marker_prefix}-offline" "${marker_prefix}-offline-run"
+  run_online \
+    "${online_doc}" \
+    "${marker_prefix}-online-serve" \
+    "${marker_prefix}-online-model-list" \
+    "${marker_prefix}-online-completion" \
+    "${marker_prefix}-online-stop"
 }
 
 case "${1:-}" in
