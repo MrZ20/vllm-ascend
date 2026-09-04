@@ -83,8 +83,8 @@ jobs:
     outputs:
       quickstart: ${{ steps.select.outputs.quickstart }}
       installation: ${{ steps.select.outputs.installation }}
-      quickstart_count: ${{ steps.select.outputs.quickstart_count }}
-      installation_count: ${{ steps.select.outputs.installation_count }}
+      run_quickstart: ${{ steps.select.outputs.run_quickstart }}
+      run_installation: ${{ steps.select.outputs.run_installation }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v7
@@ -177,23 +177,18 @@ jobs:
             esac
           fi
 
-          image_tag_from_marker() {
-            local path="$1"
-            local marker="$2"
-            local block
-            local image
-            block="$(python3 tests/e2e/doctests/doctest_helper.py block --expand "${path}" "${marker}")"
-            image="$(sed -nE 's/^[[:space:]]*export IMAGE=([^[:space:]]+)[[:space:]]*$/\1/p' <<<"${block}")"
-            if [[ -z "${image}" || "${image}" == *$'\n'* || "${image}" != *:* ]]; then
-              echo "Cannot read one IMAGE value from ${path}:${marker}" >&2
-              return 1
-            fi
-            image="${image%\"}"
-            image="${image#\"}"
-            image="${image%\'}"
-            image="${image#\'}"
-            echo "${image##*:}"
-          }
+          vllm_ascend_version="$(
+            python3 tests/e2e/doctests/doctest_helper.py \
+              extra vllm_ascend_version
+          )"
+          release_cann_version="$(
+            python3 tests/e2e/doctests/doctest_helper.py \
+              extra release_cann_version
+          )"
+          release_image_python_version="$(
+            python3 tests/e2e/doctests/doctest_helper.py \
+              extra release_image_python_version
+          )"
 
           quickstart_rows='[]'
           for device in "${quickstart_devices[@]}"; do
@@ -202,25 +197,9 @@ jobs:
               310p) runner=linux-aarch64-310p-1 ;;
             esac
             for os_variant in ubuntu openeuler; do
-              case "${device}:${os_variant}" in
-                a2:ubuntu)
-                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-a2.inc.md
-                  image_marker=quickstart-image-a2-ubuntu
-                  ;;
-                a2:openeuler)
-                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-a2.inc.md
-                  image_marker=quickstart-image-a2-openeuler
-                  ;;
-                310p:ubuntu)
-                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-300i-duo.inc.md
-                  image_marker=quickstart-image-300i-duo-ubuntu
-                  ;;
-                310p:openeuler)
-                  image_path=docs/source/getting_started/quick_start/ascend_image/atlas-300i-duo.inc.md
-                  image_marker=quickstart-image-300i-duo-openeuler
-                  ;;
-              esac
-              image_tag="$(image_tag_from_marker "${image_path}" "${image_marker}")"
+              image_tag="${vllm_ascend_version}"
+              [[ "${device}" == "310p" ]] && image_tag+="-310p"
+              [[ "${os_variant}" == "openeuler" ]] && image_tag+="-openeuler"
               row="$(jq -cn \
                 --arg device "${device}" \
                 --arg os "${os_variant}" \
@@ -234,9 +213,11 @@ jobs:
           installation_rows='[]'
           for method in "${installation_methods[@]}"; do
             for os_variant in ubuntu openeuler; do
-              image_path=docs/source/getting_started/installation/cann_image/atlas-a2.inc.md
-              image_marker="installation-cann-image-a2-${os_variant}"
-              image_tag="$(image_tag_from_marker "${image_path}" "${image_marker}")"
+              case "${os_variant}" in
+                ubuntu) os_tag=ubuntu22.04 ;;
+                openeuler) os_tag=openeuler24.03 ;;
+              esac
+              image_tag="${release_cann_version}-910b-${os_tag}-py${release_image_python_version}"
               row="$(jq -cn \
                 --arg method "${method}" \
                 --arg os "${os_variant}" \
@@ -249,11 +230,15 @@ jobs:
 
           quickstart_matrix="$(jq -cn --argjson rows "${quickstart_rows}" '{include:$rows}')"
           installation_matrix="$(jq -cn --argjson rows "${installation_rows}" '{include:$rows}')"
+          run_quickstart=false
+          run_installation=false
+          [[ ${#quickstart_devices[@]} -gt 0 ]] && run_quickstart=true
+          [[ ${#installation_methods[@]} -gt 0 ]] && run_installation=true
           {
             echo "quickstart=${quickstart_matrix}"
             echo "installation=${installation_matrix}"
-            echo "quickstart_count=$(jq 'length' <<<"${quickstart_rows}")"
-            echo "installation_count=$(jq 'length' <<<"${installation_rows}")"
+            echo "run_quickstart=${run_quickstart}"
+            echo "run_installation=${run_installation}"
           } >>"${GITHUB_OUTPUT}"
 
           {
@@ -270,7 +255,7 @@ jobs:
   quickstart:
     name: Quick Start (${{ matrix.device }}, ${{ matrix.os }})
     needs: select
-    if: needs.select.outputs.quickstart_count != '0'
+    if: needs.select.outputs.run_quickstart == 'true'
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.select.outputs.quickstart) }}
@@ -300,7 +285,7 @@ jobs:
   installation:
     name: Installation (${{ matrix.method }}, ${{ matrix.os }})
     needs: select
-    if: needs.select.outputs.installation_count != '0'
+    if: needs.select.outputs.run_installation == 'true'
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.select.outputs.installation) }}

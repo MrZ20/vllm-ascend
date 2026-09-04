@@ -319,9 +319,6 @@ vLLM Ascend provides `tests/e2e/run_doctests.sh` commands for the supported Quic
 ./tests/e2e/run_doctests.sh installation pip
 ./tests/e2e/run_doctests.sh installation uv
 ./tests/e2e/run_doctests.sh installation source
-
-# Install and verify the current local vLLM Ascend checkout.
-./tests/e2e/run_doctests.sh local-install
 ```
 
 The CI workflow selects the matching runner and container image. See [labeled_doctest.yaml](https://github.com/vllm-project/vllm-ascend/blob/main/.github/workflows/labeled_doctest.yaml).

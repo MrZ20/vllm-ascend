@@ -25,7 +25,6 @@ function usage() {
   echo "Usage:"
   echo "  $0 quickstart {a2|310p}"
   echo "  $0 installation {pip|uv|source}"
-  echo "  $0 local-install"
 }
 
 case "${1:-}" in
@@ -44,10 +43,6 @@ case "${1:-}" in
       *) usage; exit 1 ;;
     esac
     exec bash "${E2E_DIR}/doctests/002-installation-test.sh" run "$2"
-    ;;
-  local-install)
-    [[ $# -eq 1 ]] || { usage; exit 1; }
-    exec bash "${E2E_DIR}/doctests/002-installation-test.sh" local-install
     ;;
   *)
     usage

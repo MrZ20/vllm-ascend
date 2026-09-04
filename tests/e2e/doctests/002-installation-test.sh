@@ -195,20 +195,6 @@ function run_source_installation() {
   )
 }
 
-function run_local_installation() {
-  local vllm_version
-  vllm_version="$(python3 "${DOCTEST_HELPER}" extra vllm_version)"
-  INSTALL_WORK_DIR="$(mktemp -d)"
-  (
-    cd "${INSTALL_WORK_DIR}"
-    git clone --depth 1 --branch "${vllm_version}" https://github.com/vllm-project/vllm
-    cd vllm
-    VLLM_TARGET_DEVICE=empty pip install -e .
-  )
-  export ASCEND_INDEX_URL=https://mirrors.huaweicloud.com/ascend/repos/pypi
-  pip install -e "${REPO_ROOT}" --extra-index-url "${ASCEND_INDEX_URL}"
-}
-
 function cleanup_installation() {
   local exit_code=$?
   if [[ -n "${INSTALL_WORK_DIR}" && -d "${INSTALL_WORK_DIR}" ]]; then
@@ -245,17 +231,6 @@ function run_installation() {
   verify_installation_with_quickstart
 }
 
-function local_install() {
-  local os_variant
-  source "${E2E_DIR}/common.sh"
-  trap cleanup_installation EXIT
-  os_variant="$(detect_os)"
-  run_prerequisites "${os_variant}"
-  run_local_installation
-  run_shell_block "${INSTALLATION_DOC}" installation-post-standard
-  verify_installation_with_quickstart
-}
-
 case "${1:-}" in
   select)
     [[ $# -eq 3 ]] || { echo "Usage: $0 select BASE HEAD" >&2; exit 1; }
@@ -265,12 +240,8 @@ case "${1:-}" in
     [[ $# -eq 2 ]] || { echo "Usage: $0 run {pip|uv|source}" >&2; exit 1; }
     run_installation "$2"
     ;;
-  local-install)
-    [[ $# -eq 1 ]] || { echo "Usage: $0 local-install" >&2; exit 1; }
-    local_install
-    ;;
   *)
-    echo "Usage: $0 {select BASE HEAD|run {pip|uv|source}|local-install}" >&2
+    echo "Usage: $0 {select BASE HEAD|run {pip|uv|source}}" >&2
     exit 1
     ;;
 esac
