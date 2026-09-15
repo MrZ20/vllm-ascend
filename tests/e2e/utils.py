@@ -82,11 +82,19 @@ def check_embeddings_close(
 # =============================================================================
 
 
-def _check_processes(processes) -> None:
+def _check_processes(processes, *, fail_on_clean_exit: bool) -> bool:
+    """Return whether a process exited cleanly; reject exits invalid for this phase."""
+    clean_exit = False
     for process in processes:
         result = process.poll()
-        if result is not None and result != 0:
+        if result is None:
+            continue
+        if fail_on_clean_exit:
+            raise RuntimeError(f"Server process exited before readiness with code {result}.")
+        if result != 0:
             raise RuntimeError(f"Server process exited unexpectedly with code {result}.")
+        clean_exit = True
+    return clean_exit
 
 
 def wait_for_http_targets(
@@ -105,7 +113,7 @@ def wait_for_http_targets(
     processes = () if poll_processes is None else poll_processes
     client = requests if client is None else client
     while True:
-        _check_processes(processes)
+        _check_processes(processes, fail_on_clean_exit=True)
         if always_check:
             ready = dict.fromkeys(ready, False)
         for url in ready:
@@ -120,7 +128,7 @@ def wait_for_http_targets(
                 response.close()
             except (requests.RequestException, httpx.RequestError):
                 ready[url] = False
-            _check_processes(processes)
+            _check_processes(processes, fail_on_clean_exit=True)
         if all(ready.values()):
             return
         remaining = deadline - time.monotonic()
@@ -142,10 +150,12 @@ def wait_for_http_unready(
     poll_interval: float = 5.0,
     request_timeout: float = 5.0,
 ) -> None:
-    """Wait for a previously healthy master to stop; do not stop the local worker."""
+    """Wait for the master to stop or the local worker to exit cleanly."""
     deadline = None if timeout is None else time.monotonic() + timeout
+    processes = () if process is None else [process]
     while True:
-        _check_processes(() if process is None else [process])
+        if _check_processes(processes, fail_on_clean_exit=False):
+            return
         remaining = None if deadline is None else deadline - time.monotonic()
         if remaining is not None and remaining <= 0:
             raise TimeoutError(f"Timed out waiting for HTTP endpoint to stop: {url}")
@@ -155,9 +165,9 @@ def wait_for_http_unready(
             )
             ready = response.status_code == 200
             response.close()
-            if not ready:
-                return
         except requests.RequestException:
+            ready = False
+        if _check_processes(processes, fail_on_clean_exit=False) or not ready:
             return
         time.sleep(poll_interval if remaining is None else min(poll_interval, max(0, deadline - time.monotonic())))
 
@@ -360,7 +370,10 @@ def _vllm_shutdown_timeout(args: argparse.Namespace) -> float:
 
 
 class RemoteVLLMServer(_OpenAIEndpoint):
-    """Lifecycle for one vLLM process; cluster orchestration belongs to the caller."""
+    """Common lifecycle of ``vllm serve`` processes used by Ascend E2E tests.
+
+    Cluster orchestration belongs to the caller.
+    """
 
     def __init__(
         self,
@@ -471,7 +484,10 @@ def _get_pd_server_required_devices(vllm_serve_args: list[str]) -> int:
     dp_names = ("--data-parallel-size-local", "-dpl")
     if not _has_cli_option(vllm_serve_args, *dp_names):
         dp_names = ("--data-parallel-size", "-dp")
-    return get_size("--tensor-parallel-size", "-tp") * get_size(*dp_names)
+    tp_size = get_size("--tensor-parallel-size", "-tp")
+    pp_size = get_size("--pipeline-parallel-size", "-pp")
+    dp_size_local = get_size(*dp_names)
+    return tp_size * pp_size * dp_size_local
 
 
 class RemoteServerGroup(_OpenAIEndpoint):

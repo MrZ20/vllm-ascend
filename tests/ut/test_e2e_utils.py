@@ -92,14 +92,16 @@ def test_always_check_rechecks_previously_ready_urls(monkeypatch):
 
 
 @pytest.mark.parametrize("status", [200, 503])
-def test_readiness_detects_early_process_exit_even_on_http_response(http_server, status):
+@pytest.mark.parametrize("exit_code", [0, 7, -signal.SIGTERM, -signal.SIGKILL])
+def test_readiness_detects_early_process_exit_even_on_http_response(http_server, status, exit_code):
     _, url = http_server(status)
-    process = utils._ManagedProcess([sys.executable, "-c", "raise SystemExit(7)"])
+    script = f"raise SystemExit({exit_code})" if exit_code >= 0 else f"import os; os.kill(os.getpid(), {-exit_code})"
+    process = utils._ManagedProcess([sys.executable, "-c", script])
     process.start()
     try:
         process.proc.wait(timeout=5)
-        with pytest.raises(RuntimeError, match="code 7"):
-            utils.wait_for_http_ready(url, 60, process=process)
+        with pytest.raises(RuntimeError, match=f"before readiness with code {exit_code}"):
+            utils.wait_for_http_ready(url, 0.2, process=process)
     finally:
         process.shutdown()
 
@@ -110,6 +112,35 @@ def test_wait_for_unready(http_server):
         utils.wait_for_http_unready(url, 0.05, poll_interval=0.01)
     server.status = 503
     utils.wait_for_http_unready(url, 1)
+
+
+@pytest.mark.parametrize("exit_code", [0, 7, -signal.SIGTERM, -signal.SIGKILL])
+def test_unready_handles_local_exit_before_http(monkeypatch, exit_code):
+    process = Mock()
+    process.poll.return_value = exit_code
+    get = Mock(side_effect=AssertionError("An exited local worker should not wait for HTTP"))
+    monkeypatch.setattr(utils.requests, "get", get)
+    if exit_code == 0:
+        utils.wait_for_http_unready("http://127.0.0.1:1/health", 60, process=process)
+    else:
+        with pytest.raises(RuntimeError, match=f"code {exit_code}"):
+            utils.wait_for_http_unready("http://127.0.0.1:1/health", 60, process=process)
+    get.assert_not_called()
+
+
+@pytest.mark.parametrize("exit_code", [0, 7])
+@pytest.mark.parametrize("status", [200, 503])
+def test_unready_checks_local_exit_during_http(monkeypatch, exit_code, status):
+    process = Mock()
+    process.poll.side_effect = [None, exit_code]
+    get = Mock(return_value=Mock(status_code=status))
+    monkeypatch.setattr(utils.requests, "get", get)
+    if exit_code == 0:
+        utils.wait_for_http_unready("http://127.0.0.1:1/health", 60, process=process)
+    else:
+        with pytest.raises(RuntimeError, match=f"code {exit_code}"):
+            utils.wait_for_http_unready("http://127.0.0.1:1/health", 60, process=process)
+    get.assert_called_once()
 
 
 def test_process_shutdown_is_idempotent_and_kills_group(tmp_path):
@@ -206,6 +237,7 @@ def lightweight_cli(monkeypatch):
         parser.add_argument("model")
         parser.add_argument("--host", default="0.0.0.0")
         parser.add_argument("--port", "-p", type=int, default=8000)
+        parser.add_argument("--pipeline-parallel-size", "-pp", type=int, default=1)
         parser.add_argument("--uds")
         return parser.parse_known_args(args)[0]
 
@@ -271,10 +303,35 @@ def test_device_allocation_respects_visible_devices(monkeypatch, lightweight_cli
     [
         (["-tp", "2", "-dp", "4"], 8),
         (["--tensor-parallel-size=2", "--data-parallel-size=8", "--data-parallel-size-local=2"], 4),
+        (["--tensor-parallel-size", "2", "--pipeline-parallel-size", "2", "--data-parallel-size", "1"], 4),
+        (
+            [
+                "--tensor-parallel-size=2",
+                "--pipeline-parallel-size=2",
+                "--data-parallel-size=8",
+                "--data-parallel-size-local=2",
+            ],
+            8,
+        ),
+        (["-tp", "2", "-pp", "2", "-dp", "8", "-dpl", "2"], 8),
+        (["-tp=2", "-pp=2", "-dp=8", "-dpl=2"], 8),
     ],
 )
 def test_pd_required_devices(args, expected):
     assert utils._get_pd_server_required_devices(args) == expected
+
+
+@pytest.mark.parametrize("server_class", [utils.RemotePDServer, utils.RemoteEPDServer])
+def test_pipeline_parallel_device_allocation(monkeypatch, lightweight_cli, server_class):
+    monkeypatch.setenv("ASCEND_RT_VISIBLE_DEVICES", "8,9,10,11,12,13,14,15")
+    monkeypatch.setattr(utils._ManagedProcess, "start", lambda self: None)
+    monkeypatch.setattr(utils.RemoteServerGroup, "wait_all_ready", lambda *args: None)
+    args = [["model", "--port", str(port), "-tp", "2", "-pp", "2"] for port in (12345, 12346)]
+    with server_class(args) as server:
+        assert [process.env["ASCEND_RT_VISIBLE_DEVICES"] for process in server.processes] == [
+            "8,9,10,11",
+            "12,13,14,15",
+        ]
 
 
 def test_proxy_client_compatibility(monkeypatch):
