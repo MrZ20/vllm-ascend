@@ -9,7 +9,6 @@ from typing import Any
 import pytest
 import vllm
 
-from tests.e2e.conftest import RemoteOpenAIServer
 from tests.e2e.nightly.multi_node.internal_dp.scripts.multi_node_config import (
     MultiNodeConfig,
     MultiNodeConfigLoader,
@@ -22,6 +21,7 @@ from tests.e2e.nightly.multi_node.scripts.benchmark_results import (
     write_results_json,
 )
 from tests.e2e.nightly.scripts.result_postprocess import postprocess_benchmark_results
+from tests.e2e.utils import RemoteOpenAIServer, wait_for_http_ready, wait_for_http_targets, wait_for_http_unready
 from tools.aisbench import run_aisbench_cases
 
 logger = logging.getLogger(__name__)
@@ -187,18 +187,27 @@ async def test_multi_node() -> None:
             model=config.model,
             vllm_serve_args=config.server_cmd,
             server_port=config.server_port,
-            server_host=config.master_ip,
             env_dict=config.envs,
             auto_port=False,
-            proxy_port=proxy.proxy_port,
-            disaggregated_prefill=config.disagg_cfg,
-            nodes_info=config.nodes,
+            wait_for_ready=False,
             max_wait_seconds=2800,
         ) as server,
     ):
         host, port = config.benchmark_endpoint
 
+        master_health = f"http://{config.master_ip}:{config.server_port}/health"
+        if config.disagg_cfg:
+            master_health = f"http://{config.master_ip}:{proxy.proxy_port}/healthcheck"
+        wait_for_http_ready(master_health, 2800, process=server)
+
         if config.is_master:
+            if config.disagg_cfg:
+                wait_for_http_targets(
+                    [f"http://{node.ip}:{config.server_port}/health" for node in config.nodes if not node.headless],
+                    2800,
+                    poll_processes=[server],
+                    always_check=True,
+                )
             results = run_aisbench_cases(
                 model=config.model,
                 port=port,
@@ -208,4 +217,4 @@ async def test_multi_node() -> None:
             _save_benchmark_results_json(config, results)
         else:
             # We should keep listening on the master node's server url determining when to exit.
-            server.hang_until_terminated(f"http://{host}:{config.server_port}/health")
+            wait_for_http_unready(master_health, process=server)
