@@ -1,0 +1,67 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Scheduled E2E V2 single node
+'on':
+  workflow_call:
+    inputs:
+      image:
+        type: string
+        required: true
+      source_sha:
+        type: string
+        required: true
+      name:
+        type: string
+        required: true
+      config_path:
+        type: string
+        required: true
+      num_nodes:
+        type: number
+        required: true
+      npu_per_node:
+        type: string
+        default: ''
+      runner:
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 120
+    container:
+      image: ${{ inputs.image }}
+      options: --privileged --network=host --shm-size=64g
+      volumes:
+      - /root/.cache:/root/.cache
+      - /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro
+    env:
+      EXPECTED_SOURCE_SHA: ${{ inputs.source_sha }}
+      SCHEDULE_IMAGE: ${{ inputs.image }}
+      REPO_ROOT: /vllm-workspace/vllm-ascend
+      CONFIG_YAML_PATH: ${{ inputs.config_path }}
+      NUM_NODES: ${{ inputs.num_nodes }}
+      NPU_PER_NODE: ${{ inputs.npu_per_node }}
+      RUN_ID: s2-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.name }}
+      LOG_PREFIX: ${{ github.workspace }}/schedule-artifacts
+      SCHEDULE_CLEANUP_PROCESSES: '0'
+      VLLM_USE_MODELSCOPE: 'True'
+      BENCHMARK_JOB_NAME: ${{ inputs.name }}
+    defaults:
+      run:
+        shell: bash --noprofile --norc -eo pipefail {0}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ inputs.source_sha }}
+    - name: Run prepared image
+      run: |
+        bash "$REPO_ROOT/tests/e2e/schedule/scripts/run.sh"
+    - name: Upload results and logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: schedule-v2-${{ inputs.name }}-${{ github.run_attempt }}
+        path: schedule-artifacts/
+        if-no-files-found: error

@@ -1,0 +1,103 @@
+# SPDX-License-Identifier: Apache-2.0
+name: qwen-vl-epd
+model: Qwen/Qwen2.5-VL-7B-Instruct
+test_content:
+- image
+mm_request:
+  images: [null]
+  api_args:
+    max_tokens: 16
+    temperature: 0
+deployment:
+  services:
+    encode:
+      launch_strategy: explicit
+      launches:
+        node0:
+          server_cmd: vllm serve Qwen/Qwen2.5-VL-7B-Instruct --host 0.0.0.0 --port {{ LaunchContext.port }}
+            --tensor-parallel-size 2 --enforce-eager --trust-remote-code --max-model-len 10000 --max-num-batched-tokens
+            2048 --max-num-seqs 2 --no-enable-prefix-caching --gpu-memory-utilization 0.05 --ec-transfer-config
+            "$EC_CONFIG"
+          endpoint:
+            host: '{{ NodeContext.ip }}'
+            port: auto
+          envs:
+            VLLM_HOST_IP: '{{ NodeContext.ip }}'
+            HCCL_IF_IP: '{{ NodeContext.ip }}'
+            GLOO_SOCKET_IFNAME: '{{ NodeContext.nic_name }}'
+            TP_SOCKET_IFNAME: '{{ NodeContext.nic_name }}'
+            HCCL_SOCKET_IFNAME: '{{ NodeContext.nic_name }}'
+            HCCL_OP_EXPANSION_MODE: AIV
+            OMP_NUM_THREADS: '1'
+            HCCL_BUFFSIZE: '256'
+            PYTORCH_NPU_ALLOC_CONF: expandable_segments:True
+            EC_CONFIG: '{"ec_connector":"ECExampleConnector","ec_role":"ec_producer","ec_connector_extra_config":{"shared_storage_path":"/dev/shm/schedule-$RUN_ID"}}'
+    pd:
+      launch_strategy: explicit
+      launches:
+        node0:
+          server_cmd: vllm serve Qwen/Qwen2.5-VL-7B-Instruct --host 0.0.0.0 --port {{ LaunchContext.port }}
+            --tensor-parallel-size 2 --enforce-eager --trust-remote-code --max-model-len 10000 --max-num-batched-tokens
+            2048 --max-num-seqs 2 --no-enable-prefix-caching --gpu-memory-utilization 0.7 --ec-transfer-config
+            "$EC_CONFIG"
+          endpoint:
+            host: '{{ NodeContext.ip }}'
+            port: auto
+          envs:
+            VLLM_HOST_IP: '{{ NodeContext.ip }}'
+            HCCL_IF_IP: '{{ NodeContext.ip }}'
+            GLOO_SOCKET_IFNAME: '{{ NodeContext.nic_name }}'
+            TP_SOCKET_IFNAME: '{{ NodeContext.nic_name }}'
+            HCCL_SOCKET_IFNAME: '{{ NodeContext.nic_name }}'
+            HCCL_OP_EXPANSION_MODE: AIV
+            OMP_NUM_THREADS: '1'
+            HCCL_BUFFSIZE: '256'
+            PYTORCH_NPU_ALLOC_CONF: expandable_segments:True
+            EC_CONFIG: '{"ec_connector":"ECExampleConnector","ec_role":"ec_consumer","ec_connector_extra_config":{"shared_storage_path":"/dev/shm/schedule-$RUN_ID"}}'
+  routing:
+    type: epd
+    groups:
+      encode:
+      - encode
+      prefill: []
+      decode:
+      - pd
+    proxy:
+      endpoint:
+        host: '{{ NodeContext.ip }}'
+        port: auto
+      command: python $REPO_ROOT/examples/disaggregated_encoder/disagg_epd_proxy.py --host 0.0.0.0 --port {{
+        LaunchContext.port }} --encode-servers-urls {{ EPDRoutingContext.encode_urls }} --prefill-servers-urls
+        {{ EPDRoutingContext.prefill_urls }} --decode-servers-urls {{ EPDRoutingContext.decode_urls }}
+benchmarks:
+  warm_up:
+    case_type: performance
+    dataset_path: vllm-ascend/textvqa-perf-1080p
+    request_conf: vllm_api_stream_chat
+    dataset_conf: textvqa/textvqa_gen_base64
+    num_prompts: 50
+    max_out_len: 20
+    batch_size: 32
+    request_rate: 0
+    baseline: 1
+    threshold: 0.97
+  acc:
+    case_type: accuracy
+    dataset_path: vllm-ascend/textvqa-lite
+    request_conf: vllm_api_stream_chat
+    dataset_conf: textvqa/textvqa_gen_base64
+    max_out_len: 2048
+    batch_size: 128
+    baseline: 82.05
+    threshold: 5
+  perf:
+    case_type: performance
+    dataset_path: vllm-ascend/textvqa-perf-1080p
+    request_conf: vllm_api_stream_chat
+    dataset_conf: textvqa/textvqa_gen_base64
+    num_prompts: 512
+    max_out_len: 256
+    batch_size: 128
+    request_rate: 0
+    baseline: 1
+    threshold: 0.97

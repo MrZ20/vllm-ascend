@@ -13,6 +13,7 @@ from typing import Any
 import regex as re
 
 from tests.e2e.common.kv_pool.config import (
+    KVPoolConfig,
     MemcacheKVPoolConfig,
     MooncakeKVPoolConfig,
 )
@@ -67,11 +68,15 @@ class ExternalDPKVPoolManager:
     def __init__(
         self,
         *,
-        config: ExternalDPConfig,
+        config: ExternalDPConfig | None = None,
+        kv_pool: KVPoolConfig | None = None,
+        cluster_ips: list[str] | None = None,
         current_node_index: int,
         log_root: Path,
     ):
         self.config = config
+        self.kv_pool = config.kv_pool if config is not None else kv_pool
+        self.cluster_ips = config.cluster_ips if config is not None else cluster_ips
         self.current_node_index = current_node_index
         self.log_root = log_root
         self.process: subprocess.Popen | None = None
@@ -79,19 +84,19 @@ class ExternalDPKVPoolManager:
 
     @property
     def pool_type(self) -> str:
-        if self.config.kv_pool is None:
+        if self.kv_pool is None:
             raise RuntimeError("KV pool is not configured")
-        return self.config.kv_pool.type
+        return self.kv_pool.type
 
     @property
     def pool_config(self) -> dict[str, Any]:
-        if self.config.kv_pool is None:
+        if self.kv_pool is None:
             raise RuntimeError("KV pool is not configured")
-        return self.config.kv_pool.config
+        return self.kv_pool.config
 
     @property
     def service_host(self) -> str:
-        return self.config.cluster_ips[PRIMARY_NODE_INDEX]
+        return self.cluster_ips[PRIMARY_NODE_INDEX]
 
     def start(self) -> None:
         self._write_config()
@@ -147,13 +152,21 @@ class ExternalDPKVPoolManager:
     def __enter__(self):
         try:
             self.start()
-        except Exception:
-            self.cleanup()
+        except BaseException as exc:
+            try:
+                self.cleanup()
+            except Exception as cleanup_error:
+                exc.add_note(f"KV pool startup cleanup failed: {cleanup_error}")
             raise
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.cleanup()
+        try:
+            self.cleanup()
+        except Exception as cleanup_error:
+            if exc_value is None:
+                raise
+            exc_value.add_note(f"KV pool cleanup failed: {cleanup_error}")
 
 
 class ExternalDPMooncakeManager(ExternalDPKVPoolManager):
@@ -165,7 +178,7 @@ class ExternalDPMooncakeManager(ExternalDPKVPoolManager):
 
     @property
     def mooncake_config(self) -> MooncakeKVPoolConfig:
-        kv_pool = self.config.kv_pool
+        kv_pool = self.kv_pool
         if not isinstance(kv_pool, MooncakeKVPoolConfig):
             raise TypeError("Mooncake manager requires MooncakeKVPoolConfig")
         return kv_pool
@@ -175,10 +188,10 @@ class ExternalDPMooncakeManager(ExternalDPKVPoolManager):
         return f"{self.service_host}:{self.mooncake_config.master_port}"
 
     def _write_config(self) -> None:
-        local_ip = self.config.cluster_ips[self.current_node_index]
+        local_ip = self.cluster_ips[self.current_node_index]
         store_config = replace_cluster_placeholders(
             self.pool_config,
-            cluster_ips=self.config.cluster_ips,
+            cluster_ips=self.cluster_ips,
             local_ip=local_ip,
             current_node_index=self.current_node_index,
         )
@@ -235,7 +248,7 @@ class ExternalDPMemcacheManager(ExternalDPKVPoolManager):
 
     @property
     def memcache_config(self) -> MemcacheKVPoolConfig:
-        kv_pool = self.config.kv_pool
+        kv_pool = self.kv_pool
         if not isinstance(kv_pool, MemcacheKVPoolConfig):
             raise TypeError("Memcache manager requires MemcacheKVPoolConfig")
         return kv_pool
@@ -250,10 +263,10 @@ class ExternalDPMemcacheManager(ExternalDPKVPoolManager):
         return "".join(f"{key} = {format_value(value)}\n" for key, value in config.items())
 
     def _write_config(self) -> None:
-        local_ip = self.config.cluster_ips[self.current_node_index]
+        local_ip = self.cluster_ips[self.current_node_index]
         rendered_config = replace_cluster_placeholders(
             self.pool_config,
-            cluster_ips=self.config.cluster_ips,
+            cluster_ips=self.cluster_ips,
             local_ip=local_ip,
             current_node_index=self.current_node_index,
         )
@@ -303,22 +316,31 @@ class NullKVPoolManager:
 
 def create_kv_pool_manager(
     *,
-    config: ExternalDPConfig,
+    config: ExternalDPConfig | None = None,
+    kv_pool: KVPoolConfig | None = None,
+    cluster_ips: list[str] | None = None,
     current_node_index: int,
     log_root: Path,
 ) -> ExternalDPKVPoolManager | NullKVPoolManager:
+    """Use either the V1 config or the common typed pool/address inputs."""
+    if config is not None:
+        kv_pool, cluster_ips = config.kv_pool, config.cluster_ips
     kwargs = {
         "config": config,
+        "kv_pool": kv_pool,
+        "cluster_ips": cluster_ips,
         "current_node_index": current_node_index,
         "log_root": log_root,
     }
-    if config.kv_pool is None:
+    if kv_pool is None:
         return NullKVPoolManager()
-    if isinstance(config.kv_pool, MooncakeKVPoolConfig):
+    if not cluster_ips:
+        raise ValueError("KV pool requires cluster addresses")
+    if isinstance(kv_pool, MooncakeKVPoolConfig):
         return ExternalDPMooncakeManager(**kwargs)
-    if isinstance(config.kv_pool, MemcacheKVPoolConfig):
+    if isinstance(kv_pool, MemcacheKVPoolConfig):
         return ExternalDPMemcacheManager(**kwargs)
-    raise TypeError(f"Unsupported KV pool config: {type(config.kv_pool).__name__}")
+    raise TypeError(f"Unsupported KV pool config: {type(kv_pool).__name__}")
 
 
 class ServerCommandBuilder:

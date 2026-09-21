@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Nightly A3 V2
+'on':
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Prepared image containing this workflow commit and compatible vLLM/Ascend packages
+        required: true
+        type: string
+      test_cases:
+        description: Comma-separated V2 matrix names, or all
+        default: all
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: schedule-nightly-v2-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  matrix:
+    runs-on: linux-amd64-cpu-8-hk
+    outputs:
+      single_node: ${{ steps.matrix.outputs.single_node }}
+      double_node: ${{ steps.matrix.outputs.double_node }}
+      multi_node: ${{ steps.matrix.outputs.multi_node }}
+      source_sha: ${{ steps.source.outputs.sha }}
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.12'
+    - id: source
+      run: |
+        echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+    - name: Resolve selected configurations
+      id: matrix
+      env:
+        SELECT: ${{ inputs.test_cases }}
+      run: |
+        python -m venv .ci-venv
+        .ci-venv/bin/pip install pyyaml
+        .ci-venv/bin/python .github/workflows/scripts/resolve_schedule_tests_v2.py --matrix .github/workflows/configs/nightly_config_v2.yaml --soc a3 --select "$SELECT"
+  multi_node:
+    needs:
+    - matrix
+    if: ${{ always() && !cancelled() && needs.matrix.result == 'success' && needs.matrix.outputs.multi_node != '[]'
+      }}
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        test: ${{ fromJSON(needs.matrix.outputs.multi_node) }}
+    uses: ./.github/workflows/_e2e_schedule_multi_node_v2.yaml
+    with:
+      image: ${{ inputs.image }}
+      source_sha: ${{ needs.matrix.outputs.source_sha }}
+      name: ${{ matrix.test.name }}
+      config_path: ${{ matrix.test.config_path }}
+      num_nodes: ${{ matrix.test.num_nodes }}
+      npu_per_node: ${{ matrix.test.npu_per_node }}
+      runner: linux-aarch64-a3-800t-0
+    secrets:
+      KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+  double_node:
+    needs:
+    - matrix
+    - multi_node
+    if: ${{ always() && !cancelled() && needs.matrix.result == 'success' && needs.matrix.outputs.double_node !=
+      '[]' }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        test: ${{ fromJSON(needs.matrix.outputs.double_node) }}
+    uses: ./.github/workflows/_e2e_schedule_multi_node_v2.yaml
+    with:
+      image: ${{ inputs.image }}
+      source_sha: ${{ needs.matrix.outputs.source_sha }}
+      name: ${{ matrix.test.name }}
+      config_path: ${{ matrix.test.config_path }}
+      num_nodes: ${{ matrix.test.num_nodes }}
+      npu_per_node: ${{ matrix.test.npu_per_node }}
+      runner: linux-aarch64-a3-800t-0
+    secrets:
+      KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+  single_node:
+    needs:
+    - matrix
+    - double_node
+    if: ${{ always() && !cancelled() && needs.matrix.result == 'success' && needs.matrix.outputs.single_node !=
+      '[]' }}
+    strategy:
+      fail-fast: false
+      max-parallel: 9
+      matrix:
+        test: ${{ fromJSON(needs.matrix.outputs.single_node) }}
+    uses: ./.github/workflows/_e2e_schedule_single_node_v2.yaml
+    with:
+      image: ${{ inputs.image }}
+      source_sha: ${{ needs.matrix.outputs.source_sha }}
+      name: ${{ matrix.test.name }}
+      config_path: ${{ matrix.test.config_path }}
+      num_nodes: ${{ matrix.test.num_nodes }}
+      npu_per_node: ${{ matrix.test.npu_per_node }}
+      runner: ${{ matrix.test.os }}

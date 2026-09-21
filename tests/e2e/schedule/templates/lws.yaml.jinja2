@@ -1,0 +1,59 @@
+apiVersion: leaderworkerset.x-k8s.io/v1
+kind: LeaderWorkerSet
+metadata:
+  name: {{ name }}
+  namespace: {{ namespace }}
+spec:
+  replicas: 1
+  leaderWorkerTemplate:
+    size: {{ num_nodes }}
+    restartPolicy: None
+{% for role in ['leader', 'worker'] %}
+    {{ role }}Template:
+      metadata:
+        labels:
+          schedule-v2-run: {{ name }}
+      spec:
+        restartPolicy: Never
+        hostPID: false
+        shareProcessNamespace: false
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchLabels:
+                    schedule-v2-run: {{ name }}
+                topologyKey: kubernetes.io/hostname
+        tolerations:
+          - {key: dedicated, operator: Equal, value: night, effect: NoSchedule}
+        containers:
+          - name: schedule
+            image: {{ image | tojson }}
+            imagePullPolicy: IfNotPresent
+            command: [bash, /vllm-workspace/vllm-ascend/tests/e2e/schedule/scripts/run.sh]
+            env:
+{% for key, value in env.items() %}
+              - name: {{ key }}
+                value: {{ value | string | tojson }}
+{% endfor %}
+            resources:
+              requests:
+                cpu: {{ cpu | tojson }}
+                memory: {{ memory | tojson }}
+                {{ npu_resource_key }}: {{ npu_per_node }}
+              limits:
+                memory: {{ memory | tojson }}
+                {{ npu_resource_key }}: {{ npu_per_node }}
+            volumeMounts:
+              - {name: shared, mountPath: /root/.cache}
+              - {name: shm, mountPath: /dev/shm}
+              - {name: driver-tools, mountPath: /usr/local/Ascend/driver/tools, readOnly: true}
+        volumes:
+          - name: shared
+            persistentVolumeClaim:
+              claimName: {{ pvc }}
+          - name: shm
+            emptyDir: {medium: Memory, sizeLimit: 64Gi}
+          - name: driver-tools
+            hostPath: {path: /usr/local/Ascend/driver/tools, type: Directory}
+{% endfor %}

@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Scheduled E2E V2 LWS
+'on':
+  workflow_call:
+    inputs:
+      image:
+        type: string
+        required: true
+      source_sha:
+        type: string
+        required: true
+      name:
+        type: string
+        required: true
+      config_path:
+        type: string
+        required: true
+      num_nodes:
+        type: number
+        required: true
+      npu_per_node:
+        type: string
+        default: ''
+      runner:
+        type: string
+        required: true
+      npu_resource_key:
+        type: string
+        default: huawei.com/ascend-1980
+      default_npu_per_node:
+        type: string
+        default: '16'
+      cpu:
+        type: string
+        default: '16'
+      memory:
+        type: string
+        default: 128Gi
+      pvc:
+        type: string
+        default: nv-action-vllm-benchmarks-v2
+    secrets:
+      KUBECONFIG_B64:
+        required: true
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 130
+    container:
+      image: swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/vllm-ascend:nightly-cpu
+      volumes:
+      - /root/.cache:/root/.cache
+    env:
+      KUBECONFIG: ${{ github.workspace }}/.schedule-kubeconfig
+    defaults:
+      run:
+        shell: bash --noprofile --norc -eo pipefail {0}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ inputs.source_sha }}
+    - name: Prepare controller
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBECONFIG_B64 }}
+      run: |
+        umask 077
+        printf %s "$KUBE_CONFIG" | base64 -d > "$KUBECONFIG"
+        python -m venv --system-site-packages .ci-venv
+        .ci-venv/bin/python -m pip install pyyaml jinja2
+    - name: Run isolated LWS
+      env:
+        IMAGE: ${{ inputs.image }}
+        SOURCE_SHA: ${{ inputs.source_sha }}
+        TEST_NAME: ${{ inputs.name }}
+        CONFIG_PATH: ${{ inputs.config_path }}
+        NUM_NODES: ${{ inputs.num_nodes }}
+        NPUS: ${{ inputs.npu_per_node }}
+        DEFAULT_NPUS: ${{ inputs.default_npu_per_node }}
+        CPU: ${{ inputs.cpu }}
+        MEMORY: ${{ inputs.memory }}
+        PVC: ${{ inputs.pvc }}
+        NPU_KEY: ${{ inputs.npu_resource_key }}
+        RUN_UNIQUE: ${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.name }}
+      run: |
+        # Only omission uses the platform default; an explicit zero is rejected by Python.
+        if [[ -z "$NPUS" ]]; then NPUS="$DEFAULT_NPUS"; fi
+        RUN_NAME="s2-$(printf %s "$RUN_UNIQUE" | sha256sum | cut -c1-20)"
+        .ci-venv/bin/python .github/workflows/scripts/run_schedule_lws_v2.py \
+          --name "$RUN_NAME" --image "$IMAGE" --sha "$SOURCE_SHA" \
+          --config-path "$CONFIG_PATH" --num-nodes "$NUM_NODES" --npu-per-node "$NPUS" \
+          --cpu "$CPU" --memory "$MEMORY" --pvc "$PVC" --npu-resource-key "$NPU_KEY" \
+          --artifact-dir "$GITHUB_WORKSPACE/schedule-artifacts"
+    - name: Upload results and logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: schedule-v2-${{ inputs.name }}-${{ github.run_attempt }}
+        path: schedule-artifacts/
+        if-no-files-found: error
+    - name: Remove controller credentials
+      if: always()
+      run: |
+        rm -f -- "$KUBECONFIG"

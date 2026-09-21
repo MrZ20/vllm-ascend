@@ -69,7 +69,16 @@ class AisbenchRunner:
         print(f"running aisbench cmd: {aisbench_cmd}")
         self.proc: subprocess.Popen = subprocess.Popen(aisbench_cmd, shell=True)
 
-    def __init__(self, model: str, port: int, aisbench_config: dict, host_ip: str = "localhost", verify=True):
+    def __init__(
+        self,
+        model: str,
+        port: int,
+        aisbench_config: dict,
+        host_ip: str = "localhost",
+        verify=True,
+        *,
+        metrics_server=None,
+    ):
         self.model = model
         self.dataset_path = aisbench_config.get("dataset_path_local")
         if not self.dataset_path:
@@ -110,7 +119,9 @@ class AisbenchRunner:
             assert self.spec_decode_baseline, "spec_decode baseline must contain a rate for every position"
             from tools.spec_decode_metrics import capture_baseline
 
-            self.metrics_server = _MetricsServer(self.host_ip, self.port)
+            self.metrics_server = (
+                metrics_server if metrics_server is not None else _MetricsServer(self.host_ip, self.port)
+            )
             self.metrics_baseline = capture_baseline(self.metrics_server, len(self.spec_decode_baseline))
         self._run_aisbench_task()
         self._wait_for_task()

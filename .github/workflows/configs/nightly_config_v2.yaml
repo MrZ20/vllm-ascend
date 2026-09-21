@@ -1,0 +1,34 @@
+a3:
+  single_node:
+    test_config:
+    - name: qwen32-w8a8
+      config_path: tests/e2e/schedule/models/qwen/Qwen3-32B-Int8.yaml
+      num_nodes: 1
+      npu_per_node: 4
+      os: linux-aarch64-a3-800i-4
+    - name: qwen30-2p2d
+      config_path: tests/e2e/schedule/models/qwen/Qwen3-30B-2p2d.yaml
+      num_nodes: 1
+      npu_per_node: 4
+      os: linux-aarch64-a3-800i-4
+    - name: qwen-vl-epd
+      config_path: tests/e2e/schedule/models/qwen/Qwen2.5-VL-7B-EPD.yaml
+      num_nodes: 1
+      npu_per_node: 4
+      os: linux-aarch64-a3-800i-4
+  double_node:
+    test_config:
+    - name: qwen30-internal-dp
+      config_path: tests/e2e/schedule/models/qwen/Qwen3-30B-internal-dp.yaml
+      num_nodes: 2
+      npu_per_node: 2
+    - name: qwen30-mixed-pd
+      config_path: tests/e2e/schedule/models/qwen/Qwen3-30B-mixed-pd.yaml
+      num_nodes: 2
+      npu_per_node: 2
+    - name: qwen30-external-pd
+      config_path: tests/e2e/schedule/models/qwen/Qwen3-30B-external-pd.yaml
+      num_nodes: 2
+      npu_per_node: 2
+  multi_node:
+    test_config: []

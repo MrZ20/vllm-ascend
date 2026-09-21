@@ -335,6 +335,71 @@ def test_pd_required_devices(args, expected):
     assert utils._get_pd_server_required_devices(args) == expected
 
 
+def test_assignment_reserves_later_explicit_devices():
+    args = [["m", "-tp", "2"], ["m", "-tp", "2"]]
+    assert utils._allocate_server_devices(args, [{}, {"ASCEND_RT_VISIBLE_DEVICES": "4,6"}], "4,6,8,10") == [
+        "8,10",
+        "4,6",
+    ]
+
+
+@pytest.mark.parametrize("assignment", ["", "4,4", "4,12"])
+def test_assignment_rejects_invalid_explicit_devices(assignment):
+    with pytest.raises(ValueError):
+        utils._allocate_server_devices([["m"]], [{"ASCEND_RT_VISIBLE_DEVICES": assignment}], "4,6,8,10")
+
+
+def test_per_server_env_and_deferred_group_readiness(monkeypatch, lightweight_cli, tmp_path):
+    monkeypatch.setenv("ASCEND_RT_VISIBLE_DEVICES", "4,6,8,10")
+    started = Mock()
+    wait = Mock()
+    monkeypatch.setattr(utils._ManagedProcess, "start", started)
+    monkeypatch.setattr(utils.RemoteServerGroup, "wait_all_ready", wait)
+    args = [["model", "--port", "12345"], ["model", "--headless"]]
+    with utils.RemotePDServer(
+        args,
+        env_dict={"COMMON": "yes"},
+        per_server_envs=[
+            {"ASCEND_RT_VISIBLE_DEVICES": "8", "VLLM_WORKER_MULTIPROC_METHOD": "fork"},
+            {"ASCEND_RT_VISIBLE_DEVICES": "4,6"},
+        ],
+        working_dirs=[str(tmp_path), None],
+        log_files=[tmp_path / "first.log", None],
+        health_urls=["http://remote:12345/health"],
+        wait_for_ready=False,
+    ) as server:
+        assert started.call_count == 2
+        wait.assert_not_called()
+        assert server.processes[0].env["VLLM_WORKER_MULTIPROC_METHOD"] == "fork"
+        assert server.processes[1].env["COMMON"] == "yes"
+        assert server.processes[0].cwd == str(tmp_path)
+        assert server.health_urls == ["http://remote:12345/health"]
+
+
+def test_log_file_and_cwd(tmp_path):
+    logfile = tmp_path / "process.log"
+    process = utils._ManagedProcess(
+        [sys.executable, "-c", "import os; print(os.getcwd()); print('done')"], cwd=str(tmp_path), log_file=logfile
+    )
+    process.start()
+    process.proc.wait(timeout=5)
+    process.shutdown()
+    assert str(tmp_path) in logfile.read_text()
+    assert "done" in logfile.read_text()
+
+
+def test_cleanup_preserves_original_error_and_attempts_all_siblings():
+    processes = [Mock(), Mock()]
+    processes[0].shutdown.side_effect = RuntimeError("cleanup failed")
+    with (
+        pytest.raises(ValueError, match="test failed") as error,
+        utils.RemoteServerGroup(processes, [], timeout=1, wait_for_ready=False),
+    ):
+        raise ValueError("test failed")
+    assert "cleanup" in error.value.__notes__[0]
+    assert all(process.shutdown.called for process in processes)
+
+
 @pytest.mark.parametrize("pcp_size", [0, -1])
 def test_pd_required_devices_rejects_nonpositive_pcp(pcp_size):
     with pytest.raises(ValueError, match="--prefill-context-parallel-size must be positive"):
@@ -422,3 +487,10 @@ def test_shutdown_timeout_uses_upstream_engine_budget(monkeypatch):
     monkeypatch.setitem(sys.modules, "vllm.v1.engine", engine)
     assert utils._vllm_shutdown_timeout(argparse.Namespace(shutdown_timeout=7)) == 57
     get_timeout.assert_called_once_with(7, 7)
+
+
+def test_explicit_assignment_must_fit_parallel_workers():
+    with pytest.raises(ValueError, match="requires 4 devices"):
+        utils._allocate_server_devices(
+            [["model", "-tp", "2", "-pp", "2"]], [{"ASCEND_RT_VISIBLE_DEVICES": "4,5"}], "4,5,6,7"
+        )
