@@ -29,6 +29,22 @@ spec:
                 value: "{{ config_base_path | default("") }}"
               - name: LOG_PREFIX
                 value: {{ log_prefix | default("/root/.cache/ascend-logs") }}
+              - name: ASCEND_PROFILE_ROOT
+                value: {{ (log_prefix ~ "/profile_artifact") | tojson }}
+              - name: ASCEND_PROFILE_ENABLED
+                value: {{ profile_enabled | tojson }}
+              - name: ASCEND_PROFILE_START_AFTER
+                value: {{ profile_start_after | tojson }}
+              - name: ASCEND_PROFILE_DURATION
+                value: {{ profile_duration | tojson }}
+              - name: ASCEND_PROFILE_WITH_STACK
+                value: {{ profile_with_stack | tojson }}
+              - name: ASCEND_PROFILE_SCOPE
+                value: {{ profile_scope | tojson }}
+              - name: ASCEND_PROFILE_OUTPUT
+                value: {{ profile_output | tojson }}
+              - name: ASCEND_PROFILE_CASES
+                value: {{ profile_cases | tojson }}
               - name: WORKSPACE
                 value: "/vllm-workspace"
               - name: FAIL_TAG
@@ -149,6 +165,22 @@ spec:
                 value: "{{ test_frequency | default("nightly") }}"
               - name: LOG_PREFIX
                 value: {{ log_prefix | default("/root/.cache/ascend-logs") }}
+              - name: ASCEND_PROFILE_ROOT
+                value: {{ (log_prefix ~ "/profile_artifact") | tojson }}
+              - name: ASCEND_PROFILE_ENABLED
+                value: {{ profile_enabled | tojson }}
+              - name: ASCEND_PROFILE_START_AFTER
+                value: {{ profile_start_after | tojson }}
+              - name: ASCEND_PROFILE_DURATION
+                value: {{ profile_duration | tojson }}
+              - name: ASCEND_PROFILE_WITH_STACK
+                value: {{ profile_with_stack | tojson }}
+              - name: ASCEND_PROFILE_SCOPE
+                value: {{ profile_scope | tojson }}
+              - name: ASCEND_PROFILE_OUTPUT
+                value: {{ profile_output | tojson }}
+              - name: ASCEND_PROFILE_CASES
+                value: {{ profile_cases | tojson }}
               - name: WORKSPACE
                 value: "/vllm-workspace"
               - name: FAIL_TAG

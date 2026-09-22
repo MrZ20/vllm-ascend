@@ -20,9 +20,11 @@ from tests.e2e.common.multi_node.internal_dp.multi_node_config import (
     MultiNodeConfigLoader,
     ProxyLauncher,
 )
+from tests.e2e.common.multi_node.internal_dp.profiling import configure_profiling
 from tests.e2e.conftest import RemoteOpenAIServer
 from tests.e2e.nightly.scripts.result_postprocess import postprocess_benchmark_results
 from tools.aisbench import run_aisbench_cases
+from tools.profiling.workflow import ProfileSpec
 
 logger = logging.getLogger(__name__)
 
@@ -164,6 +166,7 @@ def _save_benchmark_results_json(config: MultiNodeConfig, results: list[Any]) ->
 @pytest.mark.asyncio
 async def test_multi_node() -> None:
     config = MultiNodeConfigLoader.from_yaml()
+    configure_profiling(config, ProfileSpec.from_env())
     if config.special_dependencies:
         for k, v in config.special_dependencies.items():
             command = [
