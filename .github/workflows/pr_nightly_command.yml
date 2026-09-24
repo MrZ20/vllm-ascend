@@ -467,8 +467,26 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
           BISECT_ARGS_JSON: ${{ needs.authorize.outputs.bisect_args_json }}
+          PROFILE_ENABLED: ${{ needs.authorize.outputs.profile_enabled }}
+          PROFILE_START_AFTER: ${{ needs.authorize.outputs.profile_start_after }}
+          PROFILE_DURATION: ${{ needs.authorize.outputs.profile_duration }}
+          PROFILE_WITH_STACK: ${{ needs.authorize.outputs.profile_with_stack }}
+          PROFILE_SCOPE: ${{ needs.authorize.outputs.profile_scope }}
+          PROFILE_MAX_SIZE: ${{ needs.authorize.outputs.profile_max_size }}
+          PROFILE_OUTPUT: ${{ needs.authorize.outputs.profile_output }}
+          PROFILE_CASES: ${{ needs.authorize.outputs.profile_cases }}
         run: |
           REPO='${{ github.event.client_payload.github.payload.repository.full_name }}'
+          PROFILE_OPTIONS_JSON=$(jq -cn \
+            --argjson enabled "$PROFILE_ENABLED" \
+            --arg start_after "$PROFILE_START_AFTER" \
+            --arg duration "$PROFILE_DURATION" \
+            --argjson with_stack "$PROFILE_WITH_STACK" \
+            --arg scope "$PROFILE_SCOPE" \
+            --arg max_size "$PROFILE_MAX_SIZE" \
+            --arg output "$PROFILE_OUTPUT" \
+            --arg cases "$PROFILE_CASES" \
+            '{enabled:$enabled,start_after:$start_after,duration:$duration,with_stack:$with_stack,scope:$scope,max_size:$max_size,output:$output,cases:$cases}')
           gh workflow run schedule_nightly_test_a3.yaml \
             --repo "$REPO" \
             --ref main \
@@ -478,14 +496,7 @@ jobs:
             -f skip_build_image=true \
             -f vllm_ascend_ref='${{ needs.authorize.outputs.vllm_ascend_ref }}' \
             -f aop_enabled='${{ needs.authorize.outputs.aop_enabled }}' \
-            -f profile_enabled='${{ needs.authorize.outputs.profile_enabled }}' \
-            -f profile_start_after='${{ needs.authorize.outputs.profile_start_after }}' \
-            -f profile_duration='${{ needs.authorize.outputs.profile_duration }}' \
-            -f profile_with_stack='${{ needs.authorize.outputs.profile_with_stack }}' \
-            -f profile_scope='${{ needs.authorize.outputs.profile_scope }}' \
-            -f profile_max_size='${{ needs.authorize.outputs.profile_max_size }}' \
-            -f profile_output='${{ needs.authorize.outputs.profile_output }}' \
-            -f profile_cases='${{ needs.authorize.outputs.profile_cases }}' \
+            -f profile_options_json="$PROFILE_OPTIONS_JSON" \
             -f bisect_args_json="$BISECT_ARGS_JSON"
           sleep 8
           A3_RUN_ID=$(gh api "repos/$REPO/actions/workflows/schedule_nightly_test_a3.yaml/runs?per_page=1" \

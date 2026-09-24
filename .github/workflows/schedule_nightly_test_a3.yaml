@@ -73,43 +73,15 @@ on:
         required: false
         default: '{"cann_version":"9.1.0_20260731131545","base_image_date":"auto"}'
         type: string
-      bisect_good_commit:
-        description: 'explicit good commit for bisect (overrides good_table lookup)'
       bisect_args_json:
         description: 'JSON object containing optional bisect parameters'
         required: false
         default: '{}'
         type: string
-      profile_enabled:
-        description: 'Enable manual A3 profiling'
-        type: boolean
-        default: false
-      profile_start_after:
-        description: 'Seconds after the first benchmark request'
+      profile_options_json:
+        description: 'JSON profiling options: enabled, start_after, duration, with_stack, scope, max_size, output, cases, validation_id'
         type: string
-        default: '15'
-      profile_duration:
-        description: 'Profiling seconds'
-        type: string
-        default: '8'
-      profile_with_stack:
-        type: boolean
-        default: false
-      profile_scope:
-        type: choice
-        options: [representative, all]
-        default: representative
-      profile_max_size:
-        type: string
-        default: '50G'
-      profile_output:
-        type: choice
-        options: [parsed, raw]
-        default: parsed
-      profile_cases:
-        description: 'Optional comma-separated performance case names'
-        type: string
-        default: ''
+        default: '{}'
 permissions:
   contents: read
   pull-requests: read
@@ -263,14 +235,14 @@ jobs:
       name: ${{ matrix.test_config.name }}
       vllm_ascend_ref: ${{ inputs.vllm_ascend_ref || needs.parse-trigger.outputs.ref }}
       aop_multi_enabled: ${{ inputs.aop_enabled }}
-      profile_enabled: ${{ inputs.profile_enabled }}
-      profile_start_after: ${{ inputs.profile_start_after }}
-      profile_duration: ${{ inputs.profile_duration }}
-      profile_with_stack: ${{ inputs.profile_with_stack }}
-      profile_scope: ${{ inputs.profile_scope }}
-      profile_max_size: ${{ inputs.profile_max_size }}
-      profile_output: ${{ inputs.profile_output }}
-      profile_cases: ${{ inputs.profile_cases }}
+      profile_enabled: ${{ fromJSON(inputs.profile_options_json || '{}').enabled || false }}
+      profile_start_after: ${{ fromJSON(inputs.profile_options_json || '{}').start_after || '15' }}
+      profile_duration: ${{ fromJSON(inputs.profile_options_json || '{}').duration || '8' }}
+      profile_with_stack: ${{ fromJSON(inputs.profile_options_json || '{}').with_stack || false }}
+      profile_scope: ${{ fromJSON(inputs.profile_options_json || '{}').scope || 'representative' }}
+      profile_max_size: ${{ fromJSON(inputs.profile_options_json || '{}').max_size || '50G' }}
+      profile_output: ${{ fromJSON(inputs.profile_options_json || '{}').output || 'parsed' }}
+      profile_cases: ${{ fromJSON(inputs.profile_options_json || '{}').cases || '' }}
       bisect_good_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').good_commit || '' }}
       bisect_bad_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').bad_commit || 'HEAD' }}
       bisect_fail_confirm_retries: ${{ fromJSON(inputs.bisect_args_json || '{}').fail_confirm_retries || '' }}
@@ -321,14 +293,14 @@ jobs:
       name: ${{ matrix.test_config.name }}
       vllm_ascend_ref: ${{ inputs.vllm_ascend_ref || needs.parse-trigger.outputs.ref }}
       aop_multi_enabled: ${{ inputs.aop_enabled }}
-      profile_enabled: ${{ inputs.profile_enabled }}
-      profile_start_after: ${{ inputs.profile_start_after }}
-      profile_duration: ${{ inputs.profile_duration }}
-      profile_with_stack: ${{ inputs.profile_with_stack }}
-      profile_scope: ${{ inputs.profile_scope }}
-      profile_max_size: ${{ inputs.profile_max_size }}
-      profile_output: ${{ inputs.profile_output }}
-      profile_cases: ${{ inputs.profile_cases }}
+      profile_enabled: ${{ fromJSON(inputs.profile_options_json || '{}').enabled || false }}
+      profile_start_after: ${{ fromJSON(inputs.profile_options_json || '{}').start_after || '15' }}
+      profile_duration: ${{ fromJSON(inputs.profile_options_json || '{}').duration || '8' }}
+      profile_with_stack: ${{ fromJSON(inputs.profile_options_json || '{}').with_stack || false }}
+      profile_scope: ${{ fromJSON(inputs.profile_options_json || '{}').scope || 'representative' }}
+      profile_max_size: ${{ fromJSON(inputs.profile_options_json || '{}').max_size || '50G' }}
+      profile_output: ${{ fromJSON(inputs.profile_options_json || '{}').output || 'parsed' }}
+      profile_cases: ${{ fromJSON(inputs.profile_options_json || '{}').cases || '' }}
       bisect_good_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').good_commit || '' }}
       bisect_bad_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').bad_commit || 'HEAD' }}
       bisect_fail_confirm_retries: ${{ fromJSON(inputs.bisect_args_json || '{}').fail_confirm_retries || '' }}
@@ -383,14 +355,14 @@ jobs:
       request_id: ${{ inputs.request_id || '' }}
       vllm_ascend_ref: ${{ inputs.vllm_ascend_ref || '' }}
       aop_single_enabled: ${{ inputs.aop_enabled }}
-      profile_enabled: ${{ inputs.profile_enabled }}
-      profile_start_after: ${{ inputs.profile_start_after }}
-      profile_duration: ${{ inputs.profile_duration }}
-      profile_with_stack: ${{ inputs.profile_with_stack }}
-      profile_scope: ${{ inputs.profile_scope }}
-      profile_max_size: ${{ inputs.profile_max_size }}
-      profile_output: ${{ inputs.profile_output }}
-      profile_cases: ${{ inputs.profile_cases }}
+      profile_enabled: ${{ fromJSON(inputs.profile_options_json || '{}').enabled || false }}
+      profile_start_after: ${{ fromJSON(inputs.profile_options_json || '{}').start_after || '15' }}
+      profile_duration: ${{ fromJSON(inputs.profile_options_json || '{}').duration || '8' }}
+      profile_with_stack: ${{ fromJSON(inputs.profile_options_json || '{}').with_stack || false }}
+      profile_scope: ${{ fromJSON(inputs.profile_options_json || '{}').scope || 'representative' }}
+      profile_max_size: ${{ fromJSON(inputs.profile_options_json || '{}').max_size || '50G' }}
+      profile_output: ${{ fromJSON(inputs.profile_options_json || '{}').output || 'parsed' }}
+      profile_cases: ${{ fromJSON(inputs.profile_options_json || '{}').cases || '' }}
       bisect_good_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').good_commit || '' }}
       bisect_bad_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').bad_commit || 'HEAD' }}
       bisect_fail_confirm_retries: ${{ fromJSON(inputs.bisect_args_json || '{}').fail_confirm_retries || '' }}
@@ -437,14 +409,14 @@ jobs:
       request_id: ${{ inputs.request_id || '' }}
       vllm_ascend_ref: ${{ inputs.vllm_ascend_ref || '' }}
       aop_single_enabled: ${{ inputs.aop_enabled }}
-      profile_enabled: ${{ inputs.profile_enabled }}
-      profile_start_after: ${{ inputs.profile_start_after }}
-      profile_duration: ${{ inputs.profile_duration }}
-      profile_with_stack: ${{ inputs.profile_with_stack }}
-      profile_scope: ${{ inputs.profile_scope }}
-      profile_max_size: ${{ inputs.profile_max_size }}
-      profile_output: ${{ inputs.profile_output }}
-      profile_cases: ${{ inputs.profile_cases }}
+      profile_enabled: ${{ fromJSON(inputs.profile_options_json || '{}').enabled || false }}
+      profile_start_after: ${{ fromJSON(inputs.profile_options_json || '{}').start_after || '15' }}
+      profile_duration: ${{ fromJSON(inputs.profile_options_json || '{}').duration || '8' }}
+      profile_with_stack: ${{ fromJSON(inputs.profile_options_json || '{}').with_stack || false }}
+      profile_scope: ${{ fromJSON(inputs.profile_options_json || '{}').scope || 'representative' }}
+      profile_max_size: ${{ fromJSON(inputs.profile_options_json || '{}').max_size || '50G' }}
+      profile_output: ${{ fromJSON(inputs.profile_options_json || '{}').output || 'parsed' }}
+      profile_cases: ${{ fromJSON(inputs.profile_options_json || '{}').cases || '' }}
       bisect_good_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').good_commit || '' }}
       bisect_bad_commit: ${{ fromJSON(inputs.bisect_args_json || '{}').bad_commit || 'HEAD' }}
       bisect_fail_confirm_retries: ${{ fromJSON(inputs.bisect_args_json || '{}').fail_confirm_retries || '' }}
