@@ -24,7 +24,13 @@ from tests.e2e.common.single_node.single_node_config import (
 from tests.e2e.conftest import DisaggEpdProxy, RemoteEPDServer, RemoteOpenAIServer
 from tests.e2e.nightly.scripts.result_postprocess import postprocess_benchmark_results
 from tools.aisbench import run_aisbench_cases
-from tools.profiling.workflow import ProfileSpec, install_manifest, make_instance, profile_root, with_profiler_config
+from tools.profiling.capture import (
+    ProfileSpec,
+    ServeInstance,
+    configure_profiler_command,
+    initialize_profile_manifests,
+    profile_root,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -618,9 +624,10 @@ async def test_single_node(config: SingleNodeConfig) -> None:
     # Standard OpenAI service mode
     spec = ProfileSpec.from_env()
     if spec.enabled:
-        instance = make_instance("serve-0", f"http://127.0.0.1:{config.server_port}")
-        install_manifest([instance])
-        config.server_cmd = with_profiler_config(config.server_cmd, instance, spec)
+        root = profile_root()
+        instance = ServeInstance.from_endpoint("serve-0", f"http://127.0.0.1:{config.server_port}", root=root)
+        initialize_profile_manifests(root, [instance], spec)
+        config.server_cmd = configure_profiler_command(config.server_cmd, instance, spec)
     with (
         kv_pool_manager,
         RemoteOpenAIServer(

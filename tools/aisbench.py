@@ -29,6 +29,13 @@ import pandas as pd
 import regex as re
 from modelscope import snapshot_download  # type: ignore
 
+from tools.profiling.capture import (
+    ProfileController,
+    ProfileSpec,
+    ServeManifest,
+    collect_raw_artifacts,
+    profile_root,
+)
 from tools.profiling.steady_state import (
     AisbenchTimingAdapter,
     SteadyStateResult,
@@ -38,14 +45,6 @@ from tools.profiling.steady_state import (
     render_terminal,
     steady_state_summary,
     unavailable_steady_state,
-)
-from tools.profiling.workflow import (
-    ArtifactManager,
-    ProfileController,
-    ProfileSpec,
-    ServeManifest,
-    TargetSelector,
-    profile_root,
 )
 
 BENCHMARK_HOME = os.getenv("BENCHMARK_HOME", os.path.abspath("./benchmark"))
@@ -128,19 +127,14 @@ class AisbenchRunner:
         assert self.dataset_path is not None and self.model_path is not None, (
             f"Failed to download dataset or model: dataset={self.dataset_path}, model={self.model_path}"
         )
-        self.port = port
-        self.host_ip = host_ip
-        self.task_type = aisbench_config["case_type"]
         self.profile_spec = ProfileSpec()
         self.profile_targets = ()
         try:
             self.profile_spec = ProfileSpec.from_env()
-            if self.profile_spec.includes(self.case_name, self.task_type):
+            if self.profile_spec.includes_case(self.case_name, self.task_type):
                 manifest_path = profile_root() / "serve_manifest.json"
                 if manifest_path.exists():
-                    self.profile_targets = TargetSelector.select(
-                        ServeManifest.read(manifest_path), self.profile_spec.scope
-                    )
+                    self.profile_targets = ServeManifest.read(manifest_path).select_targets(self.profile_spec.scope)
                 else:
                     logging.warning("No serve manifest for profiling; benchmark runs without profiling")
         except Exception:
@@ -206,7 +200,13 @@ class AisbenchRunner:
                 result = controller.finish()
                 print(f"Profiling case {self.profile_case_name} finished: {result}", flush=True)
                 try:
-                    ArtifactManager(profile_root()).collect(self.profile_case_name, self.profile_targets, result)
+                    collect_raw_artifacts(
+                        profile_root(),
+                        self.profile_case_name,
+                        self.profile_targets,
+                        result,
+                        self.profile_spec,
+                    )
                 except Exception:
                     logging.exception("Failed to collect profiling artifacts; benchmark result is unchanged")
         if verify:
@@ -413,7 +413,10 @@ class AisbenchRunner:
         try:
             self._get_result_performance()
         finally:
-            self._try_analyze_steady_state()
+            try:
+                self._try_analyze_steady_state()
+            except Exception:
+                logging.exception("Unexpected steady-state failure; benchmark result is unchanged")
         output_throughput = self.result_json["Output Token Throughput"]["total"].replace("token/s", "")
         assert float(output_throughput) >= self.threshold * self.baseline, (
             "Performance verification failed. "

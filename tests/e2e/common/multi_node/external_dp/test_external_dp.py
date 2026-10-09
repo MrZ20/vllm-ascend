@@ -36,7 +36,7 @@ from tests.e2e.common.multi_node.external_dp.utils import (
 )
 from tests.e2e.common.multi_node.utils import ProxyServer
 from tools.aisbench import run_aisbench_cases
-from tools.profiling.workflow import ProfileSpec, install_manifest, make_instance
+from tools.profiling.capture import ProfileSpec, ServeInstance, initialize_profile_manifests, profile_root
 
 logging.basicConfig(
     level=logging.INFO,
@@ -224,15 +224,22 @@ def test_external_dp() -> None:
     log_root = Path(os.environ.get("EXTERNAL_DP_LOG_DIR", str(DEFAULT_LOG_ROOT)))
     max_wait_seconds = int(os.environ.get("EXTERNAL_DP_MAX_WAIT_SECONDS", "5400"))
     is_master = current_node_index == 0
-    if is_master and ProfileSpec.from_env().enabled:
+    profile_spec = ProfileSpec.from_env()
+    if is_master and profile_spec.enabled:
         instances = []
         for rank in ranks:
-            role = {"prefiller": "prefill", "decoder": "decode"}.get(rank.role, "standalone")
-            name = f"{role}-{rank.dp_rank}" if role != "standalone" else f"dp-{rank.dp_rank}"
+            role = {"prefiller": "prefill", "decoder": "decode"}.get(rank.role, "unified")
+            name = f"{role}-{rank.dp_rank}" if role != "unified" else f"dp-{rank.dp_rank}"
             instances.append(
-                make_instance(name, f"http://{rank.host}:{rank.port}", role, rank.dp_rank, rank.node_index)
+                ServeInstance.from_endpoint(
+                    name,
+                    f"http://{rank.host}:{rank.port}",
+                    role,
+                    rank.dp_rank,
+                    rank.node_index,
+                )
             )
-        install_manifest(instances)
+        initialize_profile_manifests(profile_root(), instances, profile_spec)
 
     kv_pool_manager = create_kv_pool_manager(
         config=config,
