@@ -26,7 +26,7 @@ from tools.profiling.storage import (
 # Raw artifact discovery and shard planning
 # =============================================================================
 
-RANK_PARSE_CONCURRENCY = 2
+RANK_PARSE_CONCURRENCY = 1
 PUBLISH_CONCURRENCY = 1
 DEFAULT_ANALYSIS_PROCESS_COUNT = 16
 
